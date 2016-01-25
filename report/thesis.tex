@@ -1,0 +1,55 @@
+\documentclass[a4paper,oneside,article,11pt]{memoir}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsthm}
+
+% This font looks so good.
+\usepackage[sc]{mathpazo}
+
+% Typesetting pseudo-code
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{multirow}
+% Code comments like [CLRS]
+\renewcommand{\algorithmiccomment}[1]{\makebox[5cm][l]{$\triangleright$ \textit{#1}}}
+\usepackage{framed,graphicx,xcolor}
+\usepackage[font={small,it}]{caption}
+\usepackage{listings}
+\usepackage{units}
+
+% Relative references
+\usepackage{varioref}
+
+\usepackage{hyperref}
+
+\bibliographystyle{alpha}
+
+\title{Range Reporting}
+\author{Peter Gabrielsen 20114179 \\
+Christoffer Hansen 20114637}
+\newcounter{qcounter}
+\begin{document}
+
+\begin{titlingpage}
+\clearpage
+
+\maketitle
+\thispagestyle{empty}
+
+\begin{abstract}
+blabla
+\end{abstract}
+\end{titlingpage}
+
+\pagebreak
+
+\tableofcontents
+
+\pagebreak
+
+
+\bibliography{references}
+
+\end{document}
+
+
