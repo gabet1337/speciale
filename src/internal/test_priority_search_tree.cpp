@@ -1,11 +1,11 @@
 #include "priority_search_tree.hpp"
 #include <iostream>
 #include <vector>
-
+#include <algorithm>
+#include <assert.h>
 using namespace std;
 
-int main() {
-  
+void test1() {
   vector<Point> points;
 
   points.push_back(Point(1,2));
@@ -19,7 +19,37 @@ int main() {
 
   PrioritySearchTree pst(points);
   pst.print();
+  vector<Point> r = pst.report(0, 20, 4);
+  for (auto p : r) {
+    cout << p << endl;
+  }
+  sort(r.begin(), r.end());
+  vector<Point> true_res;
+  true_res.push_back(Point(16,20));
+  true_res.push_back(Point(5,6));
+  true_res.push_back(Point(9,4));
+  true_res.push_back(Point(19,9));
+  sort(true_res.begin(), true_res.end());
+  assert(equal(r.begin(),r.end(), true_res.begin(),
+	       [] (const Point& p1, const Point& p2) -> bool {
+		 return p1.x == p2.x && p1.y == p2.y;
+	       }) && "Query does not return correct result");
+}
 
+void test2() {
+  vector<Point> points;
+  for (int i = 1; i <= 10; i++)
+    for (int j = 1; j <= 10; j++)
+      points.push_back(Point(i,j));
 
+  PrioritySearchTree pst(points);
+
+  pst.print();
+
+}
+
+int main() {
+  // test1();
+  test2();
   return 0;
 }
