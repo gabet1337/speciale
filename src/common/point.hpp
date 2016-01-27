@@ -13,6 +13,9 @@ public:
   bool operator<(const Point& p) {
     return x < p.x || (x == p.x && y < p.y);
   }
+  bool operator==(const Point& p) {
+    return x == p.x && y == p.y;
+  }
   friend std::ostream& operator<<(std::ostream& os, const Point& p) {
     os << "(" << p.x << "," << p.y << ")";
     return os;

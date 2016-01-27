@@ -57,13 +57,20 @@ PrioritySearchTree::Node* PrioritySearchTree::construct(std::vector<Point> point
     else v->key = points[mid].x;
   }
   std::vector<Point> left,right;
-  // TODO: If many points have x value equal to median
-  // then split this correctly!
-  for (auto p = points.begin(); p != points.end(); p++) {
-    if (p == pmin) continue;
-    if (v->key < p->x) right.push_back(*p);
-    else left.push_back(*p);
+  for (size_t i = 0; i < mid; i++) {
+    if (i == pos) continue;
+    left.push_back(points[i]);
   }
+  for (size_t i = mid; i < points.size(); i++) {
+    if (i == pos) continue;
+    right.push_back(points[i]);
+  }
+  //works!
+  // for (auto p = points.begin(); p != points.end(); p++) {
+  //   if (p == pmin) continue;
+  //   if (v->key < p->x) right.push_back(*p);
+  //   else left.push_back(*p);
+  // }
   v->left = construct(left);
   v->right = construct(right);
   return v;
@@ -80,7 +87,7 @@ std::vector<Point> PrioritySearchTree::report(int xl, int xr, int yb) {
     if (xl <= x && x <= xr && y >= yb) result.push_back(left->root);
     if (xl > left->key) left = left->right;
     else left = left->left;
-    if (xr > right->key) right = right->right;
+    if (xr >= right->key) right = right->right;
     else right = right->left;
   }
   
@@ -107,7 +114,7 @@ std::vector<Point> PrioritySearchTree::report(int xl, int xr, int yb) {
       right = right->left;
     } else if (!right->left && right->right) {
       right = right->right;
-    } else if (xr > right->key) {
+    } else if (xr >= right->key) {
       reportSubtree(right->left, yb, result);
       right = right->right;
     } else right = right->left;

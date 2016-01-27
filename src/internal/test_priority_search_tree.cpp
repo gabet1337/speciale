@@ -18,11 +18,11 @@ void test1() {
   points.push_back(Point(20,3));
 
   PrioritySearchTree pst(points);
-  pst.print();
+  // pst.print();
   vector<Point> r = pst.report(0, 20, 4);
-  for (auto p : r) {
-    cout << p << endl;
-  }
+  // for (auto p : r) {
+  //   cout << p << endl;
+  // }
   sort(r.begin(), r.end());
   vector<Point> true_res;
   true_res.push_back(Point(16,20));
@@ -43,13 +43,20 @@ void test2() {
       points.push_back(Point(i,j));
 
   PrioritySearchTree pst(points);
-
-  pst.print();
-
+  
+  // pst.print();
+  // vector<Point> res = pst.report(1,10,5);
+  assert(pst.report(1,10,6).size() == 50 && "Incorrect size of the result for query");
+  // for (auto p : pst.report(1,10,5))
+  //   cout << p << endl;
+  
 }
 
 int main() {
-  // test1();
+  test1();
   test2();
+
+  cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
+
   return 0;
 }
