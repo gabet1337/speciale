@@ -93,11 +93,12 @@ For convenience we will assume $M > B^2$. This assumption is known as the \texti
 
 \section{Amortization}
 
-\section{Global Rebuilding}
-The term \textit{global rebuilding} refers to the standard technique of making a (typically small) static data structure dynamic. We simply store all updates in a \textit{update block} and once a certain threshold has been collected we rebuild the data structure~\cite{ionotes}. For data structures that does not allow the space for deleted records to be reoccupied we \textit{mark} (or \textit{weak delete}) the elements. Whenever $\alpha N$ elements have been marked, for some constant $\alpha > 0$, the entire data structure is rebuilt from scratch with only the non-marked elements. The cost of rebuilding is at most a constant factor higher than the cost of inserting $\alpha N$ elements and so the amortized cost of global rebuilding can be charged to the insertions of the deleted elements~\cite{Meyer:2003/AMH/1744652}.
+\section{Global rebuilding}
+
+
 
 \section{Filtering}
-Charge part of query cost to output.
+
 
 \chapter{Sublogarithmic Updates}
 
