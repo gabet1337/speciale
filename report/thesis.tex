@@ -48,6 +48,7 @@ blabla
 \pagebreak
 
 \chapter{Introduction}
+\label{chp:introduction}
 % words: big data, banking, data larger than memory, database community, slow disks, disparity between growth of CPU speeds and transfer speeds between internal and external memory (widening gap)
 % fault tolerance and consistency are more challenging to handle in-memory (In-Memory Big Data Management and Processing: A survey)
 % storage prices
@@ -72,9 +73,14 @@ To some large internet companies the bottleneck that disk-based systems presents
 
 Another price of this move to internal memory is the actual cost of running server farms and the cost of internal memory compared to external memory. The extra costs and increased complexity suggests that external memory data structures have some well defined advantages.
 
-In disk-based systems algorithms and data structures are measured 
+In disk-based systems algorithms and data structures cannot be measured in the traditional models used for internal memory algorithms since the performance is bound by disk latency. In Section~\ref{chp:iomodel} we investigate a model that encapsulates performance of the I/O bottleneck.
+
+In Section~\ref{chp:prelims} we give a preliminary overview of some of the techniques used in developing external memory efficient data structures.
+
+%TODO add more sections!
 
 \chapter{Model of computation}
+\label{chp:iomodel}
 We will argue the results of this thesis in terms of the external memory model of Aggarwal and Vitter~\cite{Aggarwal:1988/ICS/48529.48535}.
 The external memory model (or I/O model) measures the efficiency of an algorithm by counting the total number of reads and writes performed. In detail the model consists of two levels of memory; a bounded internal memory of size $M$ and an unbounded external memory. For a total of $N$ records we define an \textit{IO} operation to the process of transferring $B$ consecutive records between the two levels of memory as depicted in figure~\ref{fig:io_model}. We restrict all computations on records to be done in internal memory. Throughout the thesis we will let $K$ denote the total number of records in the output.
 
@@ -91,6 +97,7 @@ The fundamental bounds in the external memory model is that scanning can be done
 For convenience we will assume $M > B^2$. This assumption is known as the \textit{tall-cache assumption} in the cache-oblivious model and basically states that the number of blocks \nicefrac{M}{B} is larger than the size of each block $B$~\cite{Prokop99cache-obliviousalgorithms}.
 
 \chapter{Preliminaries}
+\label{chp:prelims}
 % amortization
 
 \section{Amortization}
