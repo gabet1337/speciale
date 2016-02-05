@@ -69,7 +69,8 @@ In the early days of computers disks were faster than processors. Since then pro
 
 While the database community has always been involved in development of practically efficient external memory data structures, most algorithms research has focused on worst-case efficient internal memory data structures. With the advent of Big Data and problems concerning large data sets the algorithms community has been increasingly involved in developing worst-case efficient external memory data structures for solving these problems~\cite{ionote}.
 
-To some large internet companies the bottleneck that disk-based systems presents has become to great of an obstacle and in an attempt to close the gap they have moved towards developing internal memory big data processing. This move has been allowed by growing main memory capacities but it comes with the price of issues such as fault-tolerance and consistency which are inherently more challenging to handle in volatile memory~\cite{Zhang2015}.
+%TODO reformulate.
+To some large internet companies, disk-based systems presents too large of an obstacle, and in an attempt to close the gap they have moved towards developing internal memory big data processing algorithms. This move has been allowed by growing main memory capacities but it comes with the price of issues such as fault-tolerance and consistency which are inherently more challenging to handle in volatile memory~\cite{Zhang2015}.
 
 Another price of this move to internal memory is the actual cost of running server farms and the cost of internal memory compared to external memory. The extra costs and increased complexity suggests that external memory data structures have some well defined advantages.
 
@@ -101,6 +102,22 @@ For convenience we will assume $M > B^2$. This assumption is known as the \texti
 % amortization
 
 \section{Amortization}
+Amortization is an important algorithmic tool to argue about average performance of an operation in the worst case.
+In an amortized analysis, we average the time of a sequence of data structure operations. We can then show that, even though a single operation in the sequence is expensive, the average cost of an operation is small~\cite[p.~451-452]{clrs}.
+
+The term was coined by Tarjan~\cite{Tarjan85} and he describes two views of amortization. The first view is the banker's view where we assume that a computer is running on coins. We can insert a coin and the computer will run for fixed constant amount of time. An operation will pay a certain amounts of coins and the goal of the analysis is then to show that all operations can be performed with the amount paid. We assume that we start without any coins, we are allowed to borrow coins, and coins can be carried over to later operations. Paying coins amounts to averaging forward over time and borrowing is the opposite.
+
+Another view of amortization is that of the physicist. Instead of representing prepaid work as coins the physicist represent work as potential energy which can be released later to pay for future operations.
+
+If we perform $n$ operations, we will start with an initial data structure $D_0$. For each of the operations we let $c_i$ be the cost of operation $i$ and $D_i$ be the data structure that results from that operation on the previous data structure. We define a potential function $\Phi$ to map a data structure $D_i$ to a real number $\Phi(D_i)$. The cost of the $i$th operation becomes
+$$\hat{c}_i = c_i + \Phi(D_i) - \Phi(D_{i-1})$$
+The total amortized cost becomes
+\begin{align*}
+\sum_{i=1}^n \hat{c}_i &= \sum_{i=1}^n c_i + \Phi(D_i) - \Phi(D_{i-1}) \\
+&= \sum_{i=1}^n c_i + \Phi(D_n) - \Phi(D_{0})
+\end{align*}
+
+If we can show that $\Phi(D_i) \geq \Phi(D_0)$ for all $i$ then we know that we always are able to build up enough potential in advance.
 
 \section{Global rebuilding}
 The term \textit{global rebuilding} refers to the standard technique of making a (typically small) static data structure dynamic. We simply store all updates in a \textit{update block} and once a certain threshold has been collected we rebuild the data structure~\cite{ionotes}. For data structures that does not allow the space for deleted records to be reoccupied we \textit{mark} (or \textit{weak delete}) the elements. Whenever $\alpha N$ elements have been marked, for some constant $\alpha > 0$, the entire data structure is rebuilt from scratch with only the non-marked elements. The cost of rebuilding is at most a constant factor higher than the cost of inserting $\alpha N$ elements and so the amortized cost of global rebuilding can be charged to the insertions of the deleted elements~\cite{Meyer:2003/AMH/1744652}.
