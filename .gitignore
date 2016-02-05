@@ -36,3 +36,5 @@
 *.out
 *.toc
 *.gz
+*.bbl
+*.blg
