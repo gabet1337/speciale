@@ -38,3 +38,4 @@
 *.gz
 *.bbl
 *.blg
+/report/thesis.pdf
