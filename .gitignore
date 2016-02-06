@@ -39,3 +39,7 @@
 *.bbl
 *.blg
 /report/thesis.pdf
+
+# dot files in src
+*.dot
+/src/**/*.png
