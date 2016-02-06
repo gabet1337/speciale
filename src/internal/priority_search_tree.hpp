@@ -13,7 +13,8 @@ public:
   PrioritySearchTree(std::vector<Point> points);
   ~PrioritySearchTree();
   std::vector<Point> report(int xl, int xr, int yb);
-
+  void insert(Point p);
+  void remove(Point p);
   void print();
 
 private:
@@ -21,6 +22,10 @@ private:
     Point root;
     int key;
     Node* left, *right;
+    ~Node() {
+      if (left) delete left;
+      if (right) delete right;
+    }
   };
   Node* root;
   Node* construct(std::vector<Point> points);
@@ -28,7 +33,9 @@ private:
   void print(Node* n);
 };
 
-PrioritySearchTree::~PrioritySearchTree() {}
+PrioritySearchTree::~PrioritySearchTree() {
+  delete root;
+}
 
 PrioritySearchTree::PrioritySearchTree(std::vector<Point> points) {
   std::sort(points.begin(), points.end());
