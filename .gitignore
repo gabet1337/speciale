@@ -1,4 +1,9 @@
+# Programs
+src/ipst
+
+#stuff
 *~
+*#
 
 # Compiled Object files
 *.slo
