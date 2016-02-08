@@ -56,7 +56,7 @@ blabla
 % Disk were faster than CPU in 60
 % http://read.cs.ucla.edu/111/2006fall/notes/lec15#incommensurate-scaling
 
-In the early days of computers disks were faster than processors. Since then processor technology has advanced at an incredible rate achieving annual speedups of 40 to 60 percent~\cite{ruemmler_wilkes_1994}. Although this is also true for disk capacity an entirely different story can be told for the speedup of disk performance. The disparity between processor, internal memory, and external memory speeds have grown larger for each year and the gap is widening. This disparity presents serious problems when designing algorithms on large data sets, and with more and more applications of Big Data in social media, banking, etc., these problems become increasingly relevant.
+In the early days of electronic computers disks were faster than processors. Since then processor technology has advanced at an incredible rate achieving annual speedups of 40 to 60 percent~\cite{ruemmler_wilkes_1994}. Although this is also true for disk capacity an entirely different story can be told for the speedup of disk performance. The disparity between processor, internal memory, and external memory speeds have grown larger for each year and the gap is widening. This disparity presents serious problems when designing algorithms on large data sets, and with more and more applications of Big Data in social media, banking, etc., these problems become increasingly relevant.
 
 %TODO get a better figure. This one is really ugly.
 \begin{figure}[h]
@@ -105,7 +105,7 @@ For convenience we will assume $M > B^2$. This assumption is known as the \texti
 Amortization is an important algorithmic tool to argue about average performance of an operation in the worst case.
 In an amortized analysis, we average the time of a sequence of data structure operations. We can then show that, even though a single operation in the sequence is expensive, the average cost of an operation is small~\cite[p.~451-452]{clrs}.
 
-The term was coined by Tarjan~\cite{Tarjan85} and he describes two views of amortization. The first view is the banker's view where we assume that a computer is running on coins. We can insert a coin and the computer will run for fixed constant amount of time. An operation will pay a certain amounts of coins and the goal of the analysis is then to show that all operations can be performed with the amount paid. We assume that we start without any coins, we are allowed to borrow coins, and coins can be carried over to later operations. Paying coins amounts to averaging forward over time and borrowing is the opposite.
+The term was coined by Tarjan~\cite{Tarjan85} and describes two views of amortization. The first view is the banker's view where we assume that a computer is running on coins. We can insert a coin and the computer will run for fixed constant amount of time. An operation will pay a certain amounts of coins and the goal of the analysis is then to show that all operations can be performed with the amount paid. We assume that we start without any coins, we are allowed to borrow coins, and coins can be carried over to later operations. Paying coins amounts to averaging forward over time and borrowing is the opposite.
 
 Another view of amortization is that of the physicist. Instead of representing prepaid work as coins the physicist represent work as potential energy which can be released later to pay for future operations.
 
@@ -124,11 +124,7 @@ The term \textit{global rebuilding} refers to the standard technique of making a
 
 \section{Filtering}
 The technique of \textit{filtering} is used on retrieval problems where we query a certain data structure for a subset of data points. The technique is based on the fact that the complexity of the \textit{search} and the \textit{report} parts of the algorithm should be made dependent upon each other such that we charge part of the query cost to output. In order to make filtering search feasible, it is crucial that the problems specifically require the exhaustive enumeration of the objects satisfying the query. More formally put, the class of problems amenable to filtering search treatment involves a finite set of objects $S$ a (finite or infinite) query domain $Q$, and a predicate $P$ defined for each pair in $S \times Q$. 
-The technique now requires us to preprocess $S$ such that we can effectively report each object in the query-set $g(q)$ defined in~\ref{eq:filtering} ~\cite{DBLP:journals/siamcomp/Chazelle86}.
-
-\begin{equation} \label{eq:filtering}
-g: Q \rightarrow 2^S, [g(q) = \{v \in S \mid P(v,q) \text{ is true} \} ]
-\end{equation}
+%TODO removed this section. OK?: The technique now requires us to preprocess $S$ such that we can effectively report each object in the query-set $g(q)$ defined in~\ref{eq:filtering} ~\cite{DBLP:journals/siamcomp/Chazelle86}. \begin{equation} \label{eq:filtering} g: Q \rightarrow 2^S, [g(q) = \{v \in S \mid P(v,q) \text{ is true} \} ] \end{equation}
 
 \chapter{Related work}
 
