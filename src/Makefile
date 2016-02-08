@@ -1,5 +1,5 @@
 CC = c++ -std=c++0x
-DEBUG = -g -Wall -Wall -fsanitize=address
+DEBUG = -g -Wall -fsanitize=address
 LFLAGS = $(DEBUG)
 CFLAGS = $(DEBUG) -c
 
