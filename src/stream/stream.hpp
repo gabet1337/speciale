@@ -84,20 +84,15 @@ namespace io {
 
   template <typename T>
   bool buffered_stream<T>::eof() {
-    if (b_eof) return true;
-    return buffer_start >= file_size;
+    return b_eof && buffer_pos >= (file_size-buffer_start)/sizeof(T);
   }
 
   template <typename T>
   void buffered_stream<T>::fill() {
-    std::cout << "eof at this point: " << eof() << std::endl;
-    //std::cout << "file_pos: " << file_pos << std::endl;
-    //std::cout << "buffer_pos: " << buffer_pos << std::endl;
-    //std::cout << "file_size: " << file_size << std::endl;
+    bool e = eof();
     if (is_dirty) sync();
-    if (!eof()) {
-      buffer_start = lseek(file_descriptor,0,SEEK_CUR);
-      //std::cout << "buffer_start: " << buffer_start << std::endl;
+    if (!e) {
+      buffer_start = seek(0,SEEK_CUR);
       if (buffer_start == -1) {
         perror(std::string("Error seeking file: ").append(file_name).append("'").c_str());
         exit(errno);
@@ -107,17 +102,39 @@ namespace io {
         perror(std::string("Error reading from file '").append(file_name).append("'").c_str());
         exit(errno);
       }
-      if (bytes_read < buffer_size) b_eof = true;
+      if (buffer_start + bytes_read >= file_size) b_eof = true;
       file_pos += bytes_read;
-      std::cout << "trolololo" << std::endl;
     } else {
       file_pos = seek(0,SEEK_END);
       buffer_start = file_pos;
-      std::cout << "file_pos at this point: " << file_pos << std::endl;
     }
     buffer_pos = 0; 
   }
 
+  template <typename T>
+  void buffered_stream<T>::sync() {
+    off_t cur_pos = seek(0, SEEK_CUR);
+    seek(buffer_start, SEEK_SET);
+    size_t bytes_written = ::write(file_descriptor, buffer, buffer_pos*sizeof(T));
+    if (bytes_written == -1) {
+      perror(std::string("Error on syncing buffer for file: '").append(file_name).append("'").c_str());
+      exit(errno);
+    }
+    file_size = std::max((size_t) file_size, buffer_start+bytes_written);
+    seek(cur_pos,SEEK_SET);
+    is_dirty = false;
+  }
+
+  template <typename T>
+  off_t buffered_stream<T>::seek(size_t offset, int whence) {
+    off_t pos = lseek(file_descriptor,offset,whence);
+    if (pos == -1) {
+      perror(std::string("Error seeking file: ").append(file_name).append("'").c_str());
+      exit(errno);
+    }
+    return pos;
+  }
+  
   template <typename T>
   T buffered_stream<T>::read() {
     if (buffer_pos*sizeof(T) >= buffer_size) fill();
@@ -132,38 +149,7 @@ namespace io {
     buffer[buffer_pos++] = item;
   }
 
-  template <typename T>
-  void buffered_stream<T>::sync() {
-    std::cout << "eof: " << eof() << std::endl;
-    std::cout << "file_pos: " << file_pos << std::endl;
-    std::cout << "buffer_pos: " << buffer_pos << std::endl;
-    std::cout << "file_size: " << file_size << std::endl;
 
-    off_t cur_pos = seek(0, SEEK_CUR);
-    //std::cout << "current_pos: " << cur_pos << std::endl;
-    std::cout << "buffer_start: " << buffer_start << std::endl;
-    seek(buffer_start, SEEK_SET);
-    size_t bytes_written = ::write(file_descriptor, buffer, buffer_pos*sizeof(T));
-    if (bytes_written == -1) {
-      perror(std::string("Error on syncing buffer for file: '").append(file_name).append("'").c_str());
-      exit(errno);
-    }
-    file_size = std::max((size_t) file_size, buffer_start+bytes_written);
-    std::cout << "file_size at this point: " << file_size << std::endl;
-    std::cout << seek(cur_pos,SEEK_SET) << std::endl;
-    std::cout << "bytes_written: " << bytes_written << std::endl;
-    is_dirty = false;
-  }
-
-  template <typename T>
-  off_t buffered_stream<T>::seek(size_t offset, int whence) {
-    off_t pos = lseek(file_descriptor,offset,whence);
-    if (pos == -1) {
-      perror(std::string("Error seeking file: ").append(file_name).append("'").c_str());
-      exit(errno);
-    }
-    return pos;
-  }
   
   template <typename T>
   size_t buffered_stream<T>::size() {
