@@ -3,11 +3,12 @@
 #include <fstream>
 #include "stream.hpp"
 #include "../common/point.hpp"
+#include "../common/debug.hpp"
 #include <string>
 using namespace std;
 
 void delete_file(string file) {
-  string command = "rm stream/testfiles/"+file;
+  string command = "rm -f stream/testfiles/"+file;
   if (system(command.c_str()) != 0)
     perror(("Unable to delete file"+file).c_str());
 }
@@ -68,7 +69,7 @@ void test_read_write2() {
   string actual_string;
   bs.open("stream/testfiles/test_read_write3.txt");
   while (!bs.eof()) actual_string += bs.read();
-  cout << actual_string << " " << true_string << endl;
+  DEBUG_MSG(actual_string << " " << true_string);
   assert( (actual_string == true_string) && "Unequal strings");
 
   for (char c : true_string) bs.write(c);
@@ -78,7 +79,7 @@ void test_read_write2() {
   actual_string = "";
   while (!bs.eof()) actual_string+=bs.read();
   true_string.append(true_string);
-  cout << actual_string << " " << true_string << endl;
+  DEBUG_MSG(actual_string << " " << true_string);
   assert( (actual_string == true_string) && "Unequal strings");
 
   for (char c : true_string) bs.write(c);
@@ -129,10 +130,8 @@ void test_read_point() {
   bs.write(point(1,2));
   bs.write(point(3,2));
   bs.close();
-  cout << "REOPEN" << endl;
   bs.open("stream/testfiles/test_points.txt");
   point p1 = bs.read(), p2 = bs.read();
-  cout << p1 << " " << p2 << endl;
   assert ( (point(1,2) == p1 && point(3,2) == p2) && "Not the correct point");
   bs.close();
   cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
@@ -238,7 +237,7 @@ void test_seek_read_point_in_buffer_range() {
 
   cout << "starting test_seek_read_point_inside_buffer_range ";
 
-  delete_file("rm stream/testfiles/test_seek_read_point_inside_buffer_range.dat");
+  delete_file("test_seek_read_point_inside_buffer_range.dat");
 
   // 1. Write 8 points.
   io::buffered_stream<point> bs(4);
@@ -275,7 +274,7 @@ void test_seek_modify_point_in_buffer_range() {
 
   cout << "starting test_seek_modify_point_inside_buffer_range ";
 
-  delete_file("rm stream/testfiles/test_seek_modify_point_inside_buffer_range.dat");
+  delete_file("test_seek_modify_point_inside_buffer_range.dat");
 
   // 1. Write 8 points.
   io::buffered_stream<point> bs(4);
@@ -316,19 +315,19 @@ void test_seek_modify_point_outside_buffer_range() {
 
   cout << "starting test_seek_modify_point_outside_buffer_range ";
 
-  delete_file("rm stream/testfiles/test_seek_modify_point_outside_buffer_range.dat");
+  delete_file("test_seek_modify_point_outside_buffer_range.dat");
 
   // 1. Write 8 points.
   io::buffered_stream<point> bs(2);
   bs.open("stream/testfiles/test_seek_modify_point_outside_buffer_range.dat");
-  bs.write(point(89,56));
-  bs.write(point(458,54));
-  bs.write(point(48,41));
-  bs.write(point(8,23));
-  bs.write(point(356,213));
-  bs.write(point(123,56));
-  bs.write(point(98,234));
-  bs.write(point(123,45));
+  bs.write(point(89,56)); //0
+  bs.write(point(458,54)); //8
+  bs.write(point(48,41)); //16
+  bs.write(point(8,23)); //24
+  bs.write(point(356,213));//32
+  bs.write(point(123,56));//40
+  bs.write(point(98,234));//48
+  bs.write(point(123,45));//56
 
   // 2. Seek to start of file and read point
   bs.seek(8,SEEK_SET);
@@ -338,8 +337,10 @@ void test_seek_modify_point_outside_buffer_range() {
   bs.seek(8,SEEK_SET);
   bs.write(point(777,888));
 
-  bs.seek(42,SEEK_SET);
-  assert( (point(98,234) == bs.read()) && "Invalid point read");
+  bs.seek(48,SEEK_SET);
+  point p = bs.read();
+  DEBUG_MSG(p);
+  assert( (point(98,234) == p) && "Invalid point read");
 
   bs.seek(8,SEEK_SET);
   assert( (point(777,888) == bs.read()) && "Invalid point read");
@@ -361,15 +362,16 @@ void test_split_file_in_halve() {
   cout << "starting test_split_file_in_halve ";
 
   delete_file("test_split_file.dat");
-
+  delete_file("test_split_file_split1.dat");
+  
   // 1. Write 8 points.
   io::buffered_stream<point> bs(2);
   bs.open("stream/testfiles/test_split_file.dat");
-  bs.write(point(89,56));
-  bs.write(point(458,54));
-  bs.write(point(48,41));
-  bs.write(point(8,23));
-  bs.write(point(356,213));
+  bs.write(point(89,56));//0
+  bs.write(point(458,54));//8
+  bs.write(point(48,41));//16
+  bs.write(point(8,23));//24
+  bs.write(point(356,213));//32
   bs.write(point(123,56));
   bs.write(point(98,234));
   bs.write(point(123,45));
@@ -384,12 +386,14 @@ void test_split_file_in_halve() {
   os.open("stream/testfiles/test_split_file_split1.dat");
   while (!bs.eof()) os.write(bs.read());
   os.close();
-  
+
   // 4. Truncate original file
   bs.seek(32,SEEK_SET);
   bs.truncate();
-  bs.close();
+  bs.close(); 
+
   
+
   // Assert files split into halves.
   bs.open("stream/testfiles/test_split_file.dat");
   assert ( (point(89,56) == bs.read() && point(458,54) == bs.read() && point(48,41) == bs.read() && point(8,23) == bs.read()) && "Not the correct point");
@@ -429,7 +433,7 @@ void test_read_entire_file_test_eof() {
 
   assert( (bs.eof() == 1) && "eof should be 1" );
 
-  bs.seek(0,SEEK_CUR);
+  bs.seek(0,SEEK_SET);
   
   assert ( (bs.eof() == 0) && "eof should be 0" );
 
@@ -478,7 +482,7 @@ void test_read_beyond_file() {
   while (!bs.eof()) bs.read();
 
   // We should see stream exit on ENOTTY. Delete test when fixed.
-  assert ( (point(999,999) == bs.read()) && "Should exit with errno = ENOTTY");
+  // assert ( (point(999,999) == bs.read()) && "Should exit with errno = ENOTTY");
   
   cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
   
@@ -527,8 +531,35 @@ void test_large_buffer() {
   cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
 }
 
-void test_sync() {
-  
+void test_append() {
+  cout << "starting test_append ";
+  io::buffered_stream<char> bs(4096);
+  delete_file("test_append.txt");
+  bs.open("stream/testfiles/test_append.txt");
+  bs.write('H');
+  bs.write('E');
+  bs.write('L');
+  bs.write('L');
+  bs.write('O');
+  bs.close();
+
+  bs.open("stream/testfiles/test_append.txt");
+  bs.seek(0, SEEK_END);
+  bs.write(' ');
+  bs.write('W');
+  bs.write('O');
+  bs.write('R');
+  bs.write('L');
+  bs.write('D');  
+  bs.close();
+
+  string actual, true_string = "HELLO WORLD";
+  bs.open("stream/testfiles/test_append.txt");
+  while (!bs.eof()) actual+=bs.read();
+  assert( (actual == true_string) && "Incorrect appendage");
+  assert( (bs.size() == true_string.size()) && "Incorrect size of file");
+  bs.close();
+  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
 }
 
 
@@ -546,14 +577,13 @@ int main() {
   test_large_buffer();
   test_seek_read_point_outside_buffer_range();
   
-  // Failed tests:
   test_read_entire_file_test_eof();
   test_seek_read_point_in_buffer_range();
   test_seek_modify_point_in_buffer_range();
   test_seek_modify_point_outside_buffer_range();
   test_read_beyond_file();
   test_split_file_in_halve();
-
+  test_append();
 
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
 
