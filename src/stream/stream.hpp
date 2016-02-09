@@ -10,6 +10,7 @@
 #include <error.h>
 #include <algorithm>
 #include <iostream>
+#include "../common/debug.hpp"
 
 namespace io {
   template <typename T>
@@ -30,7 +31,9 @@ namespace io {
   private:
     int file_descriptor;
     void fill();
-    size_t buffer_size, file_pos, buffer_pos;
+    bool should_refill();
+    inline size_t buffer_pos();
+    size_t buffer_size, file_pos;//, buffer_pos;
     off64_t file_size;
     off_t buffer_start;
     T* buffer;
@@ -59,7 +62,7 @@ namespace io {
     is_dirty = false;
     this->file_name = file_name;
     file_pos = 0;
-    buffer_pos = 0;
+    // buffer_pos = 0;
     buffer_start = 0;
     struct stat sb;
     fstat(file_descriptor, &sb);
@@ -83,18 +86,17 @@ namespace io {
 
   template <typename T>
   bool buffered_stream<T>::eof() {
-    //return b_eof && buffer_pos >= (file_size-buffer_start)/sizeof(T);
     return b_eof && file_pos >= file_size;
   }
 
   template <typename T>
   void buffered_stream<T>::fill() {
     bool e = eof();
-    std::cout << "e " << eof() << std::endl;
-    std::cout << "bs " << buffer_start << std::endl;
+    DEBUG_MSG("e " << eof());
+    DEBUG_MSG("bs " << buffer_start);
     if (is_dirty) sync();
     if (!e) {
-      std::cout << "fill" << std::endl;
+      DEBUG_MSG("fill");
       buffer_start = seek(0,SEEK_CUR);
       if (buffer_start == -1) {
         perror(std::string("Error seeking file: ").append(file_name).append("'").c_str());
@@ -107,66 +109,80 @@ namespace io {
       }
       if (bytes_read < buffer_size) b_eof = true;
       if (buffer_start+bytes_read >= file_size) b_eof = true;
-      std::cout << file_size << " " << b_eof << " " << file_pos << " " << bytes_read << std::endl;
+      DEBUG_MSG(file_size << " " << b_eof << " " << file_pos << " " << bytes_read);
       // file_pos += bytes_read;
     } else {
       file_pos = seek(0,SEEK_END);
       buffer_start = file_pos;
     }
-    buffer_pos = 0; 
+    // buffer_pos = 0; 
   }
 
   template <typename T>
   void buffered_stream<T>::sync() {
-    std::cout << "sync" << std::endl;
-    std::cout << "bfs " << buffer_start << std::endl;
+    DEBUG_MSG("sync");
+    DEBUG_MSG("bfs " << buffer_start);
     is_dirty = false;
+    size_t elems = buffer_pos();
     off_t cur_pos = seek(0, SEEK_CUR);
-    std::cout << "cp " << cur_pos << std::endl;
+    DEBUG_MSG("cp " << cur_pos);
     seek(buffer_start, SEEK_SET);
-    size_t bytes_written = ::write(file_descriptor, buffer, buffer_pos*sizeof(T));
+    size_t bytes_written = ::write(file_descriptor, buffer, elems*sizeof(T));
     if (bytes_written == -1) {
       perror(std::string("Error on syncing buffer for file: '").append(file_name).append("'").c_str());
       exit(errno);
     }
     seek(cur_pos,SEEK_SET);
-    std::cout << "fp " << file_pos << std::endl;
+    DEBUG_MSG("fp " << file_pos);
     file_size = std::max((size_t) file_size, file_pos);
   }
 
   template <typename T>
   off_t buffered_stream<T>::seek(size_t offset, int whence) {
+    DEBUG_MSG("seek to " << offset << " from " << whence);
     if (is_dirty) sync();
     file_pos = lseek(file_descriptor, offset, whence);
     if (file_pos == -1) {
       perror(std::string("Error seeking file: ").append(file_name).append("'").c_str());
       exit(errno);
     }
-
+    DEBUG_MSG("fps " << file_pos << " " << buffer_start << " ");
     return file_pos;
   }
   
   template <typename T>
   T buffered_stream<T>::read() {
-    if (buffer_pos * sizeof(T) >= buffer_size) fill();
-    if ( !(buffer_start <= file_pos && file_pos < buffer_start+buffer_size) )
-      fill();
-    T element = buffer[buffer_pos++];
-    std::cout << "read " << element << std::endl;
+    if (should_refill()) fill();
+    DEBUG_MSG("buffer _start " << buffer_start);
+    DEBUG_MSG((file_pos - buffer_start)/sizeof(T));
+    T element = buffer[buffer_pos()];
+    DEBUG_MSG("read " << element);
     file_pos+=sizeof(T);
     return element;
   }
 
   template <typename T>
   void buffered_stream<T>::write(T item) {
-    std::cout << "write " << item << std::endl;
+    DEBUG_MSG("write " << item);
+    if (should_refill()) fill();
     is_dirty = true;
-    if ( !(buffer_start <= file_pos && file_pos < buffer_start+buffer_size) )
-      fill();
-    if (buffer_pos >= buffer_size/sizeof(T)) fill();
+    buffer[buffer_pos()] = item;
     file_pos+=sizeof(T);
-    buffer[buffer_pos++] = item;
   }
+
+  template <typename T>
+  inline size_t buffered_stream<T>::buffer_pos() {
+    return (file_pos-buffer_start)/sizeof(T);
+  }
+
+  template <typename T>
+  bool buffered_stream<T>::should_refill() {
+    if ( !(buffer_start <= file_pos &&
+           file_pos < buffer_start+buffer_size) ) return true;
+    if (buffer_pos() >= buffer_size/sizeof(T)) return true;
+    return false;
+  }
+  
 
   template <typename T>
   size_t buffered_stream<T>::size() {
