@@ -142,14 +142,15 @@ namespace io {
       perror(std::string("Error seeking file: ").append(file_name).append("'").c_str());
       exit(errno);
     }
-    if ( !(buffer_start <= file_pos && file_pos <= buffer_start+buffer_size) )
-      fill();
+
     return file_pos;
   }
   
   template <typename T>
   T buffered_stream<T>::read() {
     if (buffer_pos * sizeof(T) >= buffer_size) fill();
+    if ( !(buffer_start <= file_pos && file_pos < buffer_start+buffer_size) )
+      fill();
     T element = buffer[buffer_pos++];
     std::cout << "read " << element << std::endl;
     file_pos+=sizeof(T);
@@ -160,6 +161,8 @@ namespace io {
   void buffered_stream<T>::write(T item) {
     std::cout << "write " << item << std::endl;
     is_dirty = true;
+    if ( !(buffer_start <= file_pos && file_pos < buffer_start+buffer_size) )
+      fill();
     if (buffer_pos >= buffer_size/sizeof(T)) fill();
     file_pos+=sizeof(T);
     buffer[buffer_pos++] = item;

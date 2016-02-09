@@ -249,7 +249,7 @@ void test_split_file_in_halve() {
 
   // 2. Seek to middle
   bs.open("stream/testfiles/test_split_file.dat");
-
+  return;
   bs.seek(32,SEEK_SET);
 
   return;
