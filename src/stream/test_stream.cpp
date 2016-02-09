@@ -129,6 +129,7 @@ void test_read_point() {
   bs.write(point(1,2));
   bs.write(point(3,2));
   bs.close();
+  cout << "REOPEN" << endl;
   bs.open("stream/testfiles/test_points.txt");
   point p1 = bs.read(), p2 = bs.read();
   cout << p1 << " " << p2 << endl;
