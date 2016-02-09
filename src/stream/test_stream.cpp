@@ -193,8 +193,8 @@ void test_modify_second_point() {
 }
 
 void test_seek_read_point_outside_buffer_range() {
-  
-  // TODO: read() should refill buffer, if we seek() beyond buffer range.
+
+  // Read point outside buffer range
   // 1. Write 8 points.
   // 2. Seek to start of file and read point.
   // 3. Seek to middle of file and read point.
@@ -228,17 +228,16 @@ void test_seek_read_point_outside_buffer_range() {
   
 }
 
-void test_seek_modify_point_in_buffer_range() {
+void test_seek_read_point_in_buffer_range() {
   
-  // TODO: if we seek() within buffer range we should move buffer_pos accordingly.
-   // TODO: read() should refill buffer, if we seek() beyond buffer range.
+  // Read point in buffer range
   // 1. Write 8 points.
   // 2. Seek to start of file and read point.
   // 3. Seek to middle of file and read point.
 
   cout << "starting test_seek_read_point_inside_buffer_range ";
 
-  system("rm stream/testfiles/test_seek_read_point_inside_buffer_range.dat");
+  delete_file("rm stream/testfiles/test_seek_read_point_inside_buffer_range.dat");
 
   // 1. Write 8 points.
   io::buffered_stream<point> bs(4);
@@ -265,9 +264,94 @@ void test_seek_modify_point_in_buffer_range() {
   
 }
 
+void test_seek_modify_point_in_buffer_range() {
+  
+  // Modify point in buffer range
+  // 1. Write 8 points.
+  // 2. Read second point.
+  // 3. Modify second point.
+  // 4. Read second point.
+
+  cout << "starting test_seek_modify_point_inside_buffer_range ";
+
+  delete_file("rm stream/testfiles/test_seek_modify_point_inside_buffer_range.dat");
+
+  // 1. Write 8 points.
+  io::buffered_stream<point> bs(4);
+  bs.open("stream/testfiles/test_seek_modify_point_inside_buffer_range.dat");
+  bs.write(point(89,56));
+  bs.write(point(458,54));
+  bs.write(point(48,41));
+  bs.write(point(8,23));
+  bs.write(point(356,213));
+  bs.write(point(123,56));
+  bs.write(point(98,234));
+  bs.write(point(123,45));
+
+  // 2. Seek to start of file and read point
+  bs.seek(8,SEEK_SET);
+  assert( (point(458,54) == bs.read()) && "Invalid point read");
+
+  // 3. Seek to middle of file and read point
+  bs.seek(8,SEEK_SET);
+  bs.write(point(777,888));
+
+  bs.seek(8,SEEK_SET);
+  assert( (point(777,888) == bs.read()) && "Invalid point read");
+  bs.close();
+
+  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  
+}
+
+void test_seek_modify_point_outside_buffer_range() {
+
+  // Modify point outside of buffer range
+  // 1. Write 8 points.
+  // 2. Read second point.
+  // 3. Modify second point.
+  // 4. Seek outside of buffer. Read point.
+  // 5. Read second point.
+
+  cout << "starting test_seek_modify_point_outside_buffer_range ";
+
+  delete_file("rm stream/testfiles/test_seek_modify_point_outside_buffer_range.dat");
+
+  // 1. Write 8 points.
+  io::buffered_stream<point> bs(2);
+  bs.open("stream/testfiles/test_seek_modify_point_outside_buffer_range.dat");
+  bs.write(point(89,56));
+  bs.write(point(458,54));
+  bs.write(point(48,41));
+  bs.write(point(8,23));
+  bs.write(point(356,213));
+  bs.write(point(123,56));
+  bs.write(point(98,234));
+  bs.write(point(123,45));
+
+  // 2. Seek to start of file and read point
+  bs.seek(8,SEEK_SET);
+  assert( (point(458,54) == bs.read()) && "Invalid point read");
+
+  // 3. Seek to middle of file and read point
+  bs.seek(8,SEEK_SET);
+  bs.write(point(777,888));
+
+  bs.seek(42,SEEK_SET);
+  assert( (point(98,234) == bs.read()) && "Invalid point read");
+
+  bs.seek(8,SEEK_SET);
+  assert( (point(777,888) == bs.read()) && "Invalid point read");
+  
+  bs.close();
+
+  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  
+}
+
 void test_split_file_in_halve() {
 
-  // TODO (split file in two halfes):
+  // split file in two halfes:
   // 1. Write 8 points.
   // 2. Seek to middle.
   // 3. Write remaining points to new file.
@@ -292,7 +376,6 @@ void test_split_file_in_halve() {
 
   // 2. Seek to middle
   bs.open("stream/testfiles/test_split_file.dat");
-  return;
   bs.seek(32,SEEK_SET);
 
   // 3. Write remaining points to new file.
@@ -316,6 +399,85 @@ void test_split_file_in_halve() {
   assert ( (point(356,213) == os.read() && point(123,56) == os.read() && point(98,234) == os.read() && point(123,45) == os.read()) && "Not the correct point");
   assert ( (os.eof()) && "File should be eof");
   os.close();
+  
+  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  
+}
+
+void test_read_entire_file_test_eof() {
+
+  // Read entire file
+  // 1. Write 8 points.
+  // 2. Read all points. Check eof.
+  
+  cout << "starting test_read_entire_file ";
+
+  delete_file("test_read_entire_file.dat");
+
+  // 1. Write 8 points.
+  io::buffered_stream<point> bs(2);
+  bs.open("stream/testfiles/test_read_entire_file.dat");
+  bs.write(point(89,56));
+  bs.write(point(458,54));
+  bs.write(point(48,41));
+  bs.write(point(8,23));
+  bs.write(point(356,213));
+  bs.write(point(123,56));
+  bs.write(point(98,234));
+  bs.write(point(123,45));
+
+  assert( (bs.eof() == 1) && "eof should be 1" );
+
+  bs.seek(0,SEEK_CUR);
+  
+  assert ( (bs.eof() == 0) && "eof should be 0" );
+
+  // 2. Read all points
+  int i = 0;
+  while (!bs.eof()) {
+    if (i == 0) assert ( (point(89,56) == bs.read()) && "Point not as expected");
+    if (i == 1) assert ( (point(458,54) == bs.read()) && "Point not as expected");
+    if (i == 2) assert ( (point(48,41) == bs.read()) && "Point not as expected");
+    if (i == 3) assert ( (point(8,23) == bs.read()) && "Point not as expected");
+    if (i == 4) assert ( (point(356,213) == bs.read()) && "Point not as expected");
+    if (i == 5) assert ( (point(123,56) == bs.read()) && "Point not as expected");
+    if (i == 6) assert ( (point(98,234) == bs.read()) && "Point not as expected");
+    if (i == 7) assert ( (point(123,45) == bs.read()) && "Point not as expected");
+    assert ( (i <= 7) && "eof should have been set");
+    i++;
+  }
+  
+  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  
+}
+
+void test_read_beyond_file() {
+
+  // Read beyond file:
+  // 1. Write 8 points.
+  // 2. Read all points + 1
+  
+  cout << "starting test_read_beyond_file ";
+
+  delete_file("test_read_beyond_file.dat");
+
+  // 1. Write 8 points.
+  io::buffered_stream<point> bs(2);
+  bs.open("stream/testfiles/test_read_beyond_file.dat");
+  bs.write(point(89,56));
+  bs.write(point(458,54));
+  bs.write(point(48,41));
+  bs.write(point(8,23));
+  bs.write(point(356,213));
+  bs.write(point(123,56));
+  bs.write(point(98,234));
+  bs.write(point(123,45));
+
+  // 2. Read all points
+  while (!bs.eof()) bs.read();
+
+  // We should see stream exit on ENOTTY. Delete test when fixed.
+  assert ( (point(999,999) == bs.read()) && "Should exit with errno = ENOTTY");
   
   cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
   
@@ -381,10 +543,17 @@ int main() {
   test_modify_first_point();
   test_modify_second_point();
   test_large_buffer();
-  test_split_file_in_halve();
   test_seek_read_point_outside_buffer_range();
-  test_seek_modify_point_in_buffer_range();
   
+  // Failed tests:
+  test_read_entire_file_test_eof();
+  test_seek_read_point_in_buffer_range();
+  test_seek_modify_point_in_buffer_range();
+  test_seek_modify_point_outside_buffer_range();
+  test_read_beyond_file();
+  test_split_file_in_halve();
+
+
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
 
   return 0;
