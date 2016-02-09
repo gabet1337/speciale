@@ -62,6 +62,7 @@ void test_read_write2() {
   string actual_string;
   bs.open("stream/testfiles/test_read_write3.txt");
   while (!bs.eof()) actual_string += bs.read();
+  cout << actual_string << " " << true_string << endl;
   assert( (actual_string == true_string) && "Unequal strings");
 
   for (char c : true_string) bs.write(c);
@@ -71,6 +72,7 @@ void test_read_write2() {
   actual_string = "";
   while (!bs.eof()) actual_string+=bs.read();
   true_string.append(true_string);
+  cout << actual_string << " " << true_string << endl;
   assert( (actual_string == true_string) && "Unequal strings");
 
   for (char c : true_string) bs.write(c);
@@ -122,7 +124,9 @@ void test_read_point() {
   bs.write(point(3,2));
   bs.close();
   bs.open("stream/testfiles/test_points.txt");
-  assert ( (point(1,2) == bs.read() && point(3,2) == bs.read()) && "Not the correct point");
+  point p1 = bs.read(), p2 = bs.read();
+  cout << p1 << " " << p2 << endl;
+  assert ( (point(1,2) == p1 && point(3,2) == p2) && "Not the correct point");
   bs.close();
   cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
 }
@@ -145,6 +149,35 @@ void test_file_size() {
   cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
 }
 
+void test_large_buffer() {
+  cout << "starting test large buffer size ";
+  system("rm stream/testfiles/test_large_buffer.txt");
+  io::buffered_stream<point> bs(4096);
+  bs.open("stream/testfiles/test_large_buffer.txt");
+  
+  for (int i = 0; i < 10000; i++) {
+    bs.write(point(i,i));
+    assert( (bs.size() == (i+1)*sizeof(point)) && "Incorrect size");
+  }
+  assert( (bs.size() == 10000*sizeof(point)) && "Incorrect size of buffer");
+
+  bs.write(point(10,12));
+  assert( (bs.size() != 10000*sizeof(point)) && "Incorrect size of buffer");
+  bs.close();
+  bs.open("stream/testfiles/test_large_buffer.txt");
+  for (int i = 0; i < 10000; i++) {
+    point p = bs.read();
+    assert ( (p == point(i,i)) && "Incorrect element in buffer");
+  }
+
+  bs.close();
+  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+}
+
+void test_sync() {
+  
+}
+
 
 int main() {
   
@@ -155,6 +188,7 @@ int main() {
   test_read_point();
   test_file_size();
   test_read_write2();
+  test_large_buffer();
 
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
 
