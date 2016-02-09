@@ -1,4 +1,4 @@
-CC = c++ -std=c++0x
+CC = c++ -std=c++0x -O2
 DEBUG = -g -Wall -fsanitize=address
 LFLAGS = $(DEBUG)
 CFLAGS = $(DEBUG) -c
