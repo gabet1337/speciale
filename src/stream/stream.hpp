@@ -26,6 +26,7 @@ namespace io {
     size_t size();
     bool empty();
     bool eof();
+    void truncate();
   private:
     int file_descriptor;
     void fill();
@@ -149,11 +150,18 @@ namespace io {
     buffer[buffer_pos++] = item;
   }
 
-
-  
   template <typename T>
   size_t buffered_stream<T>::size() {
     return (size_t) file_size;
+  }
+
+  template <typename T>
+  void buffered_stream<T>::truncate() {
+    if (ftruncate(file_descriptor,file_pos) == -1) {
+      perror(std::string("Error on truncation file: ").append(file_name).append("'").c_str());
+      exit(errno);
+    }
+    fill(); // clear buffer
   }
 
 };
