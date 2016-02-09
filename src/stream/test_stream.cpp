@@ -211,7 +211,7 @@ void test_seek_read_point_outside_buffer_range() {
   bs.write(point(123,45));
 
   // 2. Seek to start of file and read point
-  //bs.seek(0,SEEK_SET);
+  bs.seek(0,SEEK_SET);
   //assert(
   
 }
@@ -249,8 +249,11 @@ void test_split_file_in_halve() {
 
   // 2. Seek to middle
   bs.open("stream/testfiles/test_split_file.dat");
-  //bs.seek(40,SEEK_SET);
 
+  bs.seek(32,SEEK_SET);
+
+  return;
+  
   // 3. Write remaining points to new file.
   io::buffered_stream<point> os(2);
   os.open("stream/testfiles/test_split_file_split1.dat");
@@ -258,7 +261,7 @@ void test_split_file_in_halve() {
   os.close();
   
   // 4. Truncate original file
-  //bs.seek(40,SEEK_SET);
+  bs.seek(32,SEEK_SET);
   bs.truncate();
   bs.close();
   
@@ -337,6 +340,7 @@ int main() {
   test_modify_first_point();
   test_modify_second_point();
   test_large_buffer();
+  test_split_file_in_halve();
 
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
 
