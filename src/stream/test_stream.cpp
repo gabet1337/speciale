@@ -193,7 +193,6 @@ void test_seek_read_point_outside_buffer_range() {
   // 2. Seek to start of file and read point.
   // 3. Seek to middle of file and read point.
 
-
   cout << "starting test_seek_read_point_outside_buffer_range ";
 
   system("rm stream/testfiles/test_seek_read_point_outside_buffer_range.dat");
@@ -212,13 +211,51 @@ void test_seek_read_point_outside_buffer_range() {
 
   // 2. Seek to start of file and read point
   bs.seek(0,SEEK_SET);
-  //assert(
+  assert( (point(89,56) == bs.read()) && "Invalid point read");
+
+  // 3. Seek to middle of file and read point
+  bs.seek(32,SEEK_SET);
+  assert( (point(356,213) == bs.read()) && "Invalid point read");
+  bs.close();
+
+  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
   
 }
 
 void test_seek_modify_point_in_buffer_range() {
   
   // TODO: if we seek() within buffer range we should move buffer_pos accordingly.
+   // TODO: read() should refill buffer, if we seek() beyond buffer range.
+  // 1. Write 8 points.
+  // 2. Seek to start of file and read point.
+  // 3. Seek to middle of file and read point.
+
+  cout << "starting test_seek_read_point_inside_buffer_range ";
+
+  system("rm stream/testfiles/test_seek_read_point_inside_buffer_range.dat");
+
+  // 1. Write 8 points.
+  io::buffered_stream<point> bs(4);
+  bs.open("stream/testfiles/test_seek_read_point_inside_buffer_range.dat");
+  bs.write(point(89,56));
+  bs.write(point(458,54));
+  bs.write(point(48,41));
+  bs.write(point(8,23));
+  bs.write(point(356,213));
+  bs.write(point(123,56));
+  bs.write(point(98,234));
+  bs.write(point(123,45));
+
+  // 2. Seek to start of file and read point
+  bs.seek(8,SEEK_SET);
+  assert( (point(458,54) == bs.read()) && "Invalid point read");
+
+  // 3. Seek to middle of file and read point
+  bs.seek(24,SEEK_SET);
+  assert( (point(8,23) == bs.read()) && "Invalid point read");
+  bs.close();
+
+  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
   
 }
 
@@ -339,7 +376,9 @@ int main() {
   test_modify_second_point();
   test_large_buffer();
   test_split_file_in_halve();
-
+  test_seek_read_point_outside_buffer_range();
+  test_seek_modify_point_in_buffer_range();
+  
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
 
   return 0;
