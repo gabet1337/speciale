@@ -252,8 +252,6 @@ void test_split_file_in_halve() {
   return;
   bs.seek(32,SEEK_SET);
 
-  return;
-  
   // 3. Write remaining points to new file.
   io::buffered_stream<point> os(2);
   os.open("stream/testfiles/test_split_file_split1.dat");
