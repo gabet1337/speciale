@@ -107,8 +107,8 @@ namespace io {
         perror(std::string("Error reading from file '").append(file_name).append("'").c_str());
         exit(errno);
       }
-      if (bytes_read < buffer_size) b_eof = true;
-      if (buffer_start+bytes_read >= file_size) b_eof = true;
+      if (bytes_read < buffer_size) b_eof = true; else b_eof = false;
+      if (buffer_start+bytes_read >= file_size) b_eof = true; else b_eof = false;
       DEBUG_MSG(file_size << " " << b_eof << " " << file_pos << " " << bytes_read);
       // file_pos += bytes_read;
     } else {
@@ -152,6 +152,10 @@ namespace io {
   
   template <typename T>
   T buffered_stream<T>::read() {
+    if (eof()) {
+      error(1, ENOTTY, "reading beyond end of file");
+    }
+    DEBUG_MSG("should refill " << should_refill());
     if (should_refill()) fill();
     DEBUG_MSG("buffer _start " << buffer_start);
     DEBUG_MSG((file_pos - buffer_start)/sizeof(T));
@@ -191,11 +195,15 @@ namespace io {
 
   template <typename T>
   void buffered_stream<T>::truncate() {
+    DEBUG_MSG("truncate " << file_pos << " " << file_size);
     if (ftruncate(file_descriptor,file_pos) == -1) {
-      perror(std::string("Error on truncation file: ").append(file_name).append("'").c_str());
+      perror(std::string("Error on truncating file: ").append(file_name).append("'").c_str());
       exit(errno);
     }
     file_size = file_pos;
+    fill();
+    
+    DEBUG_MSG("truncate2 " << file_pos << " " << file_size);
   }
 
 };
