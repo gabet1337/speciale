@@ -161,7 +161,7 @@ namespace io {
       perror(std::string("Error on truncation file: ").append(file_name).append("'").c_str());
       exit(errno);
     }
-    fill(); // clear buffer
+    file_size = file_pos;
   }
 
 };
