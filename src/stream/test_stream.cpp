@@ -6,6 +6,12 @@
 #include <string>
 using namespace std;
 
+void delete_file(string file) {
+  string command = "rm stream/testfiles/"+file;
+  if (system(command.c_str()) != 0)
+    perror(("Unable to delete file"+file).c_str());
+}
+
 void test_open_close() {
 
   cout << "starting test_open_close ";
@@ -52,7 +58,7 @@ void test_write() {
 
 void test_read_write2() {
   cout << "starting test_read_write2 ";
-  system("rm stream/testfiles/test_read_write3.txt");
+  delete_file("test_read_write3.txt");
   io::buffered_stream<char> bs(10);
   
   bs.open("stream/testfiles/test_read_write3.txt");
@@ -116,7 +122,7 @@ void test_read_point() {
 
   cout << "starting test_read_point ";
 
-  system("rm stream/testfiles/test_points.txt");
+  delete_file("test_points.txt");
   
   io::buffered_stream<point> bs(1);
   bs.open("stream/testfiles/test_points.txt");
@@ -135,7 +141,7 @@ void test_modify_first_point() {
 
   cout << "starting test_modify_first_point ";
 
-  system("rm stream/testfiles/test_modify_point.dat");
+  delete_file("test_modify_point.dat");
 
   io::buffered_stream<point> bs(2);
   bs.open("stream/testfiles/test_modify_point.dat");
@@ -162,7 +168,7 @@ void test_modify_second_point() {
 
   cout << "starting test_modify_second_point ";
 
-  system("rm stream/testfiles/test_modify_point.dat");
+  delete_file("test_modify_point.dat");
 
   io::buffered_stream<point> bs(2);
   bs.open("stream/testfiles/test_modify_point.dat");
@@ -196,7 +202,7 @@ void test_seek_read_point_outside_buffer_range() {
 
   cout << "starting test_seek_read_point_outside_buffer_range ";
 
-  system("rm stream/testfiles/test_seek_read_point_outside_buffer_range.dat");
+  delete_file("test_seek_read_point_outside_buffer_range.dat");
 
   // 1. Write 8 points.
   io::buffered_stream<point> bs(2);
@@ -232,7 +238,7 @@ void test_split_file_in_halve() {
   
   cout << "starting test_split_file_in_halve ";
 
-  system("rm stream/testfiles/test_split_file.dat");
+  delete_file("test_split_file.dat");
 
   // 1. Write 8 points.
   io::buffered_stream<point> bs(2);
@@ -282,7 +288,7 @@ void test_file_size() {
 
   cout << "starting test_file_size ";
 
-  system("rm stream/testfiles/test_size.txt");
+  delete_file("test_size.txt");
   
   io::buffered_stream<point> bs(1);
   bs.open("stream/testfiles/test_size.txt");
@@ -298,7 +304,7 @@ void test_file_size() {
 
 void test_large_buffer() {
   cout << "starting test large buffer size ";
-  system("rm stream/testfiles/test_large_buffer.txt");
+  delete_file("test_large_buffer.txt");
   io::buffered_stream<point> bs(4096);
   bs.open("stream/testfiles/test_large_buffer.txt");
   
