@@ -24,6 +24,10 @@
 \usepackage{url}
 \bibliographystyle{alpha}
 
+% Set fonts for section
+\usepackage{titlesec}
+\titleformat*{\section}{\normalsize\bfseries}
+
 \title{Range Reporting}
 \author{Peter Gabrielsen 20114179 \\
 Christoffer Hansen 20114637}
@@ -74,7 +78,16 @@ To some large internet companies, disk-based systems presents too large of an ob
 
 Another price of this move to internal memory is the actual cost of running server farms and the cost of internal memory compared to external memory. The extra costs and increased complexity suggests that external memory data structures have some well defined advantages.
 
-In disk-based systems algorithms and data structures cannot be measured in the traditional models used for internal memory algorithms since the performance is bound by disk latency. In Section~\ref{chp:iomodel} we investigate a model that encapsulates performance of the I/O bottleneck.
+An integral problem of computational geometry is that of range searching. The problem arises in many different applications with huge data sets such as geographic information systems, spatial databases, and computer graphics. The problem can be formally described as follows. Let $\mathcal{S}$ be a set of $N$ points in $\mathbb{R}^d$, and let $\mathcal{R}$ be a family of subsets of $\mathbb{R}^d$. Our objective is to preprocess $\mathcal{S}$ such that for a query range $r \in \mathcal{R}$, the points in $\mathcal{S} \cap r$ can be reported or counted efficiently~\cite{Agarwal99geometricrange}. The ranges can be anything from rectangles and halfspaces to balls.
+
+In this thesis we consider the problem of maintaining a dynamic set, $\mathcal{S}$, of $N$ points in $\mathbb{R}^2$ in external memory. The set of points can be updated by insertion and deletion. The set will be processed such that we are able to report three-sided range queries, i.e. given a range of the type $[x_1,x_2] \times [y,\infty]$, we report points in $\mathcal{S} \cap [x_1,x_2] \times [y,\infty]$.
+%TODO insert a figure resembling figure 1 in Gerths paper.
+
+The thesis will present several solutions to this problem, implement, and experimentally compare solutions.
+%TODO above section should be better presented.
+
+\section{Outline of thesis}
+In disk-based systems, algorithms and data structures cannot be measured in the traditional models used for internal memory algorithms since the performance is bound by disk latency. In Section~\ref{chp:iomodel} we investigate a model that encapsulates performance of the I/O bottleneck.
 
 In Section~\ref{chp:prelims} we give a preliminary overview of some of the techniques used in developing external memory efficient data structures.
 
