@@ -10,8 +10,8 @@ using namespace std;
 vector<point> get_test_points() {
   vector<point> points;
   points.push_back(point(1,2));
-  points.push_back(point(23,43));
   points.push_back(point(4,54));
+  points.push_back(point(23,43));
   return points;
 }
 

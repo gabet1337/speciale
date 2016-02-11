@@ -34,6 +34,8 @@ namespace ext {
     void construct(std::vector<point> points);
     void rebuild();
     bool file_exists(std::string file_name);
+    template <class InputIterator>
+    void flush_container_to_file(InputIterator first, InputIterator last, std::string file_name);
     std::vector<point> L;
     std::set<point> I, D;
     size_t id, buffer_size, L_buffer_size, epsilon, L_size, I_size, D_size;
@@ -91,33 +93,31 @@ namespace ext {
 
 
     DEBUG_MSG("Flushing L");
-    io::buffered_stream<point> L_file(buffer_size);
-    L_file.open(get_L_file());
-    for (point p : L) {
-      L_file.write(p);
-    }
-    L_file.close();
+    flush_container_to_file(L.begin(), L.end(), get_L_file());
 
     DEBUG_MSG("Flushing I");
-    io::buffered_stream<point> I_file(buffer_size);
-    I_file.open(get_I_file());
-    for (point p : I) {
-      I_file.write(p);
-    }
-    I_file.close();
+    flush_container_to_file(I.begin(), I.end(), get_I_file());
 
     DEBUG_MSG("Flushing D");
-    io::buffered_stream<point> D_file(buffer_size);
-    D_file.open(get_D_file());
-    for (point p : D) {
-      D_file.write(p);
-    }
-    D_file.close();
+    flush_container_to_file(D.begin(), D.end(), get_D_file());
     
+  }
+
+  template <class InputIterator>
+  void child_structure::flush_container_to_file(InputIterator first, InputIterator last, std::string file_name) {
+    io::buffered_stream<point> file(buffer_size);
+    file.open(file_name);
+    while (first != last) {
+      file.write(*first);
+      first++;
+    }
+    file.close();
   }
 
   void child_structure::construct(std::vector<point> points) {
     L = points;
+    L_size = points.size();
+    // sweep and construct rest of L
   }
 
   void child_structure::insert(point p) {
@@ -153,6 +153,7 @@ namespace ext {
   }
 
   void child_structure::rebuild() {
+    //maintain size of L, i.e. L_size
   }
   
   bool child_structure::file_exists(std::string file_name) {
@@ -194,7 +195,10 @@ namespace ext {
   }
 
   bool child_structure::valid_memory() {
-
+    if (!std::is_sorted(L.begin(), L.begin()+L_size)) {
+      DEBUG_MSG("L is not sorted w.r.t x");
+      return false;
+    }
     // TODO: Check I_size, D_size, L_size is correct w.r.t. files.
     
     return true;
