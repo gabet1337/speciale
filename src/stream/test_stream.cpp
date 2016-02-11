@@ -562,6 +562,14 @@ void test_append() {
   cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
 }
 
+void test_make_folder() {
+  cout << "starting test_make_folder ";
+  io::buffered_stream<char> bs(4096);
+  bs.open("nofolder/test.txt");
+
+  bs.close();
+  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+}
 
 int main() {
   
@@ -584,7 +592,7 @@ int main() {
   test_read_beyond_file();
   test_split_file_in_halve();
   test_append();
-
+  test_make_folder();
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
 
   return 0;

@@ -57,7 +57,10 @@ namespace io {
   template <typename T>
   void buffered_stream<T>::open(std::string file_name) {
     file_descriptor = ::open(file_name.c_str(), O_RDWR | O_CREAT | O_LARGEFILE, S_IRWXU);
-    if (file_descriptor == -1) { perror(std::string("Error opening file '").append(file_name).append("'").c_str()); exit(errno); }
+    if (file_descriptor == -1) {
+      perror(std::string("Error opening file '").append(file_name).append("'").c_str());
+      exit(errno);
+    }
     is_open = true;
     is_dirty = false;
     this->file_name = file_name;

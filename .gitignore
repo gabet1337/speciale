@@ -1,6 +1,10 @@
 # Programs
 src/ipst
 src/stream_test
+src/ctest
+
+# data folders
+src/c_*
 
 #stuff
 *~
