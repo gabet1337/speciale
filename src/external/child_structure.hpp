@@ -2,61 +2,165 @@
 #define CHILD_STRUCTURE_HPP
 
 #include "../common/debug.hpp"
+#include "../common/point.hpp"
 #include "../stream/stream.hpp"
 #include <string>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <error.h>
+#include <vector>
+#include <set>
 
 namespace ext {
 
   class child_structure {
   public:
-    child_structure(size_t id, size_t buffer_size, double epsilon);
+    child_structure(size_t id, size_t buffer_size, double epsilon, std::vector<point> points);
     child_structure(size_t id);
     ~child_structure();
 #ifdef VALIDATE
     bool valid_disk();
     bool valid_memory();
+    void insert(point p);
+    void remove(point p);
 #endif
   private:
     std::string get_info_file();
     std::string get_directory();
-    size_t id;
-    size_t buffer_size;
-    size_t L_size;
-    size_t epsilon;
-    const int NUM_VARIABLES = 4;
+    std::string get_L_file();
+    std::string get_I_file();
+    std::string get_D_file();
+    void construct(std::vector<point> points);
+    void rebuild();
+    bool file_exists(std::string file_name);
+    std::vector<point> L;
+    std::set<point> I, D;
+    size_t id, buffer_size, L_buffer_size, epsilon, L_size, I_size, D_size;
+    const int NUM_VARIABLES = 6;
   };
 
   child_structure::child_structure(size_t id) {
-    
+    this->id = id;
+
+    io::buffered_stream<size_t> info_file(NUM_VARIABLES);
+    info_file.open(get_info_file());
+    this->id = info_file.read();
+    this->buffer_size = info_file.read();
+    this->epsilon = info_file.read();
+    this->L_size = info_file.read();
+    this->I_size = info_file.read();
+    this->D_size = info_file.read();
   }
 
-  child_structure::child_structure(size_t id, size_t buffer_size, double epsilon) {
-    //TODO check if exists first and error 
+  child_structure::child_structure(size_t id, size_t buffer_size,
+				   double epsilon, std::vector<point> points) {
+
     this->id = id;
+    
+    //TODO use exceptions
+    if (file_exists(get_info_file()))
+      error(1, EEXIST, "child structure already exists");
+    
     this->buffer_size = buffer_size;
     this->epsilon = (size_t)(1000.0*epsilon);
-    this->L_size = (size_t)pow((double)buffer_size, 1.0+this->epsilon/1000.0);
+    this->L_buffer_size = (size_t)pow((double)buffer_size, 1.0+this->epsilon/1000.0);
     DEBUG_MSG("constructing child structure " << id <<
-              " with B=" << buffer_size << " - e=" << epsilon << " - L_size=" << L_size);
+              " with B=" << buffer_size << " - e=" << epsilon << " - L_size=" << L_buffer_size);
+
+    construct(points);
   }
 
   child_structure::~child_structure() {
     DEBUG_MSG("destructing child structure " << id);
     DEBUG_MSG("flushing variables to " << get_info_file());
+
     //check if directory exists and open:
-    struct stat st;
-    if (stat(get_directory().c_str(), &st) == -1) mkdir(get_directory().c_str(), 0700);
+    if (!file_exists(get_directory())) mkdir(get_directory().c_str(), 0700);
     io::buffered_stream<size_t> info_file(NUM_VARIABLES);
     info_file.open(get_info_file());
-    
-    
 
+    info_file.write(id);
+    info_file.write(buffer_size);
+    info_file.write(epsilon);
+    info_file.write(L.size());
+    info_file.write(I.size());
+    info_file.write(D.size());
+    
     info_file.close();
+
+
+    DEBUG_MSG("Flushing L");
+    io::buffered_stream<point> L_file(buffer_size);
+    L_file.open(get_L_file());
+    for (point p : L) {
+      L_file.write(p);
+    }
+    L_file.close();
+
+    DEBUG_MSG("Flushing I");
+    io::buffered_stream<point> I_file(buffer_size);
+    I_file.open(get_I_file());
+    for (point p : I) {
+      I_file.write(p);
+    }
+    I_file.close();
+
+    DEBUG_MSG("Flushing D");
+    io::buffered_stream<point> D_file(buffer_size);
+    D_file.open(get_D_file());
+    for (point p : D) {
+      D_file.write(p);
+    }
+    D_file.close();
+    
   }
 
+  void child_structure::construct(std::vector<point> points) {
+    L = points;
+  }
+
+  void child_structure::insert(point p) {
+    DEBUG_MSG("Insert point " << p);
+
+    DEBUG_MSG(" - deleting from I");
+    auto it = I.find(p);
+    if (it != I.end()) I.erase(it);
+
+    DEBUG_MSG(" - deleting from D");
+    it = D.find(p);
+    if (it != D.end()) D.erase(it);
+
+    I.insert(p);
+
+    if (I.size() > buffer_size) rebuild();
+  }
+
+  void child_structure::remove(point p) {
+    DEBUG_MSG("Remove point " << p);
+
+    DEBUG_MSG(" - deleting from I");
+    auto it = I.find(p);
+    if (it != I.end()) I.erase(it);
+
+    DEBUG_MSG(" - deleting from D");
+    it = D.find(p);
+    if (it != D.end()) D.erase(it);
+
+    D.insert(p);
+
+    if (D.size() > buffer_size) rebuild();
+  }
+
+  void child_structure::rebuild() {
+  }
+  
+  bool child_structure::file_exists(std::string file_name) {
+    DEBUG_MSG("Checking if " << file_name << " exists");
+    struct stat st;
+    return !(stat(file_name.c_str(), &st) == -1);
+  }
+  
   std::string child_structure::get_directory() {
     return std::string("c_").append(std::to_string(id));
   }
@@ -65,6 +169,18 @@ namespace ext {
       return get_directory()+std::string("/info");
   }
 
+  std::string child_structure::get_L_file() {
+    return get_directory()+std::string("/L");
+  }
+
+  std::string child_structure::get_I_file() {
+    return get_directory()+std::string("/I");
+  }
+
+  std::string child_structure::get_D_file() {
+    return get_directory()+std::string("/D");
+  }
+  
 #ifdef VALIDATE
   bool child_structure::valid_disk() {
     io::buffered_stream<size_t> info_file(NUM_VARIABLES);
@@ -79,6 +195,8 @@ namespace ext {
 
   bool child_structure::valid_memory() {
 
+    // TODO: Check I_size, D_size, L_size is correct w.r.t. files.
+    
     return true;
   }
 #endif

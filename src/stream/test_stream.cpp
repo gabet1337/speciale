@@ -592,7 +592,7 @@ int main() {
   test_read_beyond_file();
   test_split_file_in_halve();
   test_append();
-  test_make_folder();
+  //test_make_folder();
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
 
   return 0;
