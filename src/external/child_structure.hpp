@@ -19,11 +19,11 @@ namespace ext {
     child_structure(size_t id, size_t buffer_size, double epsilon, std::vector<point> points);
     child_structure(size_t id);
     ~child_structure();
+    void insert(point p);
+    void remove(point p);
 #ifdef VALIDATE
     bool valid_disk();
     bool valid_memory();
-    void insert(point p);
-    void remove(point p);
 #endif
   private:
     std::string get_info_file();

@@ -23,6 +23,7 @@ void test_constructor() {
   cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
 }
 
+#ifdef VALIDATE
 void test_valid_after_constructor() {
   cout << "starting test of validity in memory ";
   ext::child_structure cs(1,4,0.5, get_test_points());
@@ -38,6 +39,7 @@ void test_valid_after_destructor() {
   assert( (cs->valid_disk() == true) && "Structure not valid on disk");
   cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
 }
+#endif
 
 void test_error_on_no_existing_child_structure() {
   cout << "starting test of error on no existing child structure ";
@@ -125,8 +127,10 @@ void clean_up() {
 
 int main() {
   clean_up();
+#ifdef VALIDATE
   test_valid_after_constructor();
   test_valid_after_destructor();
+#endif
   //test_error_on_no_existing_child_structure();
   test_flushing_L();
   test_flush_insert_point();
