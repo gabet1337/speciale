@@ -16,7 +16,8 @@ namespace ext {
 
   class child_structure {
   public:
-    child_structure(size_t id, size_t buffer_size, double epsilon, std::vector<point> points);
+    child_structure(size_t id, size_t buffer_size,
+		    double epsilon, std::vector<point> points);
     child_structure(size_t id);
     ~child_structure();
     void insert(point p);
@@ -35,7 +36,10 @@ namespace ext {
     void rebuild();
     bool file_exists(std::string file_name);
     template <class InputIterator>
-    void flush_container_to_file(InputIterator first, InputIterator last, std::string file_name);
+    void flush_container_to_file(InputIterator first,
+				 InputIterator last, std::string file_name);
+    template <class Container>
+    void load_file_to_container(Container c, std::string file_name);
     std::vector<point> L;
     std::set<point> I, D;
     size_t id, buffer_size, L_buffer_size, epsilon, L_size, I_size, D_size;
@@ -45,14 +49,26 @@ namespace ext {
   child_structure::child_structure(size_t id) {
     this->id = id;
 
+    DEBUG_MSG("Load variables into structure");
     io::buffered_stream<size_t> info_file(NUM_VARIABLES);
     info_file.open(get_info_file());
     this->id = info_file.read();
     this->buffer_size = info_file.read();
     this->epsilon = info_file.read();
     this->L_size = info_file.read();
-    this->I_size = info_file.read();
-    this->D_size = info_file.read();
+    // this->I_size = info_file.read();
+    // this->D_size = info_file.read();
+    info_file.close();
+
+    DEBUG_MSG("Load data into structure");
+    DEBUG_MSG("Loading L");
+    load_file_to_container(L, get_L_file());
+    DEBUG_MSG("Loading I");
+    load_file_to_container(I, get_I_file());
+    I_size = I.size();
+    DEBUG_MSG("Loading D");
+    load_file_to_container(D, get_D_file());
+    D_size = D.size();
   }
 
   child_structure::child_structure(size_t id, size_t buffer_size,
@@ -69,7 +85,9 @@ namespace ext {
     this->L_buffer_size = (size_t)pow((double)buffer_size, 1.0+this->epsilon/1000.0);
     DEBUG_MSG("constructing child structure " << id <<
               " with B=" << buffer_size << " - e=" << epsilon << " - L_size=" << L_buffer_size);
-
+    
+    I_size = 0;
+    D_size = 0;
     construct(points);
   }
 
@@ -85,12 +103,11 @@ namespace ext {
     info_file.write(id);
     info_file.write(buffer_size);
     info_file.write(epsilon);
-    info_file.write(L.size());
+    info_file.write(L_size);
     info_file.write(I.size());
     info_file.write(D.size());
     
     info_file.close();
-
 
     DEBUG_MSG("Flushing L");
     flush_container_to_file(L.begin(), L.end(), get_L_file());
@@ -110,6 +127,16 @@ namespace ext {
     while (first != last) {
       file.write(*first);
       first++;
+    }
+    file.close();
+  }
+
+  template <class Container>
+  void child_structure::load_file_to_container(Container c, std::string file_name) {
+    io::buffered_stream<point> file(buffer_size);
+    file.open(file_name);
+    while (!file.eof()) {
+      c.insert(c.end(), file.read());
     }
     file.close();
   }

@@ -135,6 +135,7 @@ int main() {
   test_flushing_L();
   test_flush_insert_point();
   test_flush_delete_point();
+  clean_up();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   return 0;
