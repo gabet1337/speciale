@@ -4,6 +4,7 @@
 #include "../common/debug.hpp"
 #include "../common/point.hpp"
 #include "../stream/stream.hpp"
+#include "../internal/rb_tree.hpp"
 #include <string>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -11,6 +12,8 @@
 #include <error.h>
 #include <vector>
 #include <set>
+#include <queue>
+
 
 namespace ext {
 
@@ -145,6 +148,48 @@ namespace ext {
     L = points;
     L_size = points.size();
     // sweep and construct rest of L
+    typedef std::pair<point,int> point_block;
+    auto comp = [](point_block p1, point_block p2) {
+      return p1.first.y > p2.first.y;
+    };
+    std::priority_queue<point_block, std::vector<point_block>,
+                        decltype(comp)> pq(comp);
+
+    struct block {
+      int id,size;
+      block(int _id, int _size) : id(_id), size(_size) {}
+      bool operator<(const block b) const { return id < b.id; }
+      bool operator==(const block b) const { return id == b.id; }
+    };
+    
+    //typedef std::pair<int,int> ii;
+    internal::rb_tree<block> intervals;
+
+    intervals.insert(block(-1000000,-1000000));
+    intervals.insert(block(1000000,-1000000));
+    // intervals.insert( ii(-10000000,-100000000) );
+    // intervals.insert( ii(10000000,-100000000) );
+
+    for (int i = 0; i < (int)points.size(); i++) {
+      pq.push( point_block(points[i], i/buffer_size));
+      if (i%buffer_size == 0 && i != 0) {
+        intervals.insert( block(i/buffer_size-1,buffer_size));
+        DEBUG_MSG("new block: " << i/buffer_size-1 << ", " << buffer_size);
+      }
+    }
+    
+    int remaining = points.size()%buffer_size;
+    if (remaining > 0) {
+      DEBUG_MSG("remaining block: "<< points.size()/buffer_size << ", " << remaining);
+      intervals.insert(block( points.size()/buffer_size, remaining));
+    }
+
+    while (!pq.empty()) {
+      point_block pb = pq.top(); pq.pop();
+      block pb_belong_to = intervals.belong_to(block(pb.second,0));
+      DEBUG_MSG(pb.first << " with bid " << pb.second << " belong to " << pb_belong_to.id);
+    }
+
   }
 
   void child_structure::insert(point p) {
