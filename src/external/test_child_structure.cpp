@@ -4,6 +4,9 @@
 #include "child_structure.hpp"
 #include <assert.h>
 #include <vector>
+#include <set>
+#include "../internal/rb_tree.hpp"
+#include <iterator>
 
 using namespace std;
 
@@ -125,6 +128,23 @@ void clean_up() {
   lol++;
 }
 
+
+void test_set_structure() {
+  cout << "starting test of internal::rb_tree ";
+
+  internal::rb_tree<int> s;
+  
+  s.insert(-10000000);
+  for (int i = 1; i <= 10; i++) s.insert(i);
+  s.insert(10000000);
+  assert( (s.predecessor(5) == 4));
+  s.erase(5);
+  assert( s.predecessor(5) == 4 && "Wrong element found");
+  assert( s.successor(5) == 6);
+
+  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+}
+
 int main() {
   clean_up();
 #ifdef VALIDATE
@@ -135,6 +155,7 @@ int main() {
   test_flushing_L();
   test_flush_insert_point();
   test_flush_delete_point();
+  test_set_structure();
   clean_up();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;

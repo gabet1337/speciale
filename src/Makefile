@@ -9,6 +9,7 @@ PROGRAMS = ipst stream_test ctest
 
 POINT = common/point.hpp
 STREAM = stream/stream.hpp
+RB = internal/rb_tree.hpp
 INTERNAL_PRIORITY_SEARCH_TREE = internal/priority_search_tree.hpp
 EXTERNAL_CHILD_STRUCTURE = external/child_structure.hpp
 
@@ -18,8 +19,8 @@ ipst : $(POINT) $(INTERNAL_PRIORITY_SEARCH_TREE)
 stream_test : $(STREAM) $(POINT) stream/test_stream.cpp
 	$(CC) $(LFLAGS) $(STREAM) $(POINT) stream/test_stream.cpp -o stream_test
 
-ctest : $(STREAM) $(POINT) $(EXTERNAL_CHILD_STRUCTURE) external/test_child_structure.cpp
-	$(CC) $(LFLAGS) $(POINT) $(STREAM) $(EXTERNAL_CHILD_STRUCTURE) external/test_child_structure.cpp -o ctest
+ctest : $(STREAM) $(POINT) $(RB) $(EXTERNAL_CHILD_STRUCTURE) external/test_child_structure.cpp
+	$(CC) $(LFLAGS) $(POINT) $(RB) $(STREAM) $(EXTERNAL_CHILD_STRUCTURE) external/test_child_structure.cpp -o ctest
 
 clean:
 	$(RM) *.o *~ $(PROGRAMS)
