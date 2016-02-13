@@ -129,18 +129,6 @@ void test_flush_delete_point() {
   
 }
 
-void clean_up() {
-  int lol = system("rm -rf c_0");
-  lol =system("rm -rf c_1");
-  lol = system("rm -rf c_2");
-  lol = system("rm -rf c_3");
-  lol = system("rm -rf c_4");
-  lol = system("rm -rf c_5");
-  lol = system("rm -rf c_6");
-  lol = system("rm -rf c_7");
-  lol++;
-}
-
 
 void test_set_structure() {
   cout << "starting test of internal::rb_tree ";
@@ -181,6 +169,60 @@ void test_pq() {
   cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
 }
 
+void test_collapse() {
+  cout << "starting test of correct collapse ";
+  vector<point> points;
+  points.push_back(point(1,1));
+  points.push_back(point(4,1));
+  points.push_back(point(9,1));
+  points.push_back(point(22,1));
+  points.push_back(point(26,2));
+  points.push_back(point(30,3));
+  points.push_back(point(32,1));
+  points.push_back(point(24,5));
+  points.push_back(point(20,7));
+  points.push_back(point(7,2));
+  points.push_back(point(3,6));
+  points.push_back(point(5,8));
+  points.push_back(point(12,8));
+  points.push_back(point(16,4));
+  points.push_back(point(23,8));
+  points.push_back(point(27,9));
+  points.push_back(point(31,8));
+  points.push_back(point(18,10));
+  points.push_back(point(10,10));
+  points.push_back(point(14,11));
+  points.push_back(point(25,12));
+  points.push_back(point(13,13));
+  points.push_back(point(15,15));
+  points.push_back(point(21,14));
+  points.push_back(point(29,16));
+  points.push_back(point(11,17));
+  points.push_back(point(8,19));
+  points.push_back(point(19,17));
+  points.push_back(point(28,21));
+  points.push_back(point(2,20));
+  points.push_back(point(6,22));
+  points.push_back(point(17,23));
+  sort(points.begin(), points.end());
+  ext::child_structure cs(8, 4, 0.5, points);
+  assert( cs.valid_memory() );
+}
+
+void clean_up() {
+  int lol = system("rm -rf c_0");
+  lol =system("rm -rf c_1");
+  lol = system("rm -rf c_2");
+  lol = system("rm -rf c_3");
+  lol = system("rm -rf c_4");
+  lol = system("rm -rf c_5");
+  lol = system("rm -rf c_6");
+  lol = system("rm -rf c_7");
+  lol = system("rm -rf c_8");
+  lol++;
+}
+
+
 int main() {
   clean_up();
 #ifdef VALIDATE
@@ -195,6 +237,7 @@ int main() {
   test_pq();
   test_constructor();
   test_constructor2();
+  test_collapse();
   clean_up();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;

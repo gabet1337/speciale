@@ -46,7 +46,7 @@ namespace internal {
   template <typename T>
   T rb_tree<T>::belong_to(T item) {
     auto it = s.lower_bound(item);
-    if (*it == item) return item;
+    if (*it == item) return *it;
     return *(--it);
   }
 

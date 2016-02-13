@@ -150,7 +150,7 @@ namespace ext {
     // sweep and construct rest of L
     typedef std::pair<point,int> point_block;
     auto comp = [](point_block p1, point_block p2) {
-      return p1.first.y > p2.first.y;
+      return p1.first.y > p2.first.y || (p1.first.y == p2.first.y && p1.first.x > p2.first.x);
     };
     std::priority_queue<point_block, std::vector<point_block>,
                         decltype(comp)> pq(comp);
@@ -169,25 +169,94 @@ namespace ext {
     intervals.insert(block(1000000,-1000000));
     // intervals.insert( ii(-10000000,-100000000) );
     // intervals.insert( ii(10000000,-100000000) );
-
+    std::vector<std::vector<point> > points_in_blocks(points.size()/buffer_size+1, std::vector<point>());
     for (int i = 0; i < (int)points.size(); i++) {
+      // L.push_back(points[i]);
+      points_in_blocks[i/buffer_size].push_back(points[i]);
+      DEBUG_MSG("point " << points[i] << " went into " << i/buffer_size);
       pq.push( point_block(points[i], i/buffer_size));
       if (i%buffer_size == 0 && i != 0) {
+        //TODO: update catalog
         intervals.insert( block(i/buffer_size-1,buffer_size));
         DEBUG_MSG("new block: " << i/buffer_size-1 << ", " << buffer_size);
       }
     }
-    
     int remaining = points.size()%buffer_size;
-    if (remaining > 0) {
-      DEBUG_MSG("remaining block: "<< points.size()/buffer_size << ", " << remaining);
-      intervals.insert(block( points.size()/buffer_size, remaining));
-    }
+    intervals.insert(block(remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size
+                           , remaining==0 ? buffer_size: remaining));
+    DEBUG_MSG("remaining block " << (remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size) << " with points " << (remaining==0 ? buffer_size: remaining));
+    // if (remaining > 0) {
+    //   DEBUG_MSG("remaining block: "<< points.size()/buffer_size << ", " << remaining);
+    //   intervals.insert(block( points.size()/buffer_size, remaining));
+    // }
 
     while (!pq.empty()) {
       point_block pb = pq.top(); pq.pop();
       block pb_belong_to = intervals.belong_to(block(pb.second,0));
       DEBUG_MSG(pb.first << " with bid " << pb.second << " belong to " << pb_belong_to.id);
+      int our_size = pb_belong_to.size;
+      block pred = intervals.predecessor(pb_belong_to);
+      block succ = intervals.successor(pb_belong_to);
+      DEBUG_MSG("osid " << pb_belong_to.id << ": " << our_size << std::endl
+                << "psid " << pred.id << ": " << pred.size << std::endl
+                << "ssid " << succ.id << ": " << succ.size);
+      if (our_size + pred.size == (int)buffer_size) {
+        DEBUG_MSG("collapsing with left neighbour");
+        DEBUG_MSG("constructing [" << pred.id << ", " << pb_belong_to.id << "]");
+        std::vector<point> out;
+        int limit = pb.first.y;
+        for (point p : points_in_blocks[pb_belong_to.id])
+          if (p.y >= limit) {
+            DEBUG_MSG("above: " << p);
+            out.push_back(p);
+          }
+#ifdef DEBUG
+          else DEBUG_MSG("below: " << p);
+#endif
+        for (point p : points_in_blocks[pred.id])
+          if (p.y >= limit) {
+            DEBUG_MSG("above: " << p);
+            out.push_back(p);
+          }
+#ifdef DEBUG
+          else DEBUG_MSG("below: " << p);
+#endif
+        points_in_blocks[pred.id] = out;
+        for (point p : out) L.push_back(p); //TODO: update catalog
+        intervals.erase(pb_belong_to);
+        intervals.erase(pred);
+        intervals.insert(block(pred.id,out.size()-1));
+      } else if (our_size + succ.size == (int)buffer_size) {
+        DEBUG_MSG("collapsing with right neighbour");
+        DEBUG_MSG("constructing [" << pb_belong_to.id << ", " << succ.id << "]");
+        std::vector<point> out;
+        int limit = pb.first.y;
+        for (point p : points_in_blocks[pb_belong_to.id])
+          if (p.y >= limit) {
+            DEBUG_MSG("above: " << p);
+            out.push_back(p);
+          }
+#ifdef DEBUG
+          else DEBUG_MSG("below: " << p);
+#endif
+        for (point p : points_in_blocks[succ.id])
+          if (p.y >= limit) {
+            DEBUG_MSG("above: " << p);
+            out.push_back(p);
+          }
+#ifdef DEBUG
+          else DEBUG_MSG("below: " << p);
+#endif
+        points_in_blocks[pb_belong_to.id] = out;
+        for (point p : out) L.push_back(p); //TODO: update catalog
+        intervals.erase(succ);
+        intervals.erase(pb_belong_to);
+        intervals.insert(block(pb_belong_to.id, out.size()-1));
+      } else {
+        DEBUG_MSG("removing element: " << pb.first << " from " << pb_belong_to.id << " and down to " << pb_belong_to.size-1);
+        intervals.erase(pb_belong_to);
+        intervals.insert(block(pb_belong_to.id, pb_belong_to.size-1));
+      }
     }
 
   }
