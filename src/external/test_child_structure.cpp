@@ -19,17 +19,51 @@ vector<point> get_test_points() {
   return points;
 }
 
+vector<point> get_gerth_points() {
+  vector<point> points;
+  points.push_back(point(1,1));
+  points.push_back(point(4,1));
+  points.push_back(point(9,1));
+  points.push_back(point(22,1));
+  points.push_back(point(26,2));
+  points.push_back(point(30,3));
+  points.push_back(point(32,1));
+  points.push_back(point(24,5));
+  points.push_back(point(20,7));
+  points.push_back(point(7,2));
+  points.push_back(point(3,6));
+  points.push_back(point(5,8));
+  points.push_back(point(12,8));
+  points.push_back(point(16,4));
+  points.push_back(point(23,8));
+  points.push_back(point(27,9));
+  points.push_back(point(31,8));
+  points.push_back(point(18,10));
+  points.push_back(point(10,10));
+  points.push_back(point(14,11));
+  points.push_back(point(25,12));
+  points.push_back(point(13,13));
+  points.push_back(point(15,15));
+  points.push_back(point(21,14));
+  points.push_back(point(29,16));
+  points.push_back(point(11,17));
+  points.push_back(point(8,19));
+  points.push_back(point(19,17));
+  points.push_back(point(28,21));
+  points.push_back(point(2,20));
+  points.push_back(point(6,22));
+  points.push_back(point(17,23));
+  return points;
+}
+
 void test_constructor() {
   cout << "starting test_constructor ";
-  cout << sizeof(size_t) << " " << sizeof(double) <<  " " << sizeof(point) <<endl;
   ext::child_structure cs(0, 2, 0.5, get_test_points());
-
   cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
 }
 
 void test_constructor2() {
   cout << "starting test_constructor2 ";
-  cout << sizeof(size_t) << " " << sizeof(double) <<  " " << sizeof(point) <<endl;
   vector<point> points;
   for (int i = 0; i < 5; i++) points.push_back(point(i,i));
   ext::child_structure cs(7, 2, 0.5, points);
@@ -171,42 +205,22 @@ void test_pq() {
 
 void test_collapse() {
   cout << "starting test of correct collapse ";
-  vector<point> points;
-  points.push_back(point(1,1));
-  points.push_back(point(4,1));
-  points.push_back(point(9,1));
-  points.push_back(point(22,1));
-  points.push_back(point(26,2));
-  points.push_back(point(30,3));
-  points.push_back(point(32,1));
-  points.push_back(point(24,5));
-  points.push_back(point(20,7));
-  points.push_back(point(7,2));
-  points.push_back(point(3,6));
-  points.push_back(point(5,8));
-  points.push_back(point(12,8));
-  points.push_back(point(16,4));
-  points.push_back(point(23,8));
-  points.push_back(point(27,9));
-  points.push_back(point(31,8));
-  points.push_back(point(18,10));
-  points.push_back(point(10,10));
-  points.push_back(point(14,11));
-  points.push_back(point(25,12));
-  points.push_back(point(13,13));
-  points.push_back(point(15,15));
-  points.push_back(point(21,14));
-  points.push_back(point(29,16));
-  points.push_back(point(11,17));
-  points.push_back(point(8,19));
-  points.push_back(point(19,17));
-  points.push_back(point(28,21));
-  points.push_back(point(2,20));
-  points.push_back(point(6,22));
-  points.push_back(point(17,23));
+  vector<point> points = get_gerth_points();
   sort(points.begin(), points.end());
   ext::child_structure cs(8, 4, 0.5, points);
   assert( cs.valid_memory() );
+  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+}
+
+void test_collapse2() {
+  cout << "starting test of correct collapse with uneven points ";
+  vector<point> points = get_gerth_points();
+  sort(points.begin(), points.end());
+  points.pop_back();
+  points.pop_back();
+  ext::child_structure cs(12, 4, 0.5, points);
+  assert( cs.valid_memory() );
+  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
 }
 
 void test_collapse_left() {
@@ -230,7 +244,7 @@ void test_collapse_right() {
 }
 
 void test_collapse_left_right() {
-  cout << "starting test of collapsing right ";
+  cout << "starting test of collapsing left and right and all the way ";
 
   vector<point> points;
   for (int i = 0; i < 16; i++) points.push_back(point(i,i));
@@ -257,6 +271,7 @@ void clean_up() {
   lol = system("rm -rf c_9");
   lol = system("rm -rf c_10");
   lol = system("rm -rf c_11");
+  lol = system("rm -rf c_12");
   lol++;
 }
 
@@ -276,6 +291,7 @@ int main() {
   test_constructor();
   test_constructor2();
   test_collapse();
+  test_collapse2();
   test_collapse_left();
   test_collapse_right();
   test_collapse_left_right();

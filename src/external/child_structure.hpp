@@ -14,7 +14,7 @@
 #include <set>
 #include <queue>
 #include <assert.h>
-
+#define INF 1000000000
 namespace ext {
 
   class child_structure {
@@ -30,6 +30,11 @@ namespace ext {
     bool valid_memory();
 #endif
   private:
+    struct catalog_item {
+      int min_x, max_x, min_y, i, j;
+      catalog_item(int _min_x, int _max_x, int _min_y, int _i, int _j) :
+        min_x(_min_x), max_x(_max_x), min_y(_min_y), i(_i), j(_j) {}
+    };
     std::string get_info_file();
     std::string get_directory();
     std::string get_L_file();
@@ -45,6 +50,7 @@ namespace ext {
     void load_file_to_container(Container c, std::string file_name);
     std::vector<point> L;
     std::set<point> I, D;
+    std::vector<catalog_item> catalog;
     size_t id, buffer_size, L_buffer_size, epsilon, L_size, I_size, D_size;
     const int NUM_VARIABLES = 6;
   };
@@ -170,15 +176,21 @@ namespace ext {
     // intervals.insert( ii(-10000000,-100000000) );
     // intervals.insert( ii(10000000,-100000000) );
     std::vector<std::vector<point> > points_in_blocks(points.size()/buffer_size+1, std::vector<point>());
+    int min_x = INF, max_x = -INF, min_y = INF;
     for (int i = 0; i < (int)points.size(); i++) {
-      // L.push_back(points[i]);
+      min_x = std::min(min_x, points[i].x);
+      max_x = std::max(max_x, points[i].x);
+      min_y = std::min(min_y, points[i].y);
       points_in_blocks[i/buffer_size].push_back(points[i]);
       DEBUG_MSG("point " << points[i] << " went into " << i/buffer_size);
       pq.push( point_block(points[i], i/buffer_size));
-      if (i%buffer_size == 0 && i != 0) {
-        //TODO: update catalog
-        intervals.insert( block(i/buffer_size-1,buffer_size,i/buffer_size-1));
-        DEBUG_MSG("new block: " << i/buffer_size-1 << ", " << buffer_size);
+      if ((i+1)%buffer_size == 0) {
+        DEBUG_MSG("Writing to catalog");
+        DEBUG_MSG(min_x << " " << max_x << " " << min_y << " " << (i+1)/buffer_size-1 << " " << (i+1)/buffer_size-1);
+        catalog.insert(catalog.end(), catalog_item(min_x, max_x, min_y, (i+1)/buffer_size-1, (i+1)/buffer_size-1));
+        min_x = INF, max_x = -INF, min_y = INF;
+        intervals.insert( block((i+1)/buffer_size-1,buffer_size,(i+1)/buffer_size-1));
+        DEBUG_MSG("new block: " << (i+1)/buffer_size-1 << ", " << buffer_size);
       }
     }
     int remaining = points.size()%buffer_size;
@@ -186,6 +198,11 @@ namespace ext {
                            ,remaining==0 ? buffer_size: remaining,
                            remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size));
     DEBUG_MSG("remaining block " << (remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size) << " with points " << (remaining==0 ? buffer_size: remaining));
+
+    DEBUG_MSG("writing remaining block to catalog");
+    DEBUG_MSG(min_x << " " << max_x << " " << min_y << " " << (remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size) << " " << (remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size));
+    catalog.insert(catalog.end(), catalog_item(min_x, max_x, min_y, remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size, remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size));
+
     // if (remaining > 0) {
     //   DEBUG_MSG("remaining block: "<< points.size()/buffer_size << ", " << remaining);
     //   intervals.insert(block( points.size()/buffer_size, remaining));
@@ -208,10 +225,9 @@ namespace ext {
         assert(pred.size == 0 && succ.size == 0 && "error on collapsing with both neighbours");
 #endif
         DEBUG_MSG("constructing [" << pred.id << ", " << succ.right << "]");
-        int limit = pb.first.y;
         for (point p : points_in_blocks[pb_belong_to.id]) {
 #ifdef DEBUG
-          assert(p.y >= limit);
+          assert(p.y >= pb.first.y);
 #endif
           L.push_back(p);
         }
@@ -372,6 +388,19 @@ namespace ext {
         return false;
       }
     }
+
+    for (size_t i = 0; i < (L_size%buffer_size==0 ? L_size/buffer_size : L_size/buffer_size+1); i++) {
+      int min_x = catalog[i].min_x;
+      int max_x = catalog[i].max_x;
+      int min_y = catalog[i].min_y;
+      if (min_x > max_x) { DEBUG_MSG("min x > max_x"); return false;}
+      for (size_t j = i*buffer_size; j < std::min(i*buffer_size+buffer_size,L_size); j++) {
+        if (L[j].x < min_x || max_x < L[j].x) {
+          DEBUG_MSG("point " << L[j] << " not between " << min_x << " and " << max_x << " in block " << i); return false;}
+        if (L[j].y < min_y) { DEBUG_MSG("point " << L[j] << " has y less than min_y for block " << i); return false;}
+      }
+    }
+
     // TODO: Check I_size, D_size, L_size is correct w.r.t. files.
     
     return true;
