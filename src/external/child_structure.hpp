@@ -194,22 +194,27 @@ namespace ext {
       }
     }
     int remaining = points.size()%buffer_size;
-    intervals.insert(block(remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size
-                           ,remaining==0 ? buffer_size: remaining,
-                           remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size));
-    DEBUG_MSG("remaining block " << (remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size) << " with points " << (remaining==0 ? buffer_size: remaining));
+    if (remaining) {
+      intervals.insert(block(remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size
+			     ,remaining==0 ? buffer_size: remaining,
+			     remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size));
+      DEBUG_MSG("remaining block " << (remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size) << " with points " << (remaining==0 ? buffer_size: remaining));
 
-    DEBUG_MSG("writing remaining block to catalog");
-    DEBUG_MSG(min_x << " " << max_x << " " << min_y << " " << (remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size) << " " << (remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size));
-    catalog.insert(catalog.end(), catalog_item(min_x, max_x, min_y, remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size, remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size));
-
+      DEBUG_MSG("writing remaining block to catalog");
+      DEBUG_MSG(min_x << " " << max_x << " " << min_y << " " << (remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size) << " " << (remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size));
+      catalog.insert(catalog.end(), catalog_item(min_x, max_x, min_y, remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size, remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size));
+    }
     // if (remaining > 0) {
     //   DEBUG_MSG("remaining block: "<< points.size()/buffer_size << ", " << remaining);
     //   intervals.insert(block( points.size()/buffer_size, remaining));
     // }
 
+    std::vector<point> out;
+    
     while (!pq.empty()) {
+      bool should_update_catalog = false;
       point_block pb = pq.top(); pq.pop();
+
       block pb_belong_to = intervals.belong_to(block(pb.second,0,0));
       DEBUG_MSG(pb.first << " with bid " << pb.second << " belong to " << pb_belong_to.id);
       int our_size = pb_belong_to.size;
@@ -229,16 +234,17 @@ namespace ext {
 #ifdef DEBUG
           assert(p.y >= pb.first.y);
 #endif
+	  out.push_back(p);
           L.push_back(p);
         }
         intervals.erase(succ);
         intervals.erase(pb_belong_to);
         intervals.erase(pred);
         intervals.insert(block(pred.id, pb_belong_to.size-1, succ.right));
+	should_update_catalog = true;
       } else if (our_size + pred.size == (int)buffer_size) {
         DEBUG_MSG("collapsing with left neighbour");
         DEBUG_MSG("constructing [" << pred.id << ", " << pb_belong_to.right << "]");
-        std::vector<point> out;
         int limit = pb.first.y;
         for (point p : points_in_blocks[pb_belong_to.id])
           if (p.y >= limit) {
@@ -261,11 +267,11 @@ namespace ext {
         intervals.erase(pb_belong_to);
         intervals.erase(pred);
         intervals.insert(block(pred.id,out.size()-1,pb_belong_to.right));
+	should_update_catalog = true;
       } else if (our_size + succ.size == (int)buffer_size) {
         DEBUG_MSG("collapsing with right neighbour");
         DEBUG_MSG("constructing [" << pb_belong_to.id << ", " << succ.right << "]");
-        std::vector<point> out;
-        int limit = pb.first.y;
+	int limit = pb.first.y;
         for (point p : points_in_blocks[pb_belong_to.id])
           if (p.y >= limit) {
             DEBUG_MSG("above: " << p);
@@ -287,11 +293,25 @@ namespace ext {
         intervals.erase(succ);
         intervals.erase(pb_belong_to);
         intervals.insert(block(pb_belong_to.id, out.size()-1, succ.right));
+	should_update_catalog = true;
       } else {
         DEBUG_MSG("removing element: " << pb.first << " from " << pb_belong_to.id << " and down to " << pb_belong_to.size-1);
         intervals.erase(pb_belong_to);
         intervals.insert(block(pb_belong_to.id, pb_belong_to.size-1,pb_belong_to.right));
       }
+
+      if (should_update_catalog) {
+	DEBUG_MSG("Updating catalog with collapsed entry");
+	DEBUG_MSG("- with " << out.size() << " points");
+	for (point p : out)
+	  DEBUG_MSG(" - " << p);
+	pb_belong_to = intervals.belong_to(block(pb.second,0,0));
+	min_x = std::min_element(out.begin(),out.end())->x;
+	max_x = std::max_element(out.begin(),out.end())->x;
+	DEBUG_MSG(min_x << " " << max_x << " " << pb.first.y << " " << pb_belong_to.id << " " << pb_belong_to.right);
+	catalog.push_back(catalog_item(min_x, max_x, pb.first.y, pb_belong_to.id, pb_belong_to.right));
+	out.clear();
+	}
     }
 
   }
@@ -395,10 +415,32 @@ namespace ext {
       int min_y = catalog[i].min_y;
       if (min_x > max_x) { DEBUG_MSG("min x > max_x"); return false;}
       for (size_t j = i*buffer_size; j < std::min(i*buffer_size+buffer_size,L_size); j++) {
+	DEBUG_MSG("sutter point with index " << j << " " << L[j] << " from block " << i);
         if (L[j].x < min_x || max_x < L[j].x) {
           DEBUG_MSG("point " << L[j] << " not between " << min_x << " and " << max_x << " in block " << i); return false;}
         if (L[j].y < min_y) { DEBUG_MSG("point " << L[j] << " has y less than min_y for block " << i); return false;}
       }
+    }
+
+    for (size_t i = L_size%buffer_size==0 ? L_size/buffer_size : L_size/buffer_size+1; i < catalog.size(); i++) {
+      int min_x = catalog[i].min_x;
+      int max_x = catalog[i].max_x;
+      int min_y = catalog[i].min_y;
+      if (min_x > max_x) { DEBUG_MSG("sweepline: min x " << min_x << " > max_x" << max_x << " in block " << i); return false;}
+
+      for (size_t j = i*buffer_size-((L_size%buffer_size==0 ? L_size/buffer_size : L_size/buffer_size+1)*buffer_size-L_size); j < (i*buffer_size+buffer_size)-((L_size%buffer_size==0 ? L_size/buffer_size : L_size/buffer_size+1)*buffer_size-L_size); j++) {
+	DEBUG_MSG("sutter point with index " << j << " " << L[j] << " from block " << i);
+	if (L[j].x < min_x || max_x < L[j].x) {
+          DEBUG_MSG("sweepline: point " << L[j] << " not between " << min_x << " and " << max_x << " in block " << i); return false;}
+        if (L[j].y < min_y) { DEBUG_MSG("point " << L[j] << " has y less than min_y for block " << i); return false;}
+      }
+      int min_y_i = std::min_element(L.begin()+i*buffer_size,L.begin()+i*buffer_size+buffer_size, comp)->y;
+      if (i*buffer_size+2*buffer_size < L.size() &&
+	  std::min_element(L.begin()+i*buffer_size+buffer_size, L.begin()+i*buffer_size+2*buffer_size, comp)->y < min_y_i) {
+	DEBUG_MSG("min_y " << min_y << " in i+1 must be greater than or equal to min_y " << min_y_i);
+	return false;	
+      }
+      
     }
 
     // TODO: Check I_size, D_size, L_size is correct w.r.t. files.
