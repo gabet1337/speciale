@@ -443,8 +443,18 @@ namespace ext {
       
     }
 
-    // TODO: Check I_size, D_size, L_size is correct w.r.t. files.
-    
+    for (catalog_item c : catalog) {
+      int count = 0;
+      for (catalog_item c2 : catalog) {
+	if (c.i == c2.i && c.j == c2.j)
+	  count++;
+      }
+      if (count > 1) {
+	DEBUG_MSG("Catalog interval is not unique");
+	return false;
+      }
+    }
+
     return true;
   }
 #endif
