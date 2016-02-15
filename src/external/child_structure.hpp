@@ -13,7 +13,7 @@
 #include <vector>
 #include <set>
 #include <queue>
-
+#include <assert.h>
 
 namespace ext {
 
@@ -201,7 +201,25 @@ namespace ext {
       DEBUG_MSG("osid " << pb_belong_to.id << ": " << our_size << std::endl
                 << "psid " << pred.id << ": " << pred.size << std::endl
                 << "ssid " << succ.id << ": " << succ.size);
-      if (our_size + pred.size == (int)buffer_size) {
+
+      if (our_size + pred.size + succ.size == (int)buffer_size) {
+        DEBUG_MSG("collapsing with left AND right neighbour");
+#ifdef DEBUG
+        assert(pred.size == 0 && succ.size == 0 && "error on collapsing with both neighbours");
+#endif
+        DEBUG_MSG("constructing [" << pred.id << ", " << succ.right << "]");
+        int limit = pb.first.y;
+        for (point p : points_in_blocks[pb_belong_to.id]) {
+#ifdef DEBUG
+          assert(p.y >= limit);
+#endif
+          L.push_back(p);
+        }
+        intervals.erase(succ);
+        intervals.erase(pb_belong_to);
+        intervals.erase(pred);
+        intervals.insert(block(pred.id, pb_belong_to.size-1, succ.right));
+      } else if (our_size + pred.size == (int)buffer_size) {
         DEBUG_MSG("collapsing with left neighbour");
         DEBUG_MSG("constructing [" << pred.id << ", " << pb_belong_to.right << "]");
         std::vector<point> out;
