@@ -53,6 +53,7 @@ vector<point> get_gerth_points() {
   points.push_back(point(2,20));
   points.push_back(point(6,22));
   points.push_back(point(17,23));
+
   return points;
 }
 
@@ -258,6 +259,25 @@ void test_collapse_left_right() {
 
 }
 
+void test_flush_catalog() {
+  cout << "starting test of flushing catalog ";
+
+  vector<point> points = get_gerth_points();
+  sort(points.begin(), points.end());
+  
+  ext::child_structure* cs = new ext::child_structure(13, 4, 0.5, points);
+  assert(cs->valid_memory());
+
+  delete cs;
+
+  cs = new ext::child_structure(13);
+  assert(cs->valid_memory());
+  
+  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+
+
+}
+
 void clean_up() {
   int lol = system("rm -rf c_0");
   lol =system("rm -rf c_1");
@@ -272,6 +292,7 @@ void clean_up() {
   lol = system("rm -rf c_10");
   lol = system("rm -rf c_11");
   lol = system("rm -rf c_12");
+  lol = system("rm -rf c_13");
   lol++;
 }
 
@@ -295,6 +316,7 @@ int main() {
   test_collapse_left();
   test_collapse_right();
   test_collapse_left_right();
+  test_flush_catalog();
   clean_up();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;

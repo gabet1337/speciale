@@ -31,23 +31,31 @@ namespace ext {
 #endif
   private:
     struct catalog_item {
+      catalog_item() {}
       int min_x, max_x, min_y, i, j;
       catalog_item(int _min_x, int _max_x, int _min_y, int _i, int _j) :
         min_x(_min_x), max_x(_max_x), min_y(_min_y), i(_i), j(_j) {}
+
+      friend std::ostream& operator<<(std::ostream& os, const catalog_item& ci) {
+	os << "(min_x:" << ci.min_x << ", max_x:" << ci.max_x << ", min_y:" << ci.min_y <<
+	  ", i:" << ci.i << ", j:" << ci.j << ")";
+	return os;
+      }
     };
     std::string get_info_file();
     std::string get_directory();
     std::string get_L_file();
     std::string get_I_file();
     std::string get_D_file();
+    std::string get_catalog_file();
     void construct(std::vector<point> points);
     void rebuild();
     bool file_exists(std::string file_name);
-    template <class InputIterator>
+    template <class InputIterator, typename T>
     void flush_container_to_file(InputIterator first,
 				 InputIterator last, std::string file_name);
-    template <class Container>
-    void load_file_to_container(Container c, std::string file_name);
+    template <class Container, typename T>
+    void load_file_to_container(Container &c, std::string file_name);
     std::vector<point> L;
     std::set<point> I, D;
     std::vector<catalog_item> catalog;
@@ -71,13 +79,20 @@ namespace ext {
 
     DEBUG_MSG("Load data into structure");
     DEBUG_MSG("Loading L");
-    load_file_to_container(L, get_L_file());
+    load_file_to_container<std::vector<point>, point>(L, get_L_file());
     DEBUG_MSG("Loading I");
-    load_file_to_container(I, get_I_file());
+    load_file_to_container<std::set<point>, point>(I, get_I_file());
     I_size = I.size();
     DEBUG_MSG("Loading D");
-    load_file_to_container(D, get_D_file());
+    load_file_to_container<std::set<point>, point>(D, get_D_file());
     D_size = D.size();
+    DEBUG_MSG("Loading Catalog");
+    load_file_to_container<std::vector<child_structure::catalog_item>,child_structure::catalog_item>(catalog, get_catalog_file());
+    DEBUG_MSG("Finished loading");
+    DEBUG_MSG(" - L.size(): " << L.size() << ", L_size: " << L_size);
+    DEBUG_MSG(" - I.size(): " << I.size());
+    DEBUG_MSG(" - D.size(): " << D.size());
+    DEBUG_MSG(" - Catalog.size(): " << catalog.size());
   }
 
   child_structure::child_structure(size_t id, size_t buffer_size,
@@ -119,19 +134,22 @@ namespace ext {
     info_file.close();
 
     DEBUG_MSG("Flushing L");
-    flush_container_to_file(L.begin(), L.end(), get_L_file());
+    flush_container_to_file<std::vector<point>::iterator,point>(L.begin(), L.end(), get_L_file());
 
     DEBUG_MSG("Flushing I");
-    flush_container_to_file(I.begin(), I.end(), get_I_file());
+    flush_container_to_file<std::set<point>::iterator,point>(I.begin(), I.end(), get_I_file());
 
     DEBUG_MSG("Flushing D");
-    flush_container_to_file(D.begin(), D.end(), get_D_file());
-    
+    flush_container_to_file<std::set<point>::iterator,point>(D.begin(), D.end(), get_D_file());
+
+    DEBUG_MSG("Flushing Catalog");
+    flush_container_to_file<std::vector<child_structure::catalog_item>::iterator,
+			    child_structure::catalog_item>(catalog.begin(), catalog.end(), get_catalog_file());
   }
 
-  template <class InputIterator>
+  template <class InputIterator, typename T>
   void child_structure::flush_container_to_file(InputIterator first, InputIterator last, std::string file_name) {
-    io::buffered_stream<point> file(buffer_size);
+    io::buffered_stream<T> file(buffer_size);
     file.open(file_name);
     while (first != last) {
       file.write(*first);
@@ -140,10 +158,11 @@ namespace ext {
     file.close();
   }
 
-  template <class Container>
-  void child_structure::load_file_to_container(Container c, std::string file_name) {
-    io::buffered_stream<point> file(buffer_size);
+  template <class Container, typename T>
+  void child_structure::load_file_to_container(Container &c, std::string file_name) {
+    io::buffered_stream<T> file(buffer_size);
     file.open(file_name);
+    DEBUG_MSG("file_size: " << file.size() / sizeof(T));
     while (!file.eof()) {
       c.insert(c.end(), file.read());
     }
@@ -263,7 +282,7 @@ namespace ext {
           else DEBUG_MSG("below: " << p);
 #endif
         points_in_blocks[pred.id] = out;
-        for (point p : out) L.push_back(p); //TODO: update catalog
+        for (point p : out) L.push_back(p);
         intervals.erase(pb_belong_to);
         intervals.erase(pred);
         intervals.insert(block(pred.id,out.size()-1,pb_belong_to.right));
@@ -289,7 +308,7 @@ namespace ext {
           else DEBUG_MSG("below: " << p);
 #endif
         points_in_blocks[pb_belong_to.id] = out;
-        for (point p : out) L.push_back(p); //TODO: update catalog
+        for (point p : out) L.push_back(p);
         intervals.erase(succ);
         intervals.erase(pb_belong_to);
         intervals.insert(block(pb_belong_to.id, out.size()-1, succ.right));
@@ -377,6 +396,10 @@ namespace ext {
   std::string child_structure::get_D_file() {
     return get_directory()+std::string("/D");
   }
+
+  std::string child_structure::get_catalog_file() {
+    return get_directory()+std::string("/catalog");
+  }
   
 #ifdef VALIDATE
   bool child_structure::valid_disk() {
@@ -393,7 +416,9 @@ namespace ext {
   bool child_structure::valid_memory() {
     DEBUG_MSG("VALIDATING MEMORY");
     if (!std::is_sorted(L.begin(), L.begin()+L_size)) {
-      DEBUG_MSG("L is not sorted w.r.t x");
+      DEBUG_MSG("L is not sorted w.r.t x for the first L_size " << L_size << " points");
+      for (point p : L)
+	DEBUG_MSG(" - " << p);
       return false;
     }
     auto comp = [](point p1, point p2) {
@@ -415,7 +440,7 @@ namespace ext {
       int min_y = catalog[i].min_y;
       if (min_x > max_x) { DEBUG_MSG("min x > max_x"); return false;}
       for (size_t j = i*buffer_size; j < std::min(i*buffer_size+buffer_size,L_size); j++) {
-	DEBUG_MSG("sutter point with index " << j << " " << L[j] << " from block " << i);
+	DEBUG_MSG("Getting point on index " << j << " " << L[j] << " from block " << i);
         if (L[j].x < min_x || max_x < L[j].x) {
           DEBUG_MSG("point " << L[j] << " not between " << min_x << " and " << max_x << " in block " << i); return false;}
         if (L[j].y < min_y) { DEBUG_MSG("point " << L[j] << " has y less than min_y for block " << i); return false;}
@@ -429,7 +454,7 @@ namespace ext {
       if (min_x > max_x) { DEBUG_MSG("sweepline: min x " << min_x << " > max_x" << max_x << " in block " << i); return false;}
 
       for (size_t j = i*buffer_size-((L_size%buffer_size==0 ? L_size/buffer_size : L_size/buffer_size+1)*buffer_size-L_size); j < (i*buffer_size+buffer_size)-((L_size%buffer_size==0 ? L_size/buffer_size : L_size/buffer_size+1)*buffer_size-L_size); j++) {
-	DEBUG_MSG("sutter point with index " << j << " " << L[j] << " from block " << i);
+	DEBUG_MSG("Getting point on index " << j << " " << L[j] << " from block " << i);
 	if (L[j].x < min_x || max_x < L[j].x) {
           DEBUG_MSG("sweepline: point " << L[j] << " not between " << min_x << " and " << max_x << " in block " << i); return false;}
         if (L[j].y < min_y) { DEBUG_MSG("point " << L[j] << " has y less than min_y for block " << i); return false;}
@@ -453,6 +478,11 @@ namespace ext {
 	DEBUG_MSG("Catalog interval is not unique");
 	return false;
       }
+    }
+
+    if (catalog.size() < L_size/buffer_size) {
+      DEBUG_MSG("Catalog is invalid");
+      return false;
     }
 
     return true;
