@@ -336,9 +336,22 @@ namespace ext {
   }
 
   bool child_structure::valid_memory() {
+    DEBUG_MSG("VALIDATING MEMORY");
     if (!std::is_sorted(L.begin(), L.begin()+L_size)) {
       DEBUG_MSG("L is not sorted w.r.t x");
       return false;
+    }
+    auto comp = [](point p1, point p2) {
+      return p1.y < p2.y || (p1.y == p2.y && p1.x < p2.x);
+    };
+    for (int i = L_size; i <= (int)L.size()-2*(int)buffer_size; i+=(int)buffer_size) {
+      int b_min = std::min_element(L.begin()+i, L.begin()+(i+buffer_size),comp)->y;
+      int b1_min = std::min_element(L.begin()+(i+buffer_size), L.begin()+(i+2*buffer_size),comp)->y;
+      DEBUG_MSG("bi_min: " << b_min << std::endl << "bi+1_min: " << b1_min);
+      if (b_min > b1_min) {
+        DEBUG_MSG("Blocks in L are not increasing in y-value for sweeped points");
+        return false;
+      }
     }
     // TODO: Check I_size, D_size, L_size is correct w.r.t. files.
     
