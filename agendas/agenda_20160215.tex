@@ -1,0 +1,51 @@
+\documentclass[a4paper,11pt,agenda]{meetingmins}
+
+\setcommittee{Thesis on External Range Reporting}
+
+\setmembers{
+  \chair{K.~Green},
+  P.~Gabrielsen,
+  C.~Hansen,
+}
+
+\setdate{February 15, 2016}
+
+\begin{document}
+\maketitle
+
+\section{Since last meeting}
+\begin{items}
+\item Report
+	\begin{items}
+		\item Added section to \textit{Introduction}: Formalizing problem
+		\item Added section to \textit{Preliminaries}: Boot-strapping
+		\item Added section to \textit{Implementation considerations}: Stream
+	\end{items}
+\item Coding
+	\begin{items}
+		\item Child-structure: Interval management (\textsc{RB-tree} with \textsc{succ}/\textsc{pred}).
+		\item Child-structure: Flush/Load files into data structure.
+		\item Child-structure: Extensive testing of invariants.
+		\item Child-structure: Internal priority-queue for sweeping.
+	\end{items}
+\end{items}
+
+\section{Plan until next meeting}
+\begin{items}
+\item Report
+	\begin{items}
+		\item Document child-structure.
+	\end{items}
+\item Coding
+	\begin{items}
+		\item Child-structure: Implement \texttt{Query}
+		\item Main DS: Start work on buffer tree
+	\end{items}
+\end{items}
+
+\section{Questions and remarks}
+\begin{items}
+	\item How to make figures as on Gerths slides?
+	\item Bug in article.
+\end{items}
+\end{document}
