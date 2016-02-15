@@ -209,6 +209,26 @@ void test_collapse() {
   assert( cs.valid_memory() );
 }
 
+void test_collapse_left() {
+  cout << "starting test of collapsing left ";
+  vector<point> points;
+  for (int i = 0; i < 32; i++) points.push_back(point(i,i));
+  ext::child_structure cs(9, 4, 0.5, points);
+  assert(cs.valid_memory());
+  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+}
+
+void test_collapse_right() {
+  cout << "starting test of collapsing right ";
+
+  vector<point> points;
+  for (int i = 0; i < 32; i++) points.push_back(point(i,31-i));
+  ext::child_structure cs(10, 4, 0.5, points);
+  assert(cs.valid_memory());
+  
+  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+}
+
 void clean_up() {
   int lol = system("rm -rf c_0");
   lol =system("rm -rf c_1");
@@ -219,6 +239,8 @@ void clean_up() {
   lol = system("rm -rf c_6");
   lol = system("rm -rf c_7");
   lol = system("rm -rf c_8");
+  lol = system("rm -rf c_9");
+  lol = system("rm -rf c_10");
   lol++;
 }
 
@@ -238,6 +260,8 @@ int main() {
   test_constructor();
   test_constructor2();
   test_collapse();
+  test_collapse_left();
+  test_collapse_right();
   clean_up();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;

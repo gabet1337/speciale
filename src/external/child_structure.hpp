@@ -156,8 +156,8 @@ namespace ext {
                         decltype(comp)> pq(comp);
 
     struct block {
-      int id,size;
-      block(int _id, int _size) : id(_id), size(_size) {}
+      int id,size,right;
+      block(int _id, int _size, int _right) : id(_id), size(_size), right(_right) {}
       bool operator<(const block b) const { return id < b.id; }
       bool operator==(const block b) const { return id == b.id; }
     };
@@ -165,8 +165,8 @@ namespace ext {
     //typedef std::pair<int,int> ii;
     internal::rb_tree<block> intervals;
 
-    intervals.insert(block(-1000000,-1000000));
-    intervals.insert(block(1000000,-1000000));
+    intervals.insert(block(-1000000,-1000000,-100000));
+    intervals.insert(block(1000000,-1000000,-100000));
     // intervals.insert( ii(-10000000,-100000000) );
     // intervals.insert( ii(10000000,-100000000) );
     std::vector<std::vector<point> > points_in_blocks(points.size()/buffer_size+1, std::vector<point>());
@@ -177,13 +177,14 @@ namespace ext {
       pq.push( point_block(points[i], i/buffer_size));
       if (i%buffer_size == 0 && i != 0) {
         //TODO: update catalog
-        intervals.insert( block(i/buffer_size-1,buffer_size));
+        intervals.insert( block(i/buffer_size-1,buffer_size,i/buffer_size-1));
         DEBUG_MSG("new block: " << i/buffer_size-1 << ", " << buffer_size);
       }
     }
     int remaining = points.size()%buffer_size;
     intervals.insert(block(remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size
-                           , remaining==0 ? buffer_size: remaining));
+                           ,remaining==0 ? buffer_size: remaining,
+                           remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size));
     DEBUG_MSG("remaining block " << (remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size) << " with points " << (remaining==0 ? buffer_size: remaining));
     // if (remaining > 0) {
     //   DEBUG_MSG("remaining block: "<< points.size()/buffer_size << ", " << remaining);
@@ -192,7 +193,7 @@ namespace ext {
 
     while (!pq.empty()) {
       point_block pb = pq.top(); pq.pop();
-      block pb_belong_to = intervals.belong_to(block(pb.second,0));
+      block pb_belong_to = intervals.belong_to(block(pb.second,0,0));
       DEBUG_MSG(pb.first << " with bid " << pb.second << " belong to " << pb_belong_to.id);
       int our_size = pb_belong_to.size;
       block pred = intervals.predecessor(pb_belong_to);
@@ -202,7 +203,7 @@ namespace ext {
                 << "ssid " << succ.id << ": " << succ.size);
       if (our_size + pred.size == (int)buffer_size) {
         DEBUG_MSG("collapsing with left neighbour");
-        DEBUG_MSG("constructing [" << pred.id << ", " << pb_belong_to.id << "]");
+        DEBUG_MSG("constructing [" << pred.id << ", " << pb_belong_to.right << "]");
         std::vector<point> out;
         int limit = pb.first.y;
         for (point p : points_in_blocks[pb_belong_to.id])
@@ -225,10 +226,10 @@ namespace ext {
         for (point p : out) L.push_back(p); //TODO: update catalog
         intervals.erase(pb_belong_to);
         intervals.erase(pred);
-        intervals.insert(block(pred.id,out.size()-1));
+        intervals.insert(block(pred.id,out.size()-1,pb_belong_to.right));
       } else if (our_size + succ.size == (int)buffer_size) {
         DEBUG_MSG("collapsing with right neighbour");
-        DEBUG_MSG("constructing [" << pb_belong_to.id << ", " << succ.id << "]");
+        DEBUG_MSG("constructing [" << pb_belong_to.id << ", " << succ.right << "]");
         std::vector<point> out;
         int limit = pb.first.y;
         for (point p : points_in_blocks[pb_belong_to.id])
@@ -251,11 +252,11 @@ namespace ext {
         for (point p : out) L.push_back(p); //TODO: update catalog
         intervals.erase(succ);
         intervals.erase(pb_belong_to);
-        intervals.insert(block(pb_belong_to.id, out.size()-1));
+        intervals.insert(block(pb_belong_to.id, out.size()-1, succ.right));
       } else {
         DEBUG_MSG("removing element: " << pb.first << " from " << pb_belong_to.id << " and down to " << pb_belong_to.size-1);
         intervals.erase(pb_belong_to);
-        intervals.insert(block(pb_belong_to.id, pb_belong_to.size-1));
+        intervals.insert(block(pb_belong_to.id, pb_belong_to.size-1,pb_belong_to.right));
       }
     }
 
