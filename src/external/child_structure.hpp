@@ -31,8 +31,8 @@ namespace ext {
 #endif
   private:
     struct catalog_item {
-      catalog_item() {}
       int min_x, max_x, min_y, i, j;
+      catalog_item() {}
       catalog_item(int _min_x, int _max_x, int _min_y, int _i, int _j) :
         min_x(_min_x), max_x(_max_x), min_y(_min_y), i(_i), j(_j) {}
 
@@ -172,6 +172,11 @@ namespace ext {
   void child_structure::construct(std::vector<point> points) {
     L = points;
     L_size = points.size();
+#ifdef DEBUG
+    assert(std::is_sorted(L.begin(), L.end()));
+#endif
+    catalog.clear();
+
     // sweep and construct rest of L
     typedef std::pair<point,int> point_block;
     auto comp = [](point_block p1, point_block p2) {
@@ -187,13 +192,11 @@ namespace ext {
       bool operator==(const block b) const { return id == b.id; }
     };
     
-    //typedef std::pair<int,int> ii;
     internal::rb_tree<block> intervals;
 
     intervals.insert(block(-1000000,-1000000,-100000));
     intervals.insert(block(1000000,-1000000,-100000));
-    // intervals.insert( ii(-10000000,-100000000) );
-    // intervals.insert( ii(10000000,-100000000) );
+
     std::vector<std::vector<point> > points_in_blocks(points.size()/buffer_size+1, std::vector<point>());
     int min_x = INF, max_x = -INF, min_y = INF;
     for (int i = 0; i < (int)points.size(); i++) {
@@ -223,10 +226,6 @@ namespace ext {
       DEBUG_MSG(min_x << " " << max_x << " " << min_y << " " << (remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size) << " " << (remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size));
       catalog.insert(catalog.end(), catalog_item(min_x, max_x, min_y, remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size, remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size));
     }
-    // if (remaining > 0) {
-    //   DEBUG_MSG("remaining block: "<< points.size()/buffer_size << ", " << remaining);
-    //   intervals.insert(block( points.size()/buffer_size, remaining));
-    // }
 
     std::vector<point> out;
     
@@ -338,6 +337,8 @@ namespace ext {
   void child_structure::insert(point p) {
     DEBUG_MSG("Insert point " << p);
 
+    if (I.size() >= buffer_size) rebuild();
+
     DEBUG_MSG(" - deleting from I");
     auto it = I.find(p);
     if (it != I.end()) I.erase(it);
@@ -347,13 +348,13 @@ namespace ext {
     if (it != D.end()) D.erase(it);
 
     I.insert(p);
-
-    if (I.size() > buffer_size) rebuild();
   }
 
   void child_structure::remove(point p) {
     DEBUG_MSG("Remove point " << p);
 
+    if (D.size() >= buffer_size) rebuild();
+    
     DEBUG_MSG(" - deleting from I");
     auto it = I.find(p);
     if (it != I.end()) I.erase(it);
@@ -363,12 +364,26 @@ namespace ext {
     if (it != D.end()) D.erase(it);
 
     D.insert(p);
-
-    if (D.size() > buffer_size) rebuild();
   }
 
   void child_structure::rebuild() {
+    DEBUG_MSG("STARTING REBUILDING");
     //maintain size of L, i.e. L_size
+
+    // Take the points of I and D and merge them into the first L_size points of L
+    // points in I and D are sorted as they are in a set
+    std::vector<point> L_tmp,L_new;
+    std::set_union(L.begin(),L.begin()+L_size,
+                   I.begin(),I.end(),
+                   std::back_inserter(L_tmp));
+
+    std::set_difference(L_tmp.begin(), L_tmp.end(),
+                        D.begin(), D.end(),
+                        std::back_inserter(L_new));
+    //L_new should now be equivalent to L' in article
+    I.clear();
+    D.clear();
+    construct(L_new);
   }
   
   bool child_structure::file_exists(std::string file_name) {

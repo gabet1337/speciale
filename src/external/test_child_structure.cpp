@@ -274,8 +274,154 @@ void test_flush_catalog() {
   assert(cs->valid_memory());
   
   cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+}
 
+void test_overflow_I() {
+  cout << "starting test of overflow I buffer ";
+  vector<point> points;
+  ext::child_structure cs(14,2,0.5,points);
+  assert(cs.valid_memory());
 
+  //insert B+1 points
+  for (int i = 0; i < 3; i++)
+    cs.insert(point(i,i));
+
+  assert(cs.valid_memory());
+
+  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+}
+
+void test_overflow_I2() {
+  cout << "starting test of overflow I buffer 2 ";
+  vector<point> points;
+  ext::child_structure cs(15,2,0.5,points);
+  assert(cs.valid_memory());
+
+  //insert (B+1)*2 points
+  for (int i = 0; i < 6; i++)
+    cs.insert(point(i,i));
+
+  assert(cs.valid_memory());
+
+  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+}
+
+void test_overflow_I3() {
+  cout << "starting test of overflow I buffer 3 ";
+  vector<point> points;
+  ext::child_structure *cs = new ext::child_structure(17,2,0.5,points);
+  assert(cs->valid_memory());
+
+  //insert (B+1)*2 points
+  for (int i = 0; i < 6; i++)
+    cs->insert(point(i,i));
+
+  assert(cs->valid_memory());
+
+  delete cs;
+
+  cs = new ext::child_structure(17);
+
+  assert(cs->valid_memory());
+
+  //insert (B+1)*2 points
+  for (int i = 6; i < 13; i++)
+    cs->insert(point(i,i));
+
+  assert(cs->valid_memory());
+
+  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+}
+
+void test_overflow_D() {
+  cout << "starting test of overflow D buffer ";
+  vector<point> points;
+  ext::child_structure cs(16,2,0.5,points);
+  assert(cs.valid_memory());
+
+  //remove (1+B)*2 points
+  for (int i = 0; i < 6; i++)
+    cs.remove(point(i,i));
+
+  assert(cs.valid_memory());
+
+  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+}
+
+void test_overflow_D2() {
+  cout << "starting test of overflow D buffer 2 ";
+  vector<point> points;
+  ext::child_structure cs(18,2,0.5,points);
+  assert(cs.valid_memory());
+
+  //insert (B+1)*2 points
+  for (int i = 0; i < 6; i++)
+    cs.remove(point(i,i));
+
+  assert(cs.valid_memory());
+
+  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+}
+
+void test_overflow_D3() {
+  cout << "starting test of overflow D buffer 3 ";
+  vector<point> points;
+  ext::child_structure *cs = new ext::child_structure(19,2,0.5,points);
+  assert(cs->valid_memory());
+
+  //insert (B+1)*2 points
+  for (int i = 0; i < 6; i++)
+    cs->remove(point(i,i));
+
+  assert(cs->valid_memory());
+
+  delete cs;
+
+  cs = new ext::child_structure(17);
+
+  assert(cs->valid_memory());
+
+  //insert (B+1)*2 points
+  for (int i = 6; i < 13; i++)
+    cs->remove(point(i,i));
+
+  assert(cs->valid_memory());
+
+  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+}
+
+void test_overflow_I_and_D() {
+  cout << "starting test of overflowing I and D ";
+
+  vector<point> points;
+  points.push_back(point(0,0));
+  points.push_back(point(1,1));
+  ext::child_structure *cs = new ext::child_structure(20,2,0.5,points);
+  assert(cs->valid_memory());
+
+  for (int i = 0; i < 2; i++) cs->insert(point(i,i));
+  for (int i = 0; i < 2; i++) cs->remove(point(i,i));
+  cs->remove(point(2,2));
+  assert(cs->valid_memory());
+
+  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+}
+
+void test_overflow_I_and_D_2() {
+  cout << "starting test of overflowing I and D 2 ";
+
+  vector<point> points;
+  points.push_back(point(0,0));
+  points.push_back(point(1,1));
+  ext::child_structure *cs = new ext::child_structure(21,2,0.5,points);
+  assert(cs->valid_memory());
+
+  for (int i = 0; i < 2; i++) cs->remove(point(i,i));
+  for (int i = 0; i < 2; i++) cs->insert(point(i,i));
+  cs->insert(point(2,2));
+  assert(cs->valid_memory());
+
+  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
 }
 
 void clean_up() {
@@ -293,9 +439,17 @@ void clean_up() {
   lol = system("rm -rf c_11");
   lol = system("rm -rf c_12");
   lol = system("rm -rf c_13");
+  lol = system("rm -rf c_14");
+  lol = system("rm -rf c_15");
+  lol = system("rm -rf c_16");
+  lol = system("rm -rf c_17");
+  lol = system("rm -rf c_18");
+  lol = system("rm -rf c_19");
+  lol = system("rm -rf c_20");
+  lol = system("rm -rf c_21");
+  
   lol++;
 }
-
 
 int main() {
   clean_up();
@@ -317,6 +471,14 @@ int main() {
   test_collapse_right();
   test_collapse_left_right();
   test_flush_catalog();
+  test_overflow_I();
+  test_overflow_I2();
+  test_overflow_I3();
+  test_overflow_D();
+  test_overflow_D2();
+  test_overflow_D3();
+  test_overflow_I_and_D();
+  test_overflow_I_and_D_2();
   clean_up();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
