@@ -13,6 +13,7 @@
 #include <vector>
 #include <set>
 #include <queue>
+#include <bitset>
 #include <assert.h>
 #define INF 1000000000
 namespace ext {
@@ -32,14 +33,17 @@ namespace ext {
 #endif
   private:
     struct catalog_item {
-      int min_x, max_x, min_y, i, j;
+      int min_x, max_x, min_y, i, j, start_idx, end_idx;
       catalog_item() {}
-      catalog_item(int _min_x, int _max_x, int _min_y, int _i, int _j) :
-        min_x(_min_x), max_x(_max_x), min_y(_min_y), i(_i), j(_j) {}
+      catalog_item(int _min_x, int _max_x, int _min_y, int _i, int _j,
+		   int _start_idx, int _end_idx) :
+        min_x(_min_x), max_x(_max_x), min_y(_min_y), i(_i), j(_j),
+	start_idx(_start_idx), end_idx(_end_idx) {}
 
       friend std::ostream& operator<<(std::ostream& os, const catalog_item& ci) {
 	os << "(min_x:" << ci.min_x << ", max_x:" << ci.max_x << ", min_y:" << ci.min_y <<
-	  ", i:" << ci.i << ", j:" << ci.j << ")";
+	  ", i:" << ci.i << ", j:" << ci.j << " start_idx: " << ci.start_idx <<
+	  " end_idx: " << ci.end_idx << ")";
 	return os;
       }
     };
@@ -58,6 +62,7 @@ namespace ext {
     template <class Container, typename T>
     void load_file_to_container(Container &c, std::string file_name);
     inline bool in_range(const point &p, int x1, int x2, int y);
+    inline bool in_range(const catalog_item &ci, int x1, int x2, int y);
     std::vector<point> L;
     std::set<point> I, D;
     std::vector<catalog_item> catalog;
@@ -211,7 +216,7 @@ namespace ext {
       if ((i+1)%buffer_size == 0) {
         DEBUG_MSG("Writing to catalog");
         DEBUG_MSG(min_x << " " << max_x << " " << min_y << " " << (i+1)/buffer_size-1 << " " << (i+1)/buffer_size-1);
-        catalog.insert(catalog.end(), catalog_item(min_x, max_x, min_y, (i+1)/buffer_size-1, (i+1)/buffer_size-1));
+        catalog.insert(catalog.end(), catalog_item(min_x, max_x, min_y, (i+1)/buffer_size-1, (i+1)/buffer_size-1,i+1-buffer_size,i+1));
         min_x = INF, max_x = -INF, min_y = INF;
         intervals.insert( block((i+1)/buffer_size-1,buffer_size,(i+1)/buffer_size-1));
         DEBUG_MSG("new block: " << (i+1)/buffer_size-1 << ", " << buffer_size);
@@ -226,7 +231,7 @@ namespace ext {
 
       DEBUG_MSG("writing remaining block to catalog");
       DEBUG_MSG(min_x << " " << max_x << " " << min_y << " " << (remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size) << " " << (remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size));
-      catalog.insert(catalog.end(), catalog_item(min_x, max_x, min_y, remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size, remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size));
+      catalog.insert(catalog.end(), catalog_item(min_x, max_x, min_y, remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size, remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size,L_size-remaining,L_size));
     }
 
     std::vector<point> out;
@@ -329,7 +334,7 @@ namespace ext {
 	min_x = std::min_element(out.begin(),out.end())->x;
 	max_x = std::max_element(out.begin(),out.end())->x;
 	DEBUG_MSG(min_x << " " << max_x << " " << pb.first.y << " " << pb_belong_to.id << " " << pb_belong_to.right);
-	catalog.push_back(catalog_item(min_x, max_x, pb.first.y, pb_belong_to.id, pb_belong_to.right));
+	catalog.push_back(catalog_item(min_x, max_x, pb.first.y, pb_belong_to.id, pb_belong_to.right,L.size()-buffer_size, L.size()));
 	out.clear();
 	}
     }
@@ -372,16 +377,51 @@ namespace ext {
     return x1 <= p.x && p.x <= x2 && p.y >= y;
   }
 
+  inline bool child_structure::in_range(const catalog_item &ci, int x1, int x2, int y) {
+    return (ci.i == ci.j || ci.min_y <= y) &&
+      ((x1 <= ci.min_x && x2 >= ci.max_x) || // interval spans block completely
+       (ci.min_x <= x1 && x2 <= ci.max_x) || // block spans interval completely
+       (ci.min_x <= x1 && x1 <= ci.max_x && ci.max_x <= x2) || // interval starts inside block
+       (ci.min_x <= x2 && x2 <= ci.max_x && x1 <= ci.min_x)); // interval ends inside block
+  }
+      
   std::vector<point> child_structure::report(int x1, int x2, int y) {
     DEBUG_MSG("Reporting points in [" << x1 << ", " << x2 << "] X [" <<
               y << ", \u221E]");
     std::set<point> result;
+
+    if (x2 < x1) return std::vector<point>();
     
+    DEBUG_MSG(" - reporting from I");
     for (point p : I) {
       if (in_range(p, x1, x2, y)) result.insert(p);
+      DEBUG_MSG(" - added point " << p);
     }
 
-    return std::vector<point>(result.begin(),result.end());
+    DEBUG_MSG(" - reporting from L");
+    std::vector<bool> marked(L_size/buffer_size+1,false);
+
+    for (int i = (int)catalog.size()-1; i >= 0; i--) {
+      catalog_item ci = catalog[i];
+      if (in_range(ci,x1,x2,y) && !marked[ci.i]) {
+	for (int j = ci.i; j <= ci.j; j++) marked[j] = true;
+	// Query block
+	for (int j = ci.start_idx; j < ci.end_idx; j++) {
+	  if (in_range(L[j],x1,x2,y)) {
+	    result.insert(L[j]);
+	    DEBUG_MSG(" - added point " << L[j]);
+	  }
+	}
+      }
+    }
+    
+    DEBUG_MSG(" - removing D-points");
+    std::vector<point> final_result;
+    std::set_difference(result.begin(),result.end(),
+			D.begin(),D.end(),
+			std::back_inserter(final_result));
+    
+    return final_result;
   }
 
   void child_structure::rebuild() {
@@ -471,6 +511,17 @@ namespace ext {
       int min_x = catalog[i].min_x;
       int max_x = catalog[i].max_x;
       int min_y = catalog[i].min_y;
+      int start_idx = catalog[i].start_idx;
+      int end_idx = catalog[i].end_idx;
+
+      if (start_idx > end_idx) {
+	DEBUG_MSG("start_idx > end_idx in non-collapsed blocks");
+	return false;
+      }
+      if ((int)(i*buffer_size) != start_idx) {
+	DEBUG_MSG("start_idx " << start_idx << " not correct, expected " << i*buffer_size);
+	return false;
+      }
       if (min_x > max_x) { DEBUG_MSG("min x > max_x"); return false;}
       for (size_t j = i*buffer_size; j < std::min(i*buffer_size+buffer_size,L_size); j++) {
 	DEBUG_MSG("Getting point on index " << j << " " << L[j] << " from block " << i);
@@ -484,6 +535,20 @@ namespace ext {
       int min_x = catalog[i].min_x;
       int max_x = catalog[i].max_x;
       int min_y = catalog[i].min_y;
+      int start_idx = catalog[i].start_idx;
+      int end_idx = catalog[i].end_idx;
+
+      if (start_idx > end_idx) {
+	DEBUG_MSG("start_idx " << start_idx << " > end_idx " << end_idx);
+	return false;
+      }
+
+      if (i*buffer_size-((L_size%buffer_size==0 ? L_size/buffer_size : L_size/buffer_size+1)
+			 *buffer_size-L_size) != (size_t)start_idx) {
+	DEBUG_MSG("start_idx " << start_idx << " not correct, expected " << i*buffer_size);
+	return false;
+      }
+      
       if (min_x > max_x) { DEBUG_MSG("sweepline: min x " << min_x << " > max_x" << max_x << " in block " << i); return false;}
 
       for (size_t j = i*buffer_size-((L_size%buffer_size==0 ? L_size/buffer_size : L_size/buffer_size+1)*buffer_size-L_size); j < (i*buffer_size+buffer_size)-((L_size%buffer_size==0 ? L_size/buffer_size : L_size/buffer_size+1)*buffer_size-L_size); j++) {
