@@ -424,6 +424,16 @@ void test_overflow_I_and_D_2() {
   cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
 }
 
+void test_report() {
+  cout << "starting report test of gerths points ";
+  vector<point> points = get_gerth_points();
+  sort(points.begin(), points.end());
+  ext::child_structure cs(22,2,0.5,points);
+  assert(cs.valid_memory());
+  cs.report(10,27,8);
+  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+}
+
 void clean_up() {
   int lol = system("rm -rf c_0");
   lol =system("rm -rf c_1");
@@ -447,6 +457,7 @@ void clean_up() {
   lol = system("rm -rf c_19");
   lol = system("rm -rf c_20");
   lol = system("rm -rf c_21");
+  lol = system("rm -rf c_22");
   
   lol++;
 }
@@ -479,6 +490,7 @@ int main() {
   test_overflow_D3();
   test_overflow_I_and_D();
   test_overflow_I_and_D_2();
+  test_report();
   clean_up();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;

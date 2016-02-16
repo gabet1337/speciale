@@ -25,6 +25,7 @@ namespace ext {
     ~child_structure();
     void insert(point p);
     void remove(point p);
+    std::vector<point> report(int x1, int x2, int y);
 #ifdef VALIDATE
     bool valid_disk();
     bool valid_memory();
@@ -56,6 +57,7 @@ namespace ext {
 				 InputIterator last, std::string file_name);
     template <class Container, typename T>
     void load_file_to_container(Container &c, std::string file_name);
+    inline bool in_range(const point &p, int x1, int x2, int y);
     std::vector<point> L;
     std::set<point> I, D;
     std::vector<catalog_item> catalog;
@@ -364,6 +366,22 @@ namespace ext {
     if (it != D.end()) D.erase(it);
 
     D.insert(p);
+  }
+
+  inline bool child_structure::in_range(const point &p, int x1, int x2, int y) {
+    return x1 <= p.x && p.x <= x2 && p.y >= y;
+  }
+
+  std::vector<point> child_structure::report(int x1, int x2, int y) {
+    DEBUG_MSG("Reporting points in [" << x1 << ", " << x2 << "] X [" <<
+              y << ", \u221E]");
+    std::set<point> result;
+    
+    for (point p : I) {
+      if (in_range(p, x1, x2, y)) result.insert(p);
+    }
+
+    return std::vector<point>(result.begin(),result.end());
   }
 
   void child_structure::rebuild() {
