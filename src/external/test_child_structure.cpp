@@ -639,6 +639,63 @@ void test_random_points_interleaved() {
   
 }
 
+void test_random_points_with_flush() {
+
+  test::random r;
+  std::set<point> points;
+
+  for (int i=0; i < 10000; i++)
+    points.insert(point(r.next(100),r.next(100)));
+
+  ext::child_structure* cs =
+    new ext::child_structure(30,13,0.5,std::vector<point>(points.begin(),points.end()));
+
+  delete cs;
+
+  cs = new ext::child_structure(30);
+  
+  for (int i=0; i < 40; i++) {
+
+    int x1 = r.next(100);
+    int x2 = r.next(100);
+    int y = r.next(100);
+
+    cout << "starting random test on query [" << x1 << "," << x2 << "] X [" << y << ",\u221E] ";
+    
+    std::vector<point> result = cs->report(x1,x2,y);
+    std::vector<point> actual_res;
+    std::copy_if (points.begin(), points.end(), std::back_inserter(actual_res),
+		  [&x1,&x2,&y](point p){ return  x1 <= p.x && p.x <= x2 && p.y >= y; });
+    std::sort(result.begin(), result.end());
+    std::sort(actual_res.begin(), actual_res.end());
+
+    if (!(result == actual_res)) {
+      cout << "Wrong query result" << endl;
+
+      cout << "Result:" << endl;
+      for (auto p : result)
+	cout << " - " << p << endl;
+
+      cout << "Actual_Result:" << endl;
+      for (auto p : actual_res)
+	cout << " - " << p << endl;
+      
+      std::vector<point> difference;
+      std::set_difference(actual_res.begin(),actual_res.end(),
+			  result.begin(),result.end(),
+			  std::back_inserter(difference));
+      cout << "Difference: " << endl;
+      for (auto p : difference)
+	cout << " - point " << p << endl;
+    }
+    
+    assert ( (result == actual_res) && "Wrong query result");
+    cout << " found " << result.size() << " points ";
+    cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  }
+  
+}
+
 void clean_up() {
   int lol = system("rm -rf c_0");
   lol =system("rm -rf c_1");
@@ -670,6 +727,7 @@ void clean_up() {
   lol = system("rm -rf c_27");
   lol = system("rm -rf c_28");
   lol = system("rm -rf c_29");
+  lol = system("rm -rf c_30");
   
   lol++;
 }
@@ -710,6 +768,7 @@ int main() {
   test_insert_delete_40K_points();
   test_random_points();
   test_random_points_interleaved();
+  test_random_points_with_flush();
   clean_up();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
