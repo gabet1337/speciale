@@ -154,10 +154,10 @@ This problem can sometimes be solved by augmenting the data structure with sever
 
 \chapter{Our results}
 
-\section{Implementation considerations}
+\chapter{Implementation considerations}
 %TODO We use a POSIX file-system on a Linux distribution.
 
-\subsection{Stream}
+\section{Stream}
 The implementation we present makes use of the concept of \textit{streams}. Although the C++ standard library provides several streams that allow for the internal buffer to be managed we introduce an implementation of our own. We denote this stream \texttt{buffered\_stream}. This design choice was made because of the nature of our experiments in which it is of extreme importance that we are able to argue about the exact number of I/O's being used. By introducing a stream of our own we avoid that any undefined behaviour in the standard library implementations gives rise to a potential I/O overhead. Such an overhead would be reflected directly in the overall running time of our implementation.
 
 The stream we introduce makes use of the \texttt{read} and \texttt{write} system calls and is equipped with a buffer of size $B$ in internal memory that is maintained on all operations.
@@ -174,6 +174,20 @@ More precisely we conducted experiments on the I/O-optimal $\nicefrac{M}{B}$-way
 We believe our implementation follows the same I/O pattern as that of the $\nicefrac{M}{B}$-way \textsc{Merge-Sorter}, with both data structures using linear scans of entire streams, and so we conclude that \texttt{buffered\_stream} will have the best overall performance.
 
 %TODO Redo experiments and comment on those.
+
+\section{Child structure}
+This section will present the implementation specific design choices made for the child structure presented in section ??????. %TODO Insert reference.
+
+\section{Construction}
+
+\subsection{Sweeping}
+We sweep the y-axis from bottom to top using a priority queue from the C++ standard library. Initially we put all points in the priority queue keyed on the y-value. When popping an element we make sure to maintain a counter on the most recent block holding the element. This allows us to collapse adjacent blocks if their total number of elements equal $B$.
+
+\subsection{Maintaining blocks}
+The current blocks are maintained using a Red-Black search tree $\mathcal{T}$ on block id. When partitioning the $\vert L \vert$ points into $\ell = \lceil\lvert L \lvert / B\rceil$ blocks we initially construct $T$ on data points $1, 2, \dots, \ell$. On each point in the priority queue we hold block id of the block it initially belonged to as auxiliary data. Now we are able to find adjacent blocks using a \texttt{successor} and \texttt{predecessor} query on block id in $\mathcal{T}$. Whenever the sweepline reaches a point in a block where the block together with an adjacent block contains exactly $B$ points on or above the sweepline, we either fusion with the block on the left, with the block on the right, or with both the block on left and the block on right as a degenerate case. When fusing with the left block we simply delete the block id for the current block in $\mathcal{T}$. When fusing with a right block we delete the successor of the current block id. When fusing with both a left and right block we delete both the current block id and the successor of the current block id. This idea is inspired by the concept of interval trees presented in ?????. It is clear we always create at least one less block whenever we fusion and so there is $\mathcal{O}(\ell) = \mathcal{O}(B^{\epsilon})$ blocks.
+
+\section{Updates}
+As described in ????? we delay all updates by storing them in the $\mathcal{I}$ or $\mathcal{D}$, respectively. Whenever $\mathcal{I}$ or $\mathcal{D}$ have more than $B$ points, we simply extract the points $L$ in $\mathcal{L}$ in increasing x-order from the blocks $b_1, \dots, b_{\ell}$ in $\mathcal{O}(\ell)$ I/O's and apply the $\mathcal{O}(B)$ updates. In order to rebuild the data structure we perform the construction exactly as described above initially splitting the points into $b_1, \dots, b_{\ell}$ blocks. The fusion of blocks takes $\mathcal{O}(1)$ I/O per block implying reconstruction takes worst-case $\mathcal{O}(\ell')$ I/O's. Since $\lvert L \lvert = \mathcal{O}(B^{1+\epsilon})$ and the reconstruction of $\mathcal{L}$ whenever a buffer overflows occurs requires $\mathcal{O}(\lvert L \lvert / B) = \mathcal{O}(B^{\epsilon})$ I/O's, the amortized const of reonstructiing $\mathcal{L}$ is $\mathcal{O}(1/B^{1-\epsilon})$ I/O's per buffered update.
 
 \bibliography{references}
 
