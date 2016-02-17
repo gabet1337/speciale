@@ -63,6 +63,7 @@ namespace ext {
     void load_file_to_container(Container &c, std::string file_name);
     inline bool in_range(const point &p, int x1, int x2, int y);
     inline bool in_range(const catalog_item &ci, int x1, int x2, int y);
+    inline bool above_sweep_line(const point &p, const point &sweep);
     std::vector<point> L;
     std::set<point> I, D;
     std::vector<catalog_item> catalog;
@@ -270,9 +271,9 @@ namespace ext {
       } else if (our_size + pred.size == (int)buffer_size) {
         DEBUG_MSG("collapsing with left neighbour");
         DEBUG_MSG("constructing [" << pred.id << ", " << pb_belong_to.right << "]");
-        int limit = pb.first.y;
+        //int limit = pb.first.y;
         for (point p : points_in_blocks[pb_belong_to.id])
-          if (p.y >= limit) {
+	  if (above_sweep_line(p,pb.first)) {
             DEBUG_MSG("above: " << p);
             out.push_back(p);
           }
@@ -280,7 +281,7 @@ namespace ext {
           else DEBUG_MSG("below: " << p);
 #endif
         for (point p : points_in_blocks[pred.id])
-          if (p.y >= limit) {
+	  if (above_sweep_line(p,pb.first)) {
             DEBUG_MSG("above: " << p);
             out.push_back(p);
           }
@@ -296,9 +297,9 @@ namespace ext {
       } else if (our_size + succ.size == (int)buffer_size) {
         DEBUG_MSG("collapsing with right neighbour");
         DEBUG_MSG("constructing [" << pb_belong_to.id << ", " << succ.right << "]");
-	int limit = pb.first.y;
+	//int limit = pb.first.y;
         for (point p : points_in_blocks[pb_belong_to.id])
-          if (p.y >= limit) {
+	  if (above_sweep_line(p,pb.first)) {
             DEBUG_MSG("above: " << p);
             out.push_back(p);
           }
@@ -306,7 +307,7 @@ namespace ext {
           else DEBUG_MSG("below: " << p);
 #endif
         for (point p : points_in_blocks[succ.id])
-          if (p.y >= limit) {
+	  if (above_sweep_line(p,pb.first)) {
             DEBUG_MSG("above: " << p);
             out.push_back(p);
           }
@@ -341,6 +342,10 @@ namespace ext {
 
   }
 
+  inline bool child_structure::above_sweep_line(const point &p, const point &sweep) {
+    if (p.y == sweep.y) return p.x >= sweep.x;
+    return p.y > sweep.y;
+  }
   void child_structure::insert(point p) {
     DEBUG_MSG("Insert point " << p);
 
@@ -378,7 +383,7 @@ namespace ext {
   }
 
   inline bool child_structure::in_range(const catalog_item &ci, int x1, int x2, int y) {
-    return (ci.i == ci.j || ci.min_y <= y) &&
+    return (ci.i == ci.j || ci.min_y < y) &&
       ((x1 <= ci.min_x && x2 >= ci.max_x) || // interval spans block completely
        (ci.min_x <= x1 && x2 <= ci.max_x) || // block spans interval completely
        (ci.min_x <= x1 && x1 <= ci.max_x && ci.max_x <= x2) || // interval starts inside block
@@ -410,7 +415,7 @@ namespace ext {
 	  if (in_range(L[j],x1,x2,y)) {
 	    result.insert(L[j]);
 	    DEBUG_MSG(" - added point " << L[j]);
-	  }
+	  } else DEBUG_MSG(" - rejected this bitch: point " << L[j]);
 	}
       }
     }

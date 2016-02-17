@@ -1,6 +1,7 @@
 #include <iostream>
 #include "../common/debug.hpp"
 #include "../common/point.hpp"
+#include "../common/test_lib.hpp"
 #include "child_structure.hpp"
 #include <assert.h>
 #include <vector>
@@ -502,7 +503,7 @@ void test_report_insert_delete_buffer_not_empty() {
 void test_insert_delete_40K_points() {
 
   cout << "starting report insert delete 40K points ";
-  
+#undef DEBUG  
   ext::child_structure cs(27,1000,0.5,std::vector<point>());
 
   for (int i = 0; i < 40000; i++)
@@ -515,7 +516,127 @@ void test_insert_delete_40K_points() {
 
   assert ( cs.report(10000,20000,10001).size() == 0);
 
+#define DEBUG
+  
   cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+}
+
+void test_random_points() {
+
+  test::random r;
+  std::set<point> points;
+
+  for (int i=0; i < 10000; i++)
+    points.insert(point(r.next(100),r.next(100)));
+
+  ext::child_structure cs(28,13,0.5,std::vector<point>(points.begin(),points.end()));
+
+  for (int i=0; i < 40; i++) {
+
+    int x1 = r.next(100);
+    int x2 = r.next(100);
+    int y = r.next(100);
+
+    cout << "starting random test on query [" << x1 << "," << x2 << "] X [" << y << ",\u221E] ";
+    
+    std::vector<point> result = cs.report(x1,x2,y);
+    std::vector<point> actual_res;
+    std::copy_if (points.begin(), points.end(), std::back_inserter(actual_res),
+		  [&x1,&x2,&y](point p){ return  x1 <= p.x && p.x <= x2 && p.y >= y; });
+    std::sort(result.begin(), result.end());
+    std::sort(actual_res.begin(), actual_res.end());
+
+    if (!(result == actual_res)) {
+      cout << "Wrong query result" << endl;
+
+      cout << "Result:" << endl;
+      for (auto p : result)
+	cout << " - " << p << endl;
+
+      cout << "Actual_Result:" << endl;
+      for (auto p : actual_res)
+	cout << " - " << p << endl;
+      
+      std::vector<point> difference;
+      std::set_difference(actual_res.begin(),actual_res.end(),
+			  result.begin(),result.end(),
+			  std::back_inserter(difference));
+      cout << "Difference: " << endl;
+      for (auto p : difference)
+	cout << " - point " << p << endl;
+    }
+    
+    assert ( (result == actual_res) && "Wrong query result");
+    cout << " found " << result.size() << " points ";
+    cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  }
+  
+}
+
+void test_random_points_interleaved() {
+
+  test::random r;
+  std::set<point> points;
+  std::set<point> del_points;
+  
+  int num_points = 10000;
+  
+  for (int i=0; i < num_points; i++) {
+    point p = point(r.next(100),r.next(100));
+    points.insert(p);
+    if (i%100 == 0)
+      del_points.insert(p);
+  }
+
+  ext::child_structure cs(29,13,0.5,std::vector<point>(points.begin(),points.end()));
+
+  for (auto p : del_points) {
+    cs.remove(p);
+    points.erase(points.find(p));
+  }
+
+  for (int i=0; i < 40; i++) {
+  
+    int x1 = r.next(100);
+    int x2 = r.next(100);
+    int y = r.next(100);
+
+    cout << "starting random test interleaved on query [" << x1 << "," << x2 << "] X [" << y << ",\u221E] ";
+    
+    std::vector<point> result = cs.report(x1,x2,y);
+    std::vector<point> actual_res;
+    std::copy_if (points.begin(), points.end(), std::back_inserter(actual_res),
+		  [&x1,&x2,&y](point p){ return  x1 <= p.x && p.x <= x2 && p.y >= y; });
+    std::sort(result.begin(), result.end());
+    std::sort(actual_res.begin(), actual_res.end());
+
+    if (!(result == actual_res)) {
+      cout << "Wrong query result" << endl;
+
+      cout << "Result:" << endl;
+      for (auto p : result)
+	cout << " - " << p << endl;
+
+      cout << "Actual_Result:" << endl;
+      for (auto p : actual_res)
+	cout << " - " << p << endl;
+      
+      std::vector<point> difference;
+      std::set_difference(actual_res.begin(),actual_res.end(),
+			  result.begin(),result.end(),
+			  std::back_inserter(difference));
+      cout << "Difference: " << endl;
+      for (auto p : difference)
+	cout << " - point " << p << endl;
+    
+      assert ( (result == actual_res) && "Wrong query result");
+      cout << " found " << result.size() << " points ";
+    }
+
+    cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+    
+  }
+  
 }
 
 void clean_up() {
@@ -547,6 +668,8 @@ void clean_up() {
   lol = system("rm -rf c_25");
   lol = system("rm -rf c_26");
   lol = system("rm -rf c_27");
+  lol = system("rm -rf c_28");
+  lol = system("rm -rf c_29");
   
   lol++;
 }
@@ -585,6 +708,8 @@ int main() {
   test_report_4();
   test_report_insert_delete_buffer_not_empty();
   test_insert_delete_40K_points();
+  test_random_points();
+  test_random_points_interleaved();
   clean_up();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
