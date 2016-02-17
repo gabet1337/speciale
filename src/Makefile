@@ -23,5 +23,8 @@ stream_test : $(STREAM) $(POINT) stream/test_stream.cpp
 ctest : $(STREAM) $(POINT) $(RB) $(EXTERNAL_CHILD_STRUCTURE) $(TEST_LIB) external/test_child_structure.cpp
 	$(CC) $(LFLAGS) $(POINT) $(RB) $(STREAM) $(EXTERNAL_CHILD_STRUCTURE) $(TEST_LIB) external/test_child_structure.cpp -o ctest
 
+testall : clean	stream_test ctest
+	./stream_test && ./ctest
+
 clean:
 	$(RM) *.o *~ $(PROGRAMS)

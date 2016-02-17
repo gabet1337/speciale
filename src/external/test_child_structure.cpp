@@ -733,6 +733,9 @@ void clean_up() {
 }
 
 int main() {
+
+  cout << "\033[0;33m\e[4mSTARTING TEST OF CHILD STRUCTURE\e[24m\033[0m" << endl;
+  
   clean_up();
 #ifdef VALIDATE
   test_valid_after_constructor();
