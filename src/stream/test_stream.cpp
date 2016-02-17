@@ -572,6 +572,8 @@ void test_make_folder() {
 }
 
 int main() {
+
+  cout << "\033[0;33m\e[4mSTARTING TEST OF STREAM\e[24m\033[0m" << endl;
   
   test_open_close();
   test_read();

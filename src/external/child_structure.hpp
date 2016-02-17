@@ -13,7 +13,9 @@
 #include <vector>
 #include <set>
 #include <queue>
+#include <bitset>
 #include <assert.h>
+
 #define INF 1000000000
 namespace ext {
 
@@ -32,14 +34,17 @@ namespace ext {
 #endif
   private:
     struct catalog_item {
-      int min_x, max_x, min_y, i, j;
+      int min_x, max_x, min_y, i, j, start_idx, end_idx;
       catalog_item() {}
-      catalog_item(int _min_x, int _max_x, int _min_y, int _i, int _j) :
-        min_x(_min_x), max_x(_max_x), min_y(_min_y), i(_i), j(_j) {}
+      catalog_item(int _min_x, int _max_x, int _min_y, int _i, int _j,
+		   int _start_idx, int _end_idx) :
+        min_x(_min_x), max_x(_max_x), min_y(_min_y), i(_i), j(_j),
+	start_idx(_start_idx), end_idx(_end_idx) {}
 
       friend std::ostream& operator<<(std::ostream& os, const catalog_item& ci) {
 	os << "(min_x:" << ci.min_x << ", max_x:" << ci.max_x << ", min_y:" << ci.min_y <<
-	  ", i:" << ci.i << ", j:" << ci.j << ")";
+	  ", i:" << ci.i << ", j:" << ci.j << " start_idx: " << ci.start_idx <<
+	  " end_idx: " << ci.end_idx << ")";
 	return os;
       }
     };
@@ -58,16 +63,19 @@ namespace ext {
     template <class Container, typename T>
     void load_file_to_container(Container &c, std::string file_name);
     inline bool in_range(const point &p, int x1, int x2, int y);
+    inline bool in_range(const catalog_item &ci, int x1, int x2, int y);
+    inline bool above_sweep_line(const point &p, const point &sweep);
     std::vector<point> L;
     std::set<point> I, D;
     std::vector<catalog_item> catalog;
     size_t id, buffer_size, L_buffer_size, epsilon, L_size, I_size, D_size;
+    bool L_in_memory;
     const int NUM_VARIABLES = 6;
   };
 
   child_structure::child_structure(size_t id) {
     this->id = id;
-
+    this->L_in_memory = false;
     DEBUG_MSG("Load variables into structure");
     io::buffered_stream<size_t> info_file(NUM_VARIABLES);
     info_file.open(get_info_file());
@@ -80,8 +88,8 @@ namespace ext {
     info_file.close();
 
     DEBUG_MSG("Load data into structure");
-    DEBUG_MSG("Loading L");
-    load_file_to_container<std::vector<point>, point>(L, get_L_file());
+    //DEBUG_MSG("Loading L");
+    //load_file_to_container<std::vector<point>, point>(L, get_L_file());
     DEBUG_MSG("Loading I");
     load_file_to_container<std::set<point>, point>(I, get_I_file());
     I_size = I.size();
@@ -101,7 +109,7 @@ namespace ext {
 				   double epsilon, std::vector<point> points) {
 
     this->id = id;
-    
+    this->L_in_memory = true;
     //TODO use exceptions
     if (file_exists(get_info_file()))
       error(1, EEXIST, "child structure already exists");
@@ -135,8 +143,11 @@ namespace ext {
     
     info_file.close();
 
-    DEBUG_MSG("Flushing L");
-    flush_container_to_file<std::vector<point>::iterator,point>(L.begin(), L.end(), get_L_file());
+    if (L_in_memory) {
+      DEBUG_MSG("Flushing L");
+      flush_container_to_file<std::vector<point>::iterator,point>(L.begin(), L.end(),
+								  get_L_file());
+    }
 
     DEBUG_MSG("Flushing I");
     flush_container_to_file<std::set<point>::iterator,point>(I.begin(), I.end(), get_I_file());
@@ -172,6 +183,7 @@ namespace ext {
   }
 
   void child_structure::construct(std::vector<point> points) {
+    L_in_memory = true;
     L = points;
     L_size = points.size();
 #ifdef DEBUG
@@ -211,7 +223,7 @@ namespace ext {
       if ((i+1)%buffer_size == 0) {
         DEBUG_MSG("Writing to catalog");
         DEBUG_MSG(min_x << " " << max_x << " " << min_y << " " << (i+1)/buffer_size-1 << " " << (i+1)/buffer_size-1);
-        catalog.insert(catalog.end(), catalog_item(min_x, max_x, min_y, (i+1)/buffer_size-1, (i+1)/buffer_size-1));
+        catalog.insert(catalog.end(), catalog_item(min_x, max_x, min_y, (i+1)/buffer_size-1, (i+1)/buffer_size-1,i+1-buffer_size,i+1));
         min_x = INF, max_x = -INF, min_y = INF;
         intervals.insert( block((i+1)/buffer_size-1,buffer_size,(i+1)/buffer_size-1));
         DEBUG_MSG("new block: " << (i+1)/buffer_size-1 << ", " << buffer_size);
@@ -226,7 +238,7 @@ namespace ext {
 
       DEBUG_MSG("writing remaining block to catalog");
       DEBUG_MSG(min_x << " " << max_x << " " << min_y << " " << (remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size) << " " << (remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size));
-      catalog.insert(catalog.end(), catalog_item(min_x, max_x, min_y, remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size, remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size));
+      catalog.insert(catalog.end(), catalog_item(min_x, max_x, min_y, remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size, remaining==0 ? points.size()/buffer_size-1 : points.size()/buffer_size,L_size-remaining,L_size));
     }
 
     std::vector<point> out;
@@ -265,9 +277,9 @@ namespace ext {
       } else if (our_size + pred.size == (int)buffer_size) {
         DEBUG_MSG("collapsing with left neighbour");
         DEBUG_MSG("constructing [" << pred.id << ", " << pb_belong_to.right << "]");
-        int limit = pb.first.y;
+        //int limit = pb.first.y;
         for (point p : points_in_blocks[pb_belong_to.id])
-          if (p.y >= limit) {
+	  if (above_sweep_line(p,pb.first)) {
             DEBUG_MSG("above: " << p);
             out.push_back(p);
           }
@@ -275,7 +287,7 @@ namespace ext {
           else DEBUG_MSG("below: " << p);
 #endif
         for (point p : points_in_blocks[pred.id])
-          if (p.y >= limit) {
+	  if (above_sweep_line(p,pb.first)) {
             DEBUG_MSG("above: " << p);
             out.push_back(p);
           }
@@ -291,9 +303,9 @@ namespace ext {
       } else if (our_size + succ.size == (int)buffer_size) {
         DEBUG_MSG("collapsing with right neighbour");
         DEBUG_MSG("constructing [" << pb_belong_to.id << ", " << succ.right << "]");
-	int limit = pb.first.y;
+	//int limit = pb.first.y;
         for (point p : points_in_blocks[pb_belong_to.id])
-          if (p.y >= limit) {
+	  if (above_sweep_line(p,pb.first)) {
             DEBUG_MSG("above: " << p);
             out.push_back(p);
           }
@@ -301,7 +313,7 @@ namespace ext {
           else DEBUG_MSG("below: " << p);
 #endif
         for (point p : points_in_blocks[succ.id])
-          if (p.y >= limit) {
+	  if (above_sweep_line(p,pb.first)) {
             DEBUG_MSG("above: " << p);
             out.push_back(p);
           }
@@ -329,13 +341,17 @@ namespace ext {
 	min_x = std::min_element(out.begin(),out.end())->x;
 	max_x = std::max_element(out.begin(),out.end())->x;
 	DEBUG_MSG(min_x << " " << max_x << " " << pb.first.y << " " << pb_belong_to.id << " " << pb_belong_to.right);
-	catalog.push_back(catalog_item(min_x, max_x, pb.first.y, pb_belong_to.id, pb_belong_to.right));
+	catalog.push_back(catalog_item(min_x, max_x, pb.first.y, pb_belong_to.id, pb_belong_to.right,L.size()-buffer_size, L.size()));
 	out.clear();
 	}
     }
 
   }
 
+  inline bool child_structure::above_sweep_line(const point &p, const point &sweep) {
+    if (p.y == sweep.y) return p.x >= sweep.x;
+    return p.y > sweep.y;
+  }
   void child_structure::insert(point p) {
     DEBUG_MSG("Insert point " << p);
 
@@ -372,19 +388,80 @@ namespace ext {
     return x1 <= p.x && p.x <= x2 && p.y >= y;
   }
 
+  inline bool child_structure::in_range(const catalog_item &ci, int x1, int x2, int y) {
+    return (ci.i == ci.j || ci.min_y < y) &&
+      ((x1 <= ci.min_x && x2 >= ci.max_x) || // interval spans block completely
+       (ci.min_x <= x1 && x2 <= ci.max_x) || // block spans interval completely
+       (ci.min_x <= x1 && x1 <= ci.max_x && ci.max_x <= x2) || // interval starts inside block
+       (ci.min_x <= x2 && x2 <= ci.max_x && x1 <= ci.min_x)); // interval ends inside block
+  }
+      
   std::vector<point> child_structure::report(int x1, int x2, int y) {
     DEBUG_MSG("Reporting points in [" << x1 << ", " << x2 << "] X [" <<
               y << ", \u221E]");
     std::set<point> result;
+
+    if (x2 < x1) return std::vector<point>();
     
+    DEBUG_MSG(" - reporting from I");
     for (point p : I) {
       if (in_range(p, x1, x2, y)) result.insert(p);
+      DEBUG_MSG(" - added point " << p);
     }
 
-    return std::vector<point>(result.begin(),result.end());
+    DEBUG_MSG(" - reporting from L");
+    std::vector<bool> marked(L_size/buffer_size+1,false);
+
+    io::buffered_stream<point>* L_file = 0;
+    if (!L_in_memory) {
+      L_file = new io::buffered_stream<point>(buffer_size);
+      L_file->open(get_L_file());
+    }
+    
+    for (int i = (int)catalog.size()-1; i >= 0; i--) {
+      catalog_item ci = catalog[i];
+      if (in_range(ci,x1,x2,y) && !marked[ci.i]) {
+	for (int j = ci.i; j <= ci.j; j++) marked[j] = true;
+	// Query block
+	if (L_in_memory) {
+	  for (int j = ci.start_idx; j < ci.end_idx; j++) {
+	    if (in_range(L[j],x1,x2,y)) {
+	      result.insert(L[j]);
+	      DEBUG_MSG(" - added point " << L[j]);
+	    } else DEBUG_MSG(" - rejected this bitch: point " << L[j]);
+	  }
+	} else {
+	  DEBUG_MSG("L not in memory: Reading from file");
+	  L_file->seek((off_t)(ci.start_idx*sizeof(point)),SEEK_SET);
+	  for (int j=ci.start_idx; j < ci.end_idx; j++) {
+	    point p = L_file->read();
+	    if (in_range(p,x1,x2,y)) {
+	      result.insert(p);
+	      DEBUG_MSG(" - added point " << p);
+	    } else DEBUG_MSG(" - rejected this bitch: point " << p);
+	  }
+	}
+      }
+    }
+
+    if (!L_in_memory) L_file->close();
+    
+    DEBUG_MSG(" - removing D-points");
+    std::vector<point> final_result;
+    std::set_difference(result.begin(),result.end(),
+			D.begin(),D.end(),
+			std::back_inserter(final_result));
+    
+    return final_result;
   }
 
   void child_structure::rebuild() {
+
+    if (!L_in_memory) {
+      DEBUG_MSG("Loading L");
+      load_file_to_container<std::vector<point>, point>(L, get_L_file());
+    }
+    
     DEBUG_MSG("STARTING REBUILDING");
     //maintain size of L, i.e. L_size
 
@@ -448,57 +525,85 @@ namespace ext {
 
   bool child_structure::valid_memory() {
     DEBUG_MSG("VALIDATING MEMORY");
-    if (!std::is_sorted(L.begin(), L.begin()+L_size)) {
-      DEBUG_MSG("L is not sorted w.r.t x for the first L_size " << L_size << " points");
-      for (point p : L)
-	DEBUG_MSG(" - " << p);
-      return false;
-    }
-    auto comp = [](point p1, point p2) {
-      return p1.y < p2.y || (p1.y == p2.y && p1.x < p2.x);
-    };
-    for (int i = L_size; i <= (int)L.size()-2*(int)buffer_size; i+=(int)buffer_size) {
-      int b_min = std::min_element(L.begin()+i, L.begin()+(i+buffer_size),comp)->y;
-      int b1_min = std::min_element(L.begin()+(i+buffer_size), L.begin()+(i+2*buffer_size),comp)->y;
-      DEBUG_MSG("bi_min: " << b_min << std::endl << "bi+1_min: " << b1_min);
-      if (b_min > b1_min) {
-        DEBUG_MSG("Blocks in L are not increasing in y-value for sweeped points");
-        return false;
+    if (L_in_memory) {
+      if (!std::is_sorted(L.begin(), L.begin()+L_size)) {
+	DEBUG_MSG("L is not sorted w.r.t x for the first L_size " << L_size << " points");
+	for (point p : L)
+	  DEBUG_MSG(" - " << p);
+	return false;
       }
-    }
+      auto comp = [](point p1, point p2) {
+	return p1.y < p2.y || (p1.y == p2.y && p1.x < p2.x);
+      };
+      for (int i = L_size; i <= (int)L.size()-2*(int)buffer_size; i+=(int)buffer_size) {
+	int b_min = std::min_element(L.begin()+i, L.begin()+(i+buffer_size),comp)->y;
+	int b1_min = std::min_element(L.begin()+(i+buffer_size), L.begin()+(i+2*buffer_size),comp)->y;
+	DEBUG_MSG("bi_min: " << b_min << std::endl << "bi+1_min: " << b1_min);
+	if (b_min > b1_min) {
+	  DEBUG_MSG("Blocks in L are not increasing in y-value for sweeped points");
+	  return false;
+	}
+      }
 
-    for (size_t i = 0; i < (L_size%buffer_size==0 ? L_size/buffer_size : L_size/buffer_size+1); i++) {
-      int min_x = catalog[i].min_x;
-      int max_x = catalog[i].max_x;
-      int min_y = catalog[i].min_y;
-      if (min_x > max_x) { DEBUG_MSG("min x > max_x"); return false;}
-      for (size_t j = i*buffer_size; j < std::min(i*buffer_size+buffer_size,L_size); j++) {
-	DEBUG_MSG("Getting point on index " << j << " " << L[j] << " from block " << i);
-        if (L[j].x < min_x || max_x < L[j].x) {
-          DEBUG_MSG("point " << L[j] << " not between " << min_x << " and " << max_x << " in block " << i); return false;}
-        if (L[j].y < min_y) { DEBUG_MSG("point " << L[j] << " has y less than min_y for block " << i); return false;}
-      }
-    }
+      for (size_t i = 0; i < (L_size%buffer_size==0 ? L_size/buffer_size : L_size/buffer_size+1); i++) {
+	int min_x = catalog[i].min_x;
+	int max_x = catalog[i].max_x;
+	int min_y = catalog[i].min_y;
+	int start_idx = catalog[i].start_idx;
+	int end_idx = catalog[i].end_idx;
 
-    for (size_t i = L_size%buffer_size==0 ? L_size/buffer_size : L_size/buffer_size+1; i < catalog.size(); i++) {
-      int min_x = catalog[i].min_x;
-      int max_x = catalog[i].max_x;
-      int min_y = catalog[i].min_y;
-      if (min_x > max_x) { DEBUG_MSG("sweepline: min x " << min_x << " > max_x" << max_x << " in block " << i); return false;}
+	if (start_idx > end_idx) {
+	  DEBUG_MSG("start_idx > end_idx in non-collapsed blocks");
+	  return false;
+	}
+	if ((int)(i*buffer_size) != start_idx) {
+	  DEBUG_MSG("start_idx " << start_idx << " not correct, expected " << i*buffer_size);
+	  return false;
+	}
+	if (min_x > max_x) { DEBUG_MSG("min x > max_x"); return false;}
+	for (size_t j = i*buffer_size; j < std::min(i*buffer_size+buffer_size,L_size); j++) {
+	  DEBUG_MSG("Getting point on index " << j << " " << L[j] << " from block " << i);
+	  if (L[j].x < min_x || max_x < L[j].x) {
+	    DEBUG_MSG("point " << L[j] << " not between " << min_x << " and " << max_x << " in block " << i); return false;}
+	  if (L[j].y < min_y) { DEBUG_MSG("point " << L[j] << " has y less than min_y for block " << i); return false;}
+	}
+      }
 
-      for (size_t j = i*buffer_size-((L_size%buffer_size==0 ? L_size/buffer_size : L_size/buffer_size+1)*buffer_size-L_size); j < (i*buffer_size+buffer_size)-((L_size%buffer_size==0 ? L_size/buffer_size : L_size/buffer_size+1)*buffer_size-L_size); j++) {
-	DEBUG_MSG("Getting point on index " << j << " " << L[j] << " from block " << i);
-	if (L[j].x < min_x || max_x < L[j].x) {
-          DEBUG_MSG("sweepline: point " << L[j] << " not between " << min_x << " and " << max_x << " in block " << i); return false;}
-        if (L[j].y < min_y) { DEBUG_MSG("point " << L[j] << " has y less than min_y for block " << i); return false;}
+      for (size_t i = L_size%buffer_size==0 ? L_size/buffer_size : L_size/buffer_size+1; i < catalog.size(); i++) {
+	int min_x = catalog[i].min_x;
+	int max_x = catalog[i].max_x;
+	int min_y = catalog[i].min_y;
+	int start_idx = catalog[i].start_idx;
+	int end_idx = catalog[i].end_idx;
+	
+	if (start_idx > end_idx) {
+	  DEBUG_MSG("start_idx " << start_idx << " > end_idx " << end_idx);
+	  return false;
+	}
+
+	if (i*buffer_size-((L_size%buffer_size==0 ? L_size/buffer_size : L_size/buffer_size+1)
+			   *buffer_size-L_size) != (size_t)start_idx) {
+	  DEBUG_MSG("start_idx " << start_idx << " not correct, expected " << i*buffer_size);
+	  return false;
+	}
+	
+	if (min_x > max_x) { DEBUG_MSG("sweepline: min x " << min_x << " > max_x" << max_x << " in block " << i); return false;}
+	
+	for (size_t j = i*buffer_size-((L_size%buffer_size==0 ? L_size/buffer_size : L_size/buffer_size+1)*buffer_size-L_size); j < (i*buffer_size+buffer_size)-((L_size%buffer_size==0 ? L_size/buffer_size : L_size/buffer_size+1)*buffer_size-L_size); j++) {
+	  DEBUG_MSG("Getting point on index " << j << " " << L[j] << " from block " << i);
+	  if (L[j].x < min_x || max_x < L[j].x) {
+	    DEBUG_MSG("sweepline: point " << L[j] << " not between " << min_x << " and " << max_x << " in block " << i); return false;}
+	  if (L[j].y < min_y) { DEBUG_MSG("point " << L[j] << " has y less than min_y for block " << i); return false;}
+	}
+	int min_y_i = std::min_element(L.begin()+i*buffer_size,L.begin()+i*buffer_size+buffer_size, comp)->y;
+	if (i*buffer_size+2*buffer_size < L.size() &&
+	    std::min_element(L.begin()+i*buffer_size+buffer_size, L.begin()+i*buffer_size+2*buffer_size, comp)->y < min_y_i) {
+	  DEBUG_MSG("min_y " << min_y << " in i+1 must be greater than or equal to min_y " << min_y_i);
+	  return false;	
+	}
+	
       }
-      int min_y_i = std::min_element(L.begin()+i*buffer_size,L.begin()+i*buffer_size+buffer_size, comp)->y;
-      if (i*buffer_size+2*buffer_size < L.size() &&
-	  std::min_element(L.begin()+i*buffer_size+buffer_size, L.begin()+i*buffer_size+2*buffer_size, comp)->y < min_y_i) {
-	DEBUG_MSG("min_y " << min_y << " in i+1 must be greater than or equal to min_y " << min_y_i);
-	return false;	
-      }
-      
+
     }
 
     for (catalog_item c : catalog) {
