@@ -17,6 +17,9 @@
 \usepackage{listings}
 \usepackage{units}
 
+% theorems
+\newtheorem{theorem}{Theorem}
+
 % Relative references
 \usepackage{varioref}
 
@@ -148,7 +151,37 @@ This problem can sometimes be solved by augmenting the data structure with sever
 
 \chapter{Internal Priority Search Tree}
 
-\chapter{Sublogarithmic Updates}
+\chapter{External Memory Buffered Priority Search Tree}
+In this section we will present an external memory data structure described by Brodal in~\cite{DBLP:journals/corr/Brodal15}. This structure supports updates in amortized $\mathcal{O}\left(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N\right)$, three sided range queries in $\mathcal{O}\left(\frac{1}{\epsilon}\log_B N + \nicefrac{K}{B}\right)$, and can be constructed on $N$ points in the sorting bound.
+
+The data structure relies on a bootstrapped substructure for storing $\mathcal{O}(B^{1+\epsilon})$ points, $0 \leq \epsilon \leq \frac{1}{2}$.
+The structure is very similar to that of Arge et al.~\cite[Section~3.1]{arge_vitter_2003} for handling $\mathcal{O}(B^2)$ points with the main difference being that we reduce the capacity to allow an amortized constant number of I/O's per update. This structure is described further in Section~\ref{sec:child_structure}.
+
+%TODO introduce main data structure here such that we can refer to it in coming section
+
+\section{Child structure} %TODO rename to \mathcal{O}(O^{1+\epsilon}) ?
+\label{sec:child_structure}
+In this section we will describe a data structure that supports the operations stated in Theorem~\ref{thm:child_structure}.
+\begin{theorem}
+\label{thm:child_structure}
+There exists a dynamic data structure for storing $\mathcal{O}(B^{1+\epsilon})$, $0 \leq \epsilon \leq \frac{1}{2}$.
+Insertion and deletion of $s$ points requires amortized $\mathcal{O}(1+\nicefrac{s}{B^{1-\epsilon}})$ I/O's.
+Report queries of the form $[x_1,x_2] \times [y,\infty]$ use $\mathcal{O}(1+\nicefrac{K}{B})$ I/O's.
+The structure uses linear space.
+Finally the structure can be constructed using $\mathcal{O}(\nicefrac{N}{B})$ I/O's given a x-sorted set of $N$ points.
+\end{theorem}
+
+The child structure consists of a static structure $\mathcal{L}$ storing $\mathcal{O}(B^{1+\epsilon})$ points and two buffers $\mathcal{I}$ and $\mathcal{D}$ storing at most $B$ points. $\mathcal{I}$ and $\mathcal{D}$ are initially empty and store delayed insertions and deletions, respectively. A point can occur at most once and in only one of $\mathcal{I}$ and $\mathcal{D}$.
+
+Let $L$ be the points stored in $\mathcal{L}$ and let $\ell = \lceil \nicefrac{\vert L \vert}{B}\rceil$, then $\mathcal{L}$ consists of $2\ell-1$ blocks of $B$ points in each block. The points in $L$ are first partitioned into blocks $b_1,\dots,b_\ell$ sorted by $x$-value. The last block may have size less than $B$.
+
+%TODO we need a figure to illustrate the idea of the sweep line.
+
+To construct blocks $b_{\ell+1},\dots,b_{2\ell}$ we make a vertical sweep over the points in increasing $y$-order. When the sweep line reaches a point in a block $b_i$ that together with an adjacent block, i.e. either $b_{i-1}$ or $b_{i+1}$, contains exactly $B$ points on or above the sweep line, we replace the two blocks by a single block containing the $B$ points on or above the sweep line.  The merged block is denoted $b_{i,j}$ if it contains points from the initial blocks in the range $i$ to $j$. The, now merged blocks, are then excluded from the sweep line. Every merge of adjacent blocks causes the sweep line to intersect one block less resulting in at most $\ell-1$ blocks being created from the sweep.
+
+A catalog structure stores in $\mathcal{O}(1)$ disk blocks a reference to each of the $2\ell-1$ blocks. For block $b_i$ we store the minimum and maximum $x$-values for the points contained in the block. For a merged block $b_{i,j}$ we store the interval $\left[ i,j\right]$ and the minimum $y$-value of the points in the block. This minimum $y$-value is also the point where the sweep line created the block $b_{i,j}$.
+
+%TODO maybe argue that L uses \mathcal{O}(B^{1+\epsilon}) blocks
 
 \chapter{External Memory Priority Search Tree}
 
