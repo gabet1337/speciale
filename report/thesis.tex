@@ -99,17 +99,17 @@ In Section~\ref{chp:prelims} we give a preliminary overview of some of the techn
 \chapter{Model of computation}
 \label{chp:iomodel}
 We will argue the results of this thesis in terms of the external memory model of Aggarwal and Vitter~\cite{Aggarwal:1988/ICS/48529.48535}.
-The external memory model (or I/O model) measures the efficiency of an algorithm by counting the total number of reads and writes performed. In detail the model consists of two levels of memory; a bounded internal memory of size $M$ and an unbounded external memory. For a total of $N$ records we define an \textit{IO} operation to the process of transferring $B$ consecutive records between the two levels of memory as depicted in figure~\ref{fig:io_model}. We restrict all computations on records to be done in internal memory. Throughout the thesis we will let $K$ denote the total number of records in the output.
+The external memory model (or I/O model) measures the efficiency of an algorithm by counting the total number of reads and writes performed. In detail the model consists of two levels of memory; a bounded internal memory of size $M$ and an unbounded external memory. For a total of $N$ records we define an \textit{I/O} operation to the process of transferring $B$ consecutive records between the two levels of memory as depicted in figure~\ref{fig:io_model}. We restrict all computations on records to be done in internal memory. Throughout the thesis we will let $K$ denote the total number of records in the output.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.8\textwidth]{../figures/io_model2.png}
-	\caption{The IO Model. Only reads/writes between internal and external memory are charged.}
+	\caption{The I/O Model. Only reads/writes between internal and external memory are charged.}
 	\tiny{Original (unmodified) figure:~\protect\url{http://www.slideshare.net/shripadthite/jobtalk}}
 	\label{fig:io_model}
 \end{figure}
 
-The fundamental bounds in the external memory model is that scanning can be done in $\mathcal{O}(\text{Scan}) = \mathcal{O}(\nicefrac{N}{B})$, sorting in $\mathcal{O}(\text{Sort}) = \mathcal{O}(\nicefrac{N}{B} \log_{\nicefrac{M}{B}}\nicefrac{N}{B})$ and searching in $\mathcal{O}(\log_B N)$. We denote $\mathcal{O}(\nicefrac{N}{B})$ as being linear in terms of IOs. Note that the $B$ factor is very important as $\nicefrac{N}{B} < \mathcal{O}(\nicefrac{N}{B} \log_{\nicefrac{M}{B}}\nicefrac{N}{B}) \ll N$.
+The fundamental bounds in the external memory model is that scanning can be done in $\mathcal{O}(\text{Scan}) = \mathcal{O}(\nicefrac{N}{B})$, sorting in $\mathcal{O}(\text{Sort}) = \mathcal{O}(\nicefrac{N}{B} \log_{\nicefrac{M}{B}}\nicefrac{N}{B})$ and searching in $\mathcal{O}(\log_B N)$. We denote $\mathcal{O}(\nicefrac{N}{B})$ as being linear in terms of I/Os. Note that the $B$ factor is very important as $\nicefrac{N}{B} < \mathcal{O}(\nicefrac{N}{B} \log_{\nicefrac{M}{B}}\nicefrac{N}{B}) \ll N$.
 
 For convenience we will assume $M > B^2$. This assumption is known as the \textit{tall-cache assumption} in the cache-oblivious model and basically states that the number of blocks \nicefrac{M}{B} is larger than the size of each block $B$~\cite{Prokop99cache-obliviousalgorithms}.
 
