@@ -183,6 +183,9 @@ A catalog structure stores in $\mathcal{O}(1)$ disk blocks a reference to each o
 
 %TODO maybe argue that L uses \mathcal{O}(B^{1+\epsilon}) blocks
 
+Insertions or deletions are stored in $\mathcal{I}$ or $\mathcal{D}$. When a point is inserted in $\mathcal{I}$ or $\mathcal{D}$ we make sure to remove any existing occurrence of the point such that the new update overrides any previous updates. Whenever $\mathcal{I}$ or $\mathcal{D}$ overflows the stored updates are applied to the the set of points in $\mathcal{L}$. This is done by scanning $L$ in increasing $x$-order while applying insertions and deletions, i.e. for each point in $L$ we check whether we should insert a new point from $\mathcal{I}$ before it or if the point should be deleted. This process results in a new set of points $L'$ which once again is partitioned into blocks $b_1,\dots,b_{\ell'}$ and a vertical sweep similar to the previously described sweep is performed to rebuild the merged blocks and catalog.
+This reconstruction is done in $\mathcal{O}(\ell')$ I/O's. As $\ell' = \lceil \nicefrac{\vert L \vert}{B}\rceil$ it requires $\mathcal{O}(\lceil \nicefrac{\vert L \vert}{B}\rceil) = \mathcal{O}(B^\epsilon)$ I/O's to rebuild $\mathcal{L}$. If we amortize this cost over the $>B$ updates the cost becomes $\mathcal{O}\left(\frac{B^\epsilon}{B}\right) = \mathcal{O}\left(\nicefrac{1}{B^{1-\epsilon}}\right)$ amortized I/O's per delayed update.
+
 \chapter{External Memory Priority Search Tree}
 
 \chapter{Our results}
