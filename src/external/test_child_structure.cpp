@@ -9,8 +9,22 @@
 #include "../internal/rb_tree.hpp"
 #include <iterator>
 #include <queue>
+#include <iomanip>
 
 using namespace std;
+
+void print_success() {
+  cout << "\x1b[32m\u2714\x1b[0m" << endl;
+}
+
+void set_width() {
+  cout << left << setw(65);
+}
+
+void print_description(string description) {
+  set_width();
+  cout << description;
+}
 
 vector<point> get_test_points() {
   vector<point> points;
@@ -59,52 +73,52 @@ vector<point> get_gerth_points() {
 }
 
 void test_constructor() {
-  cout << "starting test_constructor ";
+  print_description("starting test_constructor ");
   ext::child_structure cs(0, 2, 0.5, get_test_points());
-  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  print_success();
 }
 
 void test_constructor2() {
-  cout << "starting test_constructor2 ";
+  print_description("starting test_constructor2 ");
   vector<point> points;
   for (int i = 0; i < 5; i++) points.push_back(point(i,i));
   ext::child_structure cs(7, 2, 0.5, points);
 
-  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  print_success();
 }
 
 #ifdef VALIDATE
 void test_valid_after_constructor() {
-  cout << "starting test of validity in memory ";
+  print_description("starting test of validity in memory ");
   ext::child_structure cs(1,4,0.5, get_test_points());
   assert((cs.valid_memory() == true) && "Structure not valid in memory");
-  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  print_success();
 }
 
 void test_valid_after_destructor() {
-  cout << "starting test of validity on disk ";
+  print_description("starting test of validity on disk ");
   ext::child_structure* cs = new ext::child_structure(2,4,0.5, get_test_points());
   delete cs;
   cs = new ext::child_structure(2);
   assert( (cs->valid_disk() == true) && "Structure not valid on disk");
-  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  print_success();
 }
 #endif
 
 void test_error_on_no_existing_child_structure() {
-  cout << "starting test of error on no existing child structure ";
+  print_description("starting test of error on no existing child structure ");
 
   ext::child_structure* cs = new ext::child_structure(3,4,0.5,get_test_points());
   delete cs;
 
   cs = new ext::child_structure(3,4,0.5, get_test_points());
 
-  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  print_success();
 }
 
 void test_flushing_L() {
 
-  cout << "starting test of flushing L ";
+  print_description("starting test of flushing L ");
   
   ext::child_structure* cs = new ext::child_structure(4,4,0.5,get_test_points());
   delete cs;
@@ -120,12 +134,12 @@ void test_flushing_L() {
   assert ((empty_points != read_in) && " points should not be equal");
   assert ((read_in == test_points) && " points not equal");  
 
-  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  print_success();
 }
 
 void test_flush_insert_point() {
 
-  cout << "starting test of inserting point ";
+  print_description("starting test of inserting point ");
 
   ext::child_structure* cs = new ext::child_structure(5,4,0.5,get_test_points());
   cs->insert(point(2,2));
@@ -140,13 +154,13 @@ void test_flush_insert_point() {
   
   I_file.close();
   
-  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  print_success();
   
 }
 
 void test_flush_delete_point() {
 
-  cout << "starting test of delete point ";
+  print_description("starting test of delete point ");
 
   ext::child_structure* cs = new ext::child_structure(6,4,0.5,get_test_points());
   cs->remove(point(2,2));
@@ -161,13 +175,13 @@ void test_flush_delete_point() {
   
   D_file.close();
   
-  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  print_success();
   
 }
 
 
 void test_set_structure() {
-  cout << "starting test of internal::rb_tree ";
+  print_description("starting test of internal::rb_tree ");
 
   internal::rb_tree<int> s;
   
@@ -187,11 +201,11 @@ void test_set_structure() {
 
   assert( s2.predecessor(ii(5,0)) == ii(4,4) );
 
-  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  print_success();
 }
 
 void test_pq() {
-  cout << "starting test of pq ";
+  print_description("starting test of pq ");
   typedef pair<point,int> pi;
   auto comp = [](pi p1, pi p2) { return p1.first.y > p2.first.y;};
   priority_queue<pi, vector<pi>, decltype(comp)> pq(comp);
@@ -202,51 +216,51 @@ void test_pq() {
   assert ( !(pq.top().first == point(3,1)));
   assert( pq.top().first == point(4,0));
 
-  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  print_success();
 }
 
 void test_collapse() {
-  cout << "starting test of correct collapse ";
+  print_description("starting test of correct collapse ");
   vector<point> points = get_gerth_points();
   sort(points.begin(), points.end());
   ext::child_structure cs(8, 4, 0.5, points);
   assert( cs.valid_memory() );
-  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  print_success();
 }
 
 void test_collapse2() {
-  cout << "starting test of correct collapse with uneven points ";
+  print_description("starting test of correct collapse with uneven points ");
   vector<point> points = get_gerth_points();
   sort(points.begin(), points.end());
   points.pop_back();
   points.pop_back();
   ext::child_structure cs(12, 4, 0.5, points);
   assert( cs.valid_memory() );
-  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  print_success();
 }
 
 void test_collapse_left() {
-  cout << "starting test of collapsing left ";
+  print_description("starting test of collapsing left ");
   vector<point> points;
   for (int i = 0; i < 32; i++) points.push_back(point(i,i));
   ext::child_structure cs(9, 4, 0.5, points);
   assert(cs.valid_memory());
-  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  print_success();
 }
 
 void test_collapse_right() {
-  cout << "starting test of collapsing right ";
+  print_description("starting test of collapsing right ");
 
   vector<point> points;
   for (int i = 0; i < 32; i++) points.push_back(point(i,31-i));
   ext::child_structure cs(10, 4, 0.5, points);
   assert(cs.valid_memory());
   
-  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  print_success();
 }
 
 void test_collapse_left_right() {
-  cout << "starting test of collapsing left and right and all the way ";
+  print_description("starting test of collapsing left and right and all the way ");
 
   vector<point> points;
   for (int i = 0; i < 16; i++) points.push_back(point(i,i));
@@ -255,13 +269,13 @@ void test_collapse_left_right() {
   ext::child_structure cs(11, 4, 0.5, points);
   assert(cs.valid_memory());
   
-  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  print_success();
 
 
 }
 
 void test_flush_catalog() {
-  cout << "starting test of flushing catalog ";
+  print_description("starting test of flushing catalog ");
 
   vector<point> points = get_gerth_points();
   sort(points.begin(), points.end());
@@ -274,11 +288,11 @@ void test_flush_catalog() {
   cs = new ext::child_structure(13);
   assert(cs->valid_memory());
   
-  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  print_success();
 }
 
 void test_overflow_I() {
-  cout << "starting test of overflow I buffer ";
+  print_description("starting test of overflow I buffer ");
   vector<point> points;
   ext::child_structure cs(14,2,0.5,points);
   assert(cs.valid_memory());
@@ -289,11 +303,11 @@ void test_overflow_I() {
 
   assert(cs.valid_memory());
 
-  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  print_success();
 }
 
 void test_overflow_I2() {
-  cout << "starting test of overflow I buffer 2 ";
+  print_description("starting test of overflow I buffer 2 ");
   vector<point> points;
   ext::child_structure cs(15,2,0.5,points);
   assert(cs.valid_memory());
@@ -304,11 +318,11 @@ void test_overflow_I2() {
 
   assert(cs.valid_memory());
 
-  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  print_success();
 }
 
 void test_overflow_I3() {
-  cout << "starting test of overflow I buffer 3 ";
+  print_description("starting test of overflow I buffer 3 ");
   vector<point> points;
   ext::child_structure *cs = new ext::child_structure(17,2,0.5,points);
   assert(cs->valid_memory());
@@ -331,11 +345,11 @@ void test_overflow_I3() {
 
   assert(cs->valid_memory());
 
-  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  print_success();
 }
 
 void test_overflow_D() {
-  cout << "starting test of overflow D buffer ";
+  print_description("starting test of overflow D buffer ");
   vector<point> points;
   ext::child_structure cs(16,2,0.5,points);
   assert(cs.valid_memory());
@@ -346,11 +360,11 @@ void test_overflow_D() {
 
   assert(cs.valid_memory());
 
-  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  print_success();
 }
 
 void test_overflow_D2() {
-  cout << "starting test of overflow D buffer 2 ";
+  print_description("starting test of overflow D buffer 2 ");
   vector<point> points;
   ext::child_structure cs(18,2,0.5,points);
   assert(cs.valid_memory());
@@ -361,11 +375,11 @@ void test_overflow_D2() {
 
   assert(cs.valid_memory());
 
-  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  print_success();
 }
 
 void test_overflow_D3() {
-  cout << "starting test of overflow D buffer 3 ";
+  print_description("starting test of overflow D buffer 3 ");
   vector<point> points;
   ext::child_structure *cs = new ext::child_structure(19,2,0.5,points);
   assert(cs->valid_memory());
@@ -388,11 +402,11 @@ void test_overflow_D3() {
 
   assert(cs->valid_memory());
 
-  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  print_success();
 }
 
 void test_overflow_I_and_D() {
-  cout << "starting test of overflowing I and D ";
+  print_description("starting test of overflowing I and D ");
 
   vector<point> points;
   points.push_back(point(0,0));
@@ -405,11 +419,11 @@ void test_overflow_I_and_D() {
   cs->remove(point(2,2));
   assert(cs->valid_memory());
 
-  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  print_success();
 }
 
 void test_overflow_I_and_D_2() {
-  cout << "starting test of overflowing I and D 2 ";
+  print_description("starting test of overflowing I and D 2 ");
 
   vector<point> points;
   points.push_back(point(0,0));
@@ -422,43 +436,43 @@ void test_overflow_I_and_D_2() {
   cs->insert(point(2,2));
   assert(cs->valid_memory());
 
-  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  print_success();
 }
 
 void test_report() {
-  cout << "starting report test of gerths points ";
+  print_description("starting report test of gerths points ");
   vector<point> points = get_gerth_points();
   sort(points.begin(), points.end());
   ext::child_structure cs(22,2,0.5,points);
   assert(cs.valid_memory());
   assert( cs.report(10,27,12).size() == 7 );
-  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  print_success();
 }
 
 void test_report_2() {
-  cout << "starting report test of gerths points ";
+  print_description("starting report test of gerths points ");
   vector<point> points = get_gerth_points();
   sort(points.begin(), points.end());
   ext::child_structure cs(23,2,0.5,points);
   assert(cs.valid_memory());
   assert( cs.report(13,13,13).at(0) == point(13,13) );
-  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  print_success();
 }
 
 void test_report_3() {
-  cout << "starting report test of gerths points ";
+  print_description("starting report test of gerths points ");
   vector<point> points = get_gerth_points();
   sort(points.begin(), points.end());
   ext::child_structure cs(24,2,0.5,points);
   assert(cs.valid_memory());
   std::vector<point> result = cs.report(0,32,0);
   assert ( (result == points) && "wrong result");
-  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  print_success();
 }
 
 void test_report_4() {
   
-  cout << "starting report test of gerths points ";
+  print_description("starting report test of gerths points ");
   vector<point> points = get_gerth_points();
   sort(points.begin(), points.end());
   ext::child_structure cs(25,2,0.5,points);
@@ -473,13 +487,13 @@ void test_report_4() {
   result = cs.report(-8,-4,-1000);
   assert ( (result.size() == 0) && "wrong result");
   
-  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  print_success();
   
 }
 
 void test_report_insert_delete_buffer_not_empty() {
   
-  cout << "starting report insert delete not empty ";
+  print_description("starting report insert delete not empty ");
   vector<point> points = get_gerth_points();
   sort(points.begin(), points.end());
   ext::child_structure cs(26,2,0.5,points);
@@ -496,13 +510,13 @@ void test_report_insert_delete_buffer_not_empty() {
   result = cs.report(0,32,0);
   assert ( (result.size() == 34) && "wrong result");
   
-  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  print_success();
   
 }
 
 void test_insert_delete_40K_points() {
 
-  cout << "starting report insert delete 40K points ";
+  print_description("starting report insert delete 40K points ");
 #undef DEBUG  
   ext::child_structure cs(27,1000,0.5,std::vector<point>());
 
@@ -518,7 +532,7 @@ void test_insert_delete_40K_points() {
 
 #define DEBUG
   
-  cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+  print_success();
 }
 
 void test_random_points() {
@@ -535,9 +549,10 @@ void test_random_points() {
 
     int x1 = r.next(100);
     int x2 = r.next(100);
+    if (x1 > x2) swap(x1,x2);
     int y = r.next(100);
 
-    cout << "starting random test on query [" << x1 << "," << x2 << "] X [" << y << ",\u221E] ";
+    print_description("starting random test on query [" + to_string(x1) + "," + to_string(x2) + "] X [" + to_string(y) + ",\u221E] ");
     
     std::vector<point> result = cs.report(x1,x2,y);
     std::vector<point> actual_res;
@@ -567,8 +582,8 @@ void test_random_points() {
     }
     
     assert ( (result == actual_res) && "Wrong query result");
-    cout << " found " << result.size() << " points ";
-    cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+    // cout << " found " << result.size() << " points ";
+    print_success();
   }
   
 }
@@ -599,9 +614,10 @@ void test_random_points_interleaved() {
   
     int x1 = r.next(100);
     int x2 = r.next(100);
+    if (x1 > x2) swap(x1,x2);
     int y = r.next(100);
 
-    cout << "starting random test interleaved on query [" << x1 << "," << x2 << "] X [" << y << ",\u221E] ";
+    print_description("starting random test interleaved on query [" + to_string(x1) + "," + to_string(x2) + "] X [" + to_string(y) + ",\u221E] ");
     
     std::vector<point> result = cs.report(x1,x2,y);
     std::vector<point> actual_res;
@@ -630,10 +646,10 @@ void test_random_points_interleaved() {
 	cout << " - point " << p << endl;
     
       assert ( (result == actual_res) && "Wrong query result");
-      cout << " found " << result.size() << " points ";
+      // cout << " found " << result.size() << " points ";
     }
 
-    cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+    print_success();
     
   }
   
@@ -658,9 +674,10 @@ void test_random_points_with_flush() {
 
     int x1 = r.next(100);
     int x2 = r.next(100);
+    if (x1 > x2) swap(x1,x2);
     int y = r.next(100);
 
-    cout << "starting random test on query [" << x1 << "," << x2 << "] X [" << y << ",\u221E] ";
+    print_description("starting random test on query [" + to_string(x1) + "," + to_string(x2) + "] X [" + to_string(y) + ",\u221E] ");
     
     std::vector<point> result = cs->report(x1,x2,y);
     std::vector<point> actual_res;
@@ -690,10 +707,34 @@ void test_random_points_with_flush() {
     }
     
     assert ( (result == actual_res) && "Wrong query result");
-    cout << " found " << result.size() << " points ";
-    cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
+    // cout << " found " << result.size() << " points ";
+    print_success();
   }
-  
+}
+
+void test_grid_points() {
+  test::random r;
+  vector<point> grid_points;
+  for (int i = 0; i < 1000; i++)
+    for (int j = 0; j < 1000; j++)
+      grid_points.push_back(point(i,j));
+
+  ext::child_structure cs(31, 1024, 0.5, grid_points);
+
+  for (int i = 0; i < 50; i++) {
+    int x1 = r.next(1000);
+    int x2 = r.next(1000);
+    if (x1 > x2) swap(x1,x2);
+    int y = r.next(1000);
+    print_description("starting grid test on query [" + to_string(x1) + "," + to_string(x2) + "] X [" + to_string(y) + ",\u221E] ");
+    vector<point> actual_res = cs.report(x1,x2,y);
+    vector<point> true_res;
+    copy_if (grid_points.begin(), grid_points.end(), std::back_inserter(true_res),
+             [&x1,&x2,&y](point p) { return  x1 <= p.x && p.x <= x2 && p.y >= y; });
+    sort(true_res.begin(), true_res.end());
+    assert( actual_res == true_res );
+    print_success();
+  }
 }
 
 void clean_up() {
@@ -728,6 +769,7 @@ void clean_up() {
   lol = system("rm -rf c_28");
   lol = system("rm -rf c_29");
   lol = system("rm -rf c_30");
+  lol = system("rm -rf c_31");
   
   lol++;
 }
@@ -772,8 +814,9 @@ int main() {
   test_random_points();
   test_random_points_interleaved();
   test_random_points_with_flush();
+  test_grid_points();
   clean_up();
-  
+
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   return 0;
 }
