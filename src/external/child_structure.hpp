@@ -269,6 +269,7 @@ namespace ext {
 	  out.push_back(p);
           L.push_back(p);
         }
+        points_in_blocks[pred.id] = out;
         intervals.erase(succ);
         intervals.erase(pb_belong_to);
         intervals.erase(pred);
