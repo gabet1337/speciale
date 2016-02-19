@@ -17,3 +17,15 @@ VIDEOS
   
 - NPTEL lecture on internal PST
   https://www.youtube.com/watch?v=KO5r0BSRmF4
+
+NOTES
+=====
+- Use tournament tree as pq
+- Use O(B^{1+e}) as Cv in Arge
+- Ask Kenn & Færgemand about top-k selection in linear time
+- Meassure I/O's atomically
+- Cache-Grind
+- Rolf Fagerberg, External buffered B-tree by master's students
+- Use sorted vector as pq
+- xfig, ipe, tex from arxiv
+- Decorator pattern: Test individual methods
