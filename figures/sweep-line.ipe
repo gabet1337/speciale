@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70005" creator="Ipe 7.1.4">
-<info created="D:20160220042818" modified="D:20160220053449"/>
+<info created="D:20160220042818" modified="D:20160220062139"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -202,13 +202,13 @@ h
 <dashstyle name="dash dotted" value="[4 2 1 2] 0"/>
 <dashstyle name="dash dot dotted" value="[4 2 1 2 1 2] 0"/>
 <textsize name="large" value="\large"/>
+<textsize name="small" value="\small"/>
+<textsize name="tiny" value="\tiny"/>
 <textsize name="Large" value="\Large"/>
 <textsize name="LARGE" value="\LARGE"/>
 <textsize name="huge" value="\huge"/>
 <textsize name="Huge" value="\Huge"/>
-<textsize name="small" value="\small"/>
 <textsize name="footnote" value="\footnotesize"/>
-<textsize name="tiny" value="\tiny"/>
 <textstyle name="center" begin="\begin{center}" end="\end{center}"/>
 <textstyle name="itemize" begin="\begin{itemize}" end="\end{itemize}"/>
 <textstyle name="item" begin="\begin{itemize}\item{}" end="\end{itemize}"/>
@@ -262,7 +262,7 @@ h
 <use name="mark/fdisk(sfx)" pos="216 716" size="normal" stroke="black" fill="white"/>
 <use name="mark/fdisk(sfx)" pos="232 696" size="normal" stroke="black" fill="white"/>
 <use matrix="1 0 0 1 0 8" name="mark/fdisk(sfx)" pos="236 744" size="normal" stroke="black" fill="white"/>
-<use matrix="1 0 0 1 0 4" name="mark/fdisk(sfx)" pos="212 780" size="normal" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 -8 4" name="mark/fdisk(sfx)" pos="212 780" size="normal" stroke="black" fill="white"/>
 <use name="mark/fdisk(sfx)" pos="248 708" size="normal" stroke="black" fill="white"/>
 <use name="mark/fdisk(sfx)" pos="264 724" size="normal" stroke="black" fill="white"/>
 <use matrix="1 0 0 1 0 4" name="mark/fdisk(sfx)" pos="248 760" size="normal" stroke="black" fill="white"/>
