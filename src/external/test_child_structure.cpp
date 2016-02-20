@@ -737,6 +737,48 @@ void test_grid_points() {
   }
 }
 
+void test_figure_points() {
+  print_description("Testing the points in our own figure");
+  vector<point> points;
+
+  points.push_back(point(88, 704));
+  points.push_back(point(104, 748));
+  points.push_back(point(120,704));
+  points.push_back(point(140, 708));
+  points.push_back(point(120, 728));
+  points.push_back(point(128, 716));
+  points.push_back(point(168, 768));
+  points.push_back(point(156, 744));
+  points.push_back(point(172, 804));
+  points.push_back(point(184, 724));
+  points.push_back(point(200, 712));
+  points.push_back(point(184, 784));
+  points.push_back(point(216, 716));
+  points.push_back(point(232, 696));
+  points.push_back(point(236, 744));
+  points.push_back(point(212, 780));
+  points.push_back(point(248, 708));
+  points.push_back(point(264, 724));
+  points.push_back(point(248, 760));
+  points.push_back(point(280, 712));
+  points.push_back(point(300, 716));
+  points.push_back(point(276, 804));
+  points.push_back(point(312, 744));
+  points.push_back(point(328, 760));
+  points.push_back(point(328, 796));
+  points.push_back(point(100, 716));
+  points.push_back(point(292, 728));
+  points.push_back(point(212, 740));
+  points.push_back(point(88, 760));
+  points.push_back(point(148, 776));
+  points.push_back(point(316, 780));
+  points.push_back(point(268, 792));
+
+  sort(points.begin(),points.end());
+  ext::child_structure cs(32, 4, 0.5, points);
+  print_success();
+}
+
 void clean_up() {
   int lol = system("rm -rf c_0");
   lol =system("rm -rf c_1");
@@ -770,6 +812,7 @@ void clean_up() {
   lol = system("rm -rf c_29");
   lol = system("rm -rf c_30");
   lol = system("rm -rf c_31");
+  lol = system("rm -rf c_32");
   
   lol++;
 }
@@ -783,7 +826,7 @@ int main() {
   test_valid_after_constructor();
   test_valid_after_destructor();
 #endif
-  //test_error_on_no_existing_child_structure();
+  // test_error_on_no_existing_child_structure();
   test_flushing_L();
   test_flush_insert_point();
   test_flush_delete_point();
@@ -814,7 +857,8 @@ int main() {
   test_random_points();
   test_random_points_interleaved();
   test_random_points_with_flush();
-  test_grid_points();
+  test_grid_points(); 
+  test_figure_points();
   clean_up();
 
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
