@@ -19,6 +19,7 @@
 
 % theorems
 \newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
 
 % Relative references
 \usepackage{varioref}
@@ -151,6 +152,29 @@ The technique of \textit{filtering} is used on retrieval problems where we query
 It is often possible to develop dynamic external memory data structures by "externalizing" the equivalent internal memory data structure. In the case of trees this typically involves increasing the fanout from binary to multiway. This, however, results in problems when searching and reporting items from the tree, e.g. it might be the case that each subtree of a node only contributes one item to the query answer each costing one I/O.
 
 This problem can sometimes be solved by augmenting the data structure with several filtering substructures, i.e. smaller versions of the same problem. This approach was first described by Arge and Vitter~\cite{arge_vitter_2003} in a paper giving an optimal solution to diagonal corner two-sided 2D queries. Each of the substructures typically holds $\mathcal{O}(B^2)$ elements, and answers queries in $\log_B B^2 + \nicefrac{K}{B}$, where $K$ is the size of the output. It can even be a static structure if it can be constructed in $\mathcal{O}(B)$ I/O's, since $B$ updates can be stored in a separate buffer and applied using a global rebuild in amortized $\mathcal{O}(1)$ I/O's per update~\cite{vitter_2008}.
+
+\section{B-tree}
+The B-tree is to external memory what the balanced binary search tree is to internal memory. It supports insertions, deletions, and searching in $\mathcal{O}(h)$ where $h$ is the height of the tree. The height of the tree depends on the branching parameter, i.e. the maximum number of children a node can have. This parameter typically depends on the characterics of the disk used and the problem at hand. A B-tree on $N$ elements are stored in $\mathcal{O}(\nicefrac{N}{B})$ blocks and can be constructed in the sorting bound.
+This gives the following defintion of a B-tree:
+
+\begin{definition}
+\label{def:btree}
+$\mathcal{T}$ is a B-tree with branching parameter $b$ if
+\begin{itemize}
+	\item All leaves have the same depth
+	\item All nodes except for the root have degree between $\frac{1}{4}b$ and $b$ elements.
+	\item The root has degree between $2$ and $b$.
+	\item Elements are stored in non-decreasing order in the nodes.
+	\item The keys of node $x$, $x.key_i$, seperate the children's elements into ranges such that if $k_i$ is a key stored in child $c_i$ then $k_1 \leq x.key_1 \leq k_2 \leq x.key_2 \leq \cdots$
+\end{itemize}
+\end{definition}
+
+It follows from the definition that if $b=\Theta(B)$ then a B-tree will have height $\mathcal{O}(\log_B N)$.
+
+Seaching in a B-tree is very much similar to searching in a binary search tree. Instead of making a binary decision at each node we instead have to make a multiway branching decision. If the element we are searching for is not contained in the current node, we find the smallest $i$ such that the key we are searching for is less than $x.key_i$. We then recursively search for the key in child $c_i$.
+
+%TODO inserting into a B-tree + splitting a B-tree node
+%TODO deleting in a B-tree + fusing a B-tree node
 
 \chapter{Related work}
 
