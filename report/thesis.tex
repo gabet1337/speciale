@@ -14,8 +14,6 @@
 \usepackage{datetime}
 \usepackage{epstopdf} 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 % This font looks so good.
 \usepackage[sc]{mathpazo}
 
@@ -23,6 +21,7 @@
 \usepackage{algorithm}
 \usepackage{algorithmic}
 \usepackage{multirow}
+
 % Code comments like [CLRS]
 \renewcommand{\algorithmiccomment}[1]{\makebox[5cm][l]{$\triangleright$ \textit{#1}}}
 \usepackage{framed,graphicx,xcolor}
@@ -32,6 +31,7 @@
 
 % theorems
 \newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
 
 % Relative references
 \usepackage{varioref}
@@ -44,9 +44,6 @@
 \usepackage{titlesec}
 \titleformat*{\section}{\normalsize\bfseries}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
 \bibliographystyle{alpha}
 
 \renewcommand*\ttdefault{txtt}
@@ -58,8 +55,6 @@
 % see http://imf.au.dk/system/latex/bog/
 
 \begin{document}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \pagestyle{empty} 
 \pagenumbering{roman} 
@@ -131,8 +126,14 @@ Another price of this move to internal memory is the actual cost of running serv
 An integral problem of computational geometry is that of range searching. The problem arises in many different applications with huge data sets such as geographic information systems, spatial databases, and computer graphics. The problem can be formally described as follows. Let $\mathcal{S}$ be a set of $N$ points in $\mathbb{R}^d$, and let $\mathcal{R}$ be a family of subsets of $\mathbb{R}^d$. Our objective is to preprocess $\mathcal{S}$ such that for a query range $r \in \mathcal{R}$, the points in $\mathcal{S} \cap r$ can be reported or counted efficiently~\cite{Agarwal99geometricrange}. The ranges can be anything from rectangles and halfspaces to balls.
 
 In this thesis we consider the problem of maintaining a dynamic set, $\mathcal{S}$, of $N$ points in $\mathbb{R}^2$ in external memory. The set of points can be updated by insertion and deletion. The set will be processed such that we are able to report three-sided range queries, i.e. given a range of the type $[x_1,x_2] \times [y,\infty]$, we report points in $\mathcal{S} \cap [x_1,x_2] \times [y,\infty]$.
-%TODO insert a figure resembling figure 1 in Gerths paper.
 
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=1]{../figures/three-sided-query}
+	\caption{A query of the form $[x_1,x_2] \times [y,\infty]$, reporting all points in the grey area.}
+	\label{fig:three-sided-query}
+\end{figure}
+ 
 The thesis will present several solutions to this problem, implement, and experimentally compare solutions.
 %TODO above section should be better presented.
 
@@ -193,6 +194,29 @@ It is often possible to develop dynamic external memory data structures by "exte
 
 This problem can sometimes be solved by augmenting the data structure with several filtering substructures, i.e. smaller versions of the same problem. This approach was first described by Arge and Vitter~\cite{arge_vitter_2003} in a paper giving an optimal solution to diagonal corner two-sided 2D queries. Each of the substructures typically holds $\mathcal{O}(B^2)$ elements, and answers queries in $\log_B B^2 + \nicefrac{K}{B}$, where $K$ is the size of the output. It can even be a static structure if it can be constructed in $\mathcal{O}(B)$ I/O's, since $B$ updates can be stored in a separate buffer and applied using a global rebuild in amortized $\mathcal{O}(1)$ I/O's per update~\cite{vitter_2008}.
 
+\section{B-tree}
+The B-tree is to external memory what the balanced binary search tree is to internal memory. It supports insertions, deletions, and searching in $\mathcal{O}(h)$ where $h$ is the height of the tree. The height of the tree depends on the branching parameter, i.e. the maximum number of children a node can have. This parameter typically depends on the characterics of the disk used and the problem at hand. A B-tree on $N$ elements are stored in $\mathcal{O}(\nicefrac{N}{B})$ blocks and can be constructed in the sorting bound.
+This gives the following defintion of a B-tree:
+
+\begin{definition}
+\label{def:btree}
+$\mathcal{T}$ is a B-tree with branching parameter $b$ if
+\begin{itemize}
+	\item All leaves have the same depth
+	\item All nodes except for the root have degree between $\frac{1}{2}b$ and $b$ elements.
+	\item The root has degree between $2$ and $b$.
+	\item Elements are stored in non-decreasing order in the nodes.
+	\item The keys of node $x$, $x.key_i$, seperate the children's elements into ranges such that if $k_i$ is a key stored in child $c_i$ then $k_1 \leq x.key_1 \leq k_2 \leq x.key_2 \leq \cdots$
+\end{itemize}
+\end{definition}
+
+It follows from the definition that if $b=\Theta(B)$ then a B-tree will have height $\mathcal{O}(\log_B N)$.
+
+Seaching in a B-tree is very much similar to searching in a binary search tree. Instead of making a binary decision at each node we instead have to make a multiway branching decision. If the element we are searching for is not contained in the current node, we find the smallest $i$ such that the key we are searching for is less than $x.key_i$. We then recursively search for the key in child $c_i$.
+
+%TODO inserting into a B-tree + splitting a B-tree node
+%TODO deleting in a B-tree + fusing a B-tree node
+
 \chapter{Related work}
 
 
@@ -222,7 +246,12 @@ The child structure consists of a static structure $\mathcal{L}$ storing $\mathc
 
 Let $L$ be the points stored in $\mathcal{L}$ and let $\ell = \lceil \nicefrac{\vert L \vert}{B}\rceil$, then $\mathcal{L}$ consists of $2\ell-1$ blocks of $B$ points in each block. The points in $L$ are first partitioned into blocks $b_1,\dots,b_\ell$ sorted by $x$-value. The last block may have size less than $B$.
 
-%TODO we need a figure to illustrate the idea of the sweep line.
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=1]{../figures/sweep-line}
+	\caption{Child structure for $B=4$. The points are represented by white nodes. The sweep line has merged blocks $b_1$ and $b_2$ at the point where the blocks contain $4$ points on or above the line. This is represented by a line segment with black endpoints and the $b_{1,2}$ label. The same goes for the other merged blocks created.}
+	\label{fig:sweep-line}
+\end{figure}
 
 \textbf{To construct} blocks $b_{\ell+1},\dots,b_{2\ell}$ we make a vertical sweep over the points in increasing $y$-order. When the sweep line reaches a point in a block $b_i$ that together with an adjacent block, i.e. either $b_{i-1}$ or $b_{i+1}$, contains exactly $B$ points on or above the sweep line, we replace the two blocks by a single block containing the $B$ points on or above the sweep line.  The merged block is denoted $b_{i,j}$ if it contains points from the initial blocks in the range $i$ to $j$. The, now merged blocks, are then excluded from the sweep line. Every merge of adjacent blocks causes the sweep line to intersect one block less resulting in at most $\ell-1$ blocks being created from the sweep.
 
@@ -240,7 +269,14 @@ This reconstruction is done in $\mathcal{O}(\ell')$ I/O's. As $\ell' = \lceil \n
 % QUERIES %%%
 %%%%%%%%%%%%%
 \textbf{Queries} of the form $[x_1,x_2] \times [y,\infty]$ can be answered by scanning the catalog to find the blocks intersected by the sweep when it was at $y$. This corresponds directly to the $t$ line segments immediately below the line segment imposed by the bottom of the query range. These blocks will contain a superset of the points contained in our query.
-%TODO insert reference to some figure and explain the query and stuff
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=1]{../figures/sweep-line-with-query}
+	\caption{The grey area is our query and we should report the points within. This is done by finding the fat line segments which is the segments just below the sweep line at $y$. The segments can be found using the catalog and the blocks can be scanned and points reported in $\mathcal{O}(1+\nicefrac{K}{B})$.}
+	\label{fig:sweep-line-query}
+\end{figure}
+
 We know from construction that the blocks intersected contains $B$ points on or above the sweep line. The left most and right most of these blocks are not necessarily fully contained in the query range and do not necessarily contain any points to report. We know that the blocks must contain at least $B\lfloor \nicefrac{(t-2)}{2}\rfloor$ points since two adjacent blocks in the query range at the sweep line would otherwise have been merged to a single block containing just $B$ points, i.e. if we force merge all adjacent blocks two and two we would end up with $\nicefrac{(t-2)}{2}$ blocks each with at least $B$ points on or above the sweep line. It follows that the output is at least $K \geq B\lfloor \nicefrac{(t-2)}{2}\rfloor$.
 
 The $t$ relevant blocks are scanned and the points contained in the query are reported. The total number of I/O's required becomes $\mathcal{O}(1+t) = \mathcal{O}(1+\nicefrac{K}{B})$ as $t \leq 2\frac{K}{B}-2$ from the previous observation.
