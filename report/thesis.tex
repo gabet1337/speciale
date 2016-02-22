@@ -59,13 +59,13 @@
 \pagestyle{empty} 
 \pagenumbering{roman} 
 \vspace*{\fill}\noindent{\rule{\linewidth}{1mm}\\[4ex]
-{\Huge\sf 3-sided Range Reporting}\\[2ex]
+{\Huge\sf Three-sided Range Reporting}\\[2ex]
 {\huge\sf Peter Gabrielsen, 20114179}\\[2ex]
 {\huge\sf Christoffer Hansen, 20114637}\\[2ex]
 \noindent\rule{\linewidth}{1mm}\\[4ex]
 \noindent{\Large\sf Master's Thesis, Computer Science\\[1ex] 
 \monthname\ \the\year  \\[1ex] Project Advisor: Kasper Green Larsen
-\\[1ex] Formal Advisor: Gerth Stølting Brodal\\[15ex]}\\[\fill]}
+\\[1ex] Formal Advisor: Gerth St\o lting Brodal\\[15ex]}\\[\fill]}
 \epsfig{file=logo.eps}\clearpage
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,13 +82,13 @@
 \todo{in Danish\dots}
 
 \chapter*{Acknowledgements}
-\addcontentsline{toc}{chapter}{Acknowledgments}
+\addcontentsline{toc}{chapter}{Acknowledgements}
 
 \todo{\dots}
 
 \vspace{2ex}
 \begin{flushright}
-  \emph{Karsken Bælg,}\\
+  \emph{Peter Gabrielsen and Christoffer Holb\ae k Hansen}\\
   \emph{Aarhus, \today.}
 \end{flushright}
 
@@ -317,7 +317,7 @@ This section will present the implementation specific design choices made for th
 
 \textbf{Sweeping} of the y-axis is done from bottom to top using a priority queue from the C++ standard library. Initially we put all points in the priority queue keyed on the y-value and with an auxiliary information about the block it initially belonged to. When popping an element we make sure to maintain a counter on the most recent block holding the element. This allows us to collapse adjacent blocks.
 
-\textbf{Maintainance of blocks} is done using a Red-Black search tree $\mathcal{T}$ on block id. When partitioning the $\vert L \vert$ points into $\ell = \lceil\lvert L \lvert / B\rceil$ blocks we initially construct $T$ on data points $1, 2, \dots, \ell$. As each point carries information about the block id it initially belonged to, we are able to find adjacent blocks using a \texttt{successor} and \texttt{predecessor} query on block id in $\mathcal{T}$. Whenever the sweepline reaches a point in a block where the block together with an adjacent block contains exactly $B$ points on or above the sweepline, we either fusion with the block on the left, with the block on the right, or with both the block on left and the block on right. When fusing with the left block we simply delete the block id for the current block in $\mathcal{T}$. When fusing with a right block we delete the successor of the current block id. When fusing with both a left and right block we delete both the current block id and the successor of the current block id. This idea is inspired by the concept of interval trees presented in ?????. %TODO Indsæt reference
+\textbf{Maintainance of blocks} is done using a Red-Black search tree $\mathcal{T}$ on block id. When partitioning the $\vert L \vert$ points into $\ell = \lceil\lvert L \lvert / B\rceil$ blocks we initially construct $T$ on data points $1, 2, \dots, \ell$. As each point carries information about the block id it initially belonged to, we are able to find adjacent blocks using a \texttt{successor} and \texttt{predecessor} query on block id in $\mathcal{T}$. Whenever the sweepline reaches a point in a block where the block together with an adjacent block contains exactly $B$ points on or above the sweepline, we either fusion with the block on the left, with the block on the right, or with both the block on left and the block on right. When fusing with the left block we simply delete the block id for the current block in $\mathcal{T}$. When fusing with a right block we delete the successor of the current block id. When fusing with both a left and right block we delete both the current block id and the successor of the current block id. This idea is inspired by the concept of interval trees presented in ?????. %TODO Indsï¿½t reference
 Every time a fusion of blocks is caused we create a copy of all points belonging to the new block to the back of $L$. For the newly created block we update the \texttt{catalog structure} with information about the minimum y-value, the block id of the initial left-most and right-most block being covered and indices into $L$.
 It is clear we always create at least one less block whenever we fusion. This gives a total of $\mathcal{O}(\ell) = \mathcal{O}(B^{\epsilon})$ blocks.
 
