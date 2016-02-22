@@ -2,6 +2,7 @@
 #define BUFFERED_PST_HPP
 #include "../common/point.hpp"
 #include "../common/debug.hpp"
+#include "../common/utilities.hpp"
 #include "child_structure.hpp"
 #include <vector>
 #include <string>
@@ -38,12 +39,8 @@ namespace ext {
       bool point_buffer_underflow();
       void handle_insert_buffer_overflow();
       void handle_point_buffer_overflow();
-      template <class InputIterator, typename T>
-      void flush_container_to_file(InputIterator first, InputIterator last,
-				   std::string file_name);
-      std::string get_point_buffer_file_name();
-      std::string get_directory();
-      bool file_exists(std::string file_name);
+      std::string get_point_buffer_file_name(int id);
+      std::string get_directory(int id);
       bool is_leaf();
       bool b_is_leaf;
       bool is_root();
@@ -66,26 +63,21 @@ namespace ext {
     DEBUG_MSG("Constructed pst_node with id " << id << " and buffer_size: " << buffer_size);
   }
 
-  std::string buffered_pst::buffered_pst_node::get_point_buffer_file_name() {
-    return get_directory() + "/point_buffer";
+  std::string buffered_pst::buffered_pst_node::get_point_buffer_file_name(int id) {
+    return get_directory(id) + "/point_buffer";
   }
 
-  std::string buffered_pst::buffered_pst_node::get_directory() {
+  std::string buffered_pst::buffered_pst_node::get_directory(int id) {
     return std::to_string(id);
-  }
-
-  bool buffered_pst::buffered_pst_node::file_exists(std::string file_name) {
-    struct stat st;
-    return stat(file_name.c_str(),&st) == 0;
   }
   
   buffered_pst::buffered_pst_node::~buffered_pst_node() {
 
-    if (!file_exists(get_directory())) mkdir(get_directory().c_str(), 0700);
+    if (!util::file_exists(get_directory(id))) mkdir(get_directory(id).c_str(), 0700);
     
     DEBUG_MSG("Flushing point buffer");
-    flush_container_to_file<std::set<point>::iterator,point>
-      (point_buffer.begin(),point_buffer.end(), get_point_buffer_file_name());
+    util::flush_container_to_file<std::set<point>::iterator,point>
+      (point_buffer.begin(),point_buffer.end(), get_point_buffer_file_name(id), buffer_size);
 
     // DEBUG_MSG("Flushing insert buffer");
     // flush_container_to_file<std::set<point>::iterator,point>
@@ -123,19 +115,6 @@ namespace ext {
       // TODO handle this correct.
       point_buffer.insert(p);
     }
-  }
-
-  
-  template <class InputIterator, typename T>
-  void buffered_pst::buffered_pst_node::flush_container_to_file
-  (InputIterator first, InputIterator last, std::string file_name) {
-    io::buffered_stream<T> file(buffer_size);
-    file.open(file_name);
-    while (first != last) {
-      file.write(*first);
-      first++;
-    }
-    file.close();
   }
 
   bool buffered_pst::buffered_pst_node::point_buffer_overflow() {
@@ -187,9 +166,6 @@ namespace ext {
 	     points.size()/2; it++) {
 	c2.insert(*it);
       }
-	
-      flush_container_to_file<std::vector<point>::iterator,point>
-	(points.begin()+points.size()/4,points.begin()+points.size()/2,std::string("pst_2"));
 
       point_buffer = std::set<point>(points.begin()+points.size()/2,points.end());
 
@@ -202,7 +178,6 @@ namespace ext {
       b_is_leaf = false;
     }
   }
-      
 
   void buffered_pst::buffered_pst_node::handle_insert_buffer_overflow() {
     DEBUG_MSG("Starting to handle insert buffer overflow");
@@ -300,7 +275,9 @@ namespace ext {
     root->insert(p);
   }
   
-  buffered_pst::~buffered_pst() {  }
+  buffered_pst::~buffered_pst() {
+    //TODO: should delete all files of children
+  }
 
 #ifdef DEBUG
   bool buffered_pst::is_valid() {

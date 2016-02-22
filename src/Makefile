@@ -7,6 +7,7 @@ CFLAGS = $(DEBUG) -c
 
 PROGRAMS = ipst stream_test ctest epst
 
+UTILITIES = common/utilities.hpp
 POINT = common/point.hpp
 STREAM = stream/stream.hpp
 RB = internal/rb_tree.hpp
@@ -15,20 +16,21 @@ INTERNAL_PRIORITY_SEARCH_TREE = internal/priority_search_tree.hpp
 EXTERNAL_CHILD_STRUCTURE = external/child_structure.hpp
 BUFFERED_PST = external/buffered_pst.hpp
 
-ipst : $(POINT) $(INTERNAL_PRIORITY_SEARCH_TREE)
+ipst : $(POINT) $(INTERNAL_PRIORITY_SEARCH_TREE) internal/test_priority_search_tree.cpp
 	$(CC) $(LFLAGS) $(POINT) $(INTERNAL_PRIORITY_SEARCH_TREE) internal/test_priority_search_tree.cpp -o ipst
 
-stream_test : $(STREAM) $(POINT) stream/test_stream.cpp
-	$(CC) $(LFLAGS) $(STREAM) $(POINT) stream/test_stream.cpp -o stream_test
+stream_test : $(STREAM) $(POINT) $(UTILITIES) stream/test_stream.cpp
+	$(CC) $(LFLAGS) $(STREAM) $(POINT) $(UTILITIES) stream/test_stream.cpp -o stream_test
 
-ctest : $(STREAM) $(POINT) $(RB) $(EXTERNAL_CHILD_STRUCTURE) $(TEST_LIB) external/test_child_structure.cpp
-	$(CC) $(LFLAGS) $(POINT) $(RB) $(STREAM) $(EXTERNAL_CHILD_STRUCTURE) $(TEST_LIB) external/test_child_structure.cpp -o ctest
+ctest : $(STREAM) $(POINT) $(RB) $(EXTERNAL_CHILD_STRUCTURE) $(TEST_LIB) $(UTILITIES) external/test_child_structure.cpp
+	$(CC) $(LFLAGS) $(STREAM) $(POINT) $(RB) $(EXTERNAL_CHILD_STRUCTURE) $(TEST_LIB) $(UTILITIES) external/test_child_structure.cpp -o ctest
 
-epst : $(POINT) $(STREAM) $(BUFFERED_PST) $(EXTERNAL_CHILD_STRUCTURE) external/test_buffered_pst.cpp
-	$(CC) $(LFLAGS) $(POINT) $(STREAM) $(BUFFERED_PST) $(EXTERNAL_CHILD_STRUCTURE) external/test_buffered_pst.cpp -o epst
+epst : $(POINT) $(STREAM) $(BUFFERED_PST) $(EXTERNAL_CHILD_STRUCTURE) $(UTILITIES) external/test_buffered_pst.cpp
+	$(CC) $(LFLAGS) $(POINT) $(STREAM) $(BUFFERED_PST) $(EXTERNAL_CHILD_STRUCTURE) $(UTILITIES) external/test_buffered_pst.cpp -o epst
 
-testall : clean	stream_test ctest
-	./stream_test && ./ctest
+
+testall : clean	stream_test ctest epst
+	./stream_test && ./ctest && ./epst
 
 clean:
 	$(RM) *.o *~ $(PROGRAMS)

@@ -3,12 +3,10 @@
 
 #include "../common/debug.hpp"
 #include "../common/point.hpp"
+#include "../common/utilities.hpp"
 #include "../stream/stream.hpp"
 #include "../internal/rb_tree.hpp"
 #include <string>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
 #include <error.h>
 #include <vector>
 #include <set>
@@ -56,12 +54,6 @@ namespace ext {
     std::string get_catalog_file();
     void construct(std::vector<point> points);
     void rebuild();
-    bool file_exists(std::string file_name);
-    template <class InputIterator, typename T>
-    void flush_container_to_file(InputIterator first,
-				 InputIterator last, std::string file_name);
-    template <class Container, typename T>
-    void load_file_to_container(Container &c, std::string file_name);
     inline bool in_range(const point &p, int x1, int x2, int y);
     inline bool in_range(const catalog_item &ci, int x1, int x2, int y);
     inline bool above_sweep_line(const point &p, const point &sweep);
@@ -91,13 +83,13 @@ namespace ext {
     //DEBUG_MSG("Loading L");
     //load_file_to_container<std::vector<point>, point>(L, get_L_file());
     DEBUG_MSG("Loading I");
-    load_file_to_container<std::set<point>, point>(I, get_I_file());
+    util::load_file_to_container<std::set<point>, point>(I, get_I_file(),buffer_size);
     I_size = I.size();
     DEBUG_MSG("Loading D");
-    load_file_to_container<std::set<point>, point>(D, get_D_file());
+    util::load_file_to_container<std::set<point>, point>(D, get_D_file(),buffer_size);
     D_size = D.size();
     DEBUG_MSG("Loading Catalog");
-    load_file_to_container<std::vector<child_structure::catalog_item>,child_structure::catalog_item>(catalog, get_catalog_file());
+    util::load_file_to_container<std::vector<child_structure::catalog_item>,child_structure::catalog_item>(catalog, get_catalog_file(), buffer_size);
     DEBUG_MSG("Finished loading");
     DEBUG_MSG(" - L.size(): " << L.size() << ", L_size: " << L_size);
     DEBUG_MSG(" - I.size(): " << I.size());
@@ -111,7 +103,7 @@ namespace ext {
     this->id = id;
     this->L_in_memory = true;
     //TODO use exceptions
-    if (file_exists(get_info_file()))
+    if (util::file_exists(get_info_file()))
       error(1, EEXIST, "child structure already exists");
     
     this->buffer_size = buffer_size;
@@ -130,7 +122,7 @@ namespace ext {
     DEBUG_MSG("flushing variables to " << get_info_file());
 
     //check if directory exists and open:
-    if (!file_exists(get_directory())) mkdir(get_directory().c_str(), 0700);
+    if (!util::file_exists(get_directory())) mkdir(get_directory().c_str(), 0700);
     io::buffered_stream<size_t> info_file(NUM_VARIABLES);
     info_file.open(get_info_file());
 
@@ -145,41 +137,19 @@ namespace ext {
 
     if (L_in_memory) {
       DEBUG_MSG("Flushing L");
-      flush_container_to_file<std::vector<point>::iterator,point>(L.begin(), L.end(),
-								  get_L_file());
+      util::flush_container_to_file<std::vector<point>::iterator,point>(L.begin(), L.end(),
+									get_L_file(),buffer_size);
     }
 
     DEBUG_MSG("Flushing I");
-    flush_container_to_file<std::set<point>::iterator,point>(I.begin(), I.end(), get_I_file());
+    util::flush_container_to_file<std::set<point>::iterator,point>(I.begin(), I.end(), get_I_file(), buffer_size);
 
     DEBUG_MSG("Flushing D");
-    flush_container_to_file<std::set<point>::iterator,point>(D.begin(), D.end(), get_D_file());
+    util::flush_container_to_file<std::set<point>::iterator,point>(D.begin(), D.end(), get_D_file(), buffer_size);
 
     DEBUG_MSG("Flushing Catalog");
-    flush_container_to_file<std::vector<child_structure::catalog_item>::iterator,
-			    child_structure::catalog_item>(catalog.begin(), catalog.end(), get_catalog_file());
-  }
-
-  template <class InputIterator, typename T>
-  void child_structure::flush_container_to_file(InputIterator first, InputIterator last, std::string file_name) {
-    io::buffered_stream<T> file(buffer_size);
-    file.open(file_name);
-    while (first != last) {
-      file.write(*first);
-      first++;
-    }
-    file.close();
-  }
-
-  template <class Container, typename T>
-  void child_structure::load_file_to_container(Container &c, std::string file_name) {
-    io::buffered_stream<T> file(buffer_size);
-    file.open(file_name);
-    DEBUG_MSG("file_size: " << file.size() / sizeof(T));
-    while (!file.eof()) {
-      c.insert(c.end(), file.read());
-    }
-    file.close();
+    util::flush_container_to_file<std::vector<child_structure::catalog_item>::iterator,
+				  child_structure::catalog_item>(catalog.begin(), catalog.end(), get_catalog_file(), buffer_size);
   }
 
   void child_structure::construct(std::vector<point> points) {
@@ -460,7 +430,7 @@ namespace ext {
 
     if (!L_in_memory) {
       DEBUG_MSG("Loading L");
-      load_file_to_container<std::vector<point>, point>(L, get_L_file());
+      util::load_file_to_container<std::vector<point>, point>(L, get_L_file(), buffer_size);
     }
     
     DEBUG_MSG("STARTING REBUILDING");
@@ -480,12 +450,6 @@ namespace ext {
     I.clear();
     D.clear();
     construct(L_new);
-  }
-  
-  bool child_structure::file_exists(std::string file_name) {
-    DEBUG_MSG("Checking if " << file_name << " exists");
-    struct stat st;
-    return !(stat(file_name.c_str(), &st) == -1);
   }
   
   std::string child_structure::get_directory() {

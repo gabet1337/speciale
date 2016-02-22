@@ -1,11 +1,9 @@
 #include "buffered_pst.hpp"
 #include "../stream/stream.hpp"
+#include "../common/utilities.hpp"
 #include <assert.h>
 #include <iomanip>
 #include <string>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 
 using namespace std;
 
@@ -110,11 +108,6 @@ void test_insert_buffer_overflow() {
   print_success();
 }
 
-bool file_exists(string file_name) {
-  struct stat st;
-  return stat(file_name.c_str(),&st) == 0;
-}
-
 void test_root_split() {
   
   int lol = system("rm -rf 1/");
@@ -126,12 +119,12 @@ void test_root_split() {
   ext::buffered_pst epst(9,0.5);
   for (int i = 0; i < 9; i++) epst.insert(point(i,i));
 
-  assert ((!file_exists("1/point_buffer") && !file_exists("2/point_buffer"))
+  assert ((!util::file_exists("1/point_buffer") && !util::file_exists("2/point_buffer"))
 	  && "We should have no children");
 
   epst.insert(point(9,9));
 
-  assert ((file_exists("1/point_buffer") && file_exists("2/point_buffer"))
+  assert ((util::file_exists("1/point_buffer") && util::file_exists("2/point_buffer"))
 	  && "We should have children");
 
   io::buffered_stream<point> bs(4096);
@@ -158,12 +151,12 @@ void test_root_split_insert_overflow() {
   ext::buffered_pst epst(9,0.5);
   for (int i = 0; i < 9; i++) epst.insert(point(i,i));
 
-  assert ((!file_exists("1/point_buffer") && !file_exists("2/point_buffer"))
+  assert ((!util::file_exists("1/point_buffer") && !util::file_exists("2/point_buffer"))
 	  && "We should have no children");
 
   epst.insert(point(9,9));
 
-  assert ((file_exists("1/point_buffer") && file_exists("2/point_buffer"))
+  assert ((util::file_exists("1/point_buffer") && util::file_exists("2/point_buffer"))
 	  && "We should have children");
 
   io::buffered_stream<point> bs(4096);
@@ -178,7 +171,7 @@ void test_root_split_insert_overflow() {
   for (int i = 10; i < 23; i++) epst.insert(point(i,i));
   epst.insert(point(23,23));
 
-  assert ( file_exists("3/point_buffer") );
+  assert ( util::file_exists("3/point_buffer") );
   bs.open("3/point_buffer");
   assert (bs.read() == point(5,5) && bs.read() == point(6,6) && bs.read() == point(7,7));
   bs.close();
