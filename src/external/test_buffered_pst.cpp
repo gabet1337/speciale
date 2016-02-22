@@ -179,6 +179,9 @@ void test_root_split_insert_overflow() {
   epst.insert(point(23,23));
 
   assert ( file_exists("3/point_buffer") );
+  bs.open("3/point_buffer");
+  assert (bs.read() == point(5,5) && bs.read() == point(6,6) && bs.read() == point(7,7));
+  bs.close();
   
   print_success();
 }
