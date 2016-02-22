@@ -150,6 +150,7 @@ void test_root_split_insert_overflow() {
   
   int lol = system("rm -rf 1/");
   lol = system("rm -rf 2/");
+  lol = system("rm -rf 3/");
   lol++;
     
   print_description("starting test of root split");
@@ -176,6 +177,8 @@ void test_root_split_insert_overflow() {
 
   for (int i = 10; i < 23; i++) epst.insert(point(i,i));
   epst.insert(point(23,23));
+
+  assert ( file_exists("3/point_buffer") );
   
   print_success();
 }
