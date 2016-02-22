@@ -37,7 +37,15 @@ namespace ext {
       bool point_buffer_overflow();
       bool point_buffer_underflow();
       void handle_insert_buffer_overflow();
+      void handle_point_buffer_overflow();
+      template <class InputIterator, typename T>
+      void flush_container_to_file(InputIterator first, InputIterator last,
+				   std::string file_name);
+      std::string get_point_buffer_file_name();
+      std::string get_directory();
+      bool file_exists(std::string file_name);
       bool is_leaf();
+      bool b_is_leaf;
       bool is_root();
       int id;
       size_t buffer_size;
@@ -54,42 +62,84 @@ namespace ext {
   buffered_pst::buffered_pst_node::buffered_pst_node(int id, size_t _buffer_size)
     : buffer_size(_buffer_size)  {
     this->id = id;
+    b_is_leaf = true;
     DEBUG_MSG("Constructed pst_node with id " << id << " and buffer_size: " << buffer_size);
   }
 
+  std::string buffered_pst::buffered_pst_node::get_point_buffer_file_name() {
+    return get_directory() + "/point_buffer";
+  }
+
+  std::string buffered_pst::buffered_pst_node::get_directory() {
+    return std::to_string(id);
+  }
+
+  bool buffered_pst::buffered_pst_node::file_exists(std::string file_name) {
+    struct stat st;
+    return stat(file_name.c_str(),&st) == 0;
+  }
+  
   buffered_pst::buffered_pst_node::~buffered_pst_node() {
+
+    if (!file_exists(get_directory())) mkdir(get_directory().c_str(), 0700);
+    
+    DEBUG_MSG("Flushing point buffer");
+    flush_container_to_file<std::set<point>::iterator,point>
+      (point_buffer.begin(),point_buffer.end(), get_point_buffer_file_name());
+
+    // DEBUG_MSG("Flushing insert buffer");
+    // flush_container_to_file<std::set<point>::iterator,point>
+    //   (point_buffer.begin(),point_buffer.end(), get_point_buffer_file_name());
   }
 
   void buffered_pst::buffered_pst_node::insert(const point &p) {
     DEBUG_MSG("Inserting point " << p << " into node " << id);
-
-    if (is_root()) {
-      /* Inserting into root
-	 1.) Remove duplicates of p from Pr, Ir, Dr
-	 2.) If p.y < smallest y in Pr then p is inserted in Ir or Dr, o.w. in Pr.
-	 3.) If pr overflows then move smallest y-value point to Ir */
+   
+    if (is_root() && is_leaf()) {
+       point_buffer.insert(p);
+      if (point_buffer_overflow()) {
+	handle_point_buffer_overflow();
+      }
+    } else if ( is_root() ) {
       DEBUG_MSG("remove duplicates of p from Pr, Ir, Dr");
       point_buffer.erase(p);
       insert_buffer.erase(p);
       delete_buffer.erase(p);
       DEBUG_MSG("Check if put into Ir or Pr");
       point min_y = *std::min_element(point_buffer.begin(), point_buffer.end(),
-                                      [] (const point &p1, const point &p2) {
-                                        return p1.y < p2.y;
-                                      });
+				      [] (const point &p1, const point &p2) {
+					return p1.y < p2.y;
+				      });
       if (p.y < min_y.y) insert_buffer.insert(p);
       else point_buffer.insert(p);
       if ( point_buffer_overflow() ) {
-        DEBUG_MSG("Pr overflow: Moving point with smallest y-value from Pr to Ir");
-        point_buffer.erase(min_y);
-        insert_buffer.insert(min_y);
-        //TODO: handle insert_buffer overflow here
-        if ( insert_buffer_overflow() ) handle_insert_buffer_overflow();
+	DEBUG_MSG("Pr overflow: Moving point with smallest y-value from Pr to Ir");
+	point_buffer.erase(min_y);
+	insert_buffer.insert(min_y);
+	//TODO: handle insert_buffer overflow here
+	if ( insert_buffer_overflow() ) handle_insert_buffer_overflow();
       }
+    } else if ( is_leaf() ) {
+      // TODO handle this correct.
+      point_buffer.insert(p);
     }
   }
 
+  
+  template <class InputIterator, typename T>
+  void buffered_pst::buffered_pst_node::flush_container_to_file
+  (InputIterator first, InputIterator last, std::string file_name) {
+    io::buffered_stream<T> file(buffer_size);
+    file.open(file_name);
+    while (first != last) {
+      file.write(*first);
+      first++;
+    }
+    file.close();
+  }
+
   bool buffered_pst::buffered_pst_node::point_buffer_overflow() {
+    if ( is_root() && is_leaf()) return point_buffer.size() > buffer_size;
     if ( is_root() ) return point_buffer.size() > buffer_size;
     if ( is_leaf() ) return point_buffer.size() >= buffer_size/2;
     return point_buffer.size() > buffer_size;
@@ -109,12 +159,50 @@ namespace ext {
   }
 
   bool buffered_pst::buffered_pst_node::is_leaf() {
-    return true;
+    return b_is_leaf;
   }
 
   bool buffered_pst::buffered_pst_node::is_root() {
     return id == 0;
   }
+
+  void buffered_pst::buffered_pst_node::handle_point_buffer_overflow() {
+    DEBUG_MSG("Starting to handle point buffer overflow");
+    
+    if ( is_leaf() && is_root() ) {
+    
+      std::vector<point> points(point_buffer.begin(), point_buffer.end());
+      std::sort(points.begin(),points.end(),[](const point &p1, const point &p2)
+		{return p1.y < p2.y || (p1.y == p2.y && p1.x < p2.x);});
+      std::sort(points.begin(),points.begin()+points.size()/2);
+	
+      buffered_pst_node c1(1, buffer_size);
+      buffered_pst_node c2(2, buffer_size);
+	
+      for (auto it=points.begin(); it != points.begin()+points.size()/4; it++) {
+	c1.insert(*it);
+      }
+
+      for (auto it=points.begin()+points.size()/4; it != points.begin()+
+	     points.size()/2; it++) {
+	c2.insert(*it);
+      }
+	
+      flush_container_to_file<std::vector<point>::iterator,point>
+	(points.begin()+points.size()/4,points.begin()+points.size()/2,std::string("pst_2"));
+
+      point_buffer = std::set<point>(points.begin()+points.size()/2,points.end());
+
+#ifdef DEBUG
+      DEBUG_MSG("Points in point_buffer");
+      for (auto p : point_buffer)
+	DEBUG_MSG(p);
+#endif
+
+      b_is_leaf = false;
+    }
+  }
+      
 
   void buffered_pst::buffered_pst_node::handle_insert_buffer_overflow() {
     DEBUG_MSG("Starting to handle insert buffer overflow");
