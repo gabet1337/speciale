@@ -9,6 +9,7 @@ PROGRAMS = ipst stream_test ctest epst
 
 UTILITIES = common/utilities.hpp
 POINT = common/point.hpp
+RANGE = external/range.hpp
 STREAM = stream/stream.hpp
 RB = internal/rb_tree.hpp
 TEST_LIB = common/test_lib.hpp
@@ -25,8 +26,8 @@ stream_test : $(STREAM) $(POINT) $(UTILITIES) stream/test_stream.cpp
 ctest : $(STREAM) $(POINT) $(RB) $(EXTERNAL_CHILD_STRUCTURE) $(TEST_LIB) $(UTILITIES) external/test_child_structure.cpp
 	$(CC) $(LFLAGS) $(STREAM) $(POINT) $(RB) $(EXTERNAL_CHILD_STRUCTURE) $(TEST_LIB) $(UTILITIES) external/test_child_structure.cpp -o ctest
 
-epst : $(POINT) $(STREAM) $(BUFFERED_PST) $(EXTERNAL_CHILD_STRUCTURE) $(UTILITIES) external/test_buffered_pst.cpp
-	$(CC) $(LFLAGS) $(POINT) $(STREAM) $(BUFFERED_PST) $(EXTERNAL_CHILD_STRUCTURE) $(UTILITIES) external/test_buffered_pst.cpp -o epst
+epst : $(POINT) $(RANGE) $(STREAM) $(RB) $(BUFFERED_PST) $(EXTERNAL_CHILD_STRUCTURE) $(UTILITIES) external/test_buffered_pst.cpp
+	$(CC) $(LFLAGS) $(RANGE) $(POINT) $(RB) $(STREAM) $(BUFFERED_PST) $(EXTERNAL_CHILD_STRUCTURE) $(UTILITIES) external/test_buffered_pst.cpp -o epst
 
 
 testall : clean	stream_test ctest epst

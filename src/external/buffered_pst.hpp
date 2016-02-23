@@ -3,13 +3,15 @@
 #include "../common/point.hpp"
 #include "../common/debug.hpp"
 #include "../common/utilities.hpp"
+#include "../internal/rb_tree.hpp"
+#include "range.hpp"
 #include "child_structure.hpp"
 #include <vector>
 #include <string>
 #include <cmath>
 #include <algorithm>
 #include <iterator>
-
+#define INF 1000000000
 namespace ext {
 
   class buffered_pst {
@@ -25,14 +27,20 @@ namespace ext {
   private:
     class buffered_pst_node {
     public:
-      buffered_pst_node(int id, size_t buffer_size);
+      buffered_pst_node(int id, size_t buffer_size, double epsilon);
       ~buffered_pst_node();
       void insert(const point &p);
       void remove(const point &p);
+      std::set<point> insert_buffer, delete_buffer, point_buffer;
 #ifdef DEBUG
       bool is_valid();
 #endif
     private:
+      struct leaf_ranges {
+        internal::rb_tree<range> ranges;
+        leaf_ranges() {}
+        void add_range(const point &min, int min_y, 
+      };
       bool insert_buffer_overflow();
       bool delete_buffer_overflow();
       bool point_buffer_overflow();
@@ -46,21 +54,26 @@ namespace ext {
       bool is_root();
       int id;
       size_t buffer_size;
-      std::set<point> insert_buffer, delete_buffer, point_buffer;
+      size_t B_epsilon;
+      double epsilon;
       //ext::child_structure child_structure;
     };
     size_t buffer_size;
+
     int fanout;
     double epsilon;
     buffered_pst_node* root;
   };
 
   // BUFFERED_PST_NODE /////////////////////////////////////////////////////
-  buffered_pst::buffered_pst_node::buffered_pst_node(int id, size_t _buffer_size)
+  buffered_pst::buffered_pst_node::buffered_pst_node(int id, size_t _buffer_size, double epsilon)
     : buffer_size(_buffer_size)  {
     this->id = id;
+    this->epsilon = epsilon;
+    B_epsilon = (size_t)pow((double)buffer_size, epsilon);
     b_is_leaf = true;
-    DEBUG_MSG("Constructed pst_node with id " << id << " and buffer_size: " << buffer_size);
+    DEBUG_MSG("Constructed pst_node with id " << id << " and buffer_size: " << buffer_size
+              << " and B_epsilon " << B_epsilon);
   }
 
   std::string buffered_pst::buffered_pst_node::get_point_buffer_file_name(int id) {
@@ -88,11 +101,14 @@ namespace ext {
     DEBUG_MSG("Inserting point " << p << " into node " << id);
    
     if (is_root() && is_leaf()) {
-       point_buffer.insert(p);
+      point_buffer.insert(p);
       if (point_buffer_overflow()) {
 	handle_point_buffer_overflow();
       }
-    } else if ( is_root() ) {
+    } else if ( is_leaf() ) {
+      // TODO handle this correct.
+      point_buffer.insert(p);
+    } else {
       DEBUG_MSG("remove duplicates of p from Pr, Ir, Dr");
       point_buffer.erase(p);
       insert_buffer.erase(p);
@@ -102,18 +118,17 @@ namespace ext {
 				      [] (const point &p1, const point &p2) {
 					return p1.y < p2.y;
 				      });
-      if (p.y < min_y.y) insert_buffer.insert(p);
+      if (p.y < min_y.y) {
+        DEBUG_MSG("Inserted " << p << " into insert buffer...");
+        insert_buffer.insert(p);
+      }
       else point_buffer.insert(p);
-      if ( point_buffer_overflow() ) {
+      if ( is_root() && point_buffer_overflow() ) {
 	DEBUG_MSG("Pr overflow: Moving point with smallest y-value from Pr to Ir");
 	point_buffer.erase(min_y);
 	insert_buffer.insert(min_y);
-	//TODO: handle insert_buffer overflow here
-	if ( insert_buffer_overflow() ) handle_insert_buffer_overflow();
       }
-    } else if ( is_leaf() ) {
-      // TODO handle this correct.
-      point_buffer.insert(p);
+      if (insert_buffer_overflow()) handle_insert_buffer_overflow();
     }
   }
 
@@ -155,15 +170,14 @@ namespace ext {
 		{return p1.y < p2.y || (p1.y == p2.y && p1.x < p2.x);});
       std::sort(points.begin(),points.begin()+points.size()/2);
 	
-      buffered_pst_node c1(1, buffer_size);
-      buffered_pst_node c2(2, buffer_size);
+      buffered_pst_node c1(1, buffer_size, epsilon);
+      buffered_pst_node c2(2, buffer_size, epsilon);
 	
       for (auto it=points.begin(); it != points.begin()+points.size()/4; it++) {
 	c1.insert(*it);
       }
 
-      for (auto it=points.begin()+points.size()/4; it != points.begin()+
-	     points.size()/2; it++) {
+      for (auto it=points.begin()+points.size()/4; it != points.begin()+points.size()/2; it++) {
 	c2.insert(*it);
       }
 
@@ -181,6 +195,55 @@ namespace ext {
 
   void buffered_pst::buffered_pst_node::handle_insert_buffer_overflow() {
     DEBUG_MSG("Starting to handle insert buffer overflow");
+    /*
+      - Find child to send U = B/Be elements to
+      - Remove points in U from Iv, Ic, Dc, Pc and Cv (load child)
+      - Any point in U with larger y-value than or equal to minimum value in Pc
+        is inserted into Pc and Cv and removed from U
+      - Handle recursive case if Pc overflows ( move points with smallest y-value from Pc to U)
+      - if child is a leaf all points are inserted into Pc => might cause recursion as above
+      - else add remaining points in U to Ic => might cause overflow
+     */
+
+    DEBUG_MSG("Locate child to send insertions to");
+    //fake it:
+    buffered_pst_node found_child(3, buffer_size, epsilon);
+
+    DEBUG_MSG("Create U to send to child");
+    std::set<point> U;
+    size_t idx = 0;
+    for (auto p : insert_buffer) {
+      if (++idx > buffer_size/B_epsilon) break;
+      U.insert(p);
+    }
+
+    DEBUG_MSG("Remove points in U from Iv, Ic, Dc, Pc, Cv");
+
+    for (point p : U) {
+      if (insert_buffer.find(p) != insert_buffer.end()) {
+        DEBUG_MSG("Removing " << p << " from insert buffer");
+        insert_buffer.erase(p);
+      }
+      if (found_child.insert_buffer.find(p) != found_child.insert_buffer.end()) { 
+        DEBUG_MSG("Removing " << p << " from insert buffer of found child");
+        found_child.insert_buffer.erase(p);
+      }
+      if (found_child.delete_buffer.find(p) != found_child.delete_buffer.end()) { 
+        DEBUG_MSG("Removing " << p << " from insert buffer of found child");
+        found_child.delete_buffer.erase(p);
+      }
+      if (found_child.point_buffer.find(p) != found_child.point_buffer.end()) { 
+        DEBUG_MSG("Removing " << p << " from insert buffer of found child");
+        found_child.point_buffer.erase(p);
+      }
+    }
+    
+    if (found_child.is_leaf()) {
+      DEBUG_MSG("found child was a leaf... sending U do Pc");
+      for (point p : U) found_child.insert(p);
+    } else {
+
+    }
   }
 
 #ifdef DEBUG
@@ -264,7 +327,7 @@ namespace ext {
     this->epsilon = epsilon;
     fanout = (epsilon == 0.5) ? (int)sqrt(buffer_size) :
       (int)pow((double)buffer_size,epsilon);
-    root = new buffered_pst_node(0,buffer_size);
+    root = new buffered_pst_node(0,buffer_size,epsilon);
     DEBUG_MSG("Constructing buffered_pst with buffer_size: "
 	      << buffer_size << " epsilon: " << epsilon << " fanout: " << fanout);
       

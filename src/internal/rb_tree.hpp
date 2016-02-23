@@ -47,6 +47,7 @@ namespace internal {
   T rb_tree<T>::belong_to(T item) {
     auto it = s.lower_bound(item);
     if (*it == item) return *it;
+    if (it == s.begin()) return *it;
     return *(--it);
   }
 
