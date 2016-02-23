@@ -10,6 +10,7 @@
 #include <string>
 #include <cmath>
 #include <algorithm>
+#include <assert.h>
 #include <iterator>
 #define INF 1000000000
 namespace ext {
@@ -29,18 +30,24 @@ namespace ext {
     public:
       buffered_pst_node(int id, size_t buffer_size, double epsilon);
       ~buffered_pst_node();
-      void insert(const point &p);
       void remove(const point &p);
+      void add_child(const range &r);
+      void insert_into_point_buffer(const point &p);
+      template <class Container>
+      void insert_into_point_buffer(const Container &points);
+      void insert_into_insert_buffer(const point &p);
+      template <class Container>
+      void insert_into_insert_buffer(const Container &points);
+
+      bool is_leaf();
+      
+      bool is_root();
       std::set<point> insert_buffer, delete_buffer, point_buffer;
 #ifdef DEBUG
       bool is_valid();
 #endif
     private:
-      struct leaf_ranges {
-        internal::rb_tree<range> ranges;
-        leaf_ranges() {}
-        void add_range(const point &min, int min_y, 
-      };
+      internal::rb_tree<range> ranges;
       bool insert_buffer_overflow();
       bool delete_buffer_overflow();
       bool point_buffer_overflow();
@@ -49,9 +56,7 @@ namespace ext {
       void handle_point_buffer_overflow();
       std::string get_point_buffer_file_name(int id);
       std::string get_directory(int id);
-      bool is_leaf();
       bool b_is_leaf;
-      bool is_root();
       int id;
       size_t buffer_size;
       size_t B_epsilon;
@@ -97,39 +102,39 @@ namespace ext {
     //   (point_buffer.begin(),point_buffer.end(), get_point_buffer_file_name());
   }
 
-  void buffered_pst::buffered_pst_node::insert(const point &p) {
-    DEBUG_MSG("Inserting point " << p << " into node " << id);
-   
-    if (is_root() && is_leaf()) {
-      point_buffer.insert(p);
-      if (point_buffer_overflow()) {
-	handle_point_buffer_overflow();
-      }
-    } else if ( is_leaf() ) {
-      // TODO handle this correct.
-      point_buffer.insert(p);
-    } else {
-      DEBUG_MSG("remove duplicates of p from Pr, Ir, Dr");
-      point_buffer.erase(p);
-      insert_buffer.erase(p);
-      delete_buffer.erase(p);
-      DEBUG_MSG("Check if put into Ir or Pr");
-      point min_y = *std::min_element(point_buffer.begin(), point_buffer.end(),
-				      [] (const point &p1, const point &p2) {
-					return p1.y < p2.y;
-				      });
-      if (p.y < min_y.y) {
-        DEBUG_MSG("Inserted " << p << " into insert buffer...");
-        insert_buffer.insert(p);
-      }
-      else point_buffer.insert(p);
-      if ( is_root() && point_buffer_overflow() ) {
-	DEBUG_MSG("Pr overflow: Moving point with smallest y-value from Pr to Ir");
-	point_buffer.erase(min_y);
-	insert_buffer.insert(min_y);
-      }
-      if (insert_buffer_overflow()) handle_insert_buffer_overflow();
-    }
+  void buffered_pst::buffered_pst_node::insert_into_insert_buffer(const point &p) {
+    std::vector<point> points;
+    points.push_back(p);
+    insert_into_insert_buffer(points);
+  }
+
+  template <class Container>
+  void buffered_pst::buffered_pst_node::insert_into_insert_buffer(const Container &points) {
+    DEBUG_MSG("inserting point(s) into insert buffer");
+#ifdef DEBUG
+    for (point p : points)
+      DEBUG_MSG(" - " << p);
+#endif
+
+    insert_buffer.insert(points.begin(), points.end());
+    if (insert_buffer_overflow()) handle_insert_buffer_overflow();
+  }
+  
+  void buffered_pst::buffered_pst_node::insert_into_point_buffer(const point &p) {
+    std::vector<point> points;
+    points.push_back(p);
+    insert_into_point_buffer(points);
+  }
+
+  template <class Container>
+  void buffered_pst::buffered_pst_node::insert_into_point_buffer(const Container &points) {
+    DEBUG_MSG("inserting point(s) into point buffer: ");
+#ifdef DEBUG
+    for (point p : points) DEBUG_MSG(" - " << p);
+#endif
+    
+    point_buffer.insert(points.begin(), points.end());
+    if (point_buffer_overflow()) handle_point_buffer_overflow();
   }
 
   bool buffered_pst::buffered_pst_node::point_buffer_overflow() {
@@ -172,14 +177,11 @@ namespace ext {
 	
       buffered_pst_node c1(1, buffer_size, epsilon);
       buffered_pst_node c2(2, buffer_size, epsilon);
-	
-      for (auto it=points.begin(); it != points.begin()+points.size()/4; it++) {
-	c1.insert(*it);
-      }
+      c1.insert_into_point_buffer(std::vector<point>(points.begin(),
+                                                     points.begin()+points.size()/4));
 
-      for (auto it=points.begin()+points.size()/4; it != points.begin()+points.size()/2; it++) {
-	c2.insert(*it);
-      }
+      c2.insert_into_point_buffer(std::vector<point>(points.begin()+points.size()/4,
+                                                     points.begin()+points.size()/2));
 
       point_buffer = std::set<point>(points.begin()+points.size()/2,points.end());
 
@@ -190,6 +192,13 @@ namespace ext {
 #endif
 
       b_is_leaf = false;
+    } else if ( is_root() ) {
+      point min_y = *std::min_element(point_buffer.begin(), point_buffer.end(),
+				      [] (const point &p1, const point &p2) {
+					return p1.y < p2.y;
+				      });
+      point_buffer.erase(min_y);
+      insert_into_insert_buffer(min_y);
     }
   }
 
@@ -240,9 +249,9 @@ namespace ext {
     
     if (found_child.is_leaf()) {
       DEBUG_MSG("found child was a leaf... sending U do Pc");
-      for (point p : U) found_child.insert(p);
+      found_child.insert_into_point_buffer(U);
     } else {
-
+        
     }
   }
 
@@ -335,7 +344,21 @@ namespace ext {
 
   void buffered_pst::insert(const point &p) {
     DEBUG_MSG("Inserting point " << p << " into root");
-    root->insert(p);
+    if (root->is_leaf()) {
+      root->insert_into_point_buffer(p);
+    } else {
+      DEBUG_MSG("remove duplicates of p from Pr, Ir, Dr");
+      root->point_buffer.erase(p);
+      root->insert_buffer.erase(p);
+      root->delete_buffer.erase(p);
+      DEBUG_MSG("Check if put into Ir or Pr");
+      point min_y = *std::min_element(root->point_buffer.begin(), root->point_buffer.end(),
+				      [] (const point &p1, const point &p2) {
+					return p1.y < p2.y;
+				      });
+      if (p.y < min_y.y) root->insert_into_insert_buffer(p);
+      else root->insert_into_point_buffer(p);
+    }
   }
   
   buffered_pst::~buffered_pst() {

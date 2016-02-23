@@ -238,7 +238,7 @@ void test_root_split_insert_between_overflow() {
   assert (bs.read() == point(3,3) && bs.read() == point(4,4) && bs.read() == point(5,5));
   assert ( bs.eof() == true );
   bs.close();
-  
+  assert( epst.is_valid() );
   print_success();
 }
 
