@@ -23,6 +23,7 @@ namespace ext {
     ~buffered_pst();
     void insert(const point &p);
     void remove(const point &p);
+    void test();
     std::vector<point> report(int x1, int x2, int y);
 #ifdef DEBUG
     bool is_valid();
@@ -35,6 +36,7 @@ namespace ext {
       buffered_pst_node(int id, buffered_pst_node* root);
       ~buffered_pst_node();
       int id;
+      void test();
       void remove(const point &p);
       void add_child(const range &r);
       void insert_into_point_buffer(const point &p);
@@ -270,29 +272,29 @@ namespace ext {
 
     point_buffer = keep_points;
 
-    buffered_pst_node parent = parent_id == 0 ? *root : buffered_pst_node(parent_id, root);
+    buffered_pst_node* parent = parent_id == 0 ? root : new buffered_pst_node(parent_id, root);
       
-    range r = parent.ranges.belong_to(range(*(point_buffer.begin()),-1,-1));
+    range r = parent->ranges.belong_to(range(*(point_buffer.begin()),-1,-1));
     DEBUG_MSG("Existing interval has changed max_y from " << r.max_y << " to "
 	      << keep_max_y);
-    parent.ranges.erase(r);
-    parent.ranges.insert(range(r.min,keep_max_y,r.node_id));
+    parent->ranges.erase(r);
+    parent->ranges.insert(range(r.min,keep_max_y,r.node_id));
 
     int new_node_id = next_id++;
     DEBUG_MSG("Insert interval for new leaf " << move_min << " "
-	      << move_max_y << " " << new_node_id << " into " << parent.id);
-    buffered_pst_node new_child(new_node_id,parent_id,buffer_size,epsilon,root);
-    parent.ranges.insert(range(move_min,move_max_y,new_node_id));
+	      << move_max_y << " " << new_node_id << " into " << parent->id);
+    buffered_pst_node new_child(new_node_id,parent_id,buffer_size,epsilon, root);
+    parent->ranges.insert(range(move_min,move_max_y,new_node_id));
 
     new_child.insert_into_point_buffer(move_points);
 
 #ifdef DEBUG
     DEBUG_MSG("Ranges in parent now contains:");
-    for (auto r : parent.ranges)
+    for (auto r : parent->ranges)
       DEBUG_MSG(" - " << r);
 #endif
     
-    parent.handle_split();
+    parent->handle_split();
     
   }
   
@@ -468,6 +470,18 @@ namespace ext {
     }
   }
 
+  void buffered_pst::buffered_pst_node::test() {
+    DEBUG_MSG("Test called on " << id);
+    buffered_pst_node c1(1,0,9,0.5,this);
+    buffered_pst_node c2(1,0,9,0.5,this);
+
+    c1.root->id = 5;
+    DEBUG_MSG(id);
+    
+    c2.root->id = 10;
+    DEBUG_MSG(id);
+  }
+  
 #ifdef DEBUG
   bool buffered_pst::buffered_pst_node::is_valid() {
 
@@ -600,6 +614,10 @@ namespace ext {
       if (p.y < min_y.y) root->insert_into_insert_buffer(p);
       else root->insert_into_point_buffer(p);
     }
+  }
+
+  void buffered_pst::test() {
+    root->test();
   }
   
   buffered_pst::~buffered_pst() {
