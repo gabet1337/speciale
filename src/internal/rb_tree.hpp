@@ -12,6 +12,7 @@ namespace internal {
     ~rb_tree();
     void insert(T item);
     void erase(T item);
+    void clear();
     size_t size();
     T predecessor(T item);
     T successor(T item);
@@ -28,6 +29,11 @@ namespace internal {
   template <typename T>
   rb_tree<T>::~rb_tree() {}
 
+  template <typename T>
+  void rb_tree<T>::clear() {
+    s.clear();
+  }
+  
   template <typename T>
   void rb_tree<T>::insert(T item) {
     s.insert(item);

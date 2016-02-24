@@ -236,7 +236,106 @@ namespace ext {
       DEBUG_MSG(" - " << r);
 #endif
     if (ranges.size() > B_epsilon) {
+      
       DEBUG_MSG("Handle node degree overflow");
+      buffered_pst_node left_split_node(next_id++,parent_id,buffer_size,epsilon,root);
+      buffered_pst_node right_split_node(next_id++,parent_id,buffer_size,epsilon,root);
+
+      buffered_pst_node* parent = parent_id == 0 ? root : new buffered_pst_node(parent_id,root);
+
+      DEBUG_MSG("Distributing children");
+#ifdef DEBUG
+      for (auto r : ranges)
+	DEBUG_MSG(" - " << r);
+#endif
+      size_t idx = 0;
+      for (auto r : ranges) {
+	buffered_pst_node child(r.node_id,root);
+	if (++idx > ranges.size()/2) {
+	  right_split_node.add_child(r);
+	  child.parent_id = right_split_node.id;
+	} else {
+	  left_split_node.add_child(r);
+	  child.parent_id = left_split_node.id;
+	}
+      }
+
+      DEBUG_MSG("Deleting our range in parent");
+      if (parent->id == 0) {
+#ifdef DEBUG
+	if (is_root())
+	  DEBUG_MSG("We are root");
+#endif
+	DEBUG_MSG("Parent is root. Clearing all ranges");
+	parent->ranges.clear();
+      } else {
+	for (auto r : parent->ranges) {
+	  if (r.node_id == id) {
+	    parent->ranges.erase(r);
+	    DEBUG_MSG("Found range " << r << ". Deleted from parents range.");
+	    break;
+	  }
+	}
+      }
+      
+      DEBUG_MSG("Inserting new ranges");
+      range left_range = *(left_split_node.ranges.begin());
+      range right_range = *(right_split_node.ranges.begin());
+      DEBUG_MSG(" - left_range: " << left_range);
+      DEBUG_MSG(" - right_range: " << right_range);
+      parent->add_child(left_range);
+      parent->add_child(right_range);
+      
+      std::set<point> left_point_buffer, right_point_buffer, left_insert_buffer,
+	right_insert_buffer, left_delete_buffer, right_delete_buffer;
+
+      DEBUG_MSG("Distributing points from point_buffer");
+      for (point p : point_buffer) {
+	if (parent->ranges.belong_to(range(p,-1,-1)) == left_range) {
+	  DEBUG_MSG("point " << p << " went into left_split_node");
+	  left_point_buffer.insert(p);
+	} else {
+	  DEBUG_MSG("point " << p << " went into right_split_node");
+	  right_point_buffer.insert(p);
+	}
+      }
+
+      DEBUG_MSG("Distributing points from insert_buffer");
+      for (point p : insert_buffer) {
+	if (parent->ranges.belong_to(range(p,-1,-1)) == left_range) {
+	  DEBUG_MSG("point " << p << " went into left_split_node");
+	  left_insert_buffer.insert(p);
+	} else {
+	  DEBUG_MSG("point " << p << " went into right_split_node");
+	  right_insert_buffer.insert(p);
+	}
+      }
+
+      DEBUG_MSG("Distributing points from delete_buffer");
+      for (point p : delete_buffer) {
+	if (parent->ranges.belong_to(range(p,-1,-1)) == left_range) {
+	  DEBUG_MSG("point " << p << " went into left_split_node");
+	  left_delete_buffer.insert(p);
+	} else {
+	  DEBUG_MSG("point " << p << " went into right_split_node");
+	  right_delete_buffer.insert(p);
+	}
+      }
+
+      left_split_node.point_buffer = left_point_buffer;
+      left_split_node.insert_buffer = left_insert_buffer;
+      left_split_node.delete_buffer = left_delete_buffer;
+      right_split_node.point_buffer = right_point_buffer;
+      right_split_node.insert_buffer = right_insert_buffer;
+      right_split_node.delete_buffer = right_delete_buffer;
+
+      point_buffer.clear();
+      delete_buffer.clear();
+      insert_buffer.clear();
+      
+      if (parent_id != 0) delete parent;
+      
+      
     }
   }
 
@@ -281,19 +380,21 @@ namespace ext {
     int new_node_id = next_id++;
     DEBUG_MSG("Insert interval for new leaf " << move_min << " "
 	      << move_max_y << " " << new_node_id << " into " << parent->id);
-    buffered_pst_node new_child(new_node_id,parent_id,buffer_size,epsilon, root);
+    buffered_pst_node* new_child = new buffered_pst_node(new_node_id,parent_id,buffer_size,epsilon, root);
     parent->ranges.insert(range(move_min,move_max_y,new_node_id));
 
-    new_child.insert_into_point_buffer(move_points);
+    new_child->insert_into_point_buffer(move_points);
 
 #ifdef DEBUG
     DEBUG_MSG("Ranges in parent now contains:");
     for (auto r : parent->ranges)
       DEBUG_MSG(" - " << r);
 #endif
-    
-    parent->handle_split();
-    
+    delete new_child;
+    //parent->handle_split();
+
+    if ( parent_id != 0 ) delete parent;
+
   }
   
   void buffered_pst::buffered_pst_node::handle_point_buffer_overflow() {
@@ -466,6 +567,8 @@ namespace ext {
       perror("not implemented yet");
       exit(-10);
     }
+
+    handle_split();
   }
   
 #ifdef DEBUG
@@ -486,9 +589,9 @@ namespace ext {
       DEBUG_MSG("Point buffer overflow in node " << id);
       return false;
     }
-    if ( point_buffer_underflow() ) {
-      DEBUG_MSG("Point buffer underflow in node " << id);
-      return false;
+     if ( point_buffer_underflow() ) {
+       DEBUG_MSG("!!!!!!!!!!!!!!!!!!!!!!!!!! Point buffer underflow in node !!!!!!!!!!!!!!!!!! " << id);
+       //return false;
     }
 
 
@@ -577,7 +680,7 @@ namespace ext {
     this->epsilon = epsilon;
     fanout = (epsilon == 0.5) ? (int)sqrt(buffer_size) :
       (int)pow((double)buffer_size,epsilon);
-    root = new buffered_pst_node(0,-1,buffer_size,epsilon,0);
+    root = new buffered_pst_node(0,0,buffer_size,epsilon,0);
     DEBUG_MSG("Constructing buffered_pst with buffer_size: "
 	      << buffer_size << " epsilon: " << epsilon << " fanout: " << fanout);
     next_id = 1;

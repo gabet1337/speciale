@@ -348,9 +348,13 @@ void test_node_degree_overflow() {
 
   ext::buffered_pst epst(9,0.5);
   for (int i = 1; i <= 27; i++) epst.insert(point(i,i));
+
+  //TODO: ASSERT THIS BITCH UP!
   
   print_success();
 }
+
+// TODO: Create test that distributes points evenly.
 
 void cleanup() {
   for (int i = 0; i < 1000; i++)
