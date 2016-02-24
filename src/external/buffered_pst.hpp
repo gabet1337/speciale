@@ -23,7 +23,6 @@ namespace ext {
     ~buffered_pst();
     void insert(const point &p);
     void remove(const point &p);
-    void test();
     std::vector<point> report(int x1, int x2, int y);
 #ifdef DEBUG
     bool is_valid();
@@ -36,7 +35,6 @@ namespace ext {
       buffered_pst_node(int id, buffered_pst_node* root);
       ~buffered_pst_node();
       int id;
-      void test();
       void remove(const point &p);
       void add_child(const range &r);
       void insert_into_point_buffer(const point &p);
@@ -469,18 +467,6 @@ namespace ext {
       exit(-10);
     }
   }
-
-  void buffered_pst::buffered_pst_node::test() {
-    DEBUG_MSG("Test called on " << id);
-    buffered_pst_node c1(1,0,9,0.5,this);
-    buffered_pst_node c2(1,0,9,0.5,this);
-
-    c1.root->id = 5;
-    DEBUG_MSG(id);
-    
-    c2.root->id = 10;
-    DEBUG_MSG(id);
-  }
   
 #ifdef DEBUG
   bool buffered_pst::buffered_pst_node::is_valid() {
@@ -616,10 +602,6 @@ namespace ext {
     }
   }
 
-  void buffered_pst::test() {
-    root->test();
-  }
-  
   buffered_pst::~buffered_pst() {
     //TODO: should delete all files of children
     for (int i=0; i < next_id; i++) {
