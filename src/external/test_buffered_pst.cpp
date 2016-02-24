@@ -337,6 +337,21 @@ void test_maintaining_min_max_y_on_insert_buffer_overflow() {
   print_success();
 }
 
+void test_node_degree_overflow() {
+
+  int lol = system("rm -rf 1/");
+  lol = system("rm -rf 2/");
+  lol = system("rm -rf 3/");
+  lol++;
+    
+  print_description("starting test of node degree overflow");
+
+  ext::buffered_pst epst(9,0.5);
+  for (int i = 1; i <= 27; i++) epst.insert(point(i,i));
+  
+  print_success();
+}
+
 void cleanup() {
   for (int i = 0; i < 1000; i++)
     util::remove_directory(to_string(i));
@@ -360,6 +375,7 @@ int main() {
   test_root_split_insert_overflow();
   test_root_split_insert_between_overflow();
   test_maintaining_min_max_y_on_insert_buffer_overflow();
+  test_node_degree_overflow();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   

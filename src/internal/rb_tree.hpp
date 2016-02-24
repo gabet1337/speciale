@@ -1,6 +1,8 @@
 #ifndef RB_TREE_HPP
 #define RB_TREE_HPP
 #include <set>
+#include <sys/types.h>
+
 namespace internal {
 
   template <typename T>
@@ -10,6 +12,7 @@ namespace internal {
     ~rb_tree();
     void insert(T item);
     void erase(T item);
+    size_t size();
     T predecessor(T item);
     T successor(T item);
     T belong_to(T item);
@@ -30,6 +33,11 @@ namespace internal {
     s.insert(item);
   }
 
+  template <typename T>
+  size_t rb_tree<T>::size() {
+    return s.size();
+  }
+  
   template <typename T>
   void rb_tree<T>::erase(T item) {
     s.erase(s.find(item));

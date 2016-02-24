@@ -34,12 +34,15 @@ namespace ext {
 			double epsilon, buffered_pst_node* root);
       buffered_pst_node(int id, buffered_pst_node* root);
       ~buffered_pst_node();
+      int id;
       void remove(const point &p);
       void add_child(const range &r);
       void insert_into_point_buffer(const point &p);
       template <class Container>
       void insert_into_point_buffer(const Container &points);
       void insert_into_insert_buffer(const point &p);
+      void handle_split();
+      void split_leaf();
       template <class Container>
       void insert_into_insert_buffer(const Container &points);
       bool is_leaf();
@@ -63,7 +66,7 @@ namespace ext {
       std::string get_info_file_file_name(int id);
       std::string get_directory(int id);
       bool b_is_leaf;
-      int id, parent_id;
+      int parent_id;
       size_t buffer_size;
       size_t B_epsilon;
       double epsilon;
@@ -71,7 +74,6 @@ namespace ext {
       //ext::child_structure child_structure;
     };
     size_t buffer_size;
-
     int fanout;
     double epsilon;
     buffered_pst_node* root;
@@ -227,6 +229,73 @@ namespace ext {
     return id == 0;
   }
 
+  void buffered_pst::buffered_pst_node::handle_split() {
+    DEBUG_MSG("Checking if we should split " << ranges.size() << " " << B_epsilon);
+#ifdef DEBUG
+    for (auto r : ranges)
+      DEBUG_MSG(" - " << r);
+#endif
+    if (ranges.size() > B_epsilon) {
+      DEBUG_MSG("Handle node degree overflow");
+    }
+  }
+
+  void buffered_pst::buffered_pst_node::split_leaf() {
+
+    DEBUG_MSG("Started splitting of leaf");
+    
+    /*
+      1.) Move last b/4 buffer_point points to new leaf.
+      2.) Update max_y on existing interval
+      3.) Insert new interval for new leaf with min, max_y, node_id
+    */
+
+    std::vector<point> move_points;
+    std::set<point> keep_points;
+    size_t idx = 0;
+    int keep_max_y = -INF, move_max_y = -INF;
+    point move_min = point(INF,INF);
+    for (auto p : point_buffer) {
+      if (++idx <= point_buffer.size()/2) {
+	DEBUG_MSG("Keep point " << p);
+	keep_points.insert(p);
+	keep_max_y = std::max(keep_max_y,p.y);
+	continue;
+      }
+      DEBUG_MSG("Move point " << p);
+      move_max_y = std::max(move_max_y, p.y);
+      move_min = std::min(move_min, p);
+      move_points.push_back(p);
+    }
+
+    point_buffer = keep_points;
+
+    buffered_pst_node parent = parent_id == 0 ? *root : buffered_pst_node(parent_id, root);
+      
+    range r = parent.ranges.belong_to(range(*(point_buffer.begin()),-1,-1));
+    DEBUG_MSG("Existing interval has changed max_y from " << r.max_y << " to "
+	      << keep_max_y);
+    parent.ranges.erase(r);
+    parent.ranges.insert(range(r.min,keep_max_y,r.node_id));
+
+    int new_node_id = next_id++;
+    DEBUG_MSG("Insert interval for new leaf " << move_min << " "
+	      << move_max_y << " " << new_node_id << " into " << parent.id);
+    buffered_pst_node new_child(new_node_id,parent_id,buffer_size,epsilon,root);
+    parent.ranges.insert(range(move_min,move_max_y,new_node_id));
+
+    new_child.insert_into_point_buffer(move_points);
+
+#ifdef DEBUG
+    DEBUG_MSG("Ranges in parent now contains:");
+    for (auto r : parent.ranges)
+      DEBUG_MSG(" - " << r);
+#endif
+    
+    parent.handle_split();
+    
+  }
+  
   void buffered_pst::buffered_pst_node::handle_point_buffer_overflow() {
     DEBUG_MSG("Starting to handle point buffer overflow");
     
@@ -283,52 +352,8 @@ namespace ext {
       point_buffer.erase(min_y);
       insert_into_insert_buffer(min_y);
     } else if ( is_leaf() ) {
-      DEBUG_MSG("Overflow in the point buffer of node " << id);
-
-      /*
-	1.) Move last b/4 buffer_point points to new leaf.
-	2.) Update max_y on existing interval
-	3.) Insert new interval for new leaf with min, max_y, node_id
-      */
-
-      std::vector<point> move_points;
-      std::set<point> keep_points;
-      size_t idx = 0;
-      int keep_max_y = -INF, move_max_y = -INF;
-      point move_min = point(INF,INF);
-      for (auto p : point_buffer) {
-	if (++idx <= point_buffer.size()/2) {
-	  DEBUG_MSG("Keep point " << p);
-	  keep_points.insert(p);
-	  keep_max_y = std::max(keep_max_y,p.y);
-	  continue;
-	}
-	DEBUG_MSG("Move point " << p);
-	move_max_y = std::max(move_max_y, p.y);
-	move_min = std::min(move_min, p);
-	move_points.push_back(p);
-      }
-
-      point_buffer = keep_points;
-
-      buffered_pst_node parent = parent_id == 0 ? *root : buffered_pst_node(parent_id, root);
-      
-      range r = parent.ranges.belong_to(range(*(point_buffer.begin()),-1,-1));
-      if (r.max_y < keep_max_y) {
-	DEBUG_MSG("Existing interval has changed max_y from " << r.max_y << " to "
-		  << keep_max_y);
-	parent.ranges.erase(r);
-	parent.ranges.insert(range(r.min,keep_max_y,r.node_id));
-      }
-
-      int new_node_id = next_id++;
-      DEBUG_MSG("Insert interval for new leaf " << move_min << " "
-		<< move_max_y << " " << new_node_id);
-      buffered_pst_node new_child(new_node_id,parent_id,buffer_size,epsilon,root);
-      parent.ranges.insert(range(move_min,move_max_y,new_node_id));
-
-      new_child.insert_into_point_buffer(move_points);
-      
+      DEBUG_MSG("Overflow in the point buffer of leaf " << id);
+      split_leaf();
     } else {
       error(1, ECANCELED, "We should never overflow a point buffer in an internal node");
     }
@@ -342,6 +367,12 @@ namespace ext {
   std::pair<int, std::set<point> > buffered_pst::buffered_pst_node::find_child(const std::set<point> &buffer) {
     DEBUG_MSG("Starting to find child");
 
+#ifdef DEBUG
+    DEBUG_MSG("Ranges to consider:");
+    for (auto r : ranges)
+      DEBUG_MSG(" - " << r);
+#endif
+    
     std::set<point> tmp,best;
     range best_range = ranges.belong_to(range(*buffer.begin(),-1,-1));
     range cur_range = ranges.belong_to(range(*buffer.begin(),-1,-1));
@@ -393,12 +424,6 @@ namespace ext {
       U.insert(p);
     }
 
-    if (*(U.begin()) < blt.min || max_y > blt.max_y) {
-      DEBUG_MSG("Updating range " << min << " " << max_y << " for node_id: " << blt.node_id);
-      ranges.erase(blt);
-      ranges.insert(range(min,max_y,blt.node_id));
-    }
-
     DEBUG_MSG("Remove points in U from Iv, Ic, Dc, Pc, Cv");
 
     for (point p : U) {
@@ -421,11 +446,25 @@ namespace ext {
     }
     
     if (found_child.is_leaf()) {
+      
+      if (*(U.begin()) < blt.min || max_y > blt.max_y) {
+	DEBUG_MSG("Updating range " << min << " " << max_y << " for node_id: " << blt.node_id);
+	ranges.erase(blt);
+	ranges.insert(range(min,max_y,blt.node_id));
+      }
+
+#ifdef DEBUG
+      DEBUG_MSG("Range now contains:");
+      for (auto r : ranges)
+	DEBUG_MSG(" - " << r);
+#endif
+      
       DEBUG_MSG("found child was a leaf... sending U do Pc");
       found_child.insert_into_point_buffer(U);
       
     } else {
-        
+      perror("not implemented yet");
+      exit(-10);
     }
   }
 
