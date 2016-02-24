@@ -176,6 +176,11 @@ void test_root_split_insert_overflow() {
   assert ( util::file_exists("2/point_buffer") );
   bs.open("2/point_buffer");
   assert (bs.read() == point(2,2) && bs.read() == point(3,3) && bs.read() == point(4,4));
+  assert ( bs.eof() == true );
+  bs.close();
+
+  assert ( util::file_exists("3/point_buffer") );
+  bs.open("3/point_buffer");
   assert (bs.read() == point(5,5) && bs.read() == point(6,6) && bs.read() == point(7,7));
   assert ( bs.eof() == true );
   bs.close();
@@ -237,10 +242,18 @@ void test_root_split_insert_between_overflow() {
   assert ( util::file_exists("1/point_buffer") );
   bs.open("1/point_buffer");
   assert (bs.read() == point(1,1) && bs.read() == point(2,2));
+  assert ( bs.eof() == true );
+  bs.close();
+  assert( epst.is_valid() );
+
+
+  assert ( util::file_exists("3/point_buffer") );
+  bs.open("3/point_buffer");
   assert (bs.read() == point(3,3) && bs.read() == point(4,4) && bs.read() == point(5,5));
   assert ( bs.eof() == true );
   bs.close();
   assert( epst.is_valid() );
+  
   print_success();
 }
 
@@ -287,10 +300,53 @@ void test_root_split_insert_between_overflow_and_split() {
   print_success();
 }
 
+void test_maintaining_min_max_y_on_insert_buffer_overflow() {
+  int lol = system("rm -rf 1/");
+  lol = system("rm -rf 2/");
+  lol = system("rm -rf 3/");
+  lol++;
+    
+  print_description("starting test of maintaining min and max_y on insert buffer overflow");
+
+  ext::buffered_pst epst(9,0.5);
+  for (int i = 15; i < 17; i++) epst.insert(point(i,i));
+  for (int i = 100; i <= 106; i++) epst.insert(point(i,i));
+
+  assert ((!util::file_exists("1/point_buffer") && !util::file_exists("2/point_buffer"))
+	  && "We should have no children");
+
+  epst.insert(point(107,107));
+
+  assert ((util::file_exists("1/point_buffer") && util::file_exists("2/point_buffer"))
+	  && "We should have children");
+
+  io::buffered_stream<point> bs(4096);
+  bs.open("1/point_buffer");
+  assert (bs.read() == point(15,15) && bs.read() == point(16,16));
+  bs.close();
+
+  bs.open("2/point_buffer");
+  assert (bs.read() == point(100,100) && bs.read() == point(101,101) && bs.read() == point(102,102));
+  bs.close();
+
+  epst.insert(point(1,17));
+  
+  for (int i = 2; i < 15; i++) epst.insert(point(i,i));
+  
+  assert( epst.is_valid() );
+  print_success();
+}
+
+void cleanup() {
+  for (int i = 0; i < 1000; i++)
+    util::remove_directory(to_string(i));
+}
 
 int main() {
 
-  cout << "\033[0;33m\e[4mSTARTING TEST OF CHILD STRUCTURE\e[24m\033[0m" << endl;
+  cleanup();
+  
+  cout << "\033[0;33m\e[4mSTARTING TEST OF EPST STRUCTURE\e[24m\033[0m" << endl;
 #ifdef DEBUG
   test_construction();
   test_insert();
@@ -303,8 +359,12 @@ int main() {
   test_root_split();
   test_root_split_insert_overflow();
   test_root_split_insert_between_overflow();
+  test_maintaining_min_max_y_on_insert_buffer_overflow();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
+  
+  cleanup();
+  
   return 0;
   
 }
