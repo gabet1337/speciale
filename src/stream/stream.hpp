@@ -1,6 +1,5 @@
 #ifndef STREAM_HPP
 #define STREAM_HPP
-
 #include <string>
 #include <stdio.h>
 #include <sys/types.h>
@@ -95,11 +94,8 @@ namespace io {
   template <typename T>
   void buffered_stream<T>::fill() {
     bool e = eof();
-    DEBUG_MSG("e " << eof());
-    DEBUG_MSG("bs " << buffer_start);
     if (is_dirty) sync();
     if (!e) {
-      DEBUG_MSG("fill");
       buffer_start = seek(0,SEEK_CUR);
       if (buffer_start == -1) {
         perror(std::string("Error seeking file: ").append(file_name).append("'").c_str());
@@ -112,23 +108,17 @@ namespace io {
       }
       if (bytes_read < buffer_size) b_eof = true; else b_eof = false;
       if (buffer_start+bytes_read >= file_size) b_eof = true; else b_eof = false;
-      DEBUG_MSG(file_size << " " << b_eof << " " << file_pos << " " << bytes_read);
-      // file_pos += bytes_read;
     } else {
       file_pos = seek(0,SEEK_END);
       buffer_start = file_pos;
     }
-    // buffer_pos = 0; 
   }
 
   template <typename T>
   void buffered_stream<T>::sync() {
-    DEBUG_MSG("sync");
-    DEBUG_MSG("bfs " << buffer_start);
     is_dirty = false;
     size_t elems = buffer_pos();
     off_t cur_pos = seek(0, SEEK_CUR);
-    DEBUG_MSG("cp " << cur_pos);
     seek(buffer_start, SEEK_SET);
     size_t bytes_written = ::write(file_descriptor, buffer, elems*sizeof(T));
     if (bytes_written == -1) {
@@ -136,20 +126,17 @@ namespace io {
       exit(errno);
     }
     seek(cur_pos,SEEK_SET);
-    DEBUG_MSG("fp " << file_pos);
     file_size = std::max((size_t) file_size, file_pos);
   }
 
   template <typename T>
   off_t buffered_stream<T>::seek(size_t offset, int whence) {
-    DEBUG_MSG("seek to " << offset << " from " << whence);
     if (is_dirty) sync();
     file_pos = lseek(file_descriptor, offset, whence);
     if (file_pos == -1) {
       perror(std::string("Error seeking file: ").append(file_name).append("'").c_str());
       exit(errno);
     }
-    DEBUG_MSG("fps " << file_pos << " " << buffer_start << " ");
     return file_pos;
   }
   
@@ -158,19 +145,14 @@ namespace io {
     if (eof()) {
       error(1, ENOTTY, "reading beyond end of file");
     }
-    DEBUG_MSG("should refill " << should_refill());
     if (should_refill()) fill();
-    DEBUG_MSG("buffer _start " << buffer_start);
-    DEBUG_MSG((file_pos - buffer_start)/sizeof(T));
     T element = buffer[buffer_pos()];
-    DEBUG_MSG("read " << element);
     file_pos+=sizeof(T);
     return element;
   }
 
   template <typename T>
   void buffered_stream<T>::write(T item) {
-    DEBUG_MSG("write " << item);
     if (should_refill()) fill();
     is_dirty = true;
     buffer[buffer_pos()] = item;
@@ -198,16 +180,12 @@ namespace io {
 
   template <typename T>
   void buffered_stream<T>::truncate() {
-    DEBUG_MSG("truncate " << file_pos << " " << file_size);
     if (ftruncate(file_descriptor,file_pos) == -1) {
       perror(std::string("Error on truncating file: ").append(file_name).append("'").c_str());
       exit(errno);
     }
     file_size = file_pos;
     fill();
-    
-    DEBUG_MSG("truncate2 " << file_pos << " " << file_size);
   }
-
 };
 #endif
