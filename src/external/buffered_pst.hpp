@@ -64,8 +64,8 @@ namespace ext {
       std::string get_insert_buffer_file_name(int id);
       std::string get_delete_buffer_file_name(int id);
       std::string get_info_file_file_name(int id);
+      std::string get_ranges_file_name(int id);
       std::string get_directory(int id);
-      bool b_is_leaf;
       int parent_id;
       size_t buffer_size;
       size_t B_epsilon;
@@ -93,7 +93,6 @@ namespace ext {
     if ( is_root() ) this->root = this;
     else this->root = root;
     B_epsilon = (size_t)pow((double)buffer_size, epsilon);
-    b_is_leaf = true;
     DEBUG_MSG("Constructed pst_node with id " << id << " and buffer_size: " << buffer_size
               << " and B_epsilon " << B_epsilon << " and parent_id " << parent_id);
   }
@@ -109,14 +108,15 @@ namespace ext {
     util::load_file_to_container<std::vector<size_t>, size_t>(info_file, get_info_file_file_name(id), 512);
     this->buffer_size = info_file[0];
     this->B_epsilon = info_file[1];
-    this->b_is_leaf = (bool)info_file[2];
-    this->parent_id = (int)info_file[3];
+    this->parent_id = (int)info_file[2];
     DEBUG_MSG("Loading point buffer");
     util::load_file_to_container<std::set<point>, point>(point_buffer, get_point_buffer_file_name(id), buffer_size);
     DEBUG_MSG("Loading insert buffer");
     util::load_file_to_container<std::set<point>, point>(insert_buffer, get_insert_buffer_file_name(id), buffer_size);
     DEBUG_MSG("Loading delete buffer");
     util::load_file_to_container<std::set<point>, point>(delete_buffer, get_delete_buffer_file_name(id), buffer_size);
+    DEBUG_MSG("Loading ranges");
+    util::load_file_to_container<internal::rb_tree<range>, range>(ranges, get_ranges_file_name(id), buffer_size);
   }
   
   buffered_pst::buffered_pst_node::~buffered_pst_node() {
@@ -135,11 +135,14 @@ namespace ext {
     util::flush_container_to_file<std::set<point>::iterator,point>
       (delete_buffer.begin(),delete_buffer.end(), get_delete_buffer_file_name(id), buffer_size);
 
+    DEBUG_MSG("Flushing ranges");
+    util::flush_container_to_file<std::set<range>::iterator, range>
+      (ranges.begin(), ranges.end(), get_ranges_file_name(id), buffer_size);
+
     DEBUG_MSG("Flushing info file");
     std::vector<size_t> info_file;
     info_file.push_back(buffer_size);
     info_file.push_back(B_epsilon);
-    info_file.push_back((size_t)b_is_leaf);
     info_file.push_back((size_t)parent_id);
     
     util::flush_container_to_file<std::vector<size_t>::iterator, size_t>
@@ -160,6 +163,10 @@ namespace ext {
 
   std::string buffered_pst::buffered_pst_node::get_info_file_file_name(int id) {
     return get_directory(id) + "/info_file";
+  }
+
+  std::string buffered_pst::buffered_pst_node::get_ranges_file_name(int id) {
+    return get_directory(id) + "/ranges";
   }
 
   std::string buffered_pst::buffered_pst_node::get_directory(int id) {
@@ -222,7 +229,7 @@ namespace ext {
   }
 
   bool buffered_pst::buffered_pst_node::is_leaf() {
-    return b_is_leaf;
+    return ranges.empty();
   }
 
   bool buffered_pst::buffered_pst_node::is_root() {
@@ -240,7 +247,6 @@ namespace ext {
       DEBUG_MSG("Handle node degree overflow");
       buffered_pst_node left_split_node(next_id++,parent_id,buffer_size,epsilon,root);
       buffered_pst_node right_split_node(next_id++,parent_id,buffer_size,epsilon,root);
-
       buffered_pst_node* parent = parent_id == 0 ? root : new buffered_pst_node(parent_id,root);
 
       DEBUG_MSG("Distributing children");
@@ -443,7 +449,6 @@ namespace ext {
 	DEBUG_MSG(p);
 #endif
 
-      b_is_leaf = false;
     } else if ( is_root() ) {
       DEBUG_MSG("Overflow in the point buffer of the root. Move min point to insert buffer");
       point min_y = *std::min_element(point_buffer.begin(), point_buffer.end(),
@@ -660,6 +665,16 @@ namespace ext {
 	}
       }
       bs.close();
+    }
+
+    if (ranges.size() == 0 && is_leaf() != true) {
+      DEBUG_MSG("We have children but is a leaf in node: " << id);
+      return false;
+    }
+
+    if (ranges.size() != 0 && is_leaf() != false) {
+      DEBUG_MSG("We dont have children but we are not a leaf! in node: " << id);
+      return false;
     }
 
     for (auto r : ranges) {

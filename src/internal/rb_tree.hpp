@@ -10,13 +10,15 @@ namespace internal {
   public:
     rb_tree();
     ~rb_tree();
-    void insert(T item);
-    void erase(T item);
+    void insert(const T &item);
+    void insert(typename std::set<T>::iterator it, const T &item);
+    void erase(const T &item);
     void clear();
     size_t size();
-    T predecessor(T item);
-    T successor(T item);
-    T belong_to(T item);
+    bool empty();
+    T predecessor(const T &item);
+    T successor(const T &item);
+    T belong_to(const T &item);
     typename std::set<T>::iterator begin();
     typename std::set<T>::iterator end();
   private:
@@ -33,10 +35,20 @@ namespace internal {
   void rb_tree<T>::clear() {
     s.clear();
   }
+
+  template <typename T>
+  bool rb_tree<T>::empty() {
+    return s.empty();
+  }
   
   template <typename T>
-  void rb_tree<T>::insert(T item) {
+  void rb_tree<T>::insert(const T &item) {
     s.insert(item);
+  }
+
+  template <typename T>
+  void rb_tree<T>::insert(typename std::set<T>::iterator it, const T &item) {
+    s.insert(it, item);
   }
 
   template <typename T>
@@ -45,22 +57,22 @@ namespace internal {
   }
   
   template <typename T>
-  void rb_tree<T>::erase(T item) {
+  void rb_tree<T>::erase(const T &item) {
     s.erase(s.find(item));
   }
 
   template <typename T>
-  T rb_tree<T>::predecessor(T item) {
+  T rb_tree<T>::predecessor(const T &item) {
     return *(--(s.lower_bound(item)));
   }
 
   template <typename T>
-  T rb_tree<T>::successor(T item) {
+  T rb_tree<T>::successor(const T &item) {
     return *(s.upper_bound(item));
   }
 
   template <typename T>
-  T rb_tree<T>::belong_to(T item) {
+  T rb_tree<T>::belong_to(const T &item) {
     auto it = s.lower_bound(item);
     if (*it == item) return *it;
     if (it == s.begin()) return *it;

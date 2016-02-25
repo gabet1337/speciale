@@ -347,9 +347,47 @@ void test_node_degree_overflow() {
   print_description("starting test of node degree overflow");
 
   ext::buffered_pst epst(9,0.5);
-  for (int i = 1; i <= 27; i++) epst.insert(point(i,i));
+  // for (int i = 1; i <= 27; i++) epst.insert(point(i,i));
 
   //TODO: ASSERT THIS BITCH UP!
+  // after point (10,10) has been inserted we split and create node id 1 and 2
+  // 1 has (1,1), (2,2)
+  // 2 has (3,3), (4,4), (5,5)
+  for (int i = 1; i <= 10; i++) epst.insert(point(i,i));
+  assert( util::file_exists("1/point_buffer"));
+  assert( util::file_exists("2/point_buffer"));
+  io::buffered_stream<point> bs(4096);
+  bs.open("1/point_buffer");
+  assert ( bs.read() == point(1,1) && bs.read() == point(2,2) && bs.eof() );
+  bs.close();
+  bs.open("2/point_buffer");
+  assert ( bs.read() == point(3,3) && bs.read() == point(4,4) && bs.read() == point(5,5)
+           && bs.eof() );
+  bs.close();
+  assert ( epst.is_valid() );
+
+  for (int i = 11; i <= 24; i++) epst.insert(point(i,i));
+  bs.open("2/point_buffer");
+  assert ( bs.read() == point(3,3) && bs.read() == point(4,4) && bs.read() == point(5,5)
+           && bs.eof() );
+  bs.close();
+  bs.open("3/point_buffer");
+  assert ( bs.read() == point(6,6) && bs.read() == point(7,7) && bs.read() == point(8,8)
+           && bs.eof() );
+  bs.close();
+  assert (epst.is_valid());
+
+  for (int i = 25; i <= 27; i++) epst.insert(point(i,i));
+  bs.open("3/point_buffer");
+  assert ( bs.read() == point(6,6) && bs.read() == point(7,7) && bs.read() == point(8,8)
+           && bs.eof() );
+  bs.close();
+
+  bs.open("4/point_buffer");
+  assert ( bs.read() == point(9,9) && bs.read() == point(10,10) && bs.read() == point(11,11)
+           && bs.eof() );
+  bs.close();
+  assert (epst.is_valid());   
   
   print_success();
 }
