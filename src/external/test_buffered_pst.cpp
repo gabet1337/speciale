@@ -339,11 +339,6 @@ void test_maintaining_min_max_y_on_insert_buffer_overflow() {
 
 void test_node_degree_overflow() {
 
-  int lol = system("rm -rf 1/");
-  lol = system("rm -rf 2/");
-  lol = system("rm -rf 3/");
-  lol++;
-    
   print_description("starting test of node degree overflow");
 
   ext::buffered_pst epst(9,0.5);
@@ -387,12 +382,35 @@ void test_node_degree_overflow() {
   assert ( bs.read() == point(9,9) && bs.read() == point(10,10) && bs.read() == point(11,11)
            && bs.eof() );
   bs.close();
-  assert (epst.is_valid());   
+  assert (epst.is_valid());
   
   print_success();
 }
 
-// TODO: Create test that distributes points evenly.
+void test_distribute_evenly() {
+  print_description("starting test of splitting evenly");
+
+  ext::buffered_pst epst(9,0.5);
+  for (int i = 1; i <= 5; i++) epst.insert(point(i,i));
+  for (int i = 101; i <= 110; i++) epst.insert(point(i,i));
+  assert( util::file_exists("1/point_buffer"));
+  assert( util::file_exists("2/point_buffer"));
+  io::buffered_stream<point> bs(4096);
+  bs.open("1/point_buffer");
+  assert ( bs.read() == point(1,1) && bs.read() == point(2,2) && bs.eof() );
+  bs.close();
+  bs.open("2/point_buffer");
+  assert ( bs.read() == point(3,3) && bs.read() == point(4,4) && bs.read() == point(5,5)
+           && bs.eof() );
+  bs.close();
+  assert ( epst.is_valid() );
+
+  for (int i = 111; i <= 122; i++) epst.insert(point(i-60, i));
+
+    
+
+  print_success();
+}
 
 void cleanup() {
   for (int i = 0; i < 1000; i++)
@@ -418,7 +436,7 @@ int main() {
   test_root_split_insert_between_overflow();
   test_maintaining_min_max_y_on_insert_buffer_overflow();
   test_node_degree_overflow();
-   
+  test_distribute_evenly();
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   
   cleanup();

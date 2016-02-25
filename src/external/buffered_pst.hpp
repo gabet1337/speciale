@@ -350,7 +350,7 @@ namespace ext {
     DEBUG_MSG("Started splitting of leaf");
     
     /*
-      1.) Move last b/4 buffer_point points to new leaf.
+      1.) Move last b/4 point_buffer points to new leaf.
       2.) Update max_y on existing interval
       3.) Insert new interval for new leaf with min, max_y, node_id
     */
@@ -495,7 +495,10 @@ namespace ext {
       }
       tmp.insert(p);
     }
-    if (tmp.size() > best.size()) best = tmp;
+    if (tmp.size() > best.size()) {
+      best = tmp;
+      best_range = cur_range;
+    }
 
     return {best_range.node_id, best};
   }
