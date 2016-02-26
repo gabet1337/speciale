@@ -40,6 +40,18 @@ namespace ext {
       void remove(const point &p);
       void add_child(const range &r);
       void insert_into_point_buffer(const point &p);
+      void load_point_buffer();
+      void load_insert_buffer();
+      void load_delete_buffer();
+      void load_info_file();
+      void load_ranges();
+      void load_all();
+      void flush_point_buffer();
+      void flush_insert_buffer();
+      void flush_delete_buffer();
+      void flush_info_file();
+      void flush_ranges();
+      void flush_all();
       template <class Container>
       void insert_into_point_buffer(const Container &points);
       void insert_into_insert_buffer(const point &p);
@@ -101,48 +113,90 @@ namespace ext {
   }
 
   buffered_pst::buffered_pst_node::buffered_pst_node(int id, buffered_pst_node* root) {
-    
+    DEBUG_MSG("Opening existing node " << id);
     this->id = id;
     this->root = root;
-    DEBUG_MSG("Constructing node " << id << " from files");
+  }
 
+  void buffered_pst::buffered_pst_node::load_point_buffer() {
+    DEBUG_MSG("Loading point buffer");
+    util::load_file_to_container<std::set<point>, point>
+      (point_buffer, get_point_buffer_file_name(id), buffer_size);
+  }
+
+  void buffered_pst::buffered_pst_node::load_insert_buffer() {
+    DEBUG_MSG("Loading insert buffer");
+    util::load_file_to_container<std::set<point>, point>
+      (insert_buffer, get_insert_buffer_file_name(id), buffer_size);
+  }
+
+  void buffered_pst::buffered_pst_node::load_ranges() {
+    DEBUG_MSG("Loading ranges");
+    util::load_file_to_container<internal::rb_tree<range>, range>
+      (ranges, get_ranges_file_name(id), buffer_size);
+  }
+
+  void buffered_pst::buffered_pst_node::load_delete_buffer() {
+    DEBUG_MSG("Loading delete buffer");
+    util::load_file_to_container<std::set<point>, point>
+      (delete_buffer, get_delete_buffer_file_name(id), buffer_size);
+  }
+
+  void buffered_pst::buffered_pst_node::load_info_file() {
     DEBUG_MSG("Loading info file");
     std::vector<size_t> info_file;
-    util::load_file_to_container<std::vector<size_t>, size_t>(info_file, get_info_file_file_name(id), 512);
+    util::load_file_to_container<std::vector<size_t>, size_t>
+      (info_file, get_info_file_file_name(id), 512);
     this->buffer_size = info_file[0];
     this->B_epsilon = info_file[1];
     this->parent_id = (int)info_file[2];
-    DEBUG_MSG("Loading point buffer");
-    util::load_file_to_container<std::set<point>, point>(point_buffer, get_point_buffer_file_name(id), buffer_size);
-    DEBUG_MSG("Loading insert buffer");
-    util::load_file_to_container<std::set<point>, point>(insert_buffer, get_insert_buffer_file_name(id), buffer_size);
-    DEBUG_MSG("Loading delete buffer");
-    util::load_file_to_container<std::set<point>, point>(delete_buffer, get_delete_buffer_file_name(id), buffer_size);
-    DEBUG_MSG("Loading ranges");
-    util::load_file_to_container<internal::rb_tree<range>, range>(ranges, get_ranges_file_name(id), buffer_size);
+  }
+
+  void buffered_pst::buffered_pst_node::load_all() {
+    load_point_buffer();
+    load_insert_buffer();
+    load_delete_buffer();
+    load_info_file();
+    load_ranges();
   }
   
   buffered_pst::buffered_pst_node::~buffered_pst_node() {
     DEBUG_MSG("DESTRUCTING NODE " << id);
-    if (!util::file_exists(get_directory(id))) mkdir(get_directory(id).c_str(), 0700);
-    
+  }
+
+  void buffered_pst::buffered_pst_node::flush_point_buffer() {
     DEBUG_MSG("Flushing point buffer");
+    if (!util::file_exists(get_directory(id))) mkdir(get_directory(id).c_str(), 0700);
     util::flush_container_to_file<std::set<point>::iterator,point>
       (point_buffer.begin(),point_buffer.end(), get_point_buffer_file_name(id), buffer_size);
+  }
 
+  void buffered_pst::buffered_pst_node::flush_insert_buffer() {
     DEBUG_MSG("Flushing insert buffer");
+    if (!util::file_exists(get_directory(id))) mkdir(get_directory(id).c_str(), 0700);
     util::flush_container_to_file<std::set<point>::iterator,point>
-      (insert_buffer.begin(),insert_buffer.end(), get_insert_buffer_file_name(id), buffer_size);
+      (insert_buffer.begin(),insert_buffer.end(),
+       get_insert_buffer_file_name(id), buffer_size);
+  }
 
-    DEBUG_MSG("Flushing delete buffer");
-    util::flush_container_to_file<std::set<point>::iterator,point>
-      (delete_buffer.begin(),delete_buffer.end(), get_delete_buffer_file_name(id), buffer_size);
-
+  void buffered_pst::buffered_pst_node::flush_ranges() {
     DEBUG_MSG("Flushing ranges");
+    if (!util::file_exists(get_directory(id))) mkdir(get_directory(id).c_str(), 0700);
     util::flush_container_to_file<std::set<range>::iterator, range>
       (ranges.begin(), ranges.end(), get_ranges_file_name(id), buffer_size);
+  }
 
+  void buffered_pst::buffered_pst_node::flush_delete_buffer() {
+    DEBUG_MSG("Flushing delete buffer");
+    if (!util::file_exists(get_directory(id))) mkdir(get_directory(id).c_str(), 0700);
+    util::flush_container_to_file<std::set<point>::iterator,point>
+      (delete_buffer.begin(),delete_buffer.end(),
+       get_delete_buffer_file_name(id), buffer_size);
+  }
+
+  void buffered_pst::buffered_pst_node::flush_info_file() {
     DEBUG_MSG("Flushing info file");
+    if (!util::file_exists(get_directory(id))) mkdir(get_directory(id).c_str(), 0700);
     std::vector<size_t> info_file;
     info_file.push_back(buffer_size);
     info_file.push_back(B_epsilon);
@@ -150,6 +204,14 @@ namespace ext {
     
     util::flush_container_to_file<std::vector<size_t>::iterator, size_t>
       (info_file.begin(), info_file.end(), get_info_file_file_name(id), buffer_size);
+  }
+
+  void buffered_pst::buffered_pst_node::flush_all() {
+    flush_point_buffer();
+    flush_insert_buffer();
+    flush_delete_buffer();
+    flush_info_file();
+    flush_ranges();
   }
 
   std::string buffered_pst::buffered_pst_node::get_point_buffer_file_name(int id) {
@@ -597,8 +659,82 @@ namespace ext {
 	found_child.insert_into_point_buffer(U);
       
       } else {
-	perror("not implemented yet");
-	exit(-10);
+
+	/*
+	  1.) Any point in U with y-value >= the min y-value in Pc is inserted into Pc and Cv
+	  and removed from U.
+	  2.) If Pc overflows, i.e. |Pc| > B then repeatedly move min y-value point from Pc
+	  to U until |Pc| = B.
+	  3.) Add remaining points in U to Ic which might overflow.
+	*/
+
+	point min_y = *std::min_element(found_child.point_buffer.begin(),
+					found_child.point_buffer.end(),
+					[](const point &p1, const point &p2) {
+					  return p1.y < p2.y || (p1.x == p2.x && p1.y < p2.y);
+					});
+	DEBUG_MSG("Found min_y in found_child " << found_child.id << " to be " << min_y);
+
+	DEBUG_MSG("Distributing points according to min_y element");
+	std::set<point> new_U;
+	for (point p : U) {
+	  if (min_y <= p) {
+	    DEBUG_MSG("Point " << p << " went into found_childs point buffer");
+	    found_child.point_buffer.insert(p);
+	  } else {
+	    DEBUG_MSG("Point " << p << " stays in U");
+	    new_U.insert(p);
+	  }
+	}
+	U = new_U;
+
+	std::vector<point> sorted_point_buffer(found_child.point_buffer.begin(),
+						 found_child.point_buffer.end());
+
+	std::sort(sorted_point_buffer.begin(), sorted_point_buffer.end(),
+		  [](const point &p1, const point &p2) {
+		    return p1.y < p2.y || (p1.x == p2.x && p1.y < p2.y);
+		  });
+	
+	if (found_child.point_buffer_overflow()) {
+	  DEBUG_MSG("Point buffer overflows in found_child " << found_child.id);
+	  DEBUG_MSG("Moving " << (found_child.point_buffer.size()-buffer_size)
+		    << " points from point_buffer to U");
+	  size_t num_points_to_move = found_child.point_buffer.size()-buffer_size;
+	  for (size_t i = 0; i < num_points_to_move; i++) {
+	    DEBUG_MSG(" - " << sorted_point_buffer[i] << " went into U");
+	    found_child.point_buffer.erase(sorted_point_buffer[i]);
+	    U.insert(sorted_point_buffer[i]);
+	  }	  
+	}
+
+	DEBUG_MSG("Updating range");
+	range old_range;
+	for (range r : ranges) {
+	  if (found_child.id == r.node_id) {
+	    old_range = r;
+	    break;
+	  }
+	}
+
+	range new_range = range(std::min(*found_child.point_buffer.begin(),old_range.min),
+				(sorted_point_buffer.end()-1)->y,
+				old_range.node_id);
+	
+	DEBUG_MSG("Updating range for found_child " << found_child.id << " from "
+		  << old_range << " to " << new_range);
+	
+	ranges.erase(old_range);
+	ranges.insert(new_range);
+	
+	DEBUG_MSG("Inserting U into found_child " << found_child.id);
+	
+#ifdef DEBUG
+	for (point p : U)
+	  DEBUG_MSG(" - " << p);
+#endif
+	found_child.insert_into_insert_buffer(U);
+
       }
     }
     handle_split();

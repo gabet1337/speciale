@@ -459,9 +459,517 @@ void test_distribute_evenly() {
 #ifdef DEBUG
   assert ( epst.is_valid() );
 #endif
+
   print_success();
 }
 
+
+void test_insert_buffer_overflow_to_non_leaf2() {
+  print_description("starting test of insert buffer overflow to non-leaf 2");
+
+  ext::buffered_pst epst(9,0.5);
+  for (int i = 1; i <= 5; i++) epst.insert(point(i,i));
+  for (int i = 101; i <= 110; i++) epst.insert(point(i,i));
+  assert( util::file_exists("1/point_buffer"));
+  assert( util::file_exists("2/point_buffer"));
+  io::buffered_stream<point> bs(4096);
+  bs.open("1/point_buffer");
+  assert ( bs.read() == point(1,1) && bs.read() == point(2,2) && bs.eof() );
+  bs.close();
+  bs.open("2/point_buffer");
+  assert ( bs.read() == point(3,3) && bs.read() == point(4,4) && bs.read() == point(5,5)
+           && bs.eof() );
+  bs.close();
+#ifdef DEBUG
+  assert ( epst.is_valid() );
+#endif
+  for (int i = 111; i <= 122; i++) epst.insert(point(i-60, i));
+
+  bs.open("1/point_buffer");
+  assert ( bs.read() == point(1,1) && bs.read() == point(2,2) && bs.eof() );
+  bs.close();
+  bs.open("2/point_buffer");
+  assert ( bs.read() == point(3,3) && bs.read() == point(4,4) && bs.read() == point(5,5)
+           && bs.eof() );
+  bs.close();
+
+  bs.open("3/point_buffer");
+  assert ( bs.read() == point(101,101) && bs.read() == point(102,102) && bs.eof() );
+  bs.close();
+
+  bs.open("4/point_buffer");
+  assert ( bs.eof() );
+  bs.close();
+
+  bs.open("5/point_buffer");
+  assert( bs.read() == point(54,114) && bs.read() == point(55,115) && bs.read() == point(56,116)
+          && bs.read() == point(57,117) && bs.read() == point(58,118) && bs.eof());
+  bs.close();
+
+  bs.open("5/insert_buffer");
+  assert ( bs.read() == point(51,111) && bs.read() == point(52,112) && bs.read() == point(53,113) && bs.eof());
+  bs.close();
+
+  bs.open("6/point_buffer");
+  assert ( bs.read() == point(107,107) && bs.read() == point(108,108) && bs.read() == point(109,109) && bs.read() == point(110,110) && bs.eof());
+  bs.close();
+
+  bs.open("6/insert_buffer");
+  assert ( bs.read() == point(103,103) && bs.read() == point(104,104) && bs.read() == point(105,105) && bs.read() == point(106,106) && bs.eof());
+  bs.close();
+#ifdef DEBUG
+  assert ( epst.is_valid() );
+#endif
+
+  for (int i = 123; i <= 137; i++) epst.insert(point(i-60, i));
+
+  bs.open("5/insert_buffer");
+  assert ( bs.read() == point(51,111) && bs.read() == point(52,112) && bs.read() == point(53,113) && bs.eof() );
+  bs.close();
+
+  bs.open("5/point_buffer");
+  assert ( bs.read() == point(54,114) && bs.read() == point(55,115) && bs.read() == point(56,116) && bs.read() == point(57,117) && bs.read() == point(58,118) );
+  assert ( bs.read() == point(59,119) && bs.read() == point(60,120) && bs.read() == point(61,121) && bs.eof() );
+  bs.close();
+  
+#ifdef DEBUG
+  assert ( epst.is_valid() );
+#endif
+
+  for (int i = 138; i <= 140; i++) epst.insert(point(i-60, i));
+
+  bs.open("5/point_buffer");
+  assert( bs.read() == point(56,116) && bs.read() == point(57,117) &&
+	  bs.read() == point(58,118) && bs.read() == point(59,119) &&
+	  bs.read() == point(60,120) && bs.read() == point(61,121) &&
+	  bs.read() == point(62,122) && bs.read() == point(63,123) &&
+	  bs.read() == point(64,124) && bs.eof());
+  bs.close();
+
+  bs.open("5/insert_buffer");
+  assert( bs.read() == point(51,111) && bs.read() == point(52,112) &&
+	  bs.read() == point(53,113) && bs.read() == point(54,114) &&
+	  bs.read() == point(55,115) && bs.eof());
+  bs.close();
+
+#ifdef DEBUG
+  assert ( epst.is_valid() );
+#endif
+  
+  print_success();
+}
+
+void test_insert_buffer_overflow_to_non_leaf() {
+  print_description("starting test of insert buffer overflow to non-leaf");
+
+  ext::buffered_pst epst(9,0.5);
+  for (int i = 1; i <= 5; i++) epst.insert(point(i,i));
+  for (int i = 101; i <= 110; i++) epst.insert(point(i,i));
+  assert( util::file_exists("1/point_buffer"));
+  assert( util::file_exists("2/point_buffer"));
+  io::buffered_stream<point> bs(4096);
+  bs.open("1/point_buffer");
+  assert ( bs.read() == point(1,1) && bs.read() == point(2,2) && bs.eof() );
+  bs.close();
+  bs.open("2/point_buffer");
+  assert ( bs.read() == point(3,3) && bs.read() == point(4,4) && bs.read() == point(5,5)
+           && bs.eof() );
+  bs.close();
+#ifdef DEBUG
+  assert ( epst.is_valid() );
+#endif
+  for (int i = 111; i <= 122; i++) epst.insert(point(i-60, i));
+
+  bs.open("1/point_buffer");
+  assert ( bs.read() == point(1,1) && bs.read() == point(2,2) && bs.eof() );
+  bs.close();
+  bs.open("2/point_buffer");
+  assert ( bs.read() == point(3,3) && bs.read() == point(4,4) && bs.read() == point(5,5)
+           && bs.eof() );
+  bs.close();
+
+  bs.open("3/point_buffer");
+  assert ( bs.read() == point(101,101) && bs.read() == point(102,102) && bs.eof() );
+  bs.close();
+
+  bs.open("4/point_buffer");
+  assert ( bs.eof() );
+  bs.close();
+
+  bs.open("5/point_buffer");
+  assert( bs.read() == point(54,114) && bs.read() == point(55,115) && bs.read() == point(56,116)
+          && bs.read() == point(57,117) && bs.read() == point(58,118) && bs.eof());
+  bs.close();
+
+  bs.open("5/insert_buffer");
+  assert ( bs.read() == point(51,111) && bs.read() == point(52,112) && bs.read() == point(53,113) && bs.eof());
+  bs.close();
+
+  bs.open("6/point_buffer");
+  assert ( bs.read() == point(107,107) && bs.read() == point(108,108) && bs.read() == point(109,109) && bs.read() == point(110,110) && bs.eof());
+  bs.close();
+
+  bs.open("6/insert_buffer");
+  assert ( bs.read() == point(103,103) && bs.read() == point(104,104) && bs.read() == point(105,105) && bs.read() == point(106,106) && bs.eof());
+  bs.close();
+#ifdef DEBUG
+  assert ( epst.is_valid() );
+#endif
+
+  for (int i = 123; i <= 137; i++) epst.insert(point(i-60, i));
+
+  bs.open("5/insert_buffer");
+  assert ( bs.read() == point(51,111) && bs.read() == point(52,112) && bs.read() == point(53,113) && bs.eof() );
+  bs.close();
+
+  bs.open("5/point_buffer");
+  assert ( bs.read() == point(54,114) && bs.read() == point(55,115) && bs.read() == point(56,116) && bs.read() == point(57,117) && bs.read() == point(58,118) );
+  assert ( bs.read() == point(59,119) && bs.read() == point(60,120) && bs.read() == point(61,121) && bs.eof() );
+  bs.close();
+  
+#ifdef DEBUG
+  assert ( epst.is_valid() );
+#endif
+
+  print_success();
+}
+
+void test_insert_buffer_overflow_to_non_leaf3() {
+  print_description("starting test of insert buffer overflow to non-leaf 2");
+
+  ext::buffered_pst epst(9,0.5);
+  for (int i = 1; i <= 5; i++) epst.insert(point(i,i));
+  for (int i = 101; i <= 110; i++) epst.insert(point(i,i));
+  assert( util::file_exists("1/point_buffer"));
+  assert( util::file_exists("2/point_buffer"));
+  io::buffered_stream<point> bs(4096);
+  bs.open("1/point_buffer");
+  assert ( bs.read() == point(1,1) && bs.read() == point(2,2) && bs.eof() );
+  bs.close();
+  bs.open("2/point_buffer");
+  assert ( bs.read() == point(3,3) && bs.read() == point(4,4) && bs.read() == point(5,5)
+           && bs.eof() );
+  bs.close();
+#ifdef DEBUG
+  assert ( epst.is_valid() );
+#endif
+  for (int i = 111; i <= 122; i++) epst.insert(point(i-60, i));
+
+  bs.open("1/point_buffer");
+  assert ( bs.read() == point(1,1) && bs.read() == point(2,2) && bs.eof() );
+  bs.close();
+  bs.open("2/point_buffer");
+  assert ( bs.read() == point(3,3) && bs.read() == point(4,4) && bs.read() == point(5,5)
+           && bs.eof() );
+  bs.close();
+
+  bs.open("3/point_buffer");
+  assert ( bs.read() == point(101,101) && bs.read() == point(102,102) && bs.eof() );
+  bs.close();
+
+  bs.open("4/point_buffer");
+  assert ( bs.eof() );
+  bs.close();
+
+  bs.open("5/point_buffer");
+  assert( bs.read() == point(54,114) && bs.read() == point(55,115) && bs.read() == point(56,116)
+          && bs.read() == point(57,117) && bs.read() == point(58,118) && bs.eof());
+  bs.close();
+
+  bs.open("5/insert_buffer");
+  assert ( bs.read() == point(51,111) && bs.read() == point(52,112) && bs.read() == point(53,113) && bs.eof());
+  bs.close();
+
+  bs.open("6/point_buffer");
+  assert ( bs.read() == point(107,107) && bs.read() == point(108,108) && bs.read() == point(109,109) && bs.read() == point(110,110) && bs.eof());
+  bs.close();
+
+  bs.open("6/insert_buffer");
+  assert ( bs.read() == point(103,103) && bs.read() == point(104,104) && bs.read() == point(105,105) && bs.read() == point(106,106) && bs.eof());
+  bs.close();
+#ifdef DEBUG
+  assert ( epst.is_valid() );
+#endif
+
+  for (int i = 123; i <= 137; i++) epst.insert(point(i-60, i));
+
+  bs.open("5/insert_buffer");
+  assert ( bs.read() == point(51,111) && bs.read() == point(52,112) && bs.read() == point(53,113) && bs.eof() );
+  bs.close();
+
+  bs.open("5/point_buffer");
+  assert ( bs.read() == point(54,114) && bs.read() == point(55,115) && bs.read() == point(56,116) && bs.read() == point(57,117) && bs.read() == point(58,118) );
+  assert ( bs.read() == point(59,119) && bs.read() == point(60,120) && bs.read() == point(61,121) && bs.eof() );
+  bs.close();
+  
+#ifdef DEBUG
+  assert ( epst.is_valid() );
+#endif
+
+  for (int i = 138; i <= 140; i++) epst.insert(point(i-60, i));
+
+  bs.open("5/point_buffer");
+  assert( bs.read() == point(56,116) && bs.read() == point(57,117) &&
+	  bs.read() == point(58,118) && bs.read() == point(59,119) &&
+	  bs.read() == point(60,120) && bs.read() == point(61,121) &&
+	  bs.read() == point(62,122) && bs.read() == point(63,123) &&
+	  bs.read() == point(64,124) && bs.eof());
+  bs.close();
+
+  bs.open("5/insert_buffer");
+  assert( bs.read() == point(51,111) && bs.read() == point(52,112) &&
+	  bs.read() == point(53,113) && bs.read() == point(54,114) &&
+	  bs.read() == point(55,115) && bs.eof());
+  bs.close();
+
+#ifdef DEBUG
+  assert ( epst.is_valid() );
+#endif
+
+  for (int i = 141; i <= 143; i++) epst.insert(point(i-60, i));
+
+  bs.open("5/point_buffer");
+  assert( bs.read() == point(59,119) &&
+	  bs.read() == point(60,120) && bs.read() == point(61,121) &&
+	  bs.read() == point(62,122) && bs.read() == point(63,123) &&
+	  bs.read() == point(64,124) && bs.read() == point(65,125) &&
+	  bs.read() == point(66,126) && bs.read() == point(67,127) &&
+	  bs.eof());
+  bs.close();
+
+  bs.open("5/insert_buffer");
+  assert( bs.read() == point(51,111) && bs.read() == point(52,112) &&
+	  bs.read() == point(53,113) && bs.read() == point(54,114) &&
+	  bs.read() == point(55,115) && bs.read() == point(56,116) &&
+	  bs.read() == point(57,117) && bs.read() == point(58,118) &&
+	  bs.eof());
+  bs.close();
+
+#ifdef DEBUG
+  assert ( epst.is_valid() );
+#endif
+
+  for (int i = 144; i <= 146; i++) epst.insert(point(i-60, i));
+
+  bs.open("5/point_buffer");
+  assert( bs.read() == point(62,122) && bs.read() == point(63,123) &&
+    bs.read() == point(64,124) && bs.read() == point(65,125) &&
+    bs.read() == point(66,126) && bs.read() == point(67,127) &&
+    bs.read() == point(68,128) && bs.read() == point(69,129) &&
+    bs.read() == point(70,130) && bs.eof());
+  bs.close();
+
+  bs.open("5/insert_buffer");
+  assert( bs.read() == point(54,114) &&
+    bs.read() == point(55,115) && bs.read() == point(56,116) &&
+    bs.read() == point(57,117) && bs.read() == point(58,118) &&
+    bs.read() == point(59,119) && bs.read() == point(60,120) &&
+    bs.read() == point(61,121) && bs.eof());
+  bs.close();
+
+  bs.open("7/point_buffer");
+  assert( bs.read() == point(51,111) && bs.read() == point(52,112) &&
+    bs.read() == point(53,113)  && bs.eof());
+  bs.close();
+
+  bs.open("2/point_buffer");
+  assert( bs.read() == point(3,3) && bs.read() == point(4,4) &&
+    bs.read() == point(5,5) && bs.eof());
+  bs.close();
+
+#ifdef DEBUG
+  assert ( epst.is_valid() );
+#endif
+  
+  print_success();
+}
+
+void test_insert_buffer_overflow_to_non_leaf4() {
+  print_description("starting test of insert buffer overflow to non-leaf 2");
+
+  ext::buffered_pst epst(9,0.5);
+  for (int i = 1; i <= 5; i++) epst.insert(point(i,i));
+  for (int i = 101; i <= 110; i++) epst.insert(point(i,i));
+  assert( util::file_exists("1/point_buffer"));
+  assert( util::file_exists("2/point_buffer"));
+  io::buffered_stream<point> bs(4096);
+  bs.open("1/point_buffer");
+  assert ( bs.read() == point(1,1) && bs.read() == point(2,2) && bs.eof() );
+  bs.close();
+  bs.open("2/point_buffer");
+  assert ( bs.read() == point(3,3) && bs.read() == point(4,4) && bs.read() == point(5,5)
+           && bs.eof() );
+  bs.close();
+#ifdef DEBUG
+  assert ( epst.is_valid() );
+#endif
+  for (int i = 111; i <= 122; i++) epst.insert(point(i-60, i));
+
+  bs.open("1/point_buffer");
+  assert ( bs.read() == point(1,1) && bs.read() == point(2,2) && bs.eof() );
+  bs.close();
+  bs.open("2/point_buffer");
+  assert ( bs.read() == point(3,3) && bs.read() == point(4,4) && bs.read() == point(5,5)
+           && bs.eof() );
+  bs.close();
+
+  bs.open("3/point_buffer");
+  assert ( bs.read() == point(101,101) && bs.read() == point(102,102) && bs.eof() );
+  bs.close();
+
+  bs.open("4/point_buffer");
+  assert ( bs.eof() );
+  bs.close();
+
+  bs.open("5/point_buffer");
+  assert( bs.read() == point(54,114) && bs.read() == point(55,115) && bs.read() == point(56,116)
+          && bs.read() == point(57,117) && bs.read() == point(58,118) && bs.eof());
+  bs.close();
+
+  bs.open("5/insert_buffer");
+  assert ( bs.read() == point(51,111) && bs.read() == point(52,112) && bs.read() == point(53,113) && bs.eof());
+  bs.close();
+
+  bs.open("6/point_buffer");
+  assert ( bs.read() == point(107,107) && bs.read() == point(108,108) && bs.read() == point(109,109) && bs.read() == point(110,110) && bs.eof());
+  bs.close();
+
+  bs.open("6/insert_buffer");
+  assert ( bs.read() == point(103,103) && bs.read() == point(104,104) && bs.read() == point(105,105) && bs.read() == point(106,106) && bs.eof());
+  bs.close();
+#ifdef DEBUG
+  assert ( epst.is_valid() );
+#endif
+
+  for (int i = 123; i <= 137; i++) epst.insert(point(i-60, i));
+
+  bs.open("5/insert_buffer");
+  assert ( bs.read() == point(51,111) && bs.read() == point(52,112) && bs.read() == point(53,113) && bs.eof() );
+  bs.close();
+
+  bs.open("5/point_buffer");
+  assert ( bs.read() == point(54,114) && bs.read() == point(55,115) && bs.read() == point(56,116) && bs.read() == point(57,117) && bs.read() == point(58,118) );
+  assert ( bs.read() == point(59,119) && bs.read() == point(60,120) && bs.read() == point(61,121) && bs.eof() );
+  bs.close();
+  
+#ifdef DEBUG
+  assert ( epst.is_valid() );
+#endif
+
+  for (int i = 138; i <= 140; i++) epst.insert(point(i-60, i));
+
+  bs.open("5/point_buffer");
+  assert( bs.read() == point(56,116) && bs.read() == point(57,117) &&
+	  bs.read() == point(58,118) && bs.read() == point(59,119) &&
+	  bs.read() == point(60,120) && bs.read() == point(61,121) &&
+	  bs.read() == point(62,122) && bs.read() == point(63,123) &&
+	  bs.read() == point(64,124) && bs.eof());
+  bs.close();
+
+  bs.open("5/insert_buffer");
+  assert( bs.read() == point(51,111) && bs.read() == point(52,112) &&
+	  bs.read() == point(53,113) && bs.read() == point(54,114) &&
+	  bs.read() == point(55,115) && bs.eof());
+  bs.close();
+
+#ifdef DEBUG
+  assert ( epst.is_valid() );
+#endif
+
+  for (int i = 141; i <= 143; i++) epst.insert(point(i-60, i));
+
+  bs.open("5/point_buffer");
+  assert( bs.read() == point(59,119) &&
+	  bs.read() == point(60,120) && bs.read() == point(61,121) &&
+	  bs.read() == point(62,122) && bs.read() == point(63,123) &&
+	  bs.read() == point(64,124) && bs.read() == point(65,125) &&
+	  bs.read() == point(66,126) && bs.read() == point(67,127) &&
+	  bs.eof());
+  bs.close();
+
+  bs.open("5/insert_buffer");
+  assert( bs.read() == point(51,111) && bs.read() == point(52,112) &&
+	  bs.read() == point(53,113) && bs.read() == point(54,114) &&
+	  bs.read() == point(55,115) && bs.read() == point(56,116) &&
+	  bs.read() == point(57,117) && bs.read() == point(58,118) &&
+	  bs.eof());
+  bs.close();
+
+#ifdef DEBUG
+  assert ( epst.is_valid() );
+#endif
+
+  for (int i = 144; i <= 146; i++) epst.insert(point(i-60, i));
+
+  bs.open("5/point_buffer");
+  assert( bs.read() == point(62,122) && bs.read() == point(63,123) &&
+    bs.read() == point(64,124) && bs.read() == point(65,125) &&
+    bs.read() == point(66,126) && bs.read() == point(67,127) &&
+    bs.read() == point(68,128) && bs.read() == point(69,129) &&
+    bs.read() == point(70,130) && bs.eof());
+  bs.close();
+
+  bs.open("5/insert_buffer");
+  assert( bs.read() == point(54,114) &&
+    bs.read() == point(55,115) && bs.read() == point(56,116) &&
+    bs.read() == point(57,117) && bs.read() == point(58,118) &&
+    bs.read() == point(59,119) && bs.read() == point(60,120) &&
+    bs.read() == point(61,121) && bs.eof());
+  bs.close();
+
+  bs.open("7/point_buffer");
+  assert( bs.read() == point(51,111) && bs.read() == point(52,112) &&
+    bs.read() == point(53,113)  && bs.eof());
+  bs.close();
+
+  bs.open("2/point_buffer");
+  assert( bs.read() == point(3,3) && bs.read() == point(4,4) &&
+    bs.read() == point(5,5) && bs.eof());
+  bs.close();
+
+#ifdef DEBUG
+  assert ( epst.is_valid() );
+#endif
+
+  DEBUG_MSG("!!!!!!!!!!!!! WE EXPECT THE POINT BUFFER OF THE ROOT TO OVERFLOW !!!!!!!!!!!!!");
+  for (int i = 147; i <= 149; i++) epst.insert(point(i-60, i));
+
+  bs.open("5/point_buffer");
+  assert( bs.read() == point(65,125) &&
+	  bs.read() == point(66,126) && bs.read() == point(67,127) &&
+	  bs.read() == point(68,128) && bs.read() == point(69,129) &&
+	  bs.read() == point(70,130) && bs.read() == point(71,131) &&
+	  bs.read() == point(72,132) && bs.read() == point(73,133) &&
+	  bs.eof());
+  bs.close();
+
+  bs.open("5/insert_buffer");
+  assert( bs.read() == point(57,117) && bs.read() == point(58,118) &&
+	  bs.read() == point(59,119) && bs.read() == point(60,120) &&
+	  bs.read() == point(61,121) && bs.read() == point(62,122) &&
+	  bs.read() == point(63,123) && bs.read() == point(64,124) &&
+	  bs.eof());
+  bs.close();
+
+  DEBUG_MSG("!!!!!!!!!!!!! WE EXPECT THE POINT BUFFER OF THE ROOT TO OVERFLOW2 !!!!!!!!!!!!!");
+  
+  //for (int i = 150; i <= 152; i++) epst.insert(point(i-60, i));
+
+  //bs.open("1/point_buffer");
+  //assert( bs.read() == point(1,1) && bs.eof() );
+  //bs.close();
+
+  io::buffered_stream<range> ss(4096);
+  ss.open("5/ranges");
+  assert( ss.read() == range(point(1,1),-1,-1) );
+  assert( ss.read() == range(point(3,3),-1,-1) );
+  assert( ss.read() == range(point(51,111),-1,-1) );
+  assert( ss.eof() );
+  ss.close();
+  
+  print_success();
+}
+ 
 void cleanup() {
   for (int i = 0; i < 1000; i++)
     util::remove_directory(to_string(i));
@@ -487,6 +995,11 @@ int main() {
   test_maintaining_min_max_y_on_insert_buffer_overflow();
   test_node_degree_overflow();
   test_distribute_evenly();
+  test_insert_buffer_overflow_to_non_leaf();
+  test_insert_buffer_overflow_to_non_leaf2();
+  test_insert_buffer_overflow_to_non_leaf3();
+  test_insert_buffer_overflow_to_non_leaf4();
+  
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   
   cleanup();
