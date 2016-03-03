@@ -509,20 +509,8 @@ namespace ext {
       if (left_split_node.point_buffer.empty()) left_max_y = INF;
       int right_max_y = std::max_element(right_split_node.point_buffer.begin(),
 					 right_split_node.point_buffer.end(),
-					 [](const point &p1, const point &p2) {
-					   return p1.y < p2.y || (p1.y == p2.y && p1.x < p2.x);
-					 })->y;
+					 comp_y)->y;
       if (right_split_node.point_buffer.empty()) right_max_y = INF;
-
-      // DEBUG_MSG("Check if point buffers has new min x value");
-      // point left_min_x = left_child_range.min;
-      // if (!left_split_node.point_buffer.empty())
-      //   left_min_x = std::min(left_min_x, *left_split_node.point_buffer.begin());
-      
-      // point right_min_x = right_child_range.min;
-      // if (!right_split_node.point_buffer.empty())
-      //   right_min_x = std::min(right_min_x, *right_split_node.point_buffer.begin());
-
 
       parent->ranges.erase(left_child_range);
       parent->add_child(range(left_child_range.min, left_max_y, left_child_range.node_id)); 
@@ -617,8 +605,8 @@ namespace ext {
     if ( is_leaf() && is_root() ) {
     
       std::vector<point> points(point_buffer.begin(), point_buffer.end());
-      std::sort(points.begin(),points.end(),[](const point &p1, const point &p2)
-		{return p1.y < p2.y || (p1.y == p2.y && p1.x < p2.x);});
+      std::sort(points.begin(),points.end(),comp_y);
+      //errr
       std::sort(points.begin(),points.begin()+points.size()/2);
       int child1_id = next_id++;
       int child2_id = next_id++;
@@ -636,16 +624,12 @@ namespace ext {
       add_child(range(*c1.point_buffer.begin(),
                       std::max_element(c1.point_buffer.begin(),
                                        c1.point_buffer.end(),
-                                       [](const point &p1, const point &p2) {
-                                         return p1.y < p2.y || (p1.y == p2.y && p1.x < p2.x);
-                                       })->y, child1_id));
+                                       comp_y)->y, child1_id));
 
       add_child(range(*c2.point_buffer.begin(),
                       std::max_element(c2.point_buffer.begin(),
                                        c2.point_buffer.end(),
-                                       [](const point &p1, const point &p2) {
-                                         return p1.y < p2.y || (p1.y == p2.y && p1.x < p2.x);
-                                       })->y, child2_id));
+                                       comp_y)->y, child2_id));
 
       //DEBUG_MSG("Rebuild child structure of node " << id);
       
@@ -661,10 +645,7 @@ namespace ext {
       
     } else if ( is_root() ) {
       DEBUG_MSG("Overflow in the point buffer of the root. Move min point to insert buffer");
-      point min_y = *std::min_element(point_buffer.begin(), point_buffer.end(),
-				      [] (const point &p1, const point &p2) {
-					return p1.y < p2.y || (p1.y == p2.y && p1.x < p2.x);
-				      });
+      point min_y = *std::min_element(point_buffer.begin(), point_buffer.end(), comp_y);
       point_buffer.erase(min_y);
       insert_into_insert_buffer(min_y);
     } else if ( is_leaf() ) {
@@ -806,9 +787,7 @@ namespace ext {
 
       point min_y = *std::min_element(found_child.point_buffer.begin(),
 				      found_child.point_buffer.end(),
-				      [](const point &p1, const point &p2) {
-					return p1.y < p2.y || (p1.x == p2.x && p1.y < p2.y);
-				      });
+				      comp_y);
       DEBUG_MSG("Found min_y in found_child " << found_child.id << " to be " << min_y);
 
       DEBUG_MSG("Distributing points according to min_y element");
@@ -827,10 +806,7 @@ namespace ext {
       std::vector<point> sorted_point_buffer(found_child.point_buffer.begin(),
 					     found_child.point_buffer.end());
 
-      std::sort(sorted_point_buffer.begin(), sorted_point_buffer.end(),
-		[](const point &p1, const point &p2) {
-		  return p1.y < p2.y || (p1.x == p2.x && p1.y < p2.y);
-		});
+      std::sort(sorted_point_buffer.begin(), sorted_point_buffer.end(),comp_y);
 	
       if (found_child.point_buffer_overflow()) {
 	DEBUG_MSG("Point buffer overflows in found_child " << found_child.id);
@@ -1012,9 +988,7 @@ namespace ext {
     for (range r : ranges) {
       point max_y = *std::max_element(children[node_id_to_index[r.node_id]].point_buffer.begin(),
 				      children[node_id_to_index[r.node_id]].point_buffer.end(),
-				      [](const point &p1, const point &p2) {
-					return p1.y < p2.y || (p1.y == p2.y && p1.x < p2.x);
-				      });
+				      comp_y);
       if (children[node_id_to_index[r.node_id]].is_leaf() &&
 	  children[node_id_to_index[r.node_id]].point_buffer.empty()) {
 	DEBUG_MSG("We have found an empty leaf. Delete " <<
@@ -1128,9 +1102,7 @@ namespace ext {
                    delete_buffer.begin(), delete_buffer.end(),
                    std::back_inserter(union_iv_dv));
     point min_y = *std::min_element(point_buffer.begin(), point_buffer.end(),
-                                    [] (point p1, point p2) {
-                                      return p1.y < p2.y || (p1.y == p2.y && p1.x < p2.x);
-                                    });
+                                    comp_y);
     if (std::any_of(union_iv_dv.begin(), union_iv_dv.end(),
                     [&min_y] (point p) {
                       return min_y.y < p.y || (min_y.y == p.y && min_y.x < p.x);
@@ -1285,10 +1257,7 @@ namespace ext {
       root->insert_buffer.erase(p);
       root->delete_buffer.erase(p);
       DEBUG_MSG("Check if put into Ir or Pr");
-      point min_y = *std::min_element(root->point_buffer.begin(), root->point_buffer.end(),
-				      [] (const point &p1, const point &p2) {
-					return p1.y < p2.y || (p1.y == p2.y && p1.x < p2.x);
-				      });
+      point min_y = *std::min_element(root->point_buffer.begin(), root->point_buffer.end(), comp_y);
       if (p.y < min_y.y || (p.y == min_y.y && p.x < min_y.x)) root->insert_into_insert_buffer(p);
       else root->insert_into_point_buffer(p);
     }
