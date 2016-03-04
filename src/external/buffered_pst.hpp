@@ -793,7 +793,7 @@ namespace ext {
       DEBUG_MSG("Distributing points according to min_y element");
       std::set<point> new_U;
       for (point p : U) {
-        if (min_y.y <= p.y || (min_y.y == p.y && min_y.x <= p.x)) {
+        if (min_y.y < p.y || (min_y.y == p.y && min_y.x < p.x)) {
 	  DEBUG_MSG("Point " << p << " went into found_childs point buffer");
 	  found_child.point_buffer.insert(p);
 	} else {
