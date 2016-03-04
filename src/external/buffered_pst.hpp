@@ -60,11 +60,14 @@ namespace ext {
       void flush_all();
       template <class Container>
       void insert_into_point_buffer(const Container &points);
+      void insert_into_delete_buffer(const point &p);
+      template <class Container>
+      void insert_into_delete_buffer(const Container &points);
       void insert_into_insert_buffer(const point &p);
-      void handle_split();
-      void split_leaf();
       template <class Container>
       void insert_into_insert_buffer(const Container &points);
+      void handle_split();
+      void split_leaf();
       bool is_leaf();
       bool is_root();
       
@@ -81,6 +84,7 @@ namespace ext {
       bool point_buffer_underflow();
       bool is_virtual_leaf();
       void handle_insert_buffer_overflow();
+      void handle_delete_buffer_overflow();
       void handle_point_buffer_overflow();
       void handle_underflowing_point_buffer();
       std::string get_point_buffer_file_name(int id);
@@ -341,6 +345,26 @@ namespace ext {
     point_buffer.insert(points.begin(), points.end());
     
     if (point_buffer_overflow()) handle_point_buffer_overflow();
+  }
+
+  void buffered_pst::buffered_pst_node::insert_into_delete_buffer(const point &p) {
+    std::vector<point> points;
+    points.push_back(p);
+    insert_into_delete_buffer(points);
+  }
+
+  template <class Container>
+  void buffered_pst::buffered_pst_node::insert_into_delete_buffer(const Container &points) {
+    assert(is_delete_buffer_loaded);
+    DEBUG_MSG("inserting point(s) into delete buffer of node " << id);
+
+#ifdef DEBUG
+    for (auto p : points) DEBUG_MSG(" - " << p);
+#endif
+
+    delete_buffer.insert(points.begin(), points.end());
+
+    if (delete_buffer_overflow()) handle_delete_buffer_overflow();
   }
 
   bool buffered_pst::buffered_pst_node::point_buffer_overflow() {
@@ -656,6 +680,126 @@ namespace ext {
     }
   }
 
+  void buffered_pst::buffered_pst_node::handle_delete_buffer_overflow() {
+    DEBUG_MSG("Starting to handle delete buffer overflow");
+    assert(is_insert_buffer_loaded);
+    assert(is_point_buffer_loaded);
+    assert(is_delete_buffer_loaded);
+    assert(is_ranges_loaded);
+    assert(is_info_file_loaded);
+
+    DEBUG_MSG("Locate child to send insertions to");
+    auto child_info = find_child(delete_buffer);
+    buffered_pst_node found_child(child_info.first,buffer_size,root);
+    found_child.load_all();
+      
+    DEBUG_MSG("Create U to send to child");
+    DEBUG_MSG(buffer_size/B_epsilon);
+    std::set<point> U;
+    range blt = ranges.belong_to(range(*(child_info.second.begin()),-1,-1));
+    size_t idx = 0;
+    for (auto p : child_info.second) {
+      DEBUG_MSG(idx);
+      if (++idx > buffer_size/B_epsilon) break;
+      DEBUG_MSG("point " << p << " is in U");
+      U.insert(p);
+    }
+
+    DEBUG_MSG("Remove points in U from Dv, Ic, Dc, Pc, Cv");
+
+    for (point p : U) {
+      if (delete_buffer.find(p) != delete_buffer.end()) {
+	DEBUG_MSG("Removing " << p << " from delete buffer");
+	delete_buffer.erase(p);
+      }
+      if (found_child.insert_buffer.find(p) != found_child.insert_buffer.end()) { 
+	DEBUG_MSG("Removing " << p << " from insert buffer of found child");
+#ifdef DEBUG
+	CONTAINED_POINTS.erase(p);
+#endif
+	found_child.insert_buffer.erase(p);
+      }
+      if (found_child.delete_buffer.find(p) != found_child.delete_buffer.end()) { 
+	DEBUG_MSG("Removing " << p << " from delete buffer of found child");
+	found_child.delete_buffer.erase(p);
+      }
+      if (found_child.point_buffer.find(p) != found_child.point_buffer.end()) { 
+	DEBUG_MSG("Removing " << p << " from point buffer of found child");
+#ifdef DEBUG
+	CONTAINED_POINTS.erase(p);
+#endif
+	found_child.point_buffer.erase(p);
+      }
+    }
+
+    if (found_child.is_leaf()) {
+
+      int max_y = std::max_element(found_child.point_buffer.begin(),
+				   found_child.point_buffer.end(),
+				   comp_y)->y;
+
+      if (found_child.point_buffer.empty()) max_y = INF;
+      
+      DEBUG_MSG("Rebuilding range max_y from " << blt.max_y << " to " << max_y);
+      ranges.erase(blt);
+      ranges.insert(range(blt.min,max_y,blt.node_id));
+
+#ifdef DEBUG
+      DEBUG_MSG("Range now contains:");
+      for (auto r : ranges)
+	DEBUG_MSG(" - " << r);
+#endif
+
+      flush_all();
+      found_child.flush_all();
+      
+    } else {
+
+      point min_y = *std::min_element(found_child.point_buffer.begin(),
+				      found_child.point_buffer.end(),
+				      comp_y);
+      DEBUG_MSG("Found min_y in found_child " << found_child.id << " to be " << min_y);
+
+      DEBUG_MSG("Distributing points according to min_y element");
+      std::set<point> new_U;
+      for (point p : U) {
+        if (min_y.y > p.y || (min_y.y == p.y && min_y.x > p.x)) {
+	  DEBUG_MSG("Point " << p << " stays in U");
+	  new_U.insert(p);
+	}
+      }
+      U = new_U;
+
+      flush_all();
+      
+      found_child.insert_into_delete_buffer(U);
+      
+      // Load and update ranges.
+      load_ranges();
+
+      int max_y = std::max_element(found_child.point_buffer.begin(),
+				   found_child.point_buffer.end(),
+				   comp_y)->y;
+      
+      if (found_child.point_buffer.empty()) max_y = INF;
+      
+      DEBUG_MSG("Rebuilding range max_y from " << blt.max_y << " to " << max_y);
+      for (range r : ranges) {
+	if (r.node_id == found_child.id) {
+	  ranges.erase(r);
+	  ranges.insert(range(r.min,max_y,r.node_id));
+	}
+      }
+
+      flush_ranges();
+      
+      // Recursively check if children is underflowed.
+      found_child.handle_underflowing_point_buffer();
+      
+    }
+    
+  }
+
   void buffered_pst::buffered_pst_node::add_child(const range &r) {
     DEBUG_MSG("Adding range " << r << " to node " << id);
     assert(is_ranges_loaded);
@@ -944,6 +1088,9 @@ namespace ext {
       if (delete_buffer.find(p) != delete_buffer.end()) {
 	DEBUG_MSG("point " << p << " found in both X and Dv");
 	delete_buffer.erase(p);
+#ifdef DEBUG
+	CONTAINED_POINTS.erase(p);
+#endif
       } else {
 	DEBUG_MSG("point " << p << " remains in X");
 	tmp_X.insert(p);
@@ -1017,6 +1164,7 @@ namespace ext {
     flush_point_buffer();
     flush_insert_buffer();
     flush_delete_buffer();
+    flush_info_file();
     
     for (auto c : children) {
       c.flush_point_buffer();
@@ -1107,7 +1255,13 @@ namespace ext {
                     [&min_y] (point p) {
                       return min_y.y < p.y || (min_y.y == p.y && min_y.x < p.x);
                     })) {
-      DEBUG_MSG("A point in Iv or Dv has larger y value than a point in Pv");
+      DEBUG_MSG("A point in Iv or Dv has larger y value than a point in Pv on node " << id);
+      DEBUG_MSG("Points in Iv:");
+      for (auto p : insert_buffer) DEBUG_MSG(" - " << p);
+      DEBUG_MSG("Points in Dv:");
+      for (auto p : delete_buffer) DEBUG_MSG(" - " << p);
+      DEBUG_MSG("Points in Pv:");
+      for (auto p : point_buffer) DEBUG_MSG(" - " << p);
       return false;
     }
 
@@ -1260,6 +1414,25 @@ namespace ext {
       point min_y = *std::min_element(root->point_buffer.begin(), root->point_buffer.end(), comp_y);
       if (p.y < min_y.y || (p.y == min_y.y && p.x < min_y.x)) root->insert_into_insert_buffer(p);
       else root->insert_into_point_buffer(p);
+    }
+  }
+
+  void buffered_pst::remove(const point &p) {
+    DEBUG_MSG("Removing point " << p << " in root");
+#ifdef DEBUG
+    if (root->point_buffer.find(p) != root->point_buffer.end()) CONTAINED_POINTS.erase(p);
+    if (root->insert_buffer.find(p) != root->insert_buffer.end()) CONTAINED_POINTS.erase(p);
+ #endif
+    root->point_buffer.erase(p);
+    root->insert_buffer.erase(p);
+    root->delete_buffer.erase(p);
+    point min_y = *std::min_element(root->point_buffer.begin(),
+				    root->point_buffer.end(),comp_y);
+    
+    if (!root->is_leaf() && p < min_y) {
+      DEBUG_MSG("Deletion " << p << " is smaller than min_y " << min_y
+		<< ". Inserting into deletion_buffer of root");
+      root->insert_into_delete_buffer(p);
     }
   }
 

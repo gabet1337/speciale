@@ -1246,7 +1246,41 @@ void test_truly_random() {
   
   
 }
- 
+
+void test_delete() {
+
+  print_description("starting test of deleting points");
+
+  ext::buffered_pst epst(9,0.5);
+  for (int i=0; i < 5; i++) epst.insert(point(i,i));
+
+  epst.remove(point(1,1));
+  epst.remove(point(3,3));
+
+#ifdef DEBUG
+  assert ( epst.is_valid() );
+#endif
+  
+  print_success();
+}
+
+void test_delete_overflow() {
+
+  print_description("starting test of deleting points");
+
+  ext::buffered_pst epst(9,0.5);
+  for (int i=0; i<10; i++) epst.insert(point(i,i));
+  for (int i=0; i<3; i++) epst.remove(point(i,i));
+
+#ifdef DEBUG
+  assert ( epst.is_valid() );
+#endif
+  
+  print_success();
+}
+
+// TODO: Delete in internal_node.
+
 void cleanup() {
   for (int i = 0; i < 1000; i++)
     util::remove_directory(to_string(i));
@@ -1280,9 +1314,11 @@ int main() {
   test_deterministic_random();
   test_deterministic_random2();
   test_random_deterministic3();
-  test_random_insert();
-  test_truly_random();
-
+  //test_random_insert();
+  //test_truly_random();
+  test_delete();
+  test_delete_overflow();
+  
   // for (int i = 0; i < 100; i++) {
   // }
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
