@@ -1231,7 +1231,7 @@ void test_truly_random() {
   ext::buffered_pst epst(32,0.5);
   std::set<point> points;
   test::random r;
-  for (int i = 0; i < 2500; i++) points.insert(point(r.next(999), r.next(999)));
+  for (int i = 0; i < 500; i++) points.insert(point(r.next(999), r.next(999)));
   vector<point> points_random(points.begin(), points.end());
   random_shuffle(points_random.begin(), points_random.end());
   for (point p : points_random) {
@@ -1266,7 +1266,7 @@ void test_delete() {
 
 void test_delete_overflow() {
 
-  print_description("starting test of deleting points");
+  print_description("starting test of delete overflow");
 
   ext::buffered_pst epst(9,0.5);
   for (int i=0; i<10; i++) epst.insert(point(i,i));
@@ -1279,7 +1279,191 @@ void test_delete_overflow() {
   print_success();
 }
 
-// TODO: Delete in internal_node.
+void test_delete_overflow_underflow_node() {
+
+  print_description("starting test of delete overflow underflow node");
+
+  ext::buffered_pst epst(9,0.5);
+  for (int i=0; i<10; i++) epst.insert(point(i,i));
+  for (int i=5; i<7; i++) epst.remove(point(i,i));
+
+#ifdef DEBUG
+  assert ( epst.is_valid() );
+#endif
+  
+  print_success();
+}
+
+void test_delete_overflow_many_points() {
+
+  print_description("starting test of delete overflow many points");
+
+  ext::buffered_pst epst(9,0.5);
+  for (int i=0; i<30; i++) epst.insert(point(i,i));
+  for (int i=10; i<21; i++) epst.remove(point(i,i));
+
+#ifdef DEBUG
+  assert ( epst.is_valid() );
+#endif
+
+  epst.print();
+  print_success();
+  
+}
+
+void test_delete_all_points() {
+
+  print_description("starting test of delete all points");
+
+  ext::buffered_pst epst(9,0.5);
+  for (int i=0; i<30; i++) epst.insert(point(i,i));
+  for (int i=0; i<30; i++) {
+    epst.remove(point(i,i));
+#ifdef DEBUG
+    assert ( epst.is_valid() );
+#endif
+  }
+  
+#ifdef DEBUG
+  assert ( epst.is_valid() );
+#endif
+
+  print_success();
+  
+}
+
+void test_insert_200_delete_20_points() {
+
+  print_description("starting test of insert 200 delete 20 points");
+
+  ext::buffered_pst epst(9,0.5);
+  for (int i=0; i<200; i++) epst.insert(point(i,i));
+  for (int i=0; i<20; i++) {
+    epst.remove(point(i*10,i*10));
+#ifdef DEBUG
+    bool is_valid = epst.is_valid();
+    if (!is_valid) {
+      epst.print();
+      assert ( is_valid );
+    }
+#endif
+  }
+  
+#ifdef DEBUG
+  assert ( epst.is_valid() );
+#endif
+
+  print_success();
+  
+}
+
+void test_delete_truly_random() {
+  
+  print_description("starting test of deleting random points... truly!");
+  ext::buffered_pst epst(9,0.5);
+  std::set<point> points;
+  test::random r;
+  for (int i = 0; i < 200; i++) points.insert(point(r.next(999), r.next(999)));
+  vector<point> points_random(points.begin(), points.end());
+  random_shuffle(points_random.begin(), points_random.end());
+
+  for (int i=0; i < 50; i++) {
+    epst.insert(points_random[i]);
+#ifdef DEBUG
+    bool is_valid = epst.is_valid();
+    if (!is_valid) {
+      epst.print();
+      assert ( is_valid );
+    }
+#endif
+  }
+
+  for (int i=0; i<10; i++) {
+    epst.remove(points_random[i*5]);
+#ifdef DEBUG
+    bool is_valid = epst.is_valid();
+    if (!is_valid) {
+    epst.print();
+    assert ( is_valid );
+  }
+#endif
+  }
+
+  for (int i=50; i < 100; i++) {
+    epst.insert(points_random[i]);
+#ifdef DEBUG
+    bool is_valid = epst.is_valid();
+    if (!is_valid) {
+      epst.print();
+      assert ( is_valid );
+    }
+#endif
+  }
+
+  for (int i=0; i<10; i++) {
+    epst.remove(points_random[50+i*5]);
+#ifdef DEBUG
+    bool is_valid = epst.is_valid();
+    if (!is_valid) {
+      epst.print();
+      assert ( is_valid );
+    }
+#endif
+  }
+
+  for (int i=100; i < 150; i++) {
+    epst.insert(points_random[i]);
+#ifdef DEBUG
+    bool is_valid = epst.is_valid();
+    if (!is_valid) {
+      epst.print();
+      assert ( is_valid );
+    }
+#endif
+  }
+
+  for (int i=0; i<10; i++) {
+    epst.remove(points_random[100+i*5]);
+#ifdef DEBUG
+    bool is_valid = epst.is_valid();
+    if (!is_valid) {
+    epst.print();
+    assert ( is_valid );
+  }
+#endif
+  }
+
+
+  for (int i=150; i < 200; i++) {
+    epst.insert(points_random[i]);
+#ifdef DEBUG
+    bool is_valid = epst.is_valid();
+    if (!is_valid) {
+      epst.print();
+      assert ( is_valid );
+    }
+#endif
+  }
+
+  for (int i=0; i<10; i++) {
+    epst.remove(points_random[150+i*5]);
+#ifdef DEBUG
+    bool is_valid = epst.is_valid();
+    if (!is_valid) {
+    epst.print();
+    assert ( is_valid );
+  }
+#endif
+  }
+
+#ifdef DEBUG
+    bool is_valid = epst.is_valid();
+    if (!is_valid) epst.print();
+    assert( is_valid );
+#endif
+  
+  print_success();
+}
 
 void cleanup() {
   for (int i = 0; i < 1000; i++)
@@ -1295,32 +1479,35 @@ int main() {
   test_construction();
   test_insert();
 #endif
-  test_interval_range_belong_to();
-  test_test();
-  test_buffer_points_less_than_point_buffer_points();
-  test_no_duplicates_in_pv_iv_dv();
-  test_insert_buffer_overflow();
-  test_root_split();
-  test_root_split_insert_overflow();
-  test_root_split_insert_between_overflow();
-  test_maintaining_min_max_y_on_insert_buffer_overflow();
-  test_node_degree_overflow();
-  test_distribute_evenly();
-  test_insert_buffer_overflow_to_non_leaf();
-  test_insert_buffer_overflow_to_non_leaf2();
-  test_insert_buffer_overflow_to_non_leaf3();
-  test_insert_buffer_overflow_to_non_leaf4();
-  test_not_valid_on_manual_insert();
-  test_deterministic_random();
-  test_deterministic_random2();
-  test_random_deterministic3();
-  //test_random_insert();
-  //test_truly_random();
-  test_delete();
-  test_delete_overflow();
+  // test_interval_range_belong_to();
+  // test_test();
+  // test_buffer_points_less_than_point_buffer_points();
+  // test_no_duplicates_in_pv_iv_dv();
+  // test_insert_buffer_overflow();
+  // test_root_split();
+  // test_root_split_insert_overflow();
+  // test_root_split_insert_between_overflow();
+  // test_maintaining_min_max_y_on_insert_buffer_overflow();
+  // test_node_degree_overflow();
+  // test_distribute_evenly();
+  // test_insert_buffer_overflow_to_non_leaf();
+  // test_insert_buffer_overflow_to_non_leaf2();
+  // test_insert_buffer_overflow_to_non_leaf3();
+  // test_insert_buffer_overflow_to_non_leaf4();
+  // test_not_valid_on_manual_insert();
+  // test_deterministic_random();
+  // test_deterministic_random2();
+  // test_random_deterministic3();
+  test_random_insert();
+  test_truly_random();
+  // test_delete();
+  // test_delete_overflow();
+  // test_delete_overflow_underflow_node();
+  // test_delete_overflow_many_points();
+  // test_delete_all_points();
+  // test_insert_200_delete_20_points();
+  test_delete_truly_random();
   
-  // for (int i = 0; i < 100; i++) {
-  // }
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   
   cleanup();
