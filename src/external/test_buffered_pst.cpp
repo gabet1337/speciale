@@ -2,6 +2,7 @@
 #include "../stream/stream.hpp"
 #include "../common/utilities.hpp"
 #include "../internal/rb_tree.hpp"
+#include "../common/test_lib.hpp"
 #include "range.hpp"
 #include <assert.h>
 #include <iomanip>
@@ -344,6 +345,7 @@ void test_maintaining_min_max_y_on_insert_buffer_overflow() {
   for (int i = 2; i < 15; i++) epst.insert(point(i,i));
   
 #ifdef DEBUG
+  if (!epst.is_valid()) epst.print();
   assert ( epst.is_valid() );
 #endif
   print_success();
@@ -980,6 +982,270 @@ void test_insert_buffer_overflow_to_non_leaf4() {
   
   print_success();
 }
+
+void test_not_valid_on_manual_insert() {
+  print_description("starting test of manual insert to break is_valid");
+
+  ext::buffered_pst epst(9,0.5);
+  for (int i = 15; i < 17; i++) epst.insert(point(i,i));
+  for (int i = 100; i <= 106; i++) epst.insert(point(i,i));
+
+  assert ((!util::file_exists("1/point_buffer") && !util::file_exists("2/point_buffer"))
+	  && "We should have no children");
+
+  epst.insert(point(107,107));
+
+  assert ((util::file_exists("1/point_buffer") && util::file_exists("2/point_buffer"))
+	  && "We should have children");
+
+  io::buffered_stream<point> bs(4096);
+  bs.open("1/point_buffer");
+  assert (bs.read() == point(15,15) && bs.read() == point(16,16));
+  bs.close();
+
+  bs.open("2/point_buffer");
+  assert (bs.read() == point(100,100) && bs.read() == point(101,101) && bs.read() == point(102,102));
+  bs.close();
+
+  epst.insert(point(1,17));
+  
+  for (int i = 2; i < 15; i++) epst.insert(point(i,i));
+  
+#ifdef DEBUG
+  assert ( epst.is_valid() );
+#endif
+
+  bs.open("5/point_buffer");
+  bs.seek(0, SEEK_END);
+  bs.write(point(1,1000));
+  bs.close();
+
+#ifdef DEBUG
+  assert( !epst.is_valid() );
+#endif
+  
+  print_success();
+}
+
+void test_deterministic_random() {
+  print_description("starting test of random determinism");
+  ext::buffered_pst epst(9,0.5);
+  vector<point> points;
+  points.push_back(point(20,829));
+  points.push_back(point(38,611));
+  points.push_back(point(39,80));
+  points.push_back(point(81,86));
+  points.push_back(point(104,779));
+  points.push_back(point(115,393));
+  points.push_back(point(142,66));
+  points.push_back(point(159,621));
+  points.push_back(point(168,458));
+  points.push_back(point(171,448));
+  points.push_back(point(174,248));
+  points.push_back(point(180,461));
+  points.push_back(point(185,417));
+  points.push_back(point(204,906));
+  points.push_back(point(206,382));
+  points.push_back(point(217,569));
+  points.push_back(point(243,193));
+  points.push_back(point(283,787));
+  points.push_back(point(297,912));
+  points.push_back(point(325,392));
+  points.push_back(point(329,641));
+  points.push_back(point(339,126));
+  points.push_back(point(358,233));
+  points.push_back(point(361,962));
+  points.push_back(point(365,554));
+  points.push_back(point(372,334));
+  points.push_back(point(389,433));
+  points.push_back(point(435,941));
+  points.push_back(point(438,695));
+  points.push_back(point(458,886));
+  points.push_back(point(501,345));
+  points.push_back(point(562,366));
+  points.push_back(point(575,156));
+  points.push_back(point(575,901));
+  points.push_back(point(583,117));
+  points.push_back(point(702,206));
+  points.push_back(point(719,265));
+  points.push_back(point(829,846));
+  points.push_back(point(872,40));
+  points.push_back(point(904,185));
+  points.push_back(point(906,573));
+  points.push_back(point(928,125));
+  points.push_back(point(980,695));
+  points.push_back(point(987,111));
+  for (int i = 0; i < (int)points.size(); i++) {
+    epst.insert(points[i]);
+#ifdef DEBUG
+    if (i > 27)
+      assert (epst.is_valid());
+#endif
+  }
+
+    print_success();
+}
+
+void test_deterministic_random2() {
+  print_description("starting test of random determinism 2");
+
+  ext::buffered_pst epst(9,0.5);
+  vector<point> points;
+  points.push_back(point(17,752));
+  points.push_back(point(32,831));
+  points.push_back(point(97,930));
+  points.push_back(point(101,392));
+  points.push_back(point(102,65));
+  points.push_back(point(115,896));
+  points.push_back(point(118,597));
+  points.push_back(point(127,838));
+  points.push_back(point(164,885));
+  points.push_back(point(192,351));
+  points.push_back(point(249,311));
+  points.push_back(point(284,586));
+  points.push_back(point(308,715));
+  points.push_back(point(329,113));
+  points.push_back(point(358,796));
+  points.push_back(point(365,703));
+  points.push_back(point(381,721));
+  points.push_back(point(414,331));
+  points.push_back(point(463,245));
+  points.push_back(point(470,819));
+  points.push_back(point(473,410));
+  points.push_back(point(504,773));
+  points.push_back(point(505,956));
+  points.push_back(point(520,480));
+  points.push_back(point(520,964));
+  points.push_back(point(523,702));
+  points.push_back(point(565,248));
+  points.push_back(point(612,554));
+  points.push_back(point(702,869));
+  points.push_back(point(720,824));
+  points.push_back(point(751,834));
+  points.push_back(point(753,471));
+  points.push_back(point(765,31));
+  points.push_back(point(779,324));
+  points.push_back(point(806,573));
+  points.push_back(point(822,380));
+  points.push_back(point(831,772));
+  points.push_back(point(839,840));
+  points.push_back(point(862,236));
+  points.push_back(point(893,867));
+  points.push_back(point(904,874));
+  points.push_back(point(912,345));
+  points.push_back(point(913,241));
+  points.push_back(point(966,519));
+
+  for (int i = 0; i < (int)points.size()-4; i++) {
+    epst.insert(points[i]);
+  }
+  epst.insert(points[40]);
+  if (!epst.is_valid())
+    epst.print();
+
+  #ifdef DEBUG
+  assert (epst.is_valid());
+#endif
+
+  print_success();
+}
+
+void test_random_deterministic3() {
+  print_description("starting test of random determinism 3");
+  ext::buffered_pst epst(9,0.5);
+  std::vector<point> points;
+  points.push_back(point(13,59));
+  points.push_back(point(17,905));
+  points.push_back(point(79,293));
+  points.push_back(point(96,177));
+  points.push_back(point(116,260));
+  points.push_back(point(129,403));
+  points.push_back(point(136,420));
+  points.push_back(point(137,54));
+  points.push_back(point(245,236));
+  points.push_back(point(263,157));
+  points.push_back(point(271,679));
+  points.push_back(point(278,923));
+  points.push_back(point(294,587));
+  points.push_back(point(388,280));
+  points.push_back(point(388,611));
+  points.push_back(point(445,298));
+  points.push_back(point(449,725));
+  points.push_back(point(454,639));
+  points.push_back(point(464,32));
+  points.push_back(point(468,466));
+  points.push_back(point(494,105));
+  points.push_back(point(529,244));
+  points.push_back(point(549,857));
+  points.push_back(point(550,769));
+  points.push_back(point(555,207));
+  points.push_back(point(560,981));
+  points.push_back(point(599,503));
+  points.push_back(point(612,305));
+  points.push_back(point(622,395));
+  points.push_back(point(624,563));
+  points.push_back(point(627,465));
+  points.push_back(point(704,584));
+  points.push_back(point(774,328));
+  points.push_back(point(788,16));
+  points.push_back(point(811,153));
+  points.push_back(point(847,110));
+  points.push_back(point(853,407));
+  points.push_back(point(861,172));
+  points.push_back(point(862,272));
+  points.push_back(point(866,982));
+  points.push_back(point(867,21));
+  points.push_back(point(971,652));
+  points.push_back(point(974,806));
+  points.push_back(point(991,490));
+
+  for (int i = 0; i < (int)points.size(); i++) {
+    epst.insert(points[i]);
+#ifdef DEBUG
+    if (!epst.is_valid()) epst.print();
+    assert(epst.is_valid());
+#endif
+  }
+  print_success();
+}
+
+void test_random_insert() {
+  print_description("starting test of inserting random points");
+  ext::buffered_pst epst(9,0.5);
+  std::set<point> points;
+  test::random r;
+  for (int i = 0; i < 100; i++) points.insert(point(r.next(999), r.next(999)));
+  for (point p : points) {
+    epst.insert(p);
+#ifdef DEBUG
+    bool is_valid = epst.is_valid();
+    if (!is_valid) epst.print();
+    assert( is_valid );
+#endif
+  }
+  print_success();
+}
+
+void test_truly_random() {
+  print_description("starting test of inserting random points... truly!");
+  ext::buffered_pst epst(32,0.5);
+  std::set<point> points;
+  test::random r;
+  for (int i = 0; i < 2500; i++) points.insert(point(r.next(999), r.next(999)));
+  vector<point> points_random(points.begin(), points.end());
+  random_shuffle(points_random.begin(), points_random.end());
+  for (point p : points_random) {
+    epst.insert(p);
+#ifdef DEBUG
+    bool is_valid = epst.is_valid();
+    if (!is_valid) epst.print();
+    assert( is_valid );
+#endif
+  }
+  print_success();
+  
+  
+}
  
 void cleanup() {
   for (int i = 0; i < 1000; i++)
@@ -999,7 +1265,7 @@ int main() {
   test_test();
   test_buffer_points_less_than_point_buffer_points();
   test_no_duplicates_in_pv_iv_dv();
-  //test_insert_buffer_overflow();
+  test_insert_buffer_overflow();
   test_root_split();
   test_root_split_insert_overflow();
   test_root_split_insert_between_overflow();
@@ -1010,7 +1276,15 @@ int main() {
   test_insert_buffer_overflow_to_non_leaf2();
   test_insert_buffer_overflow_to_non_leaf3();
   test_insert_buffer_overflow_to_non_leaf4();
-  
+  test_not_valid_on_manual_insert();
+  test_deterministic_random();
+  test_deterministic_random2();
+  test_random_deterministic3();
+  test_random_insert();
+  test_truly_random();
+
+  // for (int i = 0; i < 100; i++) {
+  // }
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   
   cleanup();

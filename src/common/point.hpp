@@ -39,4 +39,12 @@ bool operator>=(const point &p1, const point &p2) {
   return p2 < p1 || p1 == p2;
 }
 
+bool comp_y(const point &p1, const point &p2) {
+  return p1.y < p2.y || (p1.y == p2.y && p1.x < p2.x);
+}
+
+bool comp_x(const point &p1, const point &p2) {
+  return p1 < p2;
+}
+
 #endif
