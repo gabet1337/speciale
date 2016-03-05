@@ -1389,6 +1389,9 @@ void test_delete_truly_random() {
   
   print_description("starting test of deleting random points... truly!");
 
+  if (util::file_exists("test_points"))
+    util::remove_file("test_points");
+  
   io::buffered_stream<point> bs(1);
   bs.open("test_points");
   
