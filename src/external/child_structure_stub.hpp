@@ -22,9 +22,11 @@ namespace ext {
     void remove(const point &p);
     std::vector<point> report(int x1, int x2, int y);
     void destroy() {};
-#ifdef DEBUG
+#ifdef VALIDATE
     bool valid_memory() { return true; }
     bool valid_disk() { return true; }
+#endif
+#ifdef DEBUG
     std::vector<point> get_points()
     {return std::vector<point>(points.begin(), points.end());}
 #endif
