@@ -320,13 +320,33 @@ void test_maintaining_min_max_y_on_insert_buffer_overflow() {
   print_description("starting test of maintaining min and max_y on insert buffer overflow");
 
   ext::buffered_pst epst(9,0.5);
-  for (int i = 15; i < 17; i++) epst.insert(point(i,i));
-  for (int i = 100; i <= 106; i++) epst.insert(point(i,i));
+  for (int i = 15; i < 17; i++) {
+#ifdef DEBUG
+    bool is_valid = epst.is_valid();
+    if (!is_valid) epst.print();
+    assert ( is_valid );
+#endif
+    epst.insert(point(i,i));
+
+  }
+  for (int i = 100; i <= 106; i++) {
+    epst.insert(point(i,i));
+#ifdef DEBUG
+    bool is_valid = epst.is_valid();
+    if (!is_valid) epst.print();
+    assert ( is_valid );
+#endif
+  }
 
   assert ((!util::file_exists("1/point_buffer") && !util::file_exists("2/point_buffer"))
 	  && "We should have no children");
 
   epst.insert(point(107,107));
+#ifdef DEBUG
+    bool is_valid = epst.is_valid();
+    if (!is_valid) epst.print();
+    assert ( is_valid );
+#endif
 
   assert ((util::file_exists("1/point_buffer") && util::file_exists("2/point_buffer"))
 	  && "We should have children");
@@ -341,13 +361,21 @@ void test_maintaining_min_max_y_on_insert_buffer_overflow() {
   bs.close();
 
   epst.insert(point(1,17));
-  
-  for (int i = 2; i < 15; i++) epst.insert(point(i,i));
-  
 #ifdef DEBUG
-  if (!epst.is_valid()) epst.print();
-  assert ( epst.is_valid() );
+  is_valid = epst.is_valid();
+  if (!is_valid) epst.print();
+  assert ( is_valid );
 #endif
+  
+  for (int i = 2; i < 15; i++) {
+    epst.insert(point(i,i));
+#ifdef DEBUG
+    is_valid = epst.is_valid();
+    if (!is_valid) epst.print();
+    assert ( is_valid );
+#endif
+  }
+  
   print_success();
 }
 
