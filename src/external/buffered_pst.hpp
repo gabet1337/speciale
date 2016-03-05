@@ -693,13 +693,13 @@ namespace ext {
     found_child.load_all();
       
     DEBUG_MSG("Create U to send to child");
-    DEBUG_MSG(buffer_size/B_epsilon);
+    DEBUG_MSG(delete_buffer.size()/B_epsilon);
     std::set<point> U;
     range blt = ranges.belong_to(range(*(child_info.second.begin()),-1,-1));
     size_t idx = 0;
     for (auto p : child_info.second) {
       DEBUG_MSG(idx);
-      if (++idx > buffer_size/B_epsilon) break;
+      if (++idx > delete_buffer.size()/B_epsilon) break;
       DEBUG_MSG("point " << p << " is in U");
       U.insert(p);
     }
@@ -864,7 +864,7 @@ namespace ext {
     found_child.load_all();
       
     DEBUG_MSG("Create U to send to child");
-    DEBUG_MSG(buffer_size/B_epsilon);
+    DEBUG_MSG(insert_buffer.size()/B_epsilon);
     std::set<point> U;
     range blt = ranges.belong_to(range(*(child_info.second.begin()),-1,-1));
     size_t idx = 0;
@@ -872,7 +872,7 @@ namespace ext {
     point min = blt.min;
     for (auto p : child_info.second) {
       DEBUG_MSG(idx);
-      if (++idx > buffer_size/B_epsilon) break;
+      if (++idx > insert_buffer.size()/B_epsilon) break;
       min = std::min(min,p);
       max_y = std::max(max_y, p.y);
       DEBUG_MSG("point " << p << " is in U");
