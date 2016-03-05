@@ -607,19 +607,19 @@ namespace ext {
     
     parent->ranges.insert(range(move_min,move_max_y,new_node_id));
 
-    new_child.insert_into_point_buffer(move_points);
-
 #ifdef DEBUG
     DEBUG_MSG("Ranges in parent now contains:");
     for (auto r : parent->ranges)
       DEBUG_MSG(" - " << r);
 #endif
-    
-    new_child.flush_all();
+
     flush_point_buffer();
     parent->flush_ranges();
     
     if ( parent_id != 0 ) delete parent;
+
+    new_child.insert_into_point_buffer(move_points);
+    new_child.flush_all();
   }
   
   void buffered_pst::buffered_pst_node::handle_point_buffer_overflow() {
@@ -1325,6 +1325,7 @@ namespace ext {
       return false;
     }
 
+    // tests ranges are correct w.r.t to points in point buffer
     for (auto it = ranges.begin(); it != ranges.end(); it++) {
       io::buffered_stream<point> bs(4096);
       bs.open(get_point_buffer_file_name(it->node_id));
@@ -1427,6 +1428,7 @@ namespace ext {
       }
     }
 
+    // testing correct max y in child
     for (auto r : ranges) {
       DEBUG_MSG("Openening child " << r.node_id);
       buffered_pst_node child(r.node_id,buffer_size,root);
