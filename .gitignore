@@ -54,3 +54,4 @@ src/c_*
 # dot files in src
 *.dot
 /src/**/*.png
+/src/test_points
