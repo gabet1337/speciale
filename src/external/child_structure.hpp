@@ -27,9 +27,25 @@ namespace ext {
     void insert(const point &p);
     void remove(const point &p);
     std::vector<point> report(int x1, int x2, int y);
+    void destroy();
 #ifdef DEBUG
     std::vector<point> get_points()
-    { error(1, EEXIST, "NOT IMPLEMENTED... noob"); return std::vector<point>();}
+    {
+      if (!L_in_memory) {
+        DEBUG_MSG("Loading L");
+        util::load_file_to_container<std::vector<point>, point>(L, get_L_file(), buffer_size);
+      }
+      std::vector<point> L_tmp,L_new;
+      std::set_union(L.begin(),L.begin()+L_size,
+                     I.begin(),I.end(),
+                     std::back_inserter(L_tmp));
+
+      std::set_difference(L_tmp.begin(), L_tmp.end(),
+                          D.begin(), D.end(),
+                          std::back_inserter(L_new));
+      //L_new should now be equivalent to L' in article
+      return L_new;
+    }
 #endif
 #ifdef VALIDATE
     bool valid_disk();
@@ -67,6 +83,7 @@ namespace ext {
     std::vector<catalog_item> catalog;
     size_t id, buffer_size, L_buffer_size, epsilon, L_size, I_size, D_size;
     bool L_in_memory;
+    bool should_delete_structure;
     const int NUM_VARIABLES = 6;
   };
 
@@ -100,6 +117,7 @@ namespace ext {
     DEBUG_MSG(" - I.size(): " << I.size());
     DEBUG_MSG(" - D.size(): " << D.size());
     DEBUG_MSG(" - Catalog.size(): " << catalog.size());
+    should_delete_structure = false;
   }
 
   child_structure::child_structure(size_t id, size_t buffer_size,
@@ -119,6 +137,7 @@ namespace ext {
     
     I_size = 0;
     D_size = 0;
+    should_delete_structure = false;
     construct(points);
   }
 
@@ -128,9 +147,15 @@ namespace ext {
 
     //check if directory exists and open:
     if (!util::file_exists(get_directory())) mkdir(get_directory().c_str(), 0700);
+    
+    if (should_delete_structure) {
+      DEBUG_MSG_FAIL("DELETING " << get_directory());
+      util::remove_directory(get_directory());
+      return;
+    }
+
     io::buffered_stream<size_t> info_file(NUM_VARIABLES);
     info_file.open(get_info_file());
-
     info_file.write(id);
     info_file.write(buffer_size);
     info_file.write(epsilon);
@@ -455,6 +480,10 @@ namespace ext {
     I.clear();
     D.clear();
     construct(L_new);
+  }
+
+  void child_structure::destroy() {
+    should_delete_structure = true;
   }
   
   std::string child_structure::get_directory() {

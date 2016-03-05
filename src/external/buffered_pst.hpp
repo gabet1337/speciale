@@ -133,7 +133,7 @@ namespace ext {
     is_point_buffer_loaded = true;
     is_ranges_loaded = true;
     is_info_file_loaded = true;
-    child_structure = new child_structure_stub(id, buffer_size, epsilon, std::vector<point>());
+    child_structure = new ext::child_structure(id, buffer_size, epsilon, std::vector<point>());
     is_child_structure_loaded = true;
     this->B_epsilon = B_epsilon;
     DEBUG_MSG("Constructed pst_node with id " << id << " and buffer_size: " << buffer_size
@@ -222,7 +222,7 @@ namespace ext {
     assert(!is_child_structure_loaded);
     DEBUG_MSG("Loading child structure for node " << id);
     assert(!child_structure);
-    child_structure = new child_structure_stub(id);
+    child_structure = new ext::child_structure(id);
     is_child_structure_loaded = true;
   }
 
@@ -502,12 +502,14 @@ namespace ext {
       }
 
       DEBUG_MSG_FAIL("Constructing child structures Cv' and Cv''");
+      left_split_node.child_structure->destroy();
+      right_split_node.child_structure->destroy();
       delete left_split_node.child_structure;
       delete right_split_node.child_structure;
       left_split_node.child_structure =
-        new child_structure_stub(left_split_node.id, buffer_size, epsilon, left_child_points);
+        new ext::child_structure(left_split_node.id, buffer_size, epsilon, left_child_points);
       right_split_node.child_structure =
-        new child_structure_stub(right_split_node.id, buffer_size, epsilon, right_child_points);
+        new ext::child_structure(right_split_node.id, buffer_size, epsilon, right_child_points);
 
       DEBUG_MSG("Deleting our range in parent");
       if (is_root()) {
@@ -1685,6 +1687,7 @@ namespace ext {
     for (int i=0; i < next_id; i++) {
       DEBUG_MSG("Descructing file " << i);
       util::remove_directory(std::to_string(i));
+      util::remove_directory("c_"+std::to_string(i));
     }
   }
 
