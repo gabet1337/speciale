@@ -6,6 +6,7 @@
 #include "../common/utilities.hpp"
 #include "../stream/stream.hpp"
 #include "../internal/rb_tree.hpp"
+#include "child_structure_interface.hpp"
 #include <string>
 #include <error.h>
 #include <vector>
@@ -17,15 +18,19 @@
 #define INF 1000000000
 namespace ext {
 
-  class child_structure {
+  class child_structure : public child_structure_interface {
   public:
     child_structure(size_t id, size_t buffer_size,
 		    double epsilon, std::vector<point> points);
     child_structure(size_t id);
     ~child_structure();
-    void insert(point p);
-    void remove(point p);
+    void insert(const point &p);
+    void remove(const point &p);
     std::vector<point> report(int x1, int x2, int y);
+#ifdef DEBUG
+    std::vector<point> get_points()
+    { error(1, EEXIST, "NOT IMPLEMENTED... noob"); return std::vector<point>();}
+#endif
 #ifdef VALIDATE
     bool valid_disk();
     bool valid_memory();
@@ -323,7 +328,7 @@ namespace ext {
     if (p.y == sweep.y) return p.x >= sweep.x;
     return p.y > sweep.y;
   }
-  void child_structure::insert(point p) {
+  void child_structure::insert(const point &p) {
     DEBUG_MSG("Insert point " << p);
 
     if (I.size() >= buffer_size) rebuild();
@@ -339,7 +344,7 @@ namespace ext {
     I.insert(p);
   }
 
-  void child_structure::remove(point p) {
+  void child_structure::remove(const point &p) {
     DEBUG_MSG("Remove point " << p);
 
     if (D.size() >= buffer_size) rebuild();

@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <error.h>
+#include <errno.h>
 #include <algorithm>
 #include <iostream>
 #include "../common/debug.hpp"
