@@ -16,6 +16,7 @@ namespace ext {
     virtual void insert(const point &p) = 0;
     virtual void remove(const point &p) = 0;
     virtual std::vector<point> report(int x1, int x2, int y) = 0;
+    virtual void destroy() = 0;
 #ifdef DEBUG
     virtual std::vector<point> get_points() = 0;
 #endif

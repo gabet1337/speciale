@@ -21,6 +21,7 @@ namespace ext {
     void insert(const point &p);
     void remove(const point &p);
     std::vector<point> report(int x1, int x2, int y);
+    void destroy() {};
 #ifdef DEBUG
     bool valid_memory() { return true; }
     bool valid_disk() { return true; }

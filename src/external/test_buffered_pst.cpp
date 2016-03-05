@@ -1496,6 +1496,8 @@ void test_delete_truly_random() {
 void cleanup() {
   for (int i = 0; i < 1000; i++)
     util::remove_directory(to_string(i));
+  for (int i = 0; i < 1000; i++)
+    util::remove_directory("c_"+to_string(i));
 }
 
 int main() {
