@@ -1389,9 +1389,6 @@ void test_delete_truly_random() {
   
   print_description("starting test of deleting random points... truly!");
 
-  int lol = system("test_points");
-  lol++;
-  
   io::buffered_stream<point> bs(1);
   bs.open("test_points");
   
