@@ -1306,7 +1306,7 @@ void test_delete_overflow_many_points() {
   assert ( epst.is_valid() );
 #endif
 
-  epst.print();
+  // epst.print();
   print_success();
   
 }
@@ -1427,9 +1427,9 @@ void test_delete_truly_random() {
 #ifdef DEBUG
     bool is_valid = epst.is_valid();
     if (!is_valid) {
-    epst.print();
-    assert ( is_valid );
-  }
+      epst.print();
+      assert ( is_valid );
+    }
 #endif
   }
 
@@ -1450,9 +1450,9 @@ void test_delete_truly_random() {
 #ifdef DEBUG
     bool is_valid = epst.is_valid();
     if (!is_valid) {
-    epst.print();
-    assert ( is_valid );
-  }
+      epst.print();
+      assert ( is_valid );
+    }
 #endif
   }
 
