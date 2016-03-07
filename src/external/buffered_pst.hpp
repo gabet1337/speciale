@@ -133,7 +133,7 @@ namespace ext {
     is_point_buffer_loaded = true;
     is_ranges_loaded = true;
     is_info_file_loaded = true;
-    child_structure = new ext::child_structure_stub(id, buffer_size, epsilon, std::vector<point>());
+    child_structure = new ext::child_structure(id, buffer_size, epsilon, std::vector<point>());
     is_child_structure_loaded = true;
     this->B_epsilon = B_epsilon;
     DEBUG_MSG("Constructed pst_node with id " << id << " and buffer_size: " << buffer_size
@@ -222,7 +222,7 @@ namespace ext {
     assert(!is_child_structure_loaded);
     DEBUG_MSG("Loading child structure for node " << id);
     assert(!child_structure);
-    child_structure = new ext::child_structure_stub(id);
+    child_structure = new ext::child_structure(id);
     is_child_structure_loaded = true;
   }
 
@@ -507,9 +507,9 @@ namespace ext {
       delete left_split_node.child_structure;
       delete right_split_node.child_structure;
       left_split_node.child_structure =
-        new ext::child_structure_stub(left_split_node.id, buffer_size, epsilon, left_child_points);
+        new ext::child_structure(left_split_node.id, buffer_size, epsilon, left_child_points);
       right_split_node.child_structure =
-        new ext::child_structure_stub(right_split_node.id, buffer_size, epsilon, right_child_points);
+        new ext::child_structure(right_split_node.id, buffer_size, epsilon, right_child_points);
 
       DEBUG_MSG("Deleting our range in parent");
       if (is_root()) {
@@ -1214,15 +1214,23 @@ namespace ext {
     for (auto p : insert_buffer) DEBUG_MSG(" - " << p);
 #endif
 
-    point min_y = *std::max_element(point_buffer.begin(),
+    load_point_buffer();
+    point min_y = *std::min_element(point_buffer.begin(),
 				    point_buffer.end(),
 				    comp_y);
+    
+    if (point_buffer.empty()) min_y = point(INF,INF);
+    
+    if (!X.empty())
+      min_y = std::min(min_y, *std::min_element(X.begin(), X.end(), comp_y));
 
     DEBUG_MSG("Removing deletes that can not cancel points further down from node " << id);
+    DEBUG_MSG("Found min_y to be " << min_y);
     std::set<point> new_delete_buffer;
     for (point p : delete_buffer) {
       if (p.y < min_y.y || (p.y == min_y.y && p.x < min_y.x)) new_delete_buffer.insert(p);
-      else DEBUG_MSG(" - removed point " << p);
+      else  DEBUG_MSG_FAIL(" - removed point " << p);
+      }
     }
     delete_buffer = new_delete_buffer;
 
@@ -1249,7 +1257,7 @@ namespace ext {
 #endif
 
     DEBUG_MSG("Finally point in X are inserted into Pv");
-    load_point_buffer();
+    //load_point_buffer();
     insert_into_point_buffer(X);
     
 
@@ -1415,6 +1423,24 @@ namespace ext {
       return false;
     }
 
+    // Point buffer should not have points that is also in delete buffer
+    for (point p : point_buffer) {
+      if (delete_buffer.find(p) != delete_buffer.end()) {
+	DEBUG_MSG_FAIL("Point " << p << " is both in delete_buffer and point_buffer at node "
+		       << id);
+	return false;
+      }
+    }
+
+    // Insert buffer should not have points that is also in delete buffer
+    for (point p : insert_buffer) {
+      if (delete_buffer.find(p) != delete_buffer.end()) {
+	DEBUG_MSG_FAIL("Point " << p << " is both in delete_buffer and insert_buffer at node "
+		       << id);
+	return false;
+      }
+    }
+    
     // tests ranges are correct w.r.t to points in point buffer
     for (auto it = ranges.begin(); it != ranges.end(); it++) {
       io::buffered_stream<point> bs(4096);
@@ -1711,7 +1737,7 @@ namespace ext {
       child.flush_all();
 
       // TODO: Also look at min_y
-      if (y <= it->max_y)
+      //if (y <= it->max_y)
 	q.push(child);
       
       if (it == right_it) break;
@@ -1828,8 +1854,7 @@ namespace ext {
 	
 	// TODO: Also look at min_y
 	//if (y <= it->max_y)
-	DEBUG_MSG_FAIL("Adding child " << child.id << " to queue");
-	q.push(child);
+	  q.push(child);
 	
 	if (it == right_it) break;
       }

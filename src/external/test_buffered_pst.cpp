@@ -1793,8 +1793,6 @@ void test_report_points_deterministic() {
   for (int i=50; i <= 75; i++)
     true_points.push_back(point(i,i));
       
-  epst.print();
-
   epst.report(25,75,50,"test/deterministic_result");
   
   std::vector<point> actual_points;
@@ -1809,8 +1807,123 @@ void test_report_points_deterministic() {
 	DEBUG_MSG(" - " << p);
   }
 
+  assert ( actual_points  == true_points );
+
+  print_success();
+  
+}
+
+void test_report_points_deterministic2() {
+
+  print_description("starting test of report points deterministic");
+
+  ext::buffered_pst epst(9,0.5);
+  for (int i=0; i<100; i++) epst.insert(point(i,i));
+
+  std::vector<point> true_points;
+  for (int i=3; i <= 25; i++)
+    true_points.push_back(point(i,i));
+      
+  epst.report(1,25,3,"test/deterministic_result2");
+  
+  std::vector<point> actual_points;
+  util::load_file_to_container<std::vector<point>, point>
+    (actual_points, "test/deterministic_result2", 4096);
+
+  std::sort(actual_points.begin(),actual_points.end());
+  
+  if (actual_points != true_points) {
+    DEBUG_MSG("Actual points:");
+      for (point p : actual_points)
+	DEBUG_MSG(" - " << p);
+  }
+
+  assert ( actual_points  == true_points );
+
+  print_success();
+  
+}
+
+void test_report_points_deterministic3() {
+
+  print_description("starting test of report points deterministic");
+
+  ext::buffered_pst epst(9,0.5);
+  for (int i=0; i<100; i++) epst.insert(point(i,i));
+
+  std::vector<point> true_points;
+  for (int i=0; i < 100; i++)
+    true_points.push_back(point(i,i));
+      
+  epst.report(0,100,0,"test/deterministic_result3");
+  
+  std::vector<point> actual_points;
+  util::load_file_to_container<std::vector<point>, point>
+    (actual_points, "test/deterministic_result3", 4096);
+
+  std::sort(actual_points.begin(),actual_points.end());
+  
+  if (actual_points != true_points) {
+    DEBUG_MSG("Actual points:");
+      for (point p : actual_points)
+	DEBUG_MSG(" - " << p);
+  }
+
+  assert ( actual_points  == true_points );
+
+  print_success();
+  
+}
+
+void test_report_points_deterministic_delete() {
+
+  print_description("starting test of report points deterministic");
+
+  ext::buffered_pst epst(9,0.5);
+  for (int i=0; i<100; i++) epst.insert(point(i,i));
+
+  for (int i=0; i<100; i+=2) {
+    epst.remove(point(i,i));
+    //epst.print();
+    DEBUG_MSG_FAIL("Removing p(" << i << "," << i << ")");
+#ifdef DEBUG
+    streambuf* cout_strbuf(cout.rdbuf());
+    ostringstream output;
+    cout.rdbuf(output.rdbuf());
+    bool is_valid = true;
+    if (!is_valid) {
+      epst.print();
+      cout.rdbuf(cout_strbuf);
+      epst.is_valid();
+    }
+    assert ( is_valid );
+    cout.rdbuf(cout_strbuf);
+#endif
+  }
+  
+  std::vector<point> true_points;
+  for (int i=1; i < 100; i+=2)
+    true_points.push_back(point(i,i));
+
+  epst.print();
+  assert(epst.is_valid());
+
+  epst.report(0,100,0,"test/deterministic_result4");
   epst.print();
   
+  std::vector<point> actual_points;
+  util::load_file_to_container<std::vector<point>, point>
+    (actual_points, "test/deterministic_result4", 4096);
+
+  std::sort(actual_points.begin(),actual_points.end());
+  
+  if (actual_points != true_points) {
+    DEBUG_MSG("Actual points:");
+      for (point p : actual_points)
+	DEBUG_MSG(" - " << p);
+  }
+  
+
   assert ( actual_points  == true_points );
 
   print_success();
@@ -1866,7 +1979,10 @@ int main() {
   //test_delete_truly_random_points_from_file("test_points_fail_1");
   //test_delete_truly_random_n_points(10000);
   //test_delete_truly_random_n_points_from_file("test_points_fail_1");
-  test_report_points_deterministic();
+  //test_report_points_deterministic();
+  //test_report_points_deterministic2();
+  //test_report_points_deterministic3();
+  test_report_points_deterministic_delete();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   
