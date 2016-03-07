@@ -1229,9 +1229,9 @@ namespace ext {
     std::set<point> new_delete_buffer;
     for (point p : delete_buffer) {
       if (p.y < min_y.y || (p.y == min_y.y && p.x < min_y.x)) new_delete_buffer.insert(p);
-      else  DEBUG_MSG_FAIL(" - removed point " << p);
-      }
+      else DEBUG_MSG_FAIL(" - removed point " << p);
     }
+   
     delete_buffer = new_delete_buffer;
 
     DEBUG_MSG("Rebuilding our ranges");
