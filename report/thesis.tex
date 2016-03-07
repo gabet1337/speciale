@@ -162,7 +162,7 @@ For convenience we will assume $M > B^2$. This assumption is known as the \texti
 
 \chapter{Preliminaries}
 \label{chp:prelims}
-% amortization
+This section aims to give an overview of some of the techniques used throughout this thesis. Some of the techniques are very rudimental and may be skipped or revisited when encountered in later sections.
 
 \section{Amortization}
 Amortization is an important algorithmic tool to argue about average performance of an operation in the worst case.
@@ -222,12 +222,14 @@ Seaching in a B-tree is very much similar to searching in a binary search tree. 
 \chapter{Internal Priority Search Tree}
 
 \chapter{External Memory Buffered Priority Search Tree}
+\label{chp:epst}
 In this section we will present an external memory data structure described by Brodal in~\cite{DBLP:journals/corr/Brodal15}. This structure supports updates in amortized $\mathcal{O}\left(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N\right)$, three sided range queries in $\mathcal{O}\left(\frac{1}{\epsilon}\log_B N + \nicefrac{K}{B}\right)$, and can be constructed on $N$ points in the sorting bound.
 
 The data structure relies on a bootstrapped substructure for storing $\mathcal{O}(B^{1+\epsilon})$ points, $0 \leq \epsilon \leq \frac{1}{2}$.
 The structure is very similar to that of Arge et al.~\cite[Section~3.1]{arge_vitter_2003} for handling $\mathcal{O}(B^2)$ points with the main difference being that we reduce the capacity to allow an amortized constant number of I/O's per update. This structure is described further in Section~\ref{sec:child_structure}.
 
-%TODO introduce main data structure here such that we can refer to it in coming section
+%TODO insert references to Arges epst and buffer tree.
+The external memory buffered priority search tree is a combination of the external memory priority search tree of Arge et al. and the buffered updates of the buffer tree also thanks to Arge el al. The data structure is described in Section~\ref{sec:main_data_structure}.
 
 \section{Child structure} %TODO rename to \mathcal{O}(O^{1+\epsilon}) ?
 \label{sec:child_structure}
@@ -281,6 +283,14 @@ We know from construction that the blocks intersected contains $B$ points on or 
 The $t$ relevant blocks are scanned and the points contained in the query are reported. The total number of I/O's required becomes $\mathcal{O}(1+t) = \mathcal{O}(1+\nicefrac{K}{B})$ as $t \leq 2\frac{K}{B}-2$ from the previous observation.
 
 We have now showed that we are able to construct a dynamic data structure with the bounds stated in Theorem~\ref{thm:child_structure}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+% Main data structure %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Main data structure}
+\label{sec:main_data_structure}
+This section presents the main data structure achieving the results of Theorem~\ref{thm:main_structure}.
 
 \chapter{External Memory Priority Search Tree}
 
