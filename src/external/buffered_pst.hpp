@@ -159,7 +159,7 @@ namespace ext {
 
   buffered_pst::buffered_pst_node::~buffered_pst_node() {
     DEBUG_MSG("DESTRUCTING NODE " << id);
-    // if (child_structure) delete child_structure;
+    if (child_structure) delete child_structure;
     //assert(!is_child_structure_loaded);
   }
 
@@ -481,7 +481,7 @@ namespace ext {
 	  child.parent_id = right_split_node.id;
           for (point p : child.point_buffer) {
             if (is_root()) {
-              DEBUG_MSG_FAIL("Removing " << p << " from child structure of parent");
+              DEBUG_MSG("Removing " << p << " from child structure of parent");
               child_structure->remove(p);
             }
             right_child_points.push_back(p);
@@ -491,7 +491,7 @@ namespace ext {
 	  child.parent_id = left_split_node.id;
           for (point p : child.point_buffer) {
             if (is_root()) {
-              DEBUG_MSG_FAIL("Removing " << p << " from child structure of parent");
+              DEBUG_MSG("Removing " << p << " from child structure of parent");
               child_structure->remove(p);
             }
             left_child_points.push_back(p);
@@ -501,7 +501,7 @@ namespace ext {
 	child.flush_info_file();
       }
 
-      DEBUG_MSG_FAIL("Constructing child structures Cv' and Cv''");
+      DEBUG_MSG("Constructing child structures Cv' and Cv''");
       left_split_node.child_structure->destroy();
       right_split_node.child_structure->destroy();
       delete left_split_node.child_structure;
@@ -541,7 +541,7 @@ namespace ext {
       DEBUG_MSG("Distributing points from point_buffer");
       for (point p : point_buffer) {
         if (is_root()) {
-          DEBUG_MSG_FAIL("Inserting point " << p << " into parent's child structure");
+          DEBUG_MSG("Inserting point " << p << " into parent's child structure");
           child_structure->insert(p);
         }
 	if (parent->ranges.belong_to(range(p,-1,-1)) == left_range) {
@@ -712,12 +712,12 @@ namespace ext {
                                        c2.point_buffer.end(),
                                        comp_y)->y, child2_id));
 
-      DEBUG_MSG_FAIL("Rebuild child structure of node in root leaf split" << id);
+      DEBUG_MSG("Rebuild child structure of node in root leaf split" << id);
 #ifdef DEBUG
       assert(child_structure->get_points().empty());
 #endif
       for (auto it = points.begin(); it != points.begin()+points.size()/2; it++) {
-        DEBUG_MSG_FAIL("Inserting " << *it << " into child structure of node " << id);
+        DEBUG_MSG("Inserting " << *it << " into child structure of node " << id);
         child_structure->insert(*it);
       }
       
@@ -801,7 +801,7 @@ namespace ext {
 	found_child.point_buffer.erase(p);
       }
       //TODO: maybe we dont have to remove all points, maybe just the one in point buffer
-      DEBUG_MSG_FAIL("Removing " << p << " from child structure of found child");
+      DEBUG_MSG("Removing " << p << " from child structure of found child");
       child_structure->remove(p);
     }
     
@@ -969,7 +969,7 @@ namespace ext {
 	DEBUG_MSG("Removing " << p << " from point buffer of found child");
 	found_child.point_buffer.erase(p);
       }
-      DEBUG_MSG_FAIL("Removing " << p << " from child structure from " << id);
+      DEBUG_MSG("Removing " << p << " from child structure from " << id);
       child_structure->remove(p);
     }
     
@@ -987,9 +987,9 @@ namespace ext {
 	DEBUG_MSG(" - " << r);
 #endif
 
-      DEBUG_MSG_FAIL("Inserting all points in our child structure... " << id);
+      DEBUG_MSG("Inserting all points in our child structure... " << id);
       for (point p : U) {
-        DEBUG_MSG_FAIL(" - " << p);
+        DEBUG_MSG(" - " << p);
         child_structure->insert(p);
       }
 
@@ -1020,7 +1020,7 @@ namespace ext {
         if (min_y.y < p.y || (min_y.y == p.y && min_y.x < p.x)) {
 	  DEBUG_MSG("Point " << p << " went into found_childs point buffer");
 	  found_child.point_buffer.insert(p);
-          DEBUG_MSG_FAIL("Inserting " << p << " in child structure");
+          DEBUG_MSG("Inserting " << p << " in child structure");
           child_structure->insert(p);
 	} else {
 	  DEBUG_MSG("Point " << p << " stays in U");
@@ -1042,7 +1042,7 @@ namespace ext {
 	for (size_t i = 0; i < num_points_to_move; i++) {
 	  DEBUG_MSG(" - " << sorted_point_buffer[i] << " went into U");
 	  found_child.point_buffer.erase(sorted_point_buffer[i]);
-          DEBUG_MSG_FAIL("Removing point " << sorted_point_buffer[i] << " from child structure");
+          DEBUG_MSG("Removing point " << sorted_point_buffer[i] << " from child structure");
           child_structure->remove(sorted_point_buffer[i]);
 	  U.insert(sorted_point_buffer[i]);
 	}	  
@@ -1096,21 +1096,24 @@ namespace ext {
       buffered_pst_node* parent =
         parent_id == 0 ? root : new buffered_pst_node(parent_id,buffer_size,epsilon,root);
       parent->load_child_structure();
-      DEBUG_MSG_FAIL("Moving points from insert buffer to point buffer in virtual leaf " << id);
+      DEBUG_MSG("Moving points from insert buffer to point buffer in virtual leaf " << id);
       for (point p : temp) {
-        DEBUG_MSG_FAIL(" - " << p);
+        DEBUG_MSG(" - " << p);
         parent->child_structure->insert(p);
       }
       parent->flush_child_structure();
       if (parent->id != 0) delete parent;
       insert_into_point_buffer(temp);
     }
-    
+
     if (!point_buffer_underflow()) {
       DEBUG_MSG("We are not underflowed");
       flush_point_buffer();
+      flush_ranges();
       return;
-    } else flush_point_buffer();
+    }
+
+    flush_point_buffer();
     
     DEBUG_MSG("We are underflowed. Let's butt(tom) up check children");
 
@@ -1144,7 +1147,7 @@ namespace ext {
 			decltype(comp)> pq(comp);
     std::vector<buffered_pst_node> children;
     for (range r : ranges) {
-      //if (r.max_y == INF) continue;
+      if (r.max_y == INF) continue;
       children.push_back(buffered_pst_node(r.node_id,buffer_size,epsilon,root));
       children.back().load_point_buffer();
       children.back().load_ranges();
@@ -1163,51 +1166,36 @@ namespace ext {
       }
     }
     load_child_structure();
+    load_delete_buffer();
+    load_insert_buffer();
     DEBUG_MSG("Grabbing the B/2 highest y-value points from children and deleting them");
+
     std::set<point> X;
-    for (size_t i = 0; !pq.empty() && i < buffer_size/2; i++) {
-      point_child_pair pcp = pq.top();
-      pq.pop();
-      DEBUG_MSG("Inserting " << pcp.first << " into X");
-      X.insert(pcp.first);
+    while (!pq.empty() && X.size() < buffer_size/2) {
+      point_child_pair pcp = pq.top(); pq.pop();
+      if (delete_buffer.find(pcp.first) != delete_buffer.end()) {
+	DEBUG_MSG("Point " << pcp.first << " was canceled by delete in node " << id);
+	delete_buffer.erase(pcp.first);
+#ifdef DEBUG
+	CONTAINED_POINTS.erase(pcp.first);
+#endif
+      } else {
+	auto it = insert_buffer.find(pcp.first);
+	if (it != insert_buffer.end()) {
+	  DEBUG_MSG("Move more recent updates of p from Iv to X in node " << id);
+	  X.insert(*it);
+	  insert_buffer.erase(*it);
+	} else {
+	  DEBUG_MSG("Inserting point " << pcp.first << " into X in node id " << id);
+	  X.insert(pcp.first);
+	}
+      }	
       DEBUG_MSG("Removing " << pcp.first << " from " << children[pcp.second].id);
       children[pcp.second].point_buffer.erase(pcp.first);
-      DEBUG_MSG_FAIL("Removing " << pcp.first << " from child structure " << id);
+      DEBUG_MSG("Removing " << pcp.first << " from child structure " << id);
       child_structure->remove(pcp.first);
     }
     flush_child_structure();
-    DEBUG_MSG("Removing points in X cap Dv from X and Dv");
-    load_delete_buffer();
-    assert(is_delete_buffer_loaded);
-    std::set<point> tmp_X;
-    for (point p : X)
-      if (delete_buffer.find(p) != delete_buffer.end()) {
-	DEBUG_MSG("point " << p << " found in both X and Dv");
-	delete_buffer.erase(p);
-#ifdef DEBUG
-	CONTAINED_POINTS.erase(p);
-#endif
-      } else {
-	DEBUG_MSG("point " << p << " remains in X");
-	tmp_X.insert(p);
-      }
-    X = tmp_X;
-
-    DEBUG_MSG("Move more recent updates of p from Iv to X");
-    load_insert_buffer();
-    assert(is_insert_buffer_loaded);
-    tmp_X.clear();
-    for (point p : X) {
-      if (insert_buffer.find(p) != insert_buffer.end()) {
-	DEBUG_MSG("point " << p << " is in X and Iv. Move point from Iv to X");
-	tmp_X.insert(*insert_buffer.find(p));
-	insert_buffer.erase(*insert_buffer.find(p));
-      } else {
-	DEBUG_MSG("point " << p << " was not in Iv and remains.");
-	tmp_X.insert(p);
-      }
-    }
-    X = tmp_X;
 
     DEBUG_MSG("Satisfy heap ordering between Iv and Pv");
     std::vector<point> vp_temp(X.begin(), X.end());
@@ -1271,9 +1259,9 @@ namespace ext {
     //if we are not the root then insert the pulled up points in our parents child structure
     if (!is_root()) {
       parent->load_child_structure();
-      DEBUG_MSG_FAIL("Insert X into our parents child structure " << parent->id);
+      DEBUG_MSG("Insert X into our parents child structure " << parent->id);
       for (point p : X) {
-        DEBUG_MSG_FAIL(" - " << p);
+        DEBUG_MSG(" - " << p);
         parent->child_structure->insert(p);
       }
       parent->flush_child_structure();
@@ -1683,7 +1671,7 @@ namespace ext {
   }
 
   buffered_pst::~buffered_pst() {
-    //TODO: should delete all files of children
+    delete root;
     for (int i=0; i < next_id; i++) {
       DEBUG_MSG("Descructing file " << i);
       util::remove_directory(std::to_string(i));
