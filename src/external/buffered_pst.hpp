@@ -1163,51 +1163,36 @@ namespace ext {
       }
     }
     load_child_structure();
+    load_delete_buffer();
+    load_insert_buffer();
     DEBUG_MSG("Grabbing the B/2 highest y-value points from children and deleting them");
+
     std::set<point> X;
-    for (size_t i = 0; !pq.empty() && i < buffer_size/2; i++) {
-      point_child_pair pcp = pq.top();
-      pq.pop();
-      DEBUG_MSG("Inserting " << pcp.first << " into X");
-      X.insert(pcp.first);
+    while (!pq.empty() && X.size() < buffer_size/2) {
+      point_child_pair pcp = pq.top(); pq.pop();
+      if (delete_buffer.find(pcp.first) != delete_buffer.end()) {
+	DEBUG_MSG("Point " << pcp.first << " was canceled by delete in node " << id);
+	delete_buffer.erase(pcp.first);
+#ifdef DEBUG
+	CONTAINED_POINTS.erase(pcp.first);
+#endif
+      } else {
+	auto it = insert_buffer.find(pcp.first);
+	if (it != insert_buffer.end()) {
+	  DEBUG_MSG("Move more recent updates of p from Iv to X in node " << id);
+	  X.insert(*it);
+	  insert_buffer.erase(*it);
+	} else {
+	  DEBUG_MSG("Inserting point " << pcp.first << " into X in node id " << id);
+	  X.insert(pcp.first);
+	}
+      }	
       DEBUG_MSG("Removing " << pcp.first << " from " << children[pcp.second].id);
       children[pcp.second].point_buffer.erase(pcp.first);
       DEBUG_MSG_FAIL("Removing " << pcp.first << " from child structure " << id);
       child_structure->remove(pcp.first);
     }
     flush_child_structure();
-    DEBUG_MSG("Removing points in X cap Dv from X and Dv");
-    load_delete_buffer();
-    assert(is_delete_buffer_loaded);
-    std::set<point> tmp_X;
-    for (point p : X)
-      if (delete_buffer.find(p) != delete_buffer.end()) {
-	DEBUG_MSG("point " << p << " found in both X and Dv");
-	delete_buffer.erase(p);
-#ifdef DEBUG
-	CONTAINED_POINTS.erase(p);
-#endif
-      } else {
-	DEBUG_MSG("point " << p << " remains in X");
-	tmp_X.insert(p);
-      }
-    X = tmp_X;
-
-    DEBUG_MSG("Move more recent updates of p from Iv to X");
-    load_insert_buffer();
-    assert(is_insert_buffer_loaded);
-    tmp_X.clear();
-    for (point p : X) {
-      if (insert_buffer.find(p) != insert_buffer.end()) {
-	DEBUG_MSG("point " << p << " is in X and Iv. Move point from Iv to X");
-	tmp_X.insert(*insert_buffer.find(p));
-	insert_buffer.erase(*insert_buffer.find(p));
-      } else {
-	DEBUG_MSG("point " << p << " was not in Iv and remains.");
-	tmp_X.insert(p);
-      }
-    }
-    X = tmp_X;
 
     DEBUG_MSG("Satisfy heap ordering between Iv and Pv");
     std::vector<point> vp_temp(X.begin(), X.end());
