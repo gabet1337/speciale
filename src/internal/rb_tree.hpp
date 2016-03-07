@@ -19,6 +19,7 @@ namespace internal {
     T predecessor(const T &item);
     T successor(const T &item);
     T belong_to(const T &item);
+    typename std::set<T>::iterator belong_to_iterator(const T &item);
     typename std::set<T>::iterator begin();
     typename std::set<T>::iterator end();
   private:
@@ -79,6 +80,14 @@ namespace internal {
     return *(--it);
   }
 
+  template <typename T>
+  typename std::set<T>::iterator rb_tree<T>::belong_to_iterator(const T &item) {
+    auto it = s.lower_bound(item);
+    if (*it == item) return it;
+    if (it == s.begin()) return it;
+    return (--it);
+  }
+  
   template <typename T>
   typename std::set<T>::iterator rb_tree<T>::begin() {
     return s.begin();

@@ -1,6 +1,7 @@
 #ifndef UTILITIES_HPP
 #define UTILITIES_HPP
 #include "../stream/stream.hpp"
+#include "point.hpp"
 #include <string>
 #include <iterator>
 #include <sys/types.h>
@@ -49,6 +50,10 @@ namespace util {
       c.insert(c.end(), file.read());
     }
     file.close();
+  }
+
+  inline bool in_range(const point &p, int x1, int x2, int y) {
+    return x1 <= p.x && p.x <= x2 && p.y >= y;
   }
 
 };
