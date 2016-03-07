@@ -7,6 +7,7 @@ public:
   point min;
   int max_y, node_id;
   range() {}
+  ~range() {}
   range(point _min, int _max_y, int _node_id) :
     min(_min), max_y(_max_y), node_id(_node_id) {}
   bool operator<(const range &r) {

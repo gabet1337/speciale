@@ -169,17 +169,23 @@ namespace ext {
       DEBUG_MSG("Flushing L");
       util::flush_container_to_file<std::vector<point>::iterator,point>(L.begin(), L.end(),
 									get_L_file(),buffer_size);
+      L.clear();
+      L.shrink_to_fit();
     }
 
     DEBUG_MSG("Flushing I");
     util::flush_container_to_file<std::set<point>::iterator,point>(I.begin(), I.end(), get_I_file(), buffer_size);
+    I.clear();
 
     DEBUG_MSG("Flushing D");
     util::flush_container_to_file<std::set<point>::iterator,point>(D.begin(), D.end(), get_D_file(), buffer_size);
+    D.clear();
 
     DEBUG_MSG("Flushing Catalog");
     util::flush_container_to_file<std::vector<child_structure::catalog_item>::iterator,
 				  child_structure::catalog_item>(catalog.begin(), catalog.end(), get_catalog_file(), buffer_size);
+    catalog.clear();
+    catalog.shrink_to_fit();
   }
 
   void child_structure::construct(std::vector<point> points) {
@@ -445,7 +451,10 @@ namespace ext {
       }
     }
 
-    if (!L_in_memory) L_file->close();
+    if (!L_in_memory) {
+      L_file->close();
+      delete L_file;
+    }
     
     DEBUG_MSG(" - removing D-points");
     std::vector<point> final_result;
