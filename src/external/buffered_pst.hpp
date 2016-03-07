@@ -617,9 +617,9 @@ namespace ext {
   }
 
   void buffered_pst::buffered_pst_node::split_leaf() {
-     DEBUG_MSG("Started splitting of leaf");
+    DEBUG_MSG("Started splitting of leaf");
 
-     assert(is_point_buffer_loaded);
+    assert(is_point_buffer_loaded);
    
     /*
       1.) Move last b/4 point_buffer points to new leaf.
@@ -771,8 +771,8 @@ namespace ext {
     }
 
     point min_y = *std::min_element(found_child.point_buffer.begin(),
-				      found_child.point_buffer.end(),
-				      comp_y);
+				    found_child.point_buffer.end(),
+				    comp_y);
     DEBUG_MSG("Found min_y in found_child " << found_child.id << " to be " << min_y);
     
     DEBUG_MSG("Remove points in U from Dv, Ic, Dc, Pc, Cv");
@@ -1450,7 +1450,7 @@ namespace ext {
         if (ranges.belong_to(range(p,0,0)) != *it) {
           DEBUG_MSG_FAIL("point " << p << " is in the wrong child " << it->node_id);
           DEBUG_MSG_FAIL("child " << it->node_id << " is responsible for " << *it
-                    << " but belong to " << ranges.belong_to(range(p,0,0)));
+			 << " but belong to " << ranges.belong_to(range(p,0,0)));
           return false;
         }
 	if (p.y > it->max_y) {
@@ -1558,7 +1558,7 @@ namespace ext {
       
       if (max_y != r.max_y) {
 	DEBUG_MSG_FAIL("max_y " << r.max_y << " in range of node " << id << " is not equal to "
-		  << "maximum y " << max_y << " in point buffer of child " << r.node_id);
+		       << "maximum y " << max_y << " in point buffer of child " << r.node_id);
 	return false;
       }
     }
@@ -1637,7 +1637,7 @@ namespace ext {
 #ifdef DEBUG
     if (root->point_buffer.find(p) != root->point_buffer.end()) CONTAINED_POINTS.erase(p);
     if (root->insert_buffer.find(p) != root->insert_buffer.end()) CONTAINED_POINTS.erase(p);
- #endif
+#endif
     point min_y = *std::min_element(root->point_buffer.begin(),
 				    root->point_buffer.end(),comp_y);
     
@@ -1657,7 +1657,7 @@ namespace ext {
   void buffered_pst::report(int x1, int x2, int y, const std::string &output_file) {
 
     DEBUG_MSG_FAIL("Reporting points in [" << x1 << ", " << x2 << "] X [" <<
-              y << ", \u221E]");
+		   y << ", \u221E]");
     
     if (util::file_exists(output_file))
       error(1, ECANCELED, "Output file exists. Aborting.");
@@ -1738,7 +1738,7 @@ namespace ext {
 
       // TODO: Also look at min_y
       //if (y <= it->max_y)
-	q.push(child);
+      q.push(child);
       
       if (it == right_it) break;
     }
@@ -1854,7 +1854,7 @@ namespace ext {
 	
 	// TODO: Also look at min_y
 	//if (y <= it->max_y)
-	  q.push(child);
+	q.push(child);
 	
 	if (it == right_it) break;
       }
