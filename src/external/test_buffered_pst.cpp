@@ -1814,8 +1814,8 @@ void test_report_points_deterministic() {
         DEBUG_MSG(" - " << p);
   }
   
-  assert ( actual_points  == true_points );
   epst.print();
+  assert ( actual_points  == true_points );
   assert(epst.is_valid());
   
   print_success();
@@ -1989,9 +1989,9 @@ int main() {
   //test_delete_truly_random_n_points(10000);
   //test_delete_truly_random_n_points_from_file("test_points_fail_1");
   test_report_points_deterministic();
-  test_report_points_deterministic2();
-  test_report_points_deterministic3();
-  test_report_points_deterministic_delete();
+  // test_report_points_deterministic2();
+  // test_report_points_deterministic3();
+  // test_report_points_deterministic_delete();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   
