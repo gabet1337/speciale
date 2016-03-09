@@ -1729,6 +1729,11 @@ void test_delete_truly_random_n_points_from_file(std::string file_name) {
   bool insert = true;
   for (size_t i=0; i<100000000; i++) {
     if (bs.eof()) break;
+    if (count > 549) {
+      epst.print();
+      int j;
+      cin >> j;
+    }
     for (int j=0; j<1; j++)
       DEBUG_MSG_FAIL("Handling update " << ++count);
     //bs.write(points_random[i]);
@@ -1978,11 +1983,11 @@ int main() {
   // test_delete_truly_random();
   //test_delete_truly_random_points_from_file("test_points_fail_1");
   //test_delete_truly_random_n_points(10000);
-  //test_delete_truly_random_n_points_from_file("test_points_fail_1");
+  test_delete_truly_random_n_points_from_file("test_points_fail_1");
   //test_report_points_deterministic();
   //test_report_points_deterministic2();
   //test_report_points_deterministic3();
-  test_report_points_deterministic_delete();
+  //test_report_points_deterministic_delete();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   
