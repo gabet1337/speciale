@@ -1207,14 +1207,18 @@ namespace ext {
     int X_size = X.size();
     X = std::set<point>(vp_temp.begin(), vp_temp.begin()+X_size);
     insert_buffer = std::set<point>(vp_temp.begin()+X_size, vp_temp.end());
+
+    load_point_buffer();
 #ifdef DEBUG
     DEBUG_MSG("X now contains:");
     for (auto p : X) DEBUG_MSG(" - " << p);
     DEBUG_MSG("Insert buffer now contains");
     for (auto p : insert_buffer) DEBUG_MSG(" - " << p);
+    DEBUG_MSG("Point buffer now contains");
+    for (auto p : point_buffer) DEBUG_MSG(" - " << p);
 #endif
 
-    load_point_buffer();
+
     point min_y = *std::min_element(point_buffer.begin(),
                                     point_buffer.end(),
                                     comp_y);
@@ -1222,7 +1226,7 @@ namespace ext {
     if (point_buffer.empty()) min_y = point(INF,INF);
     
     if (!X.empty())
-      min_y = std::min(min_y, *std::min_element(X.begin(), X.end(), comp_y));
+      min_y = std::min(min_y, *std::min_element(X.begin(), X.end(), comp_y), comp_y);
 
     DEBUG_MSG("Removing deletes that can not cancel points further down from node " << id);
     DEBUG_MSG("Found min_y to be " << min_y);
@@ -1895,7 +1899,7 @@ namespace ext {
     std::ofstream dot_file;
     dot_file.open("temp.dot");
     dot_file << "digraph {\n";
-    dot_file << "0 [label=\"0\npb: ";
+    dot_file << "0 [shape=rectangle label=\"0\npb: ";
     for (point p : root->point_buffer) dot_file << p << ", ";
     dot_file << "\nib: ";
     for (point p : root->insert_buffer) dot_file << p << ", ";
@@ -1912,7 +1916,7 @@ namespace ext {
     while (!q.empty()) {
       buffered_pst_node bpn = q.front(); q.pop();
       bpn.load_all();
-      dot_file << std::to_string(bpn.id) << " [label=\" " << std::to_string(bpn.id) << "\npb: ";
+      dot_file << std::to_string(bpn.id) << " [shape=rectangle label=\" " << std::to_string(bpn.id) << "\npb: ";
       for (point p : bpn.point_buffer) dot_file << p << ", ";
       dot_file << "\nib: ";
       for (point p : bpn.insert_buffer) dot_file << p << ", ";

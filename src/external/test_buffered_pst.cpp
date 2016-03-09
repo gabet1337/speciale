@@ -129,12 +129,12 @@ void test_root_split() {
   for (int i = 0; i < 9; i++) epst.insert(point(i,i));
 
   assert ((!util::file_exists("1/point_buffer") && !util::file_exists("2/point_buffer"))
-	  && "We should have no children");
+          && "We should have no children");
 
   epst.insert(point(9,9));
 
   assert ((util::file_exists("1/point_buffer") && util::file_exists("2/point_buffer"))
-	  && "We should have children");
+          && "We should have children");
 
   io::buffered_stream<point> bs(4096);
   bs.open("1/point_buffer");
@@ -161,12 +161,12 @@ void test_root_split_insert_overflow() {
   for (int i = 0; i < 9; i++) epst.insert(point(i,i));
 
   assert ((!util::file_exists("1/point_buffer") && !util::file_exists("2/point_buffer"))
-	  && "We should have no children");
+          && "We should have no children");
 
   epst.insert(point(9,9));
 
   assert ((util::file_exists("1/point_buffer") && util::file_exists("2/point_buffer"))
-	  && "We should have children");
+          && "We should have children");
 
   io::buffered_stream<point> bs(4096);
   bs.open("1/point_buffer");
@@ -228,12 +228,12 @@ void test_root_split_insert_between_overflow() {
   for (int i = 100; i <= 106; i++) epst.insert(point(i,i));
 
   assert ((!util::file_exists("1/point_buffer") && !util::file_exists("2/point_buffer"))
-	  && "We should have no children");
+          && "We should have no children");
 
   epst.insert(point(107,107));
 
   assert ((util::file_exists("1/point_buffer") && util::file_exists("2/point_buffer"))
-	  && "We should have children");
+          && "We should have children");
 
   io::buffered_stream<point> bs(4096);
   bs.open("1/point_buffer");
@@ -281,12 +281,12 @@ void test_root_split_insert_between_overflow_and_split() {
   for (int i = 100; i <= 106; i++) epst.insert(point(i,i));
 
   assert ((!util::file_exists("1/point_buffer") && !util::file_exists("2/point_buffer"))
-	  && "We should have no children");
+          && "We should have no children");
 
   epst.insert(point(107,107));
 
   assert ((util::file_exists("1/point_buffer") && util::file_exists("2/point_buffer"))
-	  && "We should have children");
+          && "We should have children");
 
   io::buffered_stream<point> bs(4096);
   bs.open("1/point_buffer");
@@ -341,7 +341,7 @@ void test_maintaining_min_max_y_on_insert_buffer_overflow() {
   }
 
   assert ((!util::file_exists("1/point_buffer") && !util::file_exists("2/point_buffer"))
-	  && "We should have no children");
+          && "We should have no children");
 
   epst.insert(point(107,107));
 #ifdef DEBUG
@@ -351,7 +351,7 @@ void test_maintaining_min_max_y_on_insert_buffer_overflow() {
 #endif
 
   assert ((util::file_exists("1/point_buffer") && util::file_exists("2/point_buffer"))
-	  && "We should have children");
+          && "We should have children");
 
   io::buffered_stream<point> bs(4096);
   bs.open("1/point_buffer");
@@ -572,16 +572,16 @@ void test_insert_buffer_overflow_to_non_leaf2() {
 
   bs.open("5/point_buffer");
   assert( bs.read() == point(56,116) && bs.read() == point(57,117) &&
-	  bs.read() == point(58,118) && bs.read() == point(59,119) &&
-	  bs.read() == point(60,120) && bs.read() == point(61,121) &&
-	  bs.read() == point(62,122) && bs.read() == point(63,123) &&
-	  bs.read() == point(64,124) && bs.eof());
+          bs.read() == point(58,118) && bs.read() == point(59,119) &&
+          bs.read() == point(60,120) && bs.read() == point(61,121) &&
+          bs.read() == point(62,122) && bs.read() == point(63,123) &&
+          bs.read() == point(64,124) && bs.eof());
   bs.close();
 
   bs.open("5/insert_buffer");
   assert( bs.read() == point(51,111) && bs.read() == point(52,112) &&
-	  bs.read() == point(53,113) && bs.read() == point(54,114) &&
-	  bs.read() == point(55,115) && bs.eof());
+          bs.read() == point(53,113) && bs.read() == point(54,114) &&
+          bs.read() == point(55,115) && bs.eof());
   bs.close();
 
 #ifdef DEBUG
@@ -742,16 +742,16 @@ void test_insert_buffer_overflow_to_non_leaf3() {
 
   bs.open("5/point_buffer");
   assert( bs.read() == point(56,116) && bs.read() == point(57,117) &&
-	  bs.read() == point(58,118) && bs.read() == point(59,119) &&
-	  bs.read() == point(60,120) && bs.read() == point(61,121) &&
-	  bs.read() == point(62,122) && bs.read() == point(63,123) &&
-	  bs.read() == point(64,124) && bs.eof());
+          bs.read() == point(58,118) && bs.read() == point(59,119) &&
+          bs.read() == point(60,120) && bs.read() == point(61,121) &&
+          bs.read() == point(62,122) && bs.read() == point(63,123) &&
+          bs.read() == point(64,124) && bs.eof());
   bs.close();
 
   bs.open("5/insert_buffer");
   assert( bs.read() == point(51,111) && bs.read() == point(52,112) &&
-	  bs.read() == point(53,113) && bs.read() == point(54,114) &&
-	  bs.read() == point(55,115) && bs.eof());
+          bs.read() == point(53,113) && bs.read() == point(54,114) &&
+          bs.read() == point(55,115) && bs.eof());
   bs.close();
 
 #ifdef DEBUG
@@ -762,19 +762,19 @@ void test_insert_buffer_overflow_to_non_leaf3() {
 
   bs.open("5/point_buffer");
   assert( bs.read() == point(59,119) &&
-	  bs.read() == point(60,120) && bs.read() == point(61,121) &&
-	  bs.read() == point(62,122) && bs.read() == point(63,123) &&
-	  bs.read() == point(64,124) && bs.read() == point(65,125) &&
-	  bs.read() == point(66,126) && bs.read() == point(67,127) &&
-	  bs.eof());
+          bs.read() == point(60,120) && bs.read() == point(61,121) &&
+          bs.read() == point(62,122) && bs.read() == point(63,123) &&
+          bs.read() == point(64,124) && bs.read() == point(65,125) &&
+          bs.read() == point(66,126) && bs.read() == point(67,127) &&
+          bs.eof());
   bs.close();
 
   bs.open("5/insert_buffer");
   assert( bs.read() == point(51,111) && bs.read() == point(52,112) &&
-	  bs.read() == point(53,113) && bs.read() == point(54,114) &&
-	  bs.read() == point(55,115) && bs.read() == point(56,116) &&
-	  bs.read() == point(57,117) && bs.read() == point(58,118) &&
-	  bs.eof());
+          bs.read() == point(53,113) && bs.read() == point(54,114) &&
+          bs.read() == point(55,115) && bs.read() == point(56,116) &&
+          bs.read() == point(57,117) && bs.read() == point(58,118) &&
+          bs.eof());
   bs.close();
 
 #ifdef DEBUG
@@ -892,16 +892,16 @@ void test_insert_buffer_overflow_to_non_leaf4() {
 
   bs.open("5/point_buffer");
   assert( bs.read() == point(56,116) && bs.read() == point(57,117) &&
-	  bs.read() == point(58,118) && bs.read() == point(59,119) &&
-	  bs.read() == point(60,120) && bs.read() == point(61,121) &&
-	  bs.read() == point(62,122) && bs.read() == point(63,123) &&
-	  bs.read() == point(64,124) && bs.eof());
+          bs.read() == point(58,118) && bs.read() == point(59,119) &&
+          bs.read() == point(60,120) && bs.read() == point(61,121) &&
+          bs.read() == point(62,122) && bs.read() == point(63,123) &&
+          bs.read() == point(64,124) && bs.eof());
   bs.close();
 
   bs.open("5/insert_buffer");
   assert( bs.read() == point(51,111) && bs.read() == point(52,112) &&
-	  bs.read() == point(53,113) && bs.read() == point(54,114) &&
-	  bs.read() == point(55,115) && bs.eof());
+          bs.read() == point(53,113) && bs.read() == point(54,114) &&
+          bs.read() == point(55,115) && bs.eof());
   bs.close();
 
 #ifdef DEBUG
@@ -912,19 +912,19 @@ void test_insert_buffer_overflow_to_non_leaf4() {
 
   bs.open("5/point_buffer");
   assert( bs.read() == point(59,119) &&
-	  bs.read() == point(60,120) && bs.read() == point(61,121) &&
-	  bs.read() == point(62,122) && bs.read() == point(63,123) &&
-	  bs.read() == point(64,124) && bs.read() == point(65,125) &&
-	  bs.read() == point(66,126) && bs.read() == point(67,127) &&
-	  bs.eof());
+          bs.read() == point(60,120) && bs.read() == point(61,121) &&
+          bs.read() == point(62,122) && bs.read() == point(63,123) &&
+          bs.read() == point(64,124) && bs.read() == point(65,125) &&
+          bs.read() == point(66,126) && bs.read() == point(67,127) &&
+          bs.eof());
   bs.close();
 
   bs.open("5/insert_buffer");
   assert( bs.read() == point(51,111) && bs.read() == point(52,112) &&
-	  bs.read() == point(53,113) && bs.read() == point(54,114) &&
-	  bs.read() == point(55,115) && bs.read() == point(56,116) &&
-	  bs.read() == point(57,117) && bs.read() == point(58,118) &&
-	  bs.eof());
+          bs.read() == point(53,113) && bs.read() == point(54,114) &&
+          bs.read() == point(55,115) && bs.read() == point(56,116) &&
+          bs.read() == point(57,117) && bs.read() == point(58,118) &&
+          bs.eof());
   bs.close();
 
 #ifdef DEBUG
@@ -967,25 +967,25 @@ void test_insert_buffer_overflow_to_non_leaf4() {
 
   bs.open("10/point_buffer");
   assert( bs.read() == point(65,125) &&
-	  bs.read() == point(66,126) && bs.read() == point(67,127) &&
-	  bs.read() == point(68,128) && bs.read() == point(69,129) &&
-	  bs.read() == point(70,130) && bs.read() == point(71,131) &&
-	  bs.read() == point(72,132) && bs.read() == point(73,133) &&
-	  bs.eof());
+          bs.read() == point(66,126) && bs.read() == point(67,127) &&
+          bs.read() == point(68,128) && bs.read() == point(69,129) &&
+          bs.read() == point(70,130) && bs.read() == point(71,131) &&
+          bs.read() == point(72,132) && bs.read() == point(73,133) &&
+          bs.eof());
   bs.close();
 
   bs.open("10/insert_buffer");
   assert( bs.read() == point(57,117) && bs.read() == point(58,118) &&
-	  bs.read() == point(59,119) && bs.read() == point(60,120) &&
-	  bs.read() == point(61,121) && bs.read() == point(62,122) &&
-	  bs.read() == point(63,123) && bs.read() == point(64,124) &&
-	  bs.eof());
+          bs.read() == point(59,119) && bs.read() == point(60,120) &&
+          bs.read() == point(61,121) && bs.read() == point(62,122) &&
+          bs.read() == point(63,123) && bs.read() == point(64,124) &&
+          bs.eof());
   bs.close();
 
   bs.open("9/point_buffer");
   assert( bs.read() == point(2,2) && bs.read() == point(3,3) &&
-	  bs.read() == point(4,4) && bs.read() == point(5,5) &&
-	  bs.eof());
+          bs.read() == point(4,4) && bs.read() == point(5,5) &&
+          bs.eof());
   bs.close();
 
   bs.open("7/point_buffer");
@@ -1021,12 +1021,12 @@ void test_not_valid_on_manual_insert() {
   for (int i = 100; i <= 106; i++) epst.insert(point(i,i));
 
   assert ((!util::file_exists("1/point_buffer") && !util::file_exists("2/point_buffer"))
-	  && "We should have no children");
+          && "We should have no children");
 
   epst.insert(point(107,107));
 
   assert ((util::file_exists("1/point_buffer") && util::file_exists("2/point_buffer"))
-	  && "We should have children");
+          && "We should have children");
 
   io::buffered_stream<point> bs(4096);
   bs.open("1/point_buffer");
@@ -1662,40 +1662,40 @@ void test_delete_truly_random_n_points(int n) {
     if (insert) {
       epst.insert(points_random[i]);
       if (i%50==0 && i!=0 && i!=points_random.size()-1) {
-	insert = false;
-	i = i-50;
+        insert = false;
+        i = i-50;
 #ifdef DEBUG
-	streambuf* cout_strbuf(cout.rdbuf());
-	ostringstream output;
-	cout.rdbuf(output.rdbuf());
-	bool is_valid = epst.is_valid();
-	if (!is_valid) {
-	  epst.print();
-	  cout.rdbuf(cout_strbuf);
-	  epst.is_valid();
-	}
-	assert ( is_valid );
-	cout.rdbuf(cout_strbuf);
+        streambuf* cout_strbuf(cout.rdbuf());
+        ostringstream output;
+        cout.rdbuf(output.rdbuf());
+        bool is_valid = epst.is_valid();
+        if (!is_valid) {
+          epst.print();
+          cout.rdbuf(cout_strbuf);
+          epst.is_valid();
+        }
+        assert ( is_valid );
+        cout.rdbuf(cout_strbuf);
 #endif
       }
     } else {
       if (i%10==0) {
-	epst.remove(points_random[i]);
+        epst.remove(points_random[i]);
 #ifdef DEBUG
-	streambuf* cout_strbuf(cout.rdbuf());
-	ostringstream output;
-	cout.rdbuf(output.rdbuf());
-	bool is_valid = epst.is_valid();
-	if (!is_valid) {
-	  epst.print();
-	  cout.rdbuf(cout_strbuf);
-	  epst.is_valid();
-	}
-	assert ( is_valid );
-	cout.rdbuf(cout_strbuf);
+        streambuf* cout_strbuf(cout.rdbuf());
+        ostringstream output;
+        cout.rdbuf(output.rdbuf());
+        bool is_valid = epst.is_valid();
+        if (!is_valid) {
+          epst.print();
+          cout.rdbuf(cout_strbuf);
+          epst.is_valid();
+        }
+        assert ( is_valid );
+        cout.rdbuf(cout_strbuf);
 #endif
       }
-      if (i%50==0) insert = true;	
+      if (i%50==0) insert = true;       
     }
 
   }
@@ -1729,51 +1729,51 @@ void test_delete_truly_random_n_points_from_file(std::string file_name) {
   bool insert = true;
   for (size_t i=0; i<100000000; i++) {
     if (bs.eof()) break;
-    if (count > 549) {
-      epst.print();
-      int j;
-      cin >> j;
-    }
+    // if (count > 549) {
+    //   epst.print();
+    //   int j;
+    //   cin >> j;
+    // }
     for (int j=0; j<1; j++)
       DEBUG_MSG_FAIL("Handling update " << ++count);
     //bs.write(points_random[i]);
     if (insert) {
       epst.insert(bs.read());
       if (i%50==0 && i!=0) {
-	insert = false;
-	i = i-50;
+        insert = false;
+        i = i-50;
 #ifdef DEBUG
-	streambuf* cout_strbuf(cout.rdbuf());
-	ostringstream output;
-	cout.rdbuf(output.rdbuf());
-	bool is_valid = epst.is_valid();
-	if (!is_valid) {
-	  epst.print();
-	  cout.rdbuf(cout_strbuf);
-	  epst.is_valid();
-	}
-	assert ( is_valid );
-	cout.rdbuf(cout_strbuf);
+        streambuf* cout_strbuf(cout.rdbuf());
+        ostringstream output;
+        cout.rdbuf(output.rdbuf());
+        bool is_valid = epst.is_valid();
+        if (!is_valid) {
+          epst.print();
+          cout.rdbuf(cout_strbuf);
+          epst.is_valid();
+        }
+        assert ( is_valid );
+        cout.rdbuf(cout_strbuf);
 #endif
       }
     } else {
       if (i%10==0) {
-	epst.remove(bs.read());
+        epst.remove(bs.read());
 #ifdef DEBUG
-	streambuf* cout_strbuf(cout.rdbuf());
-	ostringstream output;
-	cout.rdbuf(output.rdbuf());
-	bool is_valid = epst.is_valid();
-	if (!is_valid) {
-	  epst.print();
-	  cout.rdbuf(cout_strbuf);
-	  epst.is_valid();
-	}
-	assert ( is_valid );
-	cout.rdbuf(cout_strbuf);
+        streambuf* cout_strbuf(cout.rdbuf());
+        ostringstream output;
+        cout.rdbuf(output.rdbuf());
+        bool is_valid = epst.is_valid();
+        if (!is_valid) {
+          epst.print();
+          cout.rdbuf(cout_strbuf);
+          epst.is_valid();
+        }
+        assert ( is_valid );
+        cout.rdbuf(cout_strbuf);
 #endif
       }
-      if (i%50==0) insert = true;	
+      if (i%50==0) insert = true;       
     }
 
   }
@@ -1809,7 +1809,7 @@ void test_report_points_deterministic() {
   if (actual_points != true_points) {
     DEBUG_MSG("Actual points:");
       for (point p : actual_points)
-	DEBUG_MSG(" - " << p);
+        DEBUG_MSG(" - " << p);
   }
 
   assert ( actual_points  == true_points );
@@ -1840,7 +1840,7 @@ void test_report_points_deterministic2() {
   if (actual_points != true_points) {
     DEBUG_MSG("Actual points:");
       for (point p : actual_points)
-	DEBUG_MSG(" - " << p);
+        DEBUG_MSG(" - " << p);
   }
 
   assert ( actual_points  == true_points );
@@ -1871,7 +1871,7 @@ void test_report_points_deterministic3() {
   if (actual_points != true_points) {
     DEBUG_MSG("Actual points:");
       for (point p : actual_points)
-	DEBUG_MSG(" - " << p);
+        DEBUG_MSG(" - " << p);
   }
 
   assert ( actual_points  == true_points );
@@ -1925,7 +1925,7 @@ void test_report_points_deterministic_delete() {
   if (actual_points != true_points) {
     DEBUG_MSG("Actual points:");
       for (point p : actual_points)
-	DEBUG_MSG(" - " << p);
+        DEBUG_MSG(" - " << p);
   }
   
 
@@ -1953,41 +1953,41 @@ int main() {
   test_construction();
   test_insert();
 #endif
-  // test_interval_range_belong_to();
-  // test_test();
-  // test_buffer_points_less_than_point_buffer_points();
-  // test_no_duplicates_in_pv_iv_dv();
-  // test_insert_buffer_overflow();
-  // test_root_split();
-  // test_root_split_insert_overflow();
-  // test_root_split_insert_between_overflow();
-  // test_maintaining_min_max_y_on_insert_buffer_overflow();
-  // test_node_degree_overflow();
-  // test_distribute_evenly();
-  // test_insert_buffer_overflow_to_non_leaf();
-  // test_insert_buffer_overflow_to_non_leaf2();
-  // test_insert_buffer_overflow_to_non_leaf3();
-  // test_insert_buffer_overflow_to_non_leaf4();
-  // test_not_valid_on_manual_insert();
-  // test_deterministic_random();
-  // test_deterministic_random2();
-  // test_random_deterministic3();
+  test_interval_range_belong_to();
+  test_test();
+  test_buffer_points_less_than_point_buffer_points();
+  test_no_duplicates_in_pv_iv_dv();
+  test_insert_buffer_overflow();
+  test_root_split();
+  test_root_split_insert_overflow();
+  test_root_split_insert_between_overflow();
+  test_maintaining_min_max_y_on_insert_buffer_overflow();
+  test_node_degree_overflow();
+  test_distribute_evenly();
+  test_insert_buffer_overflow_to_non_leaf();
+  test_insert_buffer_overflow_to_non_leaf2();
+  test_insert_buffer_overflow_to_non_leaf3();
+  test_insert_buffer_overflow_to_non_leaf4();
+  test_not_valid_on_manual_insert();
+  test_deterministic_random();
+  test_deterministic_random2();
+  test_random_deterministic3();
   // test_random_insert();
   // test_truly_random();
-  // test_delete();
-  // test_delete_overflow();
-  // test_delete_overflow_underflow_node();
-  // test_delete_overflow_many_points();
-  // test_delete_all_points();
-  // test_insert_200_delete_20_points();
+  test_delete();
+  test_delete_overflow();
+  test_delete_overflow_underflow_node();
+  test_delete_overflow_many_points();
+  test_delete_all_points();
+  test_insert_200_delete_20_points();
   // test_delete_truly_random();
   //test_delete_truly_random_points_from_file("test_points_fail_1");
   //test_delete_truly_random_n_points(10000);
-  test_delete_truly_random_n_points_from_file("test_points_fail_1");
-  //test_report_points_deterministic();
-  //test_report_points_deterministic2();
-  //test_report_points_deterministic3();
-  //test_report_points_deterministic_delete();
+  //test_delete_truly_random_n_points_from_file("test_points_fail_1");
+  test_report_points_deterministic();
+  test_report_points_deterministic2();
+  test_report_points_deterministic3();
+  test_report_points_deterministic_delete();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   
