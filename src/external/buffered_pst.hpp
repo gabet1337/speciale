@@ -1372,8 +1372,8 @@ namespace ext {
       return false;
     }
 
-    if ( ( is_leaf() || is_virtual_leaf() ) && (!delete_buffer.empty() || !insert_buffer.empty())) {
-      DEBUG_MSG("We are a leaf or a virtual leaf without empty delete or insert buffer " << id);
+    if ( ( is_leaf() || is_virtual_leaf() ) && (!delete_buffer.empty() )) {
+      DEBUG_MSG_FAIL("We are a leaf or a virtual leaf without empty delete or insert buffer " << id);
       DEBUG_MSG("Delete buffer contains");
       for (point p : delete_buffer) DEBUG_MSG(" - " << p);
       DEBUG_MSG("Insert buffer contains");

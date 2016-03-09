@@ -1813,8 +1813,10 @@ void test_report_points_deterministic() {
       for (point p : actual_points)
         DEBUG_MSG(" - " << p);
   }
-
+  
   assert ( actual_points  == true_points );
+
+  assert(epst.is_valid());
   
   print_success();
   
