@@ -193,6 +193,7 @@ It is often possible to develop dynamic external memory data structures by "exte
 
 This problem can sometimes be solved by augmenting the data structure with several filtering substructures, i.e. smaller versions of the same problem. This approach was first described by Arge and Vitter~\cite{arge_vitter_2003} in a paper giving an optimal solution to diagonal corner two-sided 2D queries. Each of the substructures typically holds $\mathcal{O}(B^2)$ elements, and answers queries in $\log_B B^2 + \nicefrac{K}{B}$, where $K$ is the size of the output. It can even be a static structure if it can be constructed in $\mathcal{O}(B)$ I/O's, since $B$ updates can be stored in a separate buffer and applied using a global rebuild in amortized $\mathcal{O}(1)$ I/O's per update~\cite{vitter_2008}.
 
+%TODO Insert McCreight reference to B-tree!!!
 \section{B-tree}
 The B-tree is to external memory what the balanced binary search tree is to internal memory. It supports insertions, deletions, and searching in $\mathcal{O}(h)$ where $h$ is the height of the tree. The height of the tree depends on the branching parameter, i.e. the maximum number of children a node can have. This parameter typically depends on the characterics of the disk used and the problem at hand. A B-tree on $N$ elements are stored in $\mathcal{O}(\nicefrac{N}{B})$ blocks and can be constructed in the sorting bound.
 This gives the following defintion of a B-tree:
@@ -211,10 +212,13 @@ $\mathcal{T}$ is a B-tree with branching parameter $b$ if
 
 It follows from the definition that if $b=\Theta(B)$ then a B-tree will have height $\mathcal{O}(\log_B N)$.
 
-Seaching in a B-tree is very much similar to searching in a binary search tree. Instead of making a binary decision at each node we instead have to make a multiway branching decision. If the element we are searching for is not contained in the current node, we find the smallest $i$ such that the key we are searching for is less than $x.key_i$. We then recursively search for the key in child $c_i$.
+\textbf{Searching} in a B-tree is very much similar to searching in a binary search tree. Instead of making a binary decision at each node we instead have to make a multiway branching decision. If the element we are searching for is not contained in the current node, we find the smallest $i$ such that the key we are searching for is less than $x.key_i$. We then recursively search for the key in child $c_i$.
 
 %TODO inserting into a B-tree + splitting a B-tree node
+\textbf{Inserting} in a B-tree is not as simple as inserting into a binary search tree. Similarly to binary trees we search for the leaf node to insert the key, but we cannot simply create a new node for the key. Instead we insert the key into the found leaf node and if the leaf now contains too many elements we split the leaf into two leaves each containing half the elements of the original leaf. Splitting a leaf might cause its parent to have too many children which causes the parent to similarly split.
+
 %TODO deleting in a B-tree + fusing a B-tree node
+\textbf{Deleting} in a B-tree introduces an opposite to splitting, fusing. To delete a key from the tree we search the tree for the key, which now can reside in an internal node. We then delete the key from the node $x$, which might cause $x$ to have too few elements. To remedy this situation we will have to potentially fuse $x$ with a neighbouring node. If $x$ together with either its predecessor or successor contains less than $b$ elements we can fuse the two nodes. If this is not the case then we know that we are able to steal an element from a neighbouring node in order to satisfy the properties of the B-tree. As in the case of insertion, fusing nodes might recursively cause the parent to fuse with one of its neighbours.
 
 \chapter{Related work}
 
