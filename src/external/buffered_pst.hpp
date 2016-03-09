@@ -1089,6 +1089,10 @@ namespace ext {
     assert(is_ranges_loaded);
 
     if (is_virtual_leaf() && point_buffer.empty()) {
+      DEBUG_MSG("We are a virtual leaf. Empty delete buffer");
+      load_delete_buffer();
+      delete_buffer.clear();
+      flush_delete_buffer();
       load_insert_buffer();
       std::vector<point> temp(insert_buffer.begin(), insert_buffer.end());
       insert_buffer.clear();
@@ -1304,6 +1308,8 @@ namespace ext {
       parent->flush_ranges();      
       delete parent;
     }
+
+    if ( is_virtual_leaf() ) delete_buffer.clear();
     
     flush_point_buffer();
     flush_insert_buffer();
@@ -1363,6 +1369,15 @@ namespace ext {
     }
     if ( point_buffer_underflow() ) {
       DEBUG_MSG_FAIL("Point buffer underflow in node " << id);
+      return false;
+    }
+
+    if ( ( is_leaf() || is_virtual_leaf() ) && (!delete_buffer.empty() || !insert_buffer.empty())) {
+      DEBUG_MSG("We are a leaf or a virtual leaf without empty delete or insert buffer " << id);
+      DEBUG_MSG("Delete buffer contains");
+      for (point p : delete_buffer) DEBUG_MSG(" - " << p);
+      DEBUG_MSG("Insert buffer contains");
+      for (point p : insert_buffer) DEBUG_MSG(" - " << p);
       return false;
     }
 

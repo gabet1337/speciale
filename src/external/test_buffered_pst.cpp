@@ -1350,7 +1350,9 @@ void test_delete_all_points() {
   for (int i=0; i<30; i++) {
     epst.remove(point(i,i));
 #ifdef DEBUG
-    assert ( epst.is_valid() );
+    bool is_valid = epst.is_valid();
+    if (!is_valid) epst.print();
+    assert ( is_valid );
 #endif
   }
   
@@ -1813,7 +1815,7 @@ void test_report_points_deterministic() {
   }
 
   assert ( actual_points  == true_points );
-
+  
   print_success();
   
 }
