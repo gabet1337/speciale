@@ -39,3 +39,5 @@ ERRORS IN ARTICLE
 - min_y should be max_y at some places
 - Deletions might cause node to remain underflowed after siftup.
 - Inserts and deletes should not cancel each other before they hit a point buffer
+- Spelling mistake of construction in 5. Global rebuilding
+- Weird sentence: To be able to filter out deleted points etc., we maintain the buffer Pv, Iv and Dv in lexicographically sorted. Section 5.
