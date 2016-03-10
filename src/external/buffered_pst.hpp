@@ -1762,7 +1762,11 @@ namespace ext {
             CONTAINED_POINTS.erase(p);
 #endif
           }
-          child.insert_buffer.erase(p);
+          if (child.insert_buffer.erase(p)) {
+#ifdef DEBUG
+	    CONTAINED_POINTS.erase(p);
+#endif
+	  }
           child.delete_buffer.erase(p);
           if (p.y < min_y.y || (p.y == min_y.y && p.x < min_y.x)) {
             child.delete_buffer.insert(p);
@@ -1919,17 +1923,24 @@ namespace ext {
       parent->handle_split();
       if (node.parent_id != 0) delete parent;
 
-      continue;
-      while (node.point_buffer_overflow()) {
-        node.handle_point_buffer_overflow();
-        node.load_all();
-      }
+      // while (node.point_buffer_overflow()) {
+      //   node.handle_point_buffer_overflow();
+      //   node.load_all();
+      // }
 
+      node.flush_delete_buffer();
+      node.flush_insert_buffer();
+      node.flush_info_file();
+      node.flush_child_structure();
       while (node.point_buffer_underflow()) {
+	node.flush_point_buffer();
+	node.flush_ranges();
         node.handle_underflowing_point_buffer();
-        node.load_all();
+	node.load_point_buffer();
+	node.load_ranges();
       }
-      node.flush_all();
+      node.flush_ranges();
+      node.flush_point_buffer();
     }
   }
 
