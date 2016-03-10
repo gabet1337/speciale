@@ -1996,7 +1996,7 @@ namespace ext {
     }
 
     while (!q.empty()) {
-      buffered_pst_node node = q.front(); q.top();
+      buffered_pst_node node = q.front(); q.pop();
       node.load_all();
       flush_buffers_to_child(node, q, q_temp, -INF, INF, -INF);
       for (point p : node.point_buffer) {
@@ -2008,7 +2008,7 @@ namespace ext {
       node.flush_all();
     }
 
-    delete old_root();
+    delete old_root;
 
     for (int i=epoch_begin; i < epoch_end; i++) {
       DEBUG_MSG("Destructing file " << i);
@@ -2020,19 +2020,19 @@ namespace ext {
     
   }
 
-  void buffered_pst::construct_sorted(const std::string &file_name) {
+  //void buffered_pst::construct_sorted(const std::string &file_name) {
 
-    io::buffered_stream points(buffer_size);
-    points.open(file_name);
+  //   io::buffered_stream points(buffer_size);
+  //   points.open(file_name);
 
-    int each_leaf_get = buffer_size/2-1;
-    DEBUG_MSG_FAIL("Each leaf get " << buffer_size << " / 2 - 1 = " << each_leaf_get);
+  //   int each_leaf_get = buffer_size/2-1;
+  //   DEBUG_MSG_FAIL("Each leaf get " << buffer_size << " / 2 - 1 = " << each_leaf_get);
 
     
     
     
     
-  }
+  // }
   
   void buffered_pst::print() {
     assert(root);
