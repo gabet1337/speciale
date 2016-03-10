@@ -2107,13 +2107,17 @@ void test_report_points_underflowing_point_buffer() {
   ////////////////////////////////////////////////////////////////////////////
 
   epst.remove(point(2,2));
+
+  
   epst.remove(point(0,0));
   true_points_set.erase(point(2,2));
   true_points_set.erase(point(0,0));
+
+  epst.print();
   
   true_points = std::vector<point>(true_points_set.begin(), true_points_set.end());
 
-  epst.report(0,100,0, "test/underflow_pb_res4");
+  epst.report(-100,100,-100, "test/underflow_pb_res4");
 
   std::vector<point> actual_points4;
   util::load_file_to_container<std::vector<point>, point>
@@ -2126,6 +2130,9 @@ void test_report_points_underflowing_point_buffer() {
   if (actual_points4 != true_points) {
     DEBUG_MSG("Actual points:");
     for (point p : actual_points4)
+      DEBUG_MSG(" - " << p);
+    DEBUG_MSG("True points:");
+    for (point p : true_points)
       DEBUG_MSG(" - " << p);
   }
 
@@ -2182,7 +2189,7 @@ int main() {
   // test_delete_overflow_underflow_node();
   // test_delete_overflow_many_points();
   // test_delete_all_points();
-  // test_insert_200_delete_20_points();
+  //test_insert_200_delete_20_points();
   // test_delete_truly_random();
   //test_delete_truly_random_points_from_file("test_points_fail_1");
   //test_delete_truly_random_n_points(10000);
