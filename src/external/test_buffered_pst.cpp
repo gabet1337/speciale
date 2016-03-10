@@ -1794,12 +1794,19 @@ void test_report_points_deterministic() {
   print_description("starting test of report points deterministic");
 
   ext::buffered_pst epst(9,0.5);
-  for (int i=0; i<100; i++) epst.insert(point(i,i));
+  for (int i=0; i<100; i++) {
+    assert(epst.is_valid());
+    epst.insert(point(i,i));
+    epst.print();
+    // int k;
+    //cin >> k;
+  }
 
   std::vector<point> true_points;
   for (int i=50; i <= 75; i++)
     true_points.push_back(point(i,i));
-      
+  DEBUG_MSG("Starting print!");
+  epst.print();
   epst.report(25,75,50,"test/deterministic_result");
   
   std::vector<point> actual_points;
@@ -1813,9 +1820,9 @@ void test_report_points_deterministic() {
       for (point p : actual_points)
         DEBUG_MSG(" - " << p);
   }
-  
-  assert ( actual_points  == true_points );
   epst.print();
+
+  assert ( actual_points  == true_points );
   assert(epst.is_valid());
   
   print_success();
@@ -1848,7 +1855,8 @@ void test_report_points_deterministic2() {
   }
 
   assert ( actual_points  == true_points );
-
+  epst.print();
+  assert(epst.is_valid());
   print_success();
   
 }
@@ -1879,7 +1887,8 @@ void test_report_points_deterministic3() {
   }
 
   assert ( actual_points  == true_points );
-
+  epst.print();
+  assert(epst.is_valid());
   print_success();
   
 }
@@ -1934,7 +1943,8 @@ void test_report_points_deterministic_delete() {
   
 
   assert ( actual_points  == true_points );
-
+  epst.print();
+  assert(epst.is_valid());
   print_success();
   
 }
@@ -1986,12 +1996,12 @@ int main() {
   // test_insert_200_delete_20_points();
   // test_delete_truly_random();
   //test_delete_truly_random_points_from_file("test_points_fail_1");
-  //test_delete_truly_random_n_points(10000);
+  test_delete_truly_random_n_points(10000);
   //test_delete_truly_random_n_points_from_file("test_points_fail_1");
-  test_report_points_deterministic();
-  test_report_points_deterministic2();
-  test_report_points_deterministic3();
-  test_report_points_deterministic_delete();
+  // test_report_points_deterministic();
+  // test_report_points_deterministic2();
+  // test_report_points_deterministic3();
+  // test_report_points_deterministic_delete();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   
