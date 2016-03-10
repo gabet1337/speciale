@@ -1949,6 +1949,202 @@ void test_report_points_deterministic_delete() {
   
 }
 
+void test_report_points_deterministic_repeat_report() {
+
+  print_description("starting test of report points deterministic");
+
+  ext::buffered_pst epst(9,0.5);
+  for (int i=0; i<100; i++) epst.insert(point(i,i));
+
+  for (int i=0; i<100; i+=2) {
+    epst.remove(point(i,i));
+    //epst.print();
+//     DEBUG_MSG_FAIL("Removing p(" << i << "," << i << ")");
+// #ifdef DEBUG
+//     streambuf* cout_strbuf(cout.rdbuf());
+//     ostringstream output;
+//     cout.rdbuf(output.rdbuf());
+//     bool is_valid = true;
+//     if (!is_valid) {
+//       epst.print();
+//       cout.rdbuf(cout_strbuf);
+//       epst.is_valid();
+//     }
+//     assert ( is_valid );
+    //cout.rdbuf(cout_strbuf);
+    //#endif
+  }
+  
+  std::vector<point> true_points;
+  for (int i=1; i < 100; i+=2)
+    true_points.push_back(point(i,i));
+
+  epst.print();
+  assert(epst.is_valid());
+
+  for (int i=0;i<5;i++) {
+
+    if (util::file_exists("test/deterministic_result5"))
+	util::remove_file("test/deterministic_result5");
+
+    epst.report(0,100,0,"test/deterministic_result5");
+    //epst.print();
+  
+    std::vector<point> actual_points;
+    util::load_file_to_container<std::vector<point>, point>
+      (actual_points, "test/deterministic_result5", 4096);
+    
+    std::sort(actual_points.begin(),actual_points.end());
+  
+    if (actual_points != true_points) {
+      DEBUG_MSG("Actual points:");
+      for (point p : actual_points)
+        DEBUG_MSG(" - " << p);
+    }
+    assert ( actual_points  == true_points );
+    epst.print();
+    assert(epst.is_valid());
+  }
+  
+  print_success();
+  
+}
+
+void test_report_points_underflowing_point_buffer() {
+
+  print_description("starting test of report points underflowing point buffer");
+
+  std::set<point> true_points_set;
+  ext::buffered_pst epst(9,0.5);
+  for (int i=0; i<28; i++) {
+    true_points_set.insert(point(i,i));
+    epst.insert(point(i,i));
+  }
+
+  for (int i=11; i<18;i++) {
+    epst.remove(point(i,i));
+    true_points_set.erase(point(i,i));
+  }
+
+  std::vector<point> true_points(true_points_set.begin(),true_points_set.end());
+  
+  epst.report(0,100,0, "test/underflow_pb_res");
+
+  std::vector<point> actual_points;
+  util::load_file_to_container<std::vector<point>, point>
+    (actual_points, "test/underflow_pb_res", 4096);
+    
+  std::sort(actual_points.begin(),actual_points.end());
+  
+  if (actual_points != true_points) {
+    DEBUG_MSG("Actual points:");
+    for (point p : actual_points)
+      DEBUG_MSG(" - " << p);
+  }
+
+  epst.print();
+  assert ( actual_points  == true_points );
+  assert ( epst.is_valid() );
+  
+  epst.remove(point(18,18));
+  epst.remove(point(21,21));
+  true_points_set.erase(point(18,18));
+  true_points_set.erase(point(21,21));
+
+  true_points = std::vector<point>(true_points_set.begin(), true_points_set.end());
+
+  epst.report(0,100,0, "test/underflow_pb_res2");
+
+  std::vector<point> actual_points2;
+  util::load_file_to_container<std::vector<point>, point>
+    (actual_points2, "test/underflow_pb_res2", 4096);
+    
+  std::sort(actual_points2.begin(),actual_points2.end());
+
+  epst.print();
+
+  if (actual_points2 != true_points) {
+    DEBUG_MSG("Actual points:");
+    for (point p : actual_points2)
+      DEBUG_MSG(" - " << p);
+  }
+
+  assert ( actual_points2  == true_points );
+  assert ( epst.is_valid() );
+
+  ////////////////////////////////////////////////////////////////////////
+
+  epst.remove(point(8,8));
+  epst.remove(point(10,10));
+  epst.remove(point(19,19));
+  epst.remove(point(20,20));
+  true_points_set.erase(point(8,8));
+  true_points_set.erase(point(10,10));
+  true_points_set.erase(point(19,19));
+  true_points_set.erase(point(20,20));
+
+  true_points = std::vector<point>(true_points_set.begin(), true_points_set.end());
+
+  epst.report(0,100,0, "test/underflow_pb_res3");
+
+  std::vector<point> actual_points3;
+  util::load_file_to_container<std::vector<point>, point>
+    (actual_points3, "test/underflow_pb_res3", 4096);
+    
+  std::sort(actual_points3.begin(),actual_points3.end());
+
+  epst.print();
+
+  if (actual_points3 != true_points) {
+    DEBUG_MSG("Actual points:");
+    for (point p : actual_points3)
+      DEBUG_MSG(" - " << p);
+  }
+
+  assert ( actual_points3  == true_points );
+  assert ( epst.is_valid() );
+
+  ////////////////////////////////////////////////////////////////////////////
+
+  epst.remove(point(2,2));
+
+  
+  epst.remove(point(0,0));
+  true_points_set.erase(point(2,2));
+  true_points_set.erase(point(0,0));
+
+  epst.print();
+  
+  true_points = std::vector<point>(true_points_set.begin(), true_points_set.end());
+
+  epst.report(-100,100,-100, "test/underflow_pb_res4");
+
+  std::vector<point> actual_points4;
+  util::load_file_to_container<std::vector<point>, point>
+    (actual_points4, "test/underflow_pb_res4", 4096);
+    
+  std::sort(actual_points4.begin(),actual_points4.end());
+
+  epst.print();
+
+  if (actual_points4 != true_points) {
+    DEBUG_MSG("Actual points:");
+    for (point p : actual_points4)
+      DEBUG_MSG(" - " << p);
+    DEBUG_MSG("True points:");
+    for (point p : true_points)
+      DEBUG_MSG(" - " << p);
+  }
+
+  assert ( actual_points4  == true_points );
+  assert ( epst.is_valid() );
+
+  
+  print_success();
+  
+}
+
+
 void cleanup() {
   for (int i = 0; i < 1000; i++)
     util::remove_directory(to_string(i));
@@ -1993,15 +2189,17 @@ int main() {
   // test_delete_overflow_underflow_node();
   // test_delete_overflow_many_points();
   // test_delete_all_points();
-  // test_insert_200_delete_20_points();
+  //test_insert_200_delete_20_points();
   // test_delete_truly_random();
   //test_delete_truly_random_points_from_file("test_points_fail_1");
-  test_delete_truly_random_n_points(10000);
+  //test_delete_truly_random_n_points(10000);
   //test_delete_truly_random_n_points_from_file("test_points_fail_1");
   // test_report_points_deterministic();
   // test_report_points_deterministic2();
   // test_report_points_deterministic3();
   // test_report_points_deterministic_delete();
+  //test_report_points_deterministic_repeat_report();
+  test_report_points_underflowing_point_buffer();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   

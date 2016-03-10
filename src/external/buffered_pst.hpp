@@ -798,10 +798,12 @@ namespace ext {
     
     DEBUG_MSG("Remove points in U from Dv, Ic, Dc, Pc, Cv");
 
+    std::set<point> new_U;
     for (point p : U) {
       if (delete_buffer.find(p) != delete_buffer.end()) {
         DEBUG_MSG("Removing " << p << " from delete buffer");
         delete_buffer.erase(p);
+	new_U.insert(p);
       }
       if (found_child.insert_buffer.find(p) != found_child.insert_buffer.end()) { 
         DEBUG_MSG("Removing " << p << " from insert buffer of found child");
@@ -809,10 +811,12 @@ namespace ext {
         CONTAINED_POINTS.erase(p);
 #endif
         found_child.insert_buffer.erase(p);
+	new_U.insert(p);
       }
       if (found_child.delete_buffer.find(p) != found_child.delete_buffer.end()) { 
         DEBUG_MSG("Removing " << p << " from delete buffer of found child");
         found_child.delete_buffer.erase(p);
+	new_U.insert(p);
       }
       if (found_child.point_buffer.find(p) != found_child.point_buffer.end()) { 
         DEBUG_MSG("Removing " << p << " from point buffer of found child");
@@ -825,6 +829,7 @@ namespace ext {
       DEBUG_MSG("Removing " << p << " from child structure of found child");
       child_structure->remove(p);
     }
+    U = new_U;
     
     if (found_child.is_leaf() || found_child.is_virtual_leaf()) {
 
@@ -1179,6 +1184,7 @@ namespace ext {
       n.flush_ranges();
       new_ranges.insert(r);
       //flush_ranges();
+      // TODO: We should only recurse if child is underflowed. Except when constructing.
       n.handle_underflowing_point_buffer();
       //load_ranges();
     }
@@ -1746,27 +1752,37 @@ namespace ext {
       child.load_point_buffer();
       child.load_insert_buffer();
       child.load_info_file();
-
+      child.load_delete_buffer();
+      
       // TODO: min_y value should be on ranges.
       point min_y = *std::min_element(child.point_buffer.begin(),
                                       child.point_buffer.end(),
                                       comp_y);
+      if (child.point_buffer.empty()) min_y = point(-INF,-INF);
       DEBUG_MSG("Found min_y of child " << child.id << " to be " << min_y);
       DEBUG_MSG("Looking at delete_buffer of " << node.id);
       std::set<point> new_delete_buffer;
       for (point p : node.delete_buffer) {
+	DEBUG_MSG_FAIL("Looking at delete " << p);
         if (node.ranges.belong_to(range(p,-1,-1)) == *it) {
           if (child.point_buffer.erase(p)) {
+	    DEBUG_MSG_FAIL("Removing " << p <<
+			   " from childs point buffer and child structure" <<
+			   " of node " << node.id);
             node.child_structure->remove(p);
 #ifdef DEBUG
             CONTAINED_POINTS.erase(p);
 #endif
-          }
-          child.insert_buffer.erase(p);
-          child.delete_buffer.erase(p);
-          if (p.y < min_y.y || (p.y == min_y.y && p.x < min_y.x)) {
+          } else if (p.y < min_y.y || (p.y == min_y.y && p.x < min_y.x)) {
+	    DEBUG_MSG_FAIL("Inserting delete " << p << " into child " << child.id
+			   << " delete_buffer");
             child.delete_buffer.insert(p);
-          } 
+	  }
+          if (child.insert_buffer.erase(p)) {
+#ifdef DEBUG
+	    CONTAINED_POINTS.erase(p);
+#endif
+	  }
         } else {
           new_delete_buffer.insert(p);
         }
@@ -1821,8 +1837,7 @@ namespace ext {
       }
 
       child.flush_all();
-      // TODO: Also look at min_y
-      //if (y <= it->max_y)
+      
       q.push(child);
       fix_up_queue.push(child);
       
@@ -1919,17 +1934,24 @@ namespace ext {
       parent->handle_split();
       if (node.parent_id != 0) delete parent;
 
-      continue;
-      while (node.point_buffer_overflow()) {
-        node.handle_point_buffer_overflow();
-        node.load_all();
-      }
+      // while (node.point_buffer_overflow()) {
+      //   node.handle_point_buffer_overflow();
+      //   node.load_all();
+      // }
 
+      node.flush_delete_buffer();
+      node.flush_insert_buffer();
+      node.flush_info_file();
+      node.flush_child_structure();
       while (node.point_buffer_underflow()) {
+	node.flush_point_buffer();
+	node.flush_ranges();
         node.handle_underflowing_point_buffer();
-        node.load_all();
+	node.load_point_buffer();
+	node.load_ranges();
       }
-      node.flush_all();
+      node.flush_ranges();
+      node.flush_point_buffer();
     }
   }
 
