@@ -38,3 +38,4 @@ ERRORS IN ARTICLE
 - Remove all points in Dv with y-value larger than the smallest y-value in X as these cannot cancel any updates further above.
 - min_y should be max_y at some places
 - Deletions might cause node to remain underflowed after siftup.
+- Inserts and deletes should not cancel each other before they hit a point buffer
