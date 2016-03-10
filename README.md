@@ -29,3 +29,12 @@ NOTES
 - Use sorted vector as pq
 - xfig, ipe, tex from arxiv
 - Decorator pattern: Test individual methods
+
+ERRORS IN ARTICLE
+=================
+- Report
+  - (Pv U Iv) \cap Q . (Pv should have been reported in Cv, except for root)
+  - (Cv \cap Q) \ Dv (Dv should not contain any relevant points on path)
+- Remove all points in Dv with y-value larger than the smallest y-value in X as these cannot cancel any updates further above.
+- min_y should be max_y at some places
+- Deletions might cause node to remain underflowed after siftup.
