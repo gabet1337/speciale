@@ -115,10 +115,12 @@ namespace ext {
                                 std::queue<buffered_pst_node> &fix_up_queue,
                                 int x1, int x2, int y);
     void handle_invalid_buffers(std::queue<buffered_pst_node> &q);
+    void global_rebuild();
     size_t buffer_size;
     int fanout;
     double epsilon;
     buffered_pst_node* root;
+    int epoch_begin;
   };
 
   // BUFFERED_PST_NODE /////////////////////////////////////////////////////
@@ -380,7 +382,12 @@ namespace ext {
 #endif
     
     point_buffer.insert(points.begin(), points.end());
-    
+
+#ifdef DEBUG
+    DEBUG_MSG_FAIL("Point buffer now contains the following points in node " << id);
+    for (point p : point_buffer)
+      DEBUG_MSG_FAIL(" - " << p);
+#endif
     if (point_buffer_overflow()) handle_point_buffer_overflow();
   }
 
@@ -637,50 +644,66 @@ namespace ext {
     DEBUG_MSG("Started splitting of leaf");
 
     assert(is_point_buffer_loaded);
+    
+#ifdef DEBUG
+    DEBUG_MSG_FAIL("We are distributing point_buffer");
+    for (point p : point_buffer)
+      DEBUG_MSG_FAIL(" - " << p);
+#endif
    
     /*
-      1.) Move last b/4 point_buffer points to new leaf.
-      2.) Update max_y on existing interval
-      3.) Insert new interval for new leaf with min, max_y, node_id
+      - Create nodes_to_create = ceil(point_buffer.size()/(buffer_size/2)) children.
+      - Move point_buffer.size()/nodes_to_create points to each new leaf.
+      - Update existing interval
+      - Insert new interval for new leaves with min, max_y, node_id
     */
 
-    std::vector<point> move_points;
-    std::set<point> keep_points;
-    size_t idx = 0;
-    int keep_max_y = -INF, move_max_y = -INF;
-    point move_min = point(INF,INF);
-    for (auto p : point_buffer) {
-      if (++idx <= point_buffer.size()/2) {
-        DEBUG_MSG("Keep point " << p);
-        keep_points.insert(p);
-        keep_max_y = std::max(keep_max_y,p.y);
-        continue;
-      }
-      DEBUG_MSG("Move point " << p);
-      move_max_y = std::max(move_max_y, p.y);
-      move_min = std::min(move_min, p);
-      move_points.push_back(p);
-    }
+    int nodes_to_create = (int)ceil((double)point_buffer.size()/(double)(buffer_size/2-1));
 
-    point_buffer = keep_points;
+    //if (point_buffer.size() == buffer_size/2) nodes_to_create++;
+
+    DEBUG_MSG_FAIL("We are creating (" << point_buffer.size() << " / " << buffer_size/2-1 <<
+		   ") - 1 = " << nodes_to_create << "-1 new children");
+
+    buffered_pst_node* new_leaves[nodes_to_create];
+    new_leaves[0] = this;
 
     buffered_pst_node* parent =
-      parent_id == 0 ? root : new buffered_pst_node(parent_id,buffer_size,epsilon,root);
+      parent_id == 0 ? root : new buffered_pst_node(parent_id, buffer_size, epsilon, root);
     parent->load_ranges();
-    
-    range r = parent->ranges.belong_to(range(*(point_buffer.begin()),-1,-1));
-    DEBUG_MSG("Existing interval has changed max_y from " << r.max_y << " to "
-              << keep_max_y);
-    parent->ranges.erase(r);
-    parent->ranges.insert(range(r.min,keep_max_y,r.node_id));
 
-    int new_node_id = next_id++;
-    DEBUG_MSG("Insert interval for new leaf " << move_min << " "
-              << move_max_y << " " << new_node_id << " into " << parent->id);
+    parent->ranges.erase(parent->ranges.belong_to(range(*point_buffer.begin(),-1,-1)));
     
-    buffered_pst_node new_child(new_node_id,parent_id,buffer_size,B_epsilon,epsilon,root);
+    std::vector<range> new_ranges;
+    new_ranges.push_back(range(point(INF,INF), -INF, id));
     
-    parent->ranges.insert(range(move_min,move_max_y,new_node_id));
+    for (int i = 1; i < nodes_to_create; i++) {
+      new_leaves[i] = new buffered_pst_node(next_id, parent_id, buffer_size,
+					    B_epsilon, epsilon, root);
+      new_ranges.push_back(range(point(INF,INF), -INF, next_id));
+      next_id++;
+    }
+    
+    std::set<point> point_buffer_to_split(point_buffer.begin(), point_buffer.end());
+    point_buffer.clear();
+    
+    int each_get = (int)ceil((double)point_buffer_to_split.size()/(double)nodes_to_create);
+    DEBUG_MSG_FAIL("Each node should get " << each_get << " points");
+    
+    int idx = 0;
+    DEBUG_MSG_FAIL("Starting to distribute points between children initiated by node " << id);
+    for (point p : point_buffer_to_split) {
+      DEBUG_MSG_FAIL(" - " << p << " went into child "
+		     << std::to_string(new_leaves[idx/each_get]->id) << " in index " << idx);
+      new_leaves[idx/each_get]->point_buffer.insert(p);
+      new_ranges[idx/each_get].min = std::min(p,new_ranges[idx/each_get].min);
+      new_ranges[idx/each_get].max_y = std::max(p.y,new_ranges[idx/each_get].max_y);
+      idx++;
+    }
+
+    for (range r : new_ranges) {
+      parent->add_child(r);
+    }
 
 #ifdef DEBUG
     DEBUG_MSG("Ranges in parent now contains:");
@@ -690,15 +713,11 @@ namespace ext {
 
     parent->flush_ranges();
     if (parent_id != 0) delete parent;
-    DEBUG_MSG_FAIL("Point buffer contains before:");
-    for (point p : point_buffer) DEBUG_MSG_FAIL(" - " <<  p);
-    if (point_buffer_overflow()) split_leaf();
-    else flush_point_buffer();
-    DEBUG_MSG_FAIL("Point buffer contains after:");
-    for (point p : point_buffer) DEBUG_MSG_FAIL(" - " <<  p);
 
-    new_child.insert_into_point_buffer(move_points);
-    new_child.flush_all();
+    for (int i = 0; i < nodes_to_create; i++) {
+      new_leaves[i]->flush_all();
+    }
+    
   }
   
   void buffered_pst::buffered_pst_node::handle_point_buffer_overflow() {
@@ -1684,6 +1703,7 @@ namespace ext {
   buffered_pst::buffered_pst(size_t buffer_size, double epsilon) {
     this->buffer_size = buffer_size;
     this->epsilon = epsilon;
+    this->epoch_begin = 0;
     fanout = (epsilon == 0.5) ? (int)sqrt(buffer_size) :
       (int)pow((double)buffer_size,epsilon);
     root = new buffered_pst_node(0,0,buffer_size,fanout, epsilon, 0);
@@ -1856,7 +1876,13 @@ namespace ext {
 
     io::buffered_stream<point> result(buffer_size);
     result.open(output_file);
-    
+
+    if (x2 < x1) {
+      DEBUG_MSG("x2 < x1 for x1: " << x1 << " x2: " <<x2);
+      result.close();
+      return;
+    }
+
     std::queue<buffered_pst_node> q, fix_up_queue;
     flush_buffers_to_child(*root, q, fix_up_queue, x1, x2, y);
 
@@ -1955,6 +1981,59 @@ namespace ext {
     }
   }
 
+  void buffered_pst::global_rebuild() {
+
+    buffered_pst_node* old_root = root;
+    root = new buffered_pst_node(0, 0, buffer_size, fanout, epsilon, 0);
+
+    int epoch_end = next_id;
+
+    std::queue<buffered_pst_node> q, q_temp;
+    flush_buffers_to_child(*old_root, q, q_temp, -INF, INF, -INF);
+
+    for (point p : old_root->point_buffer) {
+      insert(p);
+    }
+
+    while (!q.empty()) {
+      buffered_pst_node node = q.front(); q.top();
+      node.load_all();
+      flush_buffers_to_child(node, q, q_temp, -INF, INF, -INF);
+      for (point p : node.point_buffer) {
+	insert(p);
+      }
+      for (point p : node.insert_buffer) {
+	insert(p);
+      }
+      node.flush_all();
+    }
+
+    delete old_root();
+
+    for (int i=epoch_begin; i < epoch_end; i++) {
+      DEBUG_MSG("Destructing file " << i);
+      util::remove_directory(std::to_string(i));
+      util::remove_directory("c_"+std::to_string(i));
+    }
+
+    epoch_begin = epoch_end;
+    
+  }
+
+  void buffered_pst::construct_sorted(const std::string &file_name) {
+
+    io::buffered_stream points(buffer_size);
+    points.open(file_name);
+
+    int each_leaf_get = buffer_size/2-1;
+    DEBUG_MSG_FAIL("Each leaf get " << buffer_size << " / 2 - 1 = " << each_leaf_get);
+
+    
+    
+    
+    
+  }
+  
   void buffered_pst::print() {
     assert(root);
     std::ofstream dot_file;
@@ -2001,7 +2080,7 @@ namespace ext {
   buffered_pst::~buffered_pst() {
     delete root;
     for (int i=0; i < next_id; i++) {
-      DEBUG_MSG("Descructing file " << i);
+      DEBUG_MSG("Destructing file " << i);
       util::remove_directory(std::to_string(i));
       util::remove_directory("c_"+std::to_string(i));
     }
