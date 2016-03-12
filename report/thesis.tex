@@ -106,7 +106,7 @@
 
 In the early days of electronic computers disks were faster than processors. Since then processor technology has advanced at an incredible rate achieving annual speedups of 40 to 60 percent~\cite{ruemmler_wilkes_1994}. Although this is also true for disk capacity an entirely different story can be told for the speedup of disk performance. The disparity between processor, internal memory, and external memory speeds have grown larger for each year and the gap is widening. This disparity presents serious problems when designing algorithms on large data sets, and with more and more applications of Big Data in social media, banking, etc., these problems become increasingly relevant.
 
-%TODO get a better figure. This one is really ugly.
+\todo{get a better figure. This one is really ugly.}
 \begin{figure}[h]
 	\centering
 		\includegraphics[scale=0.5]{../figures/scaling-of-cpu-vs-disk}
@@ -141,7 +141,7 @@ In disk-based systems, algorithms and data structures cannot be measured in the 
 
 In Section~\ref{chp:prelims} we give a preliminary overview of some of the techniques used in developing external memory efficient data structures.
 
-%TODO add more sections!
+\todo{add more sections!}
 
 \chapter{Model of computation}
 \label{chp:iomodel}
@@ -193,8 +193,9 @@ It is often possible to develop dynamic external memory data structures by "exte
 
 This problem can sometimes be solved by augmenting the data structure with several filtering substructures, i.e. smaller versions of the same problem. This approach was first described by Arge and Vitter~\cite{arge_vitter_2003} in a paper giving an optimal solution to diagonal corner two-sided 2D queries. Each of the substructures typically holds $\mathcal{O}(B^2)$ elements, and answers queries in $\log_B B^2 + \nicefrac{K}{B}$, where $K$ is the size of the output. It can even be a static structure if it can be constructed in $\mathcal{O}(B)$ I/O's, since $B$ updates can be stored in a separate buffer and applied using a global rebuild in amortized $\mathcal{O}(1)$ I/O's per update~\cite{vitter_2008}.
 
-%TODO Insert McCreight reference to B-tree!!!
 \section{B-tree}
+\todo{Insert reference to McCreight. Author of B-tree}
+
 The B-tree is to external memory what the balanced binary search tree is to internal memory. It supports insertions, deletions, and searching in $\mathcal{O}(h)$ where $h$ is the height of the tree. The height of the tree depends on the branching parameter, i.e. the maximum number of children a node can have. This parameter typically depends on the characterics of the disk used and the problem at hand. A B-tree on $N$ elements are stored in $\mathcal{O}(\nicefrac{N}{B})$ blocks and can be constructed in the sorting bound.
 This gives the following defintion of a B-tree:
 
@@ -214,10 +215,8 @@ It follows from the definition that if $b=\Theta(B)$ then a B-tree will have hei
 
 \textbf{Searching} in a B-tree is very much similar to searching in a binary search tree. Instead of making a binary decision at each node we instead have to make a multiway branching decision. If the element we are searching for is not contained in the current node, we find the smallest $i$ such that the key we are searching for is less than $x.key_i$. We then recursively search for the key in child $c_i$.
 
-%TODO inserting into a B-tree + splitting a B-tree node
 \textbf{Inserting} in a B-tree is not as simple as inserting into a binary search tree. Similarly to binary trees we search for the leaf node to insert the key, but we cannot simply create a new node for the key. Instead we insert the key into the found leaf node and if the leaf now contains too many elements we split the leaf into two leaves each containing half the elements of the original leaf. Splitting a leaf might cause its parent to have too many children which causes the parent to similarly split.
 
-%TODO deleting in a B-tree + fusing a B-tree node
 \textbf{Deleting} in a B-tree introduces an opposite to splitting, fusing. To delete a key from the tree we search the tree for the key, which now can reside in an internal node. We then delete the key from the node $x$, which might cause $x$ to have too few elements. To remedy this situation we will have to potentially fuse $x$ with a neighbouring node. If $x$ together with either its predecessor or successor contains less than $b$ elements we can fuse the two nodes. If this is not the case then we know that we are able to steal an element from a neighbouring node in order to satisfy the properties of the B-tree. As in the case of insertion, fusing nodes might recursively cause the parent to fuse with one of its neighbours.
 
 \chapter{Related work}
@@ -232,7 +231,8 @@ In this section we will present an external memory data structure described by B
 The data structure relies on a bootstrapped substructure for storing $\mathcal{O}(B^{1+\epsilon})$ points, $0 \leq \epsilon \leq \frac{1}{2}$.
 The structure is very similar to that of Arge et al.~\cite[Section~3.1]{arge_vitter_2003} for handling $\mathcal{O}(B^2)$ points with the main difference being that we reduce the capacity to allow an amortized constant number of I/O's per update. This structure is described further in Section~\ref{sec:child_structure}.
 
-%TODO insert references to Arges epst and buffer tree.
+\todo{ insert references to Arges epst and buffer tree.}
+
 The external memory buffered priority search tree is a combination of the external memory priority search tree of Arge et al. and the buffered updates of the buffer tree also thanks to Arge el al. The data structure is described in Section~\ref{sec:main_data_structure}.
 
 \section{Child structure} %TODO rename to \mathcal{O}(O^{1+\epsilon}) ?
@@ -295,6 +295,38 @@ We have now showed that we are able to construct a dynamic data structure with t
 \section{Main data structure}
 \label{sec:main_data_structure}
 This section presents the main data structure achieving the results of Theorem~\ref{thm:main_structure}.
+\begin{theorem}
+\label{thm:main_structure}
+An external memory data structure exists supporting insertion and deletion of points in amortized $\mathcal{O}(\nicefrac{1}{\epsilon B^{1-\epsilon}} \log_B N)$ I/O's and three sided range queries in amortized $\mathcal{O}(\nicefrac{1}{\epsilon} \log_B N + \nicefrac{K}{B})$, where $\epsilon$ is a constant, $0 < \epsilon \leq \nicefrac{1}{2}$, $N$ is the number of points in the structure, and $K$ is the size of the output. The structure can be constructued in amortized $\mathcal{O}(\nicefrac{N}{B})$ I/O's on an x-sorted set of points and stored in $\mathcal{O}(\nicefrac{N}{B})$ blocks.
+\end{theorem}
+
+The structure is a slightly modified version of the B-tree. Each internal node, except for the root, has a degree between $\frac{\Delta}{2}$ and $\Delta$, with $\Delta = \lceil B^\epsilon \rceil$. The root has degree between $2$ and $\Delta$.
+
+Each node $v$ stores three buffers containing $\mathcal{O}(B)$ points each. A point buffer $P_v$, an insertion buffer $I_v$, and a deletion buffer $D_v$.
+
+As in the internal priority search tree the points with highest $y$-value resides in the top of the tree, i.e. we have a heap ordering among the nodes of the tree on the $y$-value. This means that for a node $v$, no child $c$ of $v$ stores an element in $P_c$ with a larger $y$-value than the minimum $y$-value in $P_v$.
+$I_v$ and $D_v$ stores buffered insertions and deletions on their way down to a point buffer of a descendent and are handled recursively whenever a buffer overflows.
+
+For each internal node, $v$, we also store an instance of the child structure, $C_v$, containing the elements stored in $v$'s children.
+
+Finally, for each internal node, $v$, we store, in $\mathcal{O}(1)$ blocks, information about the minimum $y$-value of the points of each of $v$'s children or $\infty$ if the child does not store any points.
+
+All information at the root is kept in internal memory except for the child structure.
+
+\todo{Invariants}
+
+\todo{Updates}
+
+\todo{Analysis}
+
+\todo{Global rebuilding}
+
+\todo{Three sided range queries}
+
+\todo{Construction}
+
+\todo{Figures}
+
 
 \chapter{External Memory Priority Search Tree}
 
