@@ -1809,9 +1809,9 @@ void test_report_points_deterministic() {
 
   ext::buffered_pst epst(9,0.5);
   for (int i=0; i<100; i++) {
-    assert(epst.is_valid());
+    //assert(epst.is_valid());
     epst.insert(point(i,i));
-    epst.print();
+    //epst.print();
     // int k;
     //cin >> k;
   }
@@ -1821,6 +1821,7 @@ void test_report_points_deterministic() {
     true_points.push_back(point(i,i));
   DEBUG_MSG("Starting print!");
   epst.print();
+
   epst.report(25,75,50,"test/deterministic_result");
   
   std::vector<point> actual_points;
@@ -2210,8 +2211,10 @@ void test_report_200_delete_20_points() {
 void cleanup() {
   for (int i = 0; i < 1000; i++)
     util::remove_directory(to_string(i));
-  for (int i = 0; i < 1000; i++)
+  for (int i = 0; i < 1000; i++) {
     util::remove_directory("c_"+to_string(i));
+    util::remove_directory("tree_"+to_string(i)+".png");
+  }
   util::remove_directory("test");
 }
 
@@ -2255,7 +2258,7 @@ int main() {
   //test_delete_truly_random();
   //test_delete_truly_random_points_from_file("test_points_fail_1");
   //test_delete_truly_random_n_points(10000);
-  test_delete_truly_random_n_points_from_file("test_points");
+  //test_delete_truly_random_n_points_from_file("test_points");
   test_report_points_deterministic();
   test_report_points_deterministic2();
   test_report_points_deterministic3();

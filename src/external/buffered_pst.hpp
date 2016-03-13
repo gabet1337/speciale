@@ -266,7 +266,11 @@ namespace ext {
 
   void buffered_pst::buffered_pst_node::flush_ranges() {
     if (is_root()) return;
-    DEBUG_MSG("Flushing ranges for node " << id);
+    DEBUG_MSG_FAIL("Flushing ranges for node " << id);
+#ifdef DEBUG
+    for (range r : ranges)
+      DEBUG_MSG_FAIL(" - " << r);
+#endif
     if (!util::file_exists(get_directory(id))) mkdir(get_directory(id).c_str(), 0700);
     util::flush_container_to_file<std::set<range>::iterator, range>
       (ranges.begin(), ranges.end(), get_ranges_file_name(id), buffer_size);
@@ -552,7 +556,7 @@ namespace ext {
         for (auto r : parent->ranges) {
           if (r.node_id == id) {
             parent->ranges.erase(r);
-	    our_range = r;
+            our_range = r;
             DEBUG_MSG("Found range " << r << ". Deleted from parents range.");
             break;
           }
@@ -567,10 +571,10 @@ namespace ext {
       bool is_first_child = true;
       for (auto bpn : new_children) {
         range r = *(bpn->ranges.begin());
-	if (is_first_child) {
-	  r.min = std::min(r.min,our_range.min);
-	  is_first_child = false;
-	}
+        if (is_first_child) {
+          r.min = std::min(r.min,our_range.min);
+          is_first_child = false;
+        }
         parent->add_child(range(r.min, r.max_y, bpn->id));
       }
 
@@ -602,6 +606,8 @@ namespace ext {
       point_buffer.clear();
       delete_buffer.clear();
       insert_buffer.clear();
+      if (!is_root()) ranges.clear();
+      
 #ifdef DEBUG
       DEBUG_MSG("PARENTS RANGES BEFORE:");
       for (auto r : parent->ranges)
@@ -629,12 +635,13 @@ namespace ext {
 #endif
 
       for (auto bpn : new_children) bpn->flush_all();
-      if (!is_root()) ranges.clear();
+
       flush_all();
       parent->flush_all();
 
       for (auto bpn : new_children) bpn->handle_underflowing_point_buffer();
-      parent->handle_underflowing_point_buffer();
+      if ( is_root() )
+        handle_underflowing_point_buffer();
 
       if ( !is_root() )
         parent->handle_split();
@@ -670,7 +677,7 @@ namespace ext {
     //if (point_buffer.size() == buffer_size/2) nodes_to_create++;
 
     DEBUG_MSG_FAIL("We are creating (" << point_buffer.size() << " / " << buffer_size/2-1 <<
-		   ") - 1 = " << nodes_to_create << "-1 new children");
+                   ") - 1 = " << nodes_to_create << "-1 new children");
 
     buffered_pst_node* new_leaves[nodes_to_create];
     new_leaves[0] = this;
@@ -686,7 +693,7 @@ namespace ext {
     
     for (int i = 1; i < nodes_to_create; i++) {
       new_leaves[i] = new buffered_pst_node(next_id, parent_id, buffer_size,
-					    B_epsilon, epsilon, root);
+                                            B_epsilon, epsilon, root);
       new_ranges.push_back(range(point(INF,INF), -INF, next_id));
       next_id++;
     }
@@ -701,7 +708,7 @@ namespace ext {
     DEBUG_MSG_FAIL("Starting to distribute points between children initiated by node " << id);
     for (point p : point_buffer_to_split) {
       DEBUG_MSG_FAIL(" - " << p << " went into child "
-		     << std::to_string(new_leaves[idx/each_get]->id) << " in index " << idx);
+                     << std::to_string(new_leaves[idx/each_get]->id) << " in index " << idx);
       new_leaves[idx/each_get]->point_buffer.insert(p);
       new_ranges[idx/each_get].min = std::min(p,new_ranges[idx/each_get].min);
       new_ranges[idx/each_get].max_y = std::max(p.y,new_ranges[idx/each_get].max_y);
@@ -829,7 +836,7 @@ namespace ext {
       if (delete_buffer.find(p) != delete_buffer.end()) {
         DEBUG_MSG("Removing " << p << " from delete buffer");
         delete_buffer.erase(p);
-	new_U.insert(p);
+        new_U.insert(p);
       }
       if (found_child.insert_buffer.find(p) != found_child.insert_buffer.end()) { 
         DEBUG_MSG("Removing " << p << " from insert buffer of found child");
@@ -837,12 +844,12 @@ namespace ext {
         CONTAINED_POINTS.erase(p);
 #endif
         found_child.insert_buffer.erase(p);
-	new_U.insert(p);
+        new_U.insert(p);
       }
       if (found_child.delete_buffer.find(p) != found_child.delete_buffer.end()) { 
         DEBUG_MSG("Removing " << p << " from delete buffer of found child");
         found_child.delete_buffer.erase(p);
-	new_U.insert(p);
+        new_U.insert(p);
       }
       if (found_child.point_buffer.find(p) != found_child.point_buffer.end()) { 
         DEBUG_MSG("Removing " << p << " from point buffer of found child");
@@ -1042,8 +1049,8 @@ namespace ext {
       if (found_child.point_buffer.find(p) != found_child.point_buffer.end()) { 
         DEBUG_MSG("Removing " << p << " from point buffer of found child");
         found_child.point_buffer.erase(p);
-	found_child.point_buffer.insert(p);
-	continue;
+        found_child.point_buffer.insert(p);
+        continue;
       }
       DEBUG_MSG("Removing " << p << " from child structure from " << id);
       child_structure->remove(p);
@@ -1175,8 +1182,10 @@ namespace ext {
       std::vector<point> temp(insert_buffer.begin(), insert_buffer.end());
       insert_buffer.clear();
       flush_insert_buffer();
+      load_info_file();
       buffered_pst_node* parent =
         parent_id == 0 ? root : new buffered_pst_node(parent_id,buffer_size,epsilon,root);
+      flush_info_file();
       parent->load_child_structure();
       DEBUG_MSG("Moving points from insert buffer to point buffer in virtual leaf " << id);
       for (point p : temp) {
@@ -1186,8 +1195,12 @@ namespace ext {
       parent->flush_child_structure();
       if (parent->id != 0) delete parent;
       insert_into_point_buffer(temp);
+      flush_ranges();
+      flush_point_buffer();
+      return;
     }
-
+    
+    //load_ranges();
     if (!point_buffer_underflow()) {
       DEBUG_MSG("We are not underflowed");
       flush_point_buffer();
@@ -1199,27 +1212,46 @@ namespace ext {
     
     DEBUG_MSG("We are underflowed. Let's butt(tom) up check children");
 
-    internal::rb_tree<range> new_ranges;
+    //internal::rb_tree<range> new_ranges;
     // TODO: FLUSH RANGES!
-    for (range r : ranges) {
-      buffered_pst_node n(r.node_id,buffer_size,epsilon,root);
-      n.load_info_file();
-      n.load_point_buffer();
-      n.load_ranges();
-      if (n.is_leaf() && n.point_buffer.empty()) {
-        DEBUG_MSG("We have found an empty leaf. Delete it. " << n.id << " was deleted.");
-        //continue;
-      }
-      n.flush_info_file();
-      n.flush_point_buffer();
-      n.flush_ranges();
-      new_ranges.insert(r);
+    //for (range r : ranges) {
+    //buffered_pst_node n(r.node_id,buffer_size,epsilon,root);
+      //n.load_info_file();
+      //n.load_point_buffer();
+      //n.load_ranges();
+      //n.flush_info_file();
+      //n.flush_point_buffer();
+      //n.flush_ranges();
+      //new_ranges.insert(r);
       //flush_ranges();
       // TODO: We should only recurse if child is underflowed. Except when constructing.
-      n.handle_underflowing_point_buffer();
+      //n.handle_underflowing_point_buffer();
       //load_ranges();
+    //}
+    //ranges = new_ranges;
+
+    for (auto it=ranges.begin(); it != ranges.end(); it++) {
+      //if (it->max_y == INF) continue;
+      buffered_pst_node n(it->node_id,buffer_size,epsilon,root);
+      n.load_all();
+      if (n.point_buffer_underflow() ||
+          (!n.is_leaf() &&
+           n.is_virtual_leaf() &&
+           n.point_buffer.empty() &&
+           !n.insert_buffer.empty())) {
+        DEBUG_MSG("point_buffer_underflow is " << n.point_buffer_underflow()
+                  << " for node " << n.id);
+        DEBUG_MSG("is_virtual_leaf() is " << n.is_virtual_leaf() << " for node " << n.id);
+        DEBUG_MSG("point_buffer.empty() is " << n.point_buffer.empty()
+                  << " for node " << n.id);
+        flush_ranges();
+        n.flush_all();
+        n.handle_underflowing_point_buffer();
+        load_ranges();
+        it = ranges.begin();
+      } else
+        n.flush_all();
     }
-    ranges = new_ranges;
 
     DEBUG_MSG("We have filled our children!... Now ready to fill ourself");
     typedef std::pair<point, int> point_child_pair;
@@ -1322,7 +1354,8 @@ namespace ext {
     delete_buffer = new_delete_buffer;
 
     DEBUG_MSG("Rebuilding our ranges");
-    new_ranges.clear();
+   
+    internal::rb_tree<range> new_ranges;
     for (range r : ranges) {
       point max_y = *std::max_element(children[node_id_to_index[r.node_id]].point_buffer.begin(),
                                       children[node_id_to_index[r.node_id]].point_buffer.end(),
@@ -1384,7 +1417,7 @@ namespace ext {
 #endif
     
     if (parent->id != 0) {
-      parent->flush_ranges();      
+      parent->flush_ranges();
       delete parent;
     }
 
@@ -1420,13 +1453,14 @@ namespace ext {
         n.handle_underflowing_point_buffer();
         load_ranges();
         it = ranges.begin();
-      }
-      n.flush_all();
+      } else
+        n.flush_all();
     }
 
     flush_ranges();
+    return;
   }
-  
+
 #ifdef DEBUG
   bool buffered_pst::buffered_pst_node::is_valid() {
 
@@ -1737,8 +1771,8 @@ namespace ext {
     } else {
       DEBUG_MSG("remove duplicates of p from Pr, Ir, Dr");
       if (root->point_buffer.erase(p)) {
-	root->point_buffer.insert(p);
-	return;
+        root->point_buffer.insert(p);
+        return;
       }
       root->insert_buffer.erase(p);
       root->delete_buffer.erase(p);
@@ -1798,26 +1832,26 @@ namespace ext {
       DEBUG_MSG("Looking at delete_buffer of " << node.id);
       std::set<point> new_delete_buffer;
       for (point p : node.delete_buffer) {
-	DEBUG_MSG_FAIL("Looking at delete " << p);
+        DEBUG_MSG_FAIL("Looking at delete " << p);
         if (node.ranges.belong_to(range(p,-1,-1)) == *it) {
           if (child.point_buffer.erase(p)) {
-	    DEBUG_MSG_FAIL("Removing " << p <<
-			   " from childs point buffer and child structure" <<
-			   " of node " << node.id);
+            DEBUG_MSG_FAIL("Removing " << p <<
+                           " from childs point buffer and child structure" <<
+                           " of node " << node.id);
             node.child_structure->remove(p);
 #ifdef DEBUG
             CONTAINED_POINTS.erase(p);
 #endif
           } else if (p.y < min_y.y || (p.y == min_y.y && p.x < min_y.x)) {
-	    DEBUG_MSG_FAIL("Inserting delete " << p << " into child " << child.id
-			   << " delete_buffer");
+            DEBUG_MSG_FAIL("Inserting delete " << p << " into child " << child.id
+                           << " delete_buffer");
             child.delete_buffer.insert(p);
-	  }
+          }
           if (child.insert_buffer.erase(p)) {
 #ifdef DEBUG
-	    CONTAINED_POINTS.erase(p);
+            CONTAINED_POINTS.erase(p);
 #endif
-	  }
+          }
         } else {
           new_delete_buffer.insert(p);
         }
@@ -1957,9 +1991,11 @@ namespace ext {
 
   void buffered_pst::handle_invalid_buffers(std::queue<buffered_pst_node> &q) {
     while (!q.empty()) {
+
       buffered_pst_node node = q.front(); q.pop();
       node.load_all();
       DEBUG_MSG_FAIL("STARTING TO FIX NODE " << node.id);
+      
       while (node.delete_buffer_overflow()) {
         node.handle_delete_buffer_overflow();
         node.load_all();
@@ -1972,6 +2008,8 @@ namespace ext {
 
       buffered_pst_node* parent =
         node.parent_id == 0 ? root : new buffered_pst_node(node.parent_id,buffer_size,epsilon,root);
+      node.flush_all();
+      
       parent->handle_split();
       if (node.parent_id != 0) delete parent;
 
@@ -1980,19 +2018,21 @@ namespace ext {
       //   node.load_all();
       // }
 
-      node.flush_delete_buffer();
-      node.flush_insert_buffer();
-      node.flush_info_file();
-      node.flush_child_structure();
-      while (node.point_buffer_underflow()) {
-	node.flush_point_buffer();
-	node.flush_ranges();
+      //node.flush_delete_buffer();
+      //node.flush_insert_buffer();
+      //node.flush_info_file();
+      //node.flush_child_structure();
+      //node.load_point_buffer();
+      //node.load_ranges();
+      //while (node.point_buffer_underflow()) {
+      //node.flush_point_buffer();
+      //node.flush_ranges();
         node.handle_underflowing_point_buffer();
-	node.load_point_buffer();
-	node.load_ranges();
-      }
-      node.flush_ranges();
-      node.flush_point_buffer();
+        //node.load_point_buffer();
+        //node.load_ranges();
+        //}
+        //node.flush_ranges();
+        //node.flush_point_buffer();
     }
   }
 
@@ -2015,10 +2055,10 @@ namespace ext {
       node.load_all();
       flush_buffers_to_child(node, q, q_temp, -INF, INF, -INF);
       for (point p : node.point_buffer) {
-	insert(p);
+        insert(p);
       }
       for (point p : node.insert_buffer) {
-	insert(p);
+        insert(p);
       }
       node.flush_all();
     }
