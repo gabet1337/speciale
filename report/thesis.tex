@@ -24,6 +24,7 @@
 % Code comments like [CLRS]
 \renewcommand{\algorithmiccomment}[1]{\makebox[5cm][l]{$\triangleright$ \textit{#1}}}
 \usepackage{framed,graphicx,xcolor}
+\usepackage[space]{grffile}
 \usepackage[font={small,it}]{caption}
 \usepackage{listings}
 \usepackage{units}
@@ -330,6 +331,19 @@ To be able to maintain the above invariants we must be very careful whenever we 
 \todo{Analysis}
 
 \todo{Global rebuilding}
+\subsection{Global rebuilding}
+\todo{Reference to earlier section on global rebuilding}
+As we do not fuse nodes with a too low node degree we might end up with an unbalanced tree. We use global rebuilding to guarantee that the tree is rebalanced and thus that our amortized bounds hold.
+Updates are partitioned into epochs. After a rebuild a new epoch begins and if the data structure at this points stores $\bar{N}$ points, then the next epoch will begin after $\bar{N}/2$ updates, i.e. a global rebuild will be performed.
+Having a new epoch after every $\bar{N}/2$ updates ensures that our tree does not grow higher than $\mathcal{O}\left(\frac{1}{\epsilon}\log_B\frac{3\bar{N}}{2}\right) = \mathcal{O}\left(\frac{1}{\epsilon}\log_B N\right)$ as the size is $\frac{1}{2}\bar{N} \leq N \leq \frac{3}{2}\bar{N}$.
+
+Global rebuilding works by constructing an empty structure and then reinserting all the points of the old structure that has not been deleted.
+
+The points to reinsert are found by doing a top-down traversal of the tree while flushing insertion and deletion buffers to children. The points to reinsert are then found in the point buffers after flushing. This might cause buffers to temporarily overflow but we will allow this as the old structure will be deleted.
+
+\textbf{Analysis}
+
+\includegraphics[width=\textwidth]{../handwritten notes/Notes on global rebuilding analysis.jpg}
 
 \todo{Three sided range queries}
 
