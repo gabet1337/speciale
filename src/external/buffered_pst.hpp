@@ -544,6 +544,7 @@ namespace ext {
         DEBUG_MSG(" - " << r);
 #endif
       DEBUG_MSG("Deleting our range in parent " << parent->id << " vi er: " << id);
+      range our_range(point(INF,INF), -INF, id);
       if (is_root()) {
         DEBUG_MSG("We are root");
         ranges.clear();
@@ -551,6 +552,7 @@ namespace ext {
         for (auto r : parent->ranges) {
           if (r.node_id == id) {
             parent->ranges.erase(r);
+	    our_range = r;
             DEBUG_MSG("Found range " << r << ". Deleted from parents range.");
             break;
           }
@@ -562,8 +564,13 @@ namespace ext {
         DEBUG_MSG(" - " << r);
 #endif
       DEBUG_MSG("Inserting new ranges");
+      bool is_first_child = true;
       for (auto bpn : new_children) {
         range r = *(bpn->ranges.begin());
+	if (is_first_child) {
+	  r.min = std::min(r.min,our_range.min);
+	  is_first_child = false;
+	}
         parent->add_child(range(r.min, r.max_y, bpn->id));
       }
 
@@ -1018,6 +1025,7 @@ namespace ext {
 
     DEBUG_MSG("Remove points in U from Iv, Ic, Dc, Pc, Cv");
 
+    std::set<point> new_U;
     for (point p : U) {
       if (insert_buffer.find(p) != insert_buffer.end()) {
         DEBUG_MSG("Removing " << p << " from insert buffer");
@@ -1034,10 +1042,14 @@ namespace ext {
       if (found_child.point_buffer.find(p) != found_child.point_buffer.end()) { 
         DEBUG_MSG("Removing " << p << " from point buffer of found child");
         found_child.point_buffer.erase(p);
+	found_child.point_buffer.insert(p);
+	continue;
       }
       DEBUG_MSG("Removing " << p << " from child structure from " << id);
       child_structure->remove(p);
+      new_U.insert(p);
     }
+    U = new_U;
     
     if (found_child.is_leaf()) {
       
@@ -1724,7 +1736,10 @@ namespace ext {
       root->insert_into_point_buffer(p);
     } else {
       DEBUG_MSG("remove duplicates of p from Pr, Ir, Dr");
-      root->point_buffer.erase(p);
+      if (root->point_buffer.erase(p)) {
+	root->point_buffer.insert(p);
+	return;
+      }
       root->insert_buffer.erase(p);
       root->delete_buffer.erase(p);
       DEBUG_MSG("Check if put into Ir or Pr");
