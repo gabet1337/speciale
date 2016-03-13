@@ -313,9 +313,19 @@ Finally, for each internal node, $v$, we store, in $\mathcal{O}(1)$ blocks, info
 
 All information at the root is kept in internal memory except for the child structure.
 
-\todo{Invariants}
+\subsection{Invariants}
+For a node $v$ in the main data structure the following invariants must be true:
+\begin{itemize}
+	\item $P_v$, $I_v$, and $D_v$ are disjoint and points in the buffers have $x$-values spanned by the subtree at $v$.
+	\item All points in $I_v \cup D_v$ have $y$-value less than the points in $P_v$.
+	\item An update in a buffer at $v$ is more recent and should eventually overwrite any update in a descendent of $v$ with the same key.
+	\item A leaf in the tree has empty insertion and deletion buffers and the size of its point buffer is less than $B/2$.
+	\item An internal node in the tree has $B/2 \leq \vert P_v \vert \leq B$, $\vert D_v \vert \leq B/4$, and $\vert I_v \vert \leq B$.
+\end{itemize}
 
 \todo{Updates}
+\subsection{Updates}
+To be able to maintain the above invariants we must be very careful whenever we update the data structure.
 
 \todo{Analysis}
 
@@ -350,6 +360,7 @@ More precisely we conducted experiments on the I/O-optimal $\nicefrac{M}{B}$-way
 \end{itemize}
 
 We believe our implementation follows the same I/O pattern as that of the $\nicefrac{M}{B}$-way \textsc{Merge-Sorter}, with both data structures using linear scans of entire streams, and so we conclude that \texttt{buffered\_stream} will have the best overall performance.
+%TODO this is not the case when we have queries in the child structure which relies on seek.
 
 %TODO Redo experiments and comment on those.
 
