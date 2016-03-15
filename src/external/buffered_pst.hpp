@@ -393,8 +393,8 @@ namespace ext {
 #endif
 
     insert_buffer.insert(points.begin(), points.end());
-    
-    if (insert_buffer_overflow()) handle_insert_buffer_overflow();
+
+    //if (insert_buffer_overflow()) handle_insert_buffer_overflow();
   }
   
   void buffered_pst::buffered_pst_node::insert_into_point_buffer(const point &p) {
@@ -419,7 +419,7 @@ namespace ext {
     for (point p : point_buffer)
       DEBUG_MSG_FAIL(" - " << p);
 #endif
-    if (point_buffer_overflow()) handle_point_buffer_overflow();
+    //if (point_buffer_overflow()) handle_point_buffer_overflow();
   }
 
   void buffered_pst::buffered_pst_node::insert_into_delete_buffer(const point &p) {
@@ -439,7 +439,7 @@ namespace ext {
 
     delete_buffer.insert(points.begin(), points.end());
 
-    if (delete_buffer_overflow()) handle_delete_buffer_overflow();
+    //if (delete_buffer_overflow()) handle_delete_buffer_overflow();
   }
 
   bool buffered_pst::buffered_pst_node::point_buffer_overflow() {
@@ -1795,6 +1795,7 @@ namespace ext {
 #endif
     if (root->is_leaf()) {
       root->insert_into_point_buffer(p);
+      event_stack.push({root, EVENT::point_buffer_overflow});
     } else {
       DEBUG_MSG("remove duplicates of p from Pr, Ir, Dr");
       if (root->point_buffer.erase(p)) {
@@ -1805,8 +1806,13 @@ namespace ext {
       root->delete_buffer.erase(p);
       DEBUG_MSG("Check if put into Ir or Pr");
       point min_y = *std::min_element(root->point_buffer.begin(), root->point_buffer.end(), comp_y);
-      if (p.y < min_y.y || (p.y == min_y.y && p.x < min_y.x)) root->insert_into_insert_buffer(p);
-      else root->insert_into_point_buffer(p);
+      if (p.y < min_y.y || (p.y == min_y.y && p.x < min_y.x)) {
+        root->insert_into_insert_buffer(p);
+        event_stack.push({root, EVENT::insert_buffer_overflow});
+      } else {
+        root->insert_into_point_buffer(p);
+        event_stack.push({root, EVENT::point_buffer_overflow});
+      }
     }
   }
 
@@ -1823,13 +1829,16 @@ namespace ext {
     root->insert_buffer.erase(p);
     root->delete_buffer.erase(p);
     
+    event_stack.push({root, EVENT::point_buffer_underflow});
+    
     if (!root->is_leaf() && (p.y < min_y.y || (p.y == min_y.y && p.x < min_y.x))) {
       DEBUG_MSG("Deletion " << p << " is smaller than min_y " << min_y
                 << ". Inserting into deletion_buffer of root");
       root->insert_into_delete_buffer(p);
+      event_stack.push({root, EVENT::delete_buffer_overflow});
     }
 
-    root->handle_underflowing_point_buffer();
+    //root->handle_underflowing_point_buffer();
   }
 
   /*
