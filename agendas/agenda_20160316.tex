@@ -21,6 +21,7 @@
 	\end{items}
 \item Coding
 	\begin{items}
+		\item Refactored the whole thing to event stack loop to better grasp the recursion
 		\item Main data structure: Query fix up
 			\begin{items}
 				\item Rewritten split leaf function to handle more splits simultaneously
@@ -35,11 +36,16 @@
 \begin{items}
 \item Report
 	\begin{items}
-		\item Nothing
+		\item Main data structure: Finish documenting theory
+		\item Main data structure: Document implementation details
 	\end{items}
 \item Coding
 	\begin{items}
-		\item Nothing
+		\item Rewrite insert buffer overflow to handle more elements to overflow
+		\item Same for delete buffer
+		\item Finish query fixup
+		\item Construction in $\mathcal{O}(N/B)$
+		\item Testing of global rebuilding
 	\end{items}
 \end{items}
 
@@ -48,6 +54,4 @@
 	\item We take a break from 21.-28. March
 \end{items}
 
-\section{Bug of the week}
-We gotta find something
 \end{document}
