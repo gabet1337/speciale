@@ -1696,7 +1696,9 @@ namespace ext {
                                                  buffered_pst_node* parent,
                                                  std::map<int,buffered_pst_node*>
                                                  &children) {
+    
     DEBUG_MSG("Starting to handle node degree overflow of node " << node->id);
+    
 #ifdef DEBUG
     assert(node->is_ranges_loaded);
     assert(node->is_info_file_loaded);
@@ -1712,38 +1714,65 @@ namespace ext {
 #endif
       
     DEBUG_MSG("Handle node degree overflow");
-    int nodes_to_create = (int)ceil((double)node->ranges.size() / (double)B_epsilon);
-    DEBUG_MSG("NODES TO CREATE: " << node->ranges.size() << " / " << B_epsilon << " = " << nodes_to_create);
+
+    /*
+      - Remember buffers on old node
+      - Clear buffers on old node
+      - Put old node in new_children vector
+    */
+
+    std::set<point> temp_delete_buffer(node->delete_buffer.begin(), node->delete_buffer.end());
+    std::set<point> temp_point_buffer(node->point_buffer.begin(), node->point_buffer.end());
+    std::set<point> temp_insert_buffer(node->insert_buffer.begin(), node->insert_buffer.end());
+    internal::rb_tree<range> temp_ranges(node->ranges.begin(), node->ranges.end());
+    
+    node->delete_buffer.clear();
+    node->insert_buffer.clear();
+    node->point_buffer.clear();
+    node->ranges.clear();
+
+    int nodes_to_create = (int)ceil((double)temp_ranges.size() / (double)B_epsilon);
+    DEBUG_MSG("NODES TO CREATE: " << temp_ranges.size() << " / " << B_epsilon << " = " << nodes_to_create);
     buffered_pst_node* new_children[nodes_to_create];
     std::map<int,int> node_id_to_idx;
-    for (int i = 0; i < nodes_to_create; i++) {
+    
+    if (node->is_root()) {
+      node_id_to_idx[next_id] = 0;
+      new_children[0] =
+        new buffered_pst_node(next_id++, node->parent_id, buffer_size, B_epsilon,
+                              epsilon, root);
+      node->child_structure->destroy();
+      delete node->child_structure;
+    } else {
+      new_children[0] = node;
+      node_id_to_idx[node->id] = 0;
+    }
+
+    for (int i = 1; i < nodes_to_create; i++) {
       node_id_to_idx[next_id] = i;
-      new_children[i] = new buffered_pst_node(next_id++, node->parent_id, buffer_size, B_epsilon, epsilon, root);
+      new_children[i] =
+        new buffered_pst_node(next_id++, node->parent_id, buffer_size, B_epsilon, epsilon, root);
     }
 
     DEBUG_MSG("Distributing children");
 #ifdef DEBUG
-    for (auto r : node->ranges)
+    for (auto r : temp_ranges)
       DEBUG_MSG(" - " << r);
 #endif
                                
     size_t idx = 0;
-    int each_get = ceil((double)node->ranges.size()/nodes_to_create);
+    int each_get = ceil((double)temp_ranges.size()/nodes_to_create);
     std::vector<std::vector<point> > children_points(nodes_to_create, std::vector<point>());
-    for (range r : node->ranges) {
+    for (range r : temp_ranges) {
       new_children[idx/each_get]->add_child(r);
       children[r.node_id]->parent_id = new_children[idx/each_get]->id;
       for (point p : children[r.node_id]->point_buffer) {
-        if (node->is_root()) {
-          DEBUG_MSG("Removing " << p << " from child structure of parent");
-          node->child_structure->remove(p);
-        }
         children_points[idx/each_get].push_back(p);
       }
       idx++;
     }
 
-    DEBUG_MSG("Constructing child structures Cv' and Cv''");
+    DEBUG_MSG("Constructing child structures Cv'");
     idx = 0;
     for (auto bpn : new_children) {
       bpn->child_structure->destroy();
@@ -1756,10 +1785,7 @@ namespace ext {
 
     DEBUG_MSG("Deleting our range in parent " << parent->id << " we are: " << node->id);
     range our_range(point(INF,INF), -INF, node->id);
-    if (node->is_root()) {
-      DEBUG_MSG("We are root");
-      node->ranges.clear();
-    } else {
+    if (!node->is_root()) {
       for (auto r : parent->ranges) {
         if (r.node_id == node->id) {
           parent->ranges.erase(r);
@@ -1782,37 +1808,35 @@ namespace ext {
     }
 
     DEBUG_MSG("Distributing points from point_buffer");
-    for (point p : node->point_buffer) {
-      if (node->is_root()) {
-        DEBUG_MSG("Inserting point " << p << " into parent's child structure");
-        node->child_structure->insert(p);
-      }
+
+    for (point p : temp_point_buffer) {
       range r = parent->ranges.belong_to(range(p,-1,-1));
       new_children[node_id_to_idx[r.node_id]]->point_buffer.insert(p);
       DEBUG_MSG("point " << p << " went into " << r.node_id << " node_id_to_idx: " << node_id_to_idx[r.node_id]);
     }
 
+    if (node->is_root()) {
+      DEBUG_MSG("Inserting points from temp_point_buffer into roots child structure");
+      std::vector<point> root_child_structure(temp_point_buffer.begin(),
+                                              temp_point_buffer.end());
+      node->child_structure = new ext::child_structure(node->id, buffer_size, epsilon,
+                                                       root_child_structure);
+    }
+
     DEBUG_MSG("Distributing points from insert_buffer");
-    for (point p : node->insert_buffer) {
+    for (point p : temp_insert_buffer) {
       range r = parent->ranges.belong_to(range(p,-1,-1));
       new_children[node_id_to_idx[r.node_id]]->insert_buffer.insert(p);
       DEBUG_MSG("point " << p << " went into " << r.node_id);
     }
 
     DEBUG_MSG("Distributing points from delete_buffer");
-    for (point p : node->delete_buffer) {
+    for (point p : temp_delete_buffer) {
       range r = parent->ranges.belong_to(range(p,-1,-1));
       new_children[node_id_to_idx[r.node_id]]->delete_buffer.insert(p);
       DEBUG_MSG("point " << p << " went into " << r.node_id);
     }
 
-    //this codes empties all the stuff of the removed node
-    //TODO: leaks storage space on disk!
-    node->point_buffer.clear();
-    node->delete_buffer.clear();
-    node->insert_buffer.clear();
-    if (!node->is_root()) node->ranges.clear();
-      
     DEBUG_MSG("Rebuild ranges to fit max_y of child");
     for (auto bpn : new_children) {
       int max_y = std::max_element(bpn->point_buffer.begin(),
@@ -1834,13 +1858,18 @@ namespace ext {
       DEBUG_MSG(" - " << r);
 #endif
 
-    if ( !node->is_root() ) event_stack.push({copy_node(parent), EVENT::node_degree_overflow});
-    if ( node->is_root() ) event_stack.push({copy_node(node), EVENT::point_buffer_underflow});
+    event_stack.push({copy_node(parent), EVENT::node_degree_overflow});
+    if ( node->is_root() ) event_stack.push({node, EVENT::point_buffer_underflow});
 
     for (auto bpn : new_children) {
-      event_stack.push({bpn, EVENT::point_buffer_underflow});
+      event_stack.push({copy_node(bpn), EVENT::point_buffer_underflow});
       bpn->flush_all();
     }
+    
+    for (int i = node->is_root() ? 0 : 1; i < nodes_to_create; i++) {
+      delete new_children[i];
+    }
+  
   }
 
   buffered_pst::buffered_pst_node* buffered_pst::find_child(buffered_pst_node* node,
@@ -2143,7 +2172,7 @@ namespace ext {
 
     while (!q.empty()) {
 
-      // buffered_pst_node node = q.front(); q.pop();
+      buffered_pst_node node = q.front(); q.pop();
       // node.load_all();
       // DEBUG_MSG_FAIL("STARTING TO FIX NODE " << node.id);
       

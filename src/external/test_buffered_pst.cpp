@@ -967,7 +967,10 @@ void test_insert_buffer_overflow_to_non_leaf4() {
 
   for (int i = 147; i <= 149; i++) epst.insert(point(i-60, i));
 
-  bs.open("10/point_buffer");
+  DEBUG_MSG("Checking invariants....");
+  epst.print();
+  
+  bs.open("9/point_buffer");
   assert( bs.read() == point(65,125) &&
           bs.read() == point(66,126) && bs.read() == point(67,127) &&
           bs.read() == point(68,128) && bs.read() == point(69,129) &&
@@ -976,7 +979,7 @@ void test_insert_buffer_overflow_to_non_leaf4() {
           bs.eof());
   bs.close();
 
-  bs.open("10/insert_buffer");
+  bs.open("9/insert_buffer");
   assert( bs.read() == point(57,117) && bs.read() == point(58,118) &&
           bs.read() == point(59,119) && bs.read() == point(60,120) &&
           bs.read() == point(61,121) && bs.read() == point(62,122) &&
@@ -984,7 +987,7 @@ void test_insert_buffer_overflow_to_non_leaf4() {
           bs.eof());
   bs.close();
 
-  bs.open("9/point_buffer");
+  bs.open("5/point_buffer");
   assert( bs.read() == point(2,2) && bs.read() == point(3,3) &&
           bs.read() == point(4,4) && bs.read() == point(5,5) &&
           bs.eof());
@@ -2251,12 +2254,12 @@ int main() {
   // test_random_deterministic3();
   // test_random_insert();
   // test_truly_random();
-  // test_delete();
-  // test_delete_overflow();
-  // test_delete_overflow_underflow_node();
-  // test_delete_overflow_many_points();
-  // test_delete_all_points();
-  // test_insert_200_delete_20_points();
+  test_delete();
+  test_delete_overflow();
+  test_delete_overflow_underflow_node();
+  test_delete_overflow_many_points();
+  test_delete_all_points();
+  test_insert_200_delete_20_points();
   // test_delete_truly_random();
   // test_delete_truly_random_points_from_file("test_points_fail_1");
   // test_delete_truly_random_n_points(10000);
