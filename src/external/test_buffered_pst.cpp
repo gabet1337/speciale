@@ -2324,30 +2324,33 @@ void test_report_random_2() {
     }
 
     assert( epst.is_valid() );
+
+    for (int j = 0; i < 10; j++) {
     
-    int x1 = r.next(200);
-    int x2 = r.next(200);
-    int y = r.next(200);
+      int x1 = r.next(200);
+      int x2 = r.next(200);
+      int y = r.next(200);
     
-    if (x2 < x1) std::swap(x1,x2);
+      if (x2 < x1) std::swap(x1,x2);
   
-    epst.report(x1,x2,y,"test/report_rand_2");
+      epst.report(x1,x2,y,"test/report_rand_2");
 
-    std::vector<point> actual_points;
-    util::load_file_to_container<std::vector<point>, point>
-      (actual_points, "test/report_rand", 4096);
+      std::vector<point> actual_points;
+      util::load_file_to_container<std::vector<point>, point>
+        (actual_points, "test/report_rand_2", 4096);
     
-    std::sort(actual_points.begin(),actual_points.end());
+      std::sort(actual_points.begin(),actual_points.end());
 
-    std::vector<point> true_reported_points;
-    for (point p : true_points)
-      if (util::in_range(p,x1,x2,y))
-        true_reported_points.push_back(p);
+      std::vector<point> true_reported_points;
+      for (point p : true_points)
+        if (util::in_range(p,x1,x2,y))
+          true_reported_points.push_back(p);
 
-    epst.print();
+      epst.print();
   
-    assert (true_reported_points == actual_points);
-    assert ( epst.is_valid() );
+      assert (true_reported_points == actual_points);
+      assert ( epst.is_valid() );
+    }
 
     util::remove_directory("test/report_rand_2");
 
@@ -2425,6 +2428,7 @@ int main() {
   // test_report_points_underflowing_point_buffer();
   // test_report_200_delete_20_points();
   test_report_random();
+  //test_report_random_2();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   
