@@ -1250,7 +1250,11 @@ namespace ext {
     for (auto p : node->insert_buffer) {
       if (node->ranges.belong_to(range(p, -1, -1)) != range_of_child) continue;
       DEBUG_MSG(idx);
-      if (++idx > node->insert_buffer.size()/B_epsilon) break;
+#ifdef DEBUG
+      assert(node->insert_buffer.size() > buffer_size);
+#endif
+      if (++idx > std::max(node->insert_buffer.size()/B_epsilon,
+                           node->insert_buffer.size()-buffer_size)) break;
       min = std::min(min,p);
       max_y = std::max(max_y, p.y);
       DEBUG_MSG("point " << p << " is in U");
@@ -1416,7 +1420,11 @@ namespace ext {
     size_t idx = 0;
     for (auto p : node->delete_buffer) {
       if (node->ranges.belong_to(range(p,-1,-1)) != range_of_child) continue;
-      if (++idx > node->delete_buffer.size()/B_epsilon) break;
+#ifdef DEBUG
+      assert(node->delete_buffer.size() > buffer_size);
+#endif
+      if (++idx > std::max(node->delete_buffer.size()/B_epsilon,
+                           node->delete_buffer.size()-buffer_size)) break;
       DEBUG_MSG("point " << p << " is in U");
       U.insert(p);
     }
