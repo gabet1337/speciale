@@ -2221,43 +2221,50 @@ void test_report_random() {
   ext::buffered_pst epst(9,0.5);
 
   test::random r;
-  
+  io::buffered_stream<point> bs(4096);
+  bs.open("testpoints_report_random");
   for (int i=0; i<200; i++) {
     point p(r.next(200),r.next(200));
     epst.insert(p);
     true_points.insert(p);
+    bs.write(p);
   }
 
   std::vector<point> rand_deletes(true_points.begin(), true_points.end());
   std::random_shuffle(rand_deletes.begin(), rand_deletes.end());
-
+  
   for (int i=0; i<100; i++) {
     epst.remove(rand_deletes[i]);
     true_points.erase(rand_deletes[i]);
+    bs.write(rand_deletes[i]);
   }
-
-#ifdef DEBUG
-    streambuf* cout_strbuf(cout.rdbuf());
-    ostringstream output;
-    cout.rdbuf(output.rdbuf());
-    bool is_valid = epst.is_valid();
-    if (!is_valid) {
-      epst.print();
-      cout.rdbuf(cout_strbuf);
-      epst.is_valid();
-    }
-    cout.rdbuf(cout_strbuf);
-    assert ( is_valid );
-#endif
+  bs.close();
   
-  for (int i = 0; i < 10; i++) {
+#ifdef DEBUG
+  streambuf* cout_strbuf(cout.rdbuf());
+  ostringstream output;
+  cout.rdbuf(output.rdbuf());
+  bool is_valid = epst.is_valid();
+  if (!is_valid) {
+    epst.print();
+    cout.rdbuf(cout_strbuf);
+    epst.is_valid();
+  }
+  cout.rdbuf(cout_strbuf);
+  assert ( is_valid );
+#endif
+  io::buffered_stream<int> bs2(4096);
 
+  for (int i = 0; i < 10; i++) {
+    bs2.open("testpoints_report_random_q");
+    bs2.seek(SEEK_END,0);
     int x1 = r.next(200);
     int x2 = r.next(200);
     int y = r.next(200);
     
     if (x2 < x1) std::swap(x1,x2);
-  
+    bs2.write(x1); bs2.write(x2); bs2.write(y);
+    bs2.close();
     epst.report(x1,x2,y,"test/report_rand");
 
     std::vector<point> actual_points;
@@ -2291,6 +2298,109 @@ void test_report_random() {
     
   }
     
+  print_success();
+  
+}
+
+void test_report_random_repeat() {
+  print_description("starting test of report random ");
+
+  std::set<point> true_points;
+  ext::buffered_pst epst(9,0.5);
+
+  io::buffered_stream<point> bs(4096);
+  bs.open("testpoints_report_random");
+  for (int i=0; i<200; i++) {
+    point p = bs.read();
+    epst.insert(p);
+    true_points.insert(p);
+  }
+
+#ifdef DEBUG
+  streambuf* cout_strbuf(cout.rdbuf());
+  ostringstream output;
+  cout.rdbuf(output.rdbuf());
+  bool is_valid = epst.is_valid();
+  if (!is_valid) {
+    epst.print();
+    cout.rdbuf(cout_strbuf);
+    epst.is_valid();
+  }
+  cout.rdbuf(cout_strbuf);
+  assert ( is_valid );
+#endif
+  
+
+  for (int i=0; i<100; i++) {
+    point p = bs.read();
+    epst.remove(p);
+    true_points.erase(p);
+  }
+  bs.close();
+  
+#ifdef DEBUG
+  cout.rdbuf(output.rdbuf());
+  is_valid = epst.is_valid();
+  if (!is_valid) {
+    epst.print();
+    cout.rdbuf(cout_strbuf);
+    epst.is_valid();
+  }
+  cout.rdbuf(cout_strbuf);
+  assert ( is_valid );
+#endif
+  
+  io::buffered_stream<int> bs2(4096);
+  bs2.open("testpoints_report_random_q");
+  for (int i = 0; i < 10; i++) {
+  
+    int x1 = bs2.read();
+    int x2 = bs2.read();
+    int y = bs2.read();
+    
+    if (x2 < x1) std::swap(x1,x2);
+    epst.print();
+    DEBUG_MSG_FAIL("report: " << x1 << " " << x2 << " " << y);
+    int k;
+    cin >> k;
+    epst.report(x1,x2,y,"test/report_rand");
+
+    std::vector<point> actual_points;
+    util::load_file_to_container<std::vector<point>, point>
+      (actual_points, "test/report_rand", 4096);
+    
+    std::sort(actual_points.begin(),actual_points.end());
+
+    std::vector<point> true_reported_points;
+    for (point p : true_points)
+      if (util::in_range(p,x1,x2,y))
+        true_reported_points.push_back(p);
+
+#ifdef DEBUG
+    cout.rdbuf(output.rdbuf());
+    is_valid = epst.is_valid();
+    if (!is_valid) {
+      epst.print();
+      cout.rdbuf(cout_strbuf);
+      epst.is_valid();
+    }
+    cout.rdbuf(cout_strbuf);
+    assert ( is_valid );
+#endif
+
+    if (true_reported_points != actual_points) {
+      DEBUG_MSG_FAIL("ACTUAL POINTS:");
+      for (point p : actual_points) DEBUG_MSG_FAIL(" - " << p);
+      DEBUG_MSG_FAIL("TRUE POINTS:");
+      for (point p : true_reported_points) DEBUG_MSG_FAIL(" - " << p);
+      epst.print();
+    }
+    assert (true_reported_points == actual_points);
+
+    util::remove_directory("test/report_rand");
+    
+  }
+  bs2.close();
   print_success();
   
 }
@@ -2414,7 +2524,7 @@ int main() {
   // test_delete_overflow();
   // test_delete_overflow_underflow_node();
   // test_delete_overflow_many_points();
-  // test_delete_all_points();
+  //test_delete_all_points();
   // test_insert_200_delete_20_points();
   // test_delete_truly_random();
   // test_delete_truly_random_points_from_file("test_points_fail_1");
@@ -2427,7 +2537,8 @@ int main() {
   // test_report_points_deterministic_repeat_report();
   // test_report_points_underflowing_point_buffer();
   // test_report_200_delete_20_points();
-  test_report_random();
+  //test_report_random();
+  test_report_random_repeat();
   //test_report_random_2();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;

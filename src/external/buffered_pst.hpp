@@ -129,7 +129,7 @@ namespace ext {
     void split_leaf(buffered_pst_node* node, buffered_pst_node* parent);
     void handle_point_buffer_overflow_in_virtual_leaf(buffered_pst_node* parent,
                                                       buffered_pst_node* node,
-                                                      buffered_pst_node* child);
+                                                      std::map<int,buffered_pst_node*> &children);
     void flush_buffers_to_child(buffered_pst_node &node,
                                 std::deque<buffered_pst_node> &q,
                                 std::deque<buffered_pst_node> &fix_up_queue,
@@ -455,7 +455,7 @@ namespace ext {
   bool buffered_pst::buffered_pst_node::point_buffer_overflow() {
     assert(is_point_buffer_loaded);
     assert(is_ranges_loaded);
-    if ( is_leaf() ) return point_buffer.size() >= buffer_size/2;
+    if ( is_leaf() && !is_root() ) return point_buffer.size() >= buffer_size/2;
     return point_buffer.size() > buffer_size;
   }
 
@@ -918,12 +918,19 @@ namespace ext {
               ? root
               : new buffered_pst_node(node->parent_id,buffer_size,epsilon,root);
             parent->load_child_structure();
-            while ( node->point_buffer_overflow() ) {
-              buffered_pst_node* child = find_child(node, node->point_buffer);
+            
+            std::map<int, buffered_pst_node*> children;
+            for (range r : node->ranges) {
+              buffered_pst_node* child = new buffered_pst_node(r.node_id, buffer_size, epsilon, root);
+              children[r.node_id] = child;
               child->load_point_buffer();
-              handle_point_buffer_overflow_in_virtual_leaf(parent, node, child);
-              child->flush_point_buffer();
-              delete child;
+            }
+
+            handle_point_buffer_overflow_in_virtual_leaf(parent, node, children);
+
+            for (auto c : children) {
+              c.second->flush_point_buffer();
+              delete c.second;
             }
             
             parent->flush_child_structure();
@@ -1039,9 +1046,10 @@ namespace ext {
           node->flush_all();
           parent->flush_ranges();
           if (!parent->is_root()) delete parent;
-          for (const auto& c : children) {
+          for (auto c : children) {
             c.second->flush_point_buffer();
             c.second->flush_info_file();
+            delete c.second;
           }
         }
         break;
@@ -1109,6 +1117,7 @@ namespace ext {
           for (auto c : children) {
             c->flush_point_buffer();
             c->flush_ranges();
+            delete c;
           }
           handle_point_buffer_underflow_in_children(node);
           node->flush_all();
@@ -1241,53 +1250,63 @@ namespace ext {
       event_stack.push({copy_node(node), EVENT::insert_buffer_overflow});
   }
 
-  void buffered_pst::handle_point_buffer_overflow_in_virtual_leaf(buffered_pst_node* parent,
-                                                                  buffered_pst_node* node,
-                                                                  buffered_pst_node* child) {
+  void buffered_pst::handle_point_buffer_overflow_in_virtual_leaf
+  (buffered_pst_node* parent,
+   buffered_pst_node* node,
+   std::map<int,buffered_pst_node*> &children) {
 
     DEBUG_MSG("Point buffer overflow in virtual leaf " << node->id
-              << ". Create U to send to child " << child->id);
+              << ". Create U to send to children");
 
 #ifdef DEBUG
     assert (node->is_point_buffer_loaded);
     assert (node->is_ranges_loaded);
     assert (node->is_child_structure_loaded);
     assert (parent->is_child_structure_loaded);
-    assert (child->is_point_buffer_loaded);
+    for (auto c : children)
+      assert (c.second->is_point_buffer_loaded);
+    assert(node->point_buffer.size() > buffer_size);
 #endif
 
-    range range_of_child(range(point(-1,-1), -1, -1));
-    for (range r : node->ranges)
-      if (r.node_id == child->id) {
-        range_of_child = r;
-        break;
-      }
-
-    std::vector<point> point_buffer_sorted(node->point_buffer.begin(),
+    std::vector<point> sorted_point_buffer(node->point_buffer.begin(),
                                            node->point_buffer.end());
-    std::sort(point_buffer_sorted.begin(), point_buffer_sorted.end(), comp_y);
+    std::sort(sorted_point_buffer.begin(), sorted_point_buffer.end(), comp_y);
     
-    child->point_buffer = std::set<point>
-      (point_buffer_sorted.begin(),
-       point_buffer_sorted.begin() + buffer_size/B_epsilon);
+    int points_to_move = std::max(node->point_buffer.size() / B_epsilon,
+                                  node->point_buffer.size() - buffer_size);
     
-    node->point_buffer = std::set<point>(point_buffer_sorted.begin() + buffer_size/B_epsilon,
-                                         point_buffer_sorted.end());
-    
-    for (point p : child->point_buffer) {
+
+
+    for (int i = 0; i < points_to_move; i++) {
+      point p = sorted_point_buffer[i];
       parent->child_structure->remove(p);
       node->child_structure->insert(p);
+
+      range r = node->ranges.belong_to(range(p, -1, -1));
+
+      children[r.node_id]->point_buffer.insert(p);
+
+      node->point_buffer.erase(p);
     }
 
-    node->ranges.erase(range_of_child);
-    range r(std::min(*std::min_element(child->point_buffer.begin(),
-                                       child->point_buffer.end()),
-                     range_of_child.min),
-            (point_buffer_sorted.begin()+(buffer_size/B_epsilon-1))->y,
-            range_of_child.node_id);
-    node->add_child(r);
-
-    if (state == STATE::fix_up) event_stack.push({copy_node(child), EVENT::point_buffer_overflow});
+    std::vector<range> new_ranges(node->ranges.begin(), node->ranges.end());
+    for (size_t i = 0; i < new_ranges.size(); i++) {
+      if (i == 0)
+        new_ranges[i].min =
+          std::min(new_ranges[i].min,
+                   *std::min_element(children[new_ranges[i].node_id]->point_buffer.begin(),
+                                     children[new_ranges[i].node_id]->point_buffer.end()));
+      new_ranges[i].max_y = children[new_ranges[i].node_id]->point_buffer.empty() ? INF
+        : std::max_element(children[new_ranges[i].node_id]->point_buffer.begin(),
+                           children[new_ranges[i].node_id]->point_buffer.end(),
+                           comp_y)->y;
+    }
+    node->ranges.clear();
+    for (auto r : new_ranges) node->ranges.insert(r);
+    
+    for (auto c : children)
+      if (state == STATE::fix_up || state == STATE::normal)
+        event_stack.push({copy_node(c.second), EVENT::point_buffer_overflow});
   }
 
 
@@ -1299,7 +1318,7 @@ namespace ext {
   void buffered_pst::handle_insert_buffer_overflow_in_leaf_and_virtual_leaf
   (buffered_pst_node* leaf,
    buffered_pst_node* parent) {
-    DEBUG_MSG("We, " << parent->id << ", are a leaf. Move all elements of the insert buffer to point buffer");
+    DEBUG_MSG("We, " << leaf->id << ", are a leaf. Move all elements of the insert buffer to point buffer");
 
 #ifdef DEBUG
     assert(leaf->is_insert_buffer_loaded);
@@ -1562,8 +1581,9 @@ namespace ext {
 
     std::set<point> new_U;
     for (point p : U) {
-      if (node->delete_buffer.erase(p))
+      if (node->delete_buffer.erase(p)) {
         DEBUG_MSG("Removing " << p << " from delete buffer");
+      }
       
       if (child->insert_buffer.erase(p)) {
         DEBUG_MSG("Removing " << p << " from insert buffer of found child");
@@ -1572,8 +1592,10 @@ namespace ext {
 #endif
       }
       
-      if (child->delete_buffer.erase(p))
+      if (child->delete_buffer.erase(p)) {
         DEBUG_MSG("Removing " << p << " from delete buffer of found child");
+        new_U.insert(p);
+      }
       
       if (child->point_buffer.erase(p)) {
         DEBUG_MSG("Removing " << p << " from point buffer of found child");
@@ -1582,9 +1604,7 @@ namespace ext {
 #endif
         DEBUG_MSG("Removing " << p << " from child structure of found child");
         node->child_structure->remove(p);
-        continue;
       }
-      new_U.insert(p);
     }
     U = new_U;
     
@@ -2159,16 +2179,16 @@ namespace ext {
 #ifdef DEBUG
             CONTAINED_POINTS.erase(p);
 #endif
-          } else if (p.y < min_y.y || (p.y == min_y.y && p.x < min_y.x)) {
+          } else if (child.insert_buffer.erase(p)) {
+#ifdef DEBUG
+            CONTAINED_POINTS.erase(p);
+#endif
+          } else if ( (p.y < min_y.y || (p.y == min_y.y && p.x < min_y.x)) && !child.is_leaf() ) {
             DEBUG_MSG_FAIL("Inserting delete " << p << " into child " << child.id
                            << " delete_buffer");
             child.delete_buffer.insert(p);
           }
-          if (child.insert_buffer.erase(p)) {
-#ifdef DEBUG
-            CONTAINED_POINTS.erase(p);
-#endif
-          }
+          
         } else {
           new_delete_buffer.insert(p);
         }
@@ -2314,6 +2334,10 @@ namespace ext {
   }
 
   void buffered_pst::handle_invalid_buffer_events(std::deque<buffered_pst_node> &q) {
+    print();
+    DEBUG_MSG("Starting to handle invalid buffers");
+    int k;
+    std::cin >> k;
 
     state = STATE::fix_up;
 
