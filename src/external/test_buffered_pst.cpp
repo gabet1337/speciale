@@ -1360,6 +1360,7 @@ void test_delete_all_points() {
     assert ( is_valid );
 #endif
   }
+  epst.print();
   
 #ifdef DEBUG
   assert ( epst.is_valid() );
@@ -2428,14 +2429,14 @@ void test_report_random_2() {
     std::vector<point> rand_deletes(true_points.begin(), true_points.end());
     std::random_shuffle(rand_deletes.begin(), rand_deletes.end());
 
-    for (int i=0; i<50; i++) {
+    for (int j=0; j<50; j++) {
       epst.remove(rand_deletes[i]);
       true_points.erase(rand_deletes[i]);
     }
 
     assert( epst.is_valid() );
 
-    for (int j = 0; i < 10; j++) {
+    for (int j = 0; j < 10; j++) {
     
       int x1 = r.next(200);
       int x2 = r.next(200);
@@ -2460,11 +2461,12 @@ void test_report_random_2() {
   
       assert (true_reported_points == actual_points);
       assert ( epst.is_valid() );
+      util::remove_directory("test/report_rand_2");
     }
 
-    util::remove_directory("test/report_rand_2");
 
-    for (int i=0; i<50; i++) {
+
+    for (int j=0; j<50; j++) {
       point p(r.next(200),r.next(200));
       epst.insert(p);
       true_points.insert(p);
@@ -2538,8 +2540,8 @@ int main() {
   // test_report_points_underflowing_point_buffer();
   // test_report_200_delete_20_points();
   //test_report_random();
-  test_report_random_repeat();
-  //test_report_random_2();
+  //test_report_random_repeat();
+  test_report_random_2();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   
