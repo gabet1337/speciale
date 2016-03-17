@@ -2246,8 +2246,8 @@ void test_report_random() {
       cout.rdbuf(cout_strbuf);
       epst.is_valid();
     }
-    assert ( is_valid );
     cout.rdbuf(cout_strbuf);
+    assert ( is_valid );
 #endif
   
   for (int i = 0; i < 10; i++) {
@@ -2281,10 +2281,10 @@ void test_report_random() {
       cout.rdbuf(cout_strbuf);
       epst.is_valid();
     }
-    assert ( is_valid );
     cout.rdbuf(cout_strbuf);
+    assert ( is_valid );
 #endif
-    
+
     assert (true_reported_points == actual_points);
 
     util::remove_directory("test/report_rand");
