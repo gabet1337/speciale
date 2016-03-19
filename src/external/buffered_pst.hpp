@@ -37,6 +37,16 @@ namespace ext {
     void remove(const point &p);
     void report(int x1, int x2, int y, const std::string &output_file);
     void print();
+    struct global_rebuild_configuration {
+      global_rebuild_configuration()
+        : start_rebuild_at(0), rebuild_factor(0.5) {}
+      global_rebuild_configuration(size_t _start_rebuild_at, double _rebuild_factor)
+        : start_rebuild_at(_start_rebuild_at), rebuild_factor(_rebuild_factor) {}
+      ~global_rebuild_configuration() {};
+      size_t start_rebuild_at;
+      double rebuild_factor;
+    };
+    void set_global_rebuild_configuration(const global_rebuild_configuration &config);
 #ifdef DEBUG
     bool is_valid();
 #endif
@@ -119,6 +129,7 @@ namespace ext {
                                      std::map<int, buffered_pst_node*> &children);
     /// HELPER METHODS
     void handle_events();
+    void handle_global_rebuild();
     buffered_pst_node* copy_node(buffered_pst_node* node);
     buffered_pst_node* find_child(buffered_pst_node* node, const std::set<point> &buffer);
     void handle_delete_buffer_overflow_in_leaf_and_virtual_leaf(buffered_pst_node* node);
@@ -147,11 +158,13 @@ namespace ext {
     };
     enum struct STATE {
       normal,
-      fix_up
+      fix_up,
+      global_rebuild  
     };
     std::string event_to_string(const EVENT &e);
     std::stack<std::pair<buffered_pst_node*, EVENT> > event_stack;
-    size_t buffer_size;
+    global_rebuild_configuration global_rebuild_config;
+    size_t buffer_size, operation_count, epoch_begin_point_count;
     int B_epsilon;
     double epsilon;
     buffered_pst_node* root;
@@ -795,6 +808,9 @@ namespace ext {
 
   // BUFFERED_PST /////////////////////////////////////////////////////////
   buffered_pst::buffered_pst(size_t buffer_size, double epsilon) {
+    this->epoch_begin_point_count = 0;
+    this->operation_count = 0;
+    this->global_rebuild_config = global_rebuild_configuration();
     this->parent_to_stop_at = -1;
     this->state = STATE::normal;
     this->buffer_size = buffer_size;
@@ -814,11 +830,13 @@ namespace ext {
   void buffered_pst::insert(const point &p) {
     DEBUG_MSG("Inserting point " << p << " into root");
 #ifdef DEBUG
-    CONTAINED_POINTS.insert(p);
+    if (state == STATE::normal)
+      CONTAINED_POINTS.insert(p);
 #endif
     if (root->is_leaf()) {
       root->insert_into_point_buffer(p);
-      if (state == STATE::normal) event_stack.push({root, EVENT::point_buffer_overflow});
+      if (state == STATE::normal || state == STATE::global_rebuild)
+        event_stack.push({root, EVENT::point_buffer_overflow});
     } else {
       DEBUG_MSG("remove duplicates of p from Pr, Ir, Dr");
       if (root->point_buffer.erase(p)) {
@@ -831,20 +849,37 @@ namespace ext {
       point min_y = *std::min_element(root->point_buffer.begin(), root->point_buffer.end(), comp_y);
       if (p.y < min_y.y || (p.y == min_y.y && p.x < min_y.x)) {
         root->insert_into_insert_buffer(p);
-        if (state == STATE::normal) event_stack.push({root, EVENT::insert_buffer_overflow});
+        if (state == STATE::normal || state == STATE::global_rebuild)
+          event_stack.push({root, EVENT::insert_buffer_overflow});
       } else {
         root->insert_into_point_buffer(p);
-        if (state == STATE::normal) event_stack.push({root, EVENT::point_buffer_overflow});
+        if (state == STATE::normal || state == STATE::global_rebuild)
+          event_stack.push({root, EVENT::point_buffer_overflow});
       }
     }
     handle_events();
+    handle_global_rebuild();
   }
 
+  void buffered_pst::handle_global_rebuild() {
+    DEBUG_MSG("Starting to handle global rebuild");
+    if (state == STATE::global_rebuild) return;
+    operation_count++;
+    if (global_rebuild_config.start_rebuild_at >=
+        epoch_begin_point_count + operation_count) return;
+    if ((size_t)((double)operation_count * global_rebuild_config.rebuild_factor)
+         >= epoch_begin_point_count) {
+      global_rebuild();
+    }
+  }
+  
   void buffered_pst::remove(const point &p) {
     DEBUG_MSG("Removing point " << p << " in root");
 #ifdef DEBUG
-    if (root->point_buffer.find(p) != root->point_buffer.end()) CONTAINED_POINTS.erase(p);
-    if (root->insert_buffer.find(p) != root->insert_buffer.end()) CONTAINED_POINTS.erase(p);
+    if (state == STATE::normal) {
+      if (root->point_buffer.find(p) != root->point_buffer.end()) CONTAINED_POINTS.erase(p);
+      if (root->insert_buffer.find(p) != root->insert_buffer.end()) CONTAINED_POINTS.erase(p);
+    }
 #endif
     point min_y = *std::min_element(root->point_buffer.begin(),
                                     root->point_buffer.end(),comp_y);
@@ -853,17 +888,25 @@ namespace ext {
     root->insert_buffer.erase(p);
     root->delete_buffer.erase(p);
     
-    if (state == STATE::normal) event_stack.push({root, EVENT::point_buffer_underflow});
+    if (state == STATE::normal || state == STATE::global_rebuild)
+      event_stack.push({root, EVENT::point_buffer_underflow});
     
     if (!root->is_leaf() && (p.y < min_y.y || (p.y == min_y.y && p.x < min_y.x))) {
       DEBUG_MSG("Deletion " << p << " is smaller than min_y " << min_y
                 << ". Inserting into deletion_buffer of root");
       root->insert_into_delete_buffer(p);
-      if (state == STATE::normal) event_stack.push({root, EVENT::delete_buffer_overflow});
+      if (state == STATE::normal || state == STATE::global_rebuild)
+        event_stack.push({root, EVENT::delete_buffer_overflow});
     }
 
     handle_events();
+    handle_global_rebuild();
     //root->handle_underflowing_point_buffer();
+  }
+
+  void buffered_pst::set_global_rebuild_configuration
+  (const global_rebuild_configuration &config) {
+    global_rebuild_config = config;
   }
 
   /*
@@ -1085,7 +1128,8 @@ namespace ext {
             parent->flush_child_structure();
             if (!parent->is_root()) delete parent;
           } else {
-            if (state == STATE::normal || state == STATE::fix_up)
+            if (state == STATE::normal || state == STATE::fix_up
+                || state == STATE::global_rebuild)
               event_stack.push({copy_node(node), EVENT::point_buffer_underflow_full_children});
             handle_point_buffer_underflow_in_children(node);
           }
@@ -1248,7 +1292,8 @@ namespace ext {
     node->point_buffer.erase(min_y);
     node->insert_into_insert_buffer(min_y);
    
-    if (state == STATE::normal || state == STATE::fix_up)
+    if (state == STATE::normal || state == STATE::fix_up
+        || state == STATE::global_rebuild)
       event_stack.push({copy_node(node), EVENT::insert_buffer_overflow});
   }
 
@@ -1309,7 +1354,8 @@ namespace ext {
     for (auto r : new_ranges) node->ranges.insert(r);
     
     for (auto c : children)
-      if (state == STATE::fix_up || state == STATE::normal)
+      if (state == STATE::fix_up || state == STATE::normal
+          || state == STATE::global_rebuild)
         event_stack.push({copy_node(c.second), EVENT::point_buffer_overflow});
   }
 
@@ -1354,7 +1400,8 @@ namespace ext {
 
     leaf->insert_into_point_buffer(ib_temp);
     
-    if (state == STATE::normal || state == STATE::fix_up)
+    if (state == STATE::normal || state == STATE::fix_up
+        || state == STATE::global_rebuild)
       event_stack.push({copy_node(leaf), EVENT::point_buffer_overflow});
   }
 
@@ -1458,7 +1505,8 @@ namespace ext {
       DEBUG_MSG("found child was a leaf... sending U to Pc of node " << child->id);
       child->insert_into_point_buffer(U);
 
-      if (state == STATE::normal || state == STATE::fix_up) {
+      if (state == STATE::normal || state == STATE::fix_up
+          || state == STATE::global_rebuild) {
         event_stack.push({copy_node(child), EVENT::point_buffer_overflow});
         //event_stack.push({copy_node(child), EVENT::insert_buffer_overflow});
       }
@@ -1539,14 +1587,15 @@ namespace ext {
       
       child->insert_into_insert_buffer(U);
 
-      if (state == STATE::normal || state == STATE::fix_up)
+      if (state == STATE::normal || state == STATE::fix_up
+          || state == STATE::global_rebuild)
         event_stack.push({copy_node(child), EVENT::insert_buffer_overflow});
     }
   }
 
   void buffered_pst::handle_delete_buffer_overflow_in_leaf_and_virtual_leaf(buffered_pst_node* node) {
     DEBUG_MSG("Delete buffer overflow in a leaf or virtual leaf: empty delete buffer in node " << node->id);
-    //assert ( true == false );
+    // assert ( true == false );
 #ifdef DEBUG
     assert (node->is_delete_buffer_loaded);
 #endif
@@ -1659,7 +1708,8 @@ namespace ext {
       
       child->insert_into_delete_buffer(U);
 
-      if (state == STATE::normal || state == STATE::fix_up) {
+      if (state == STATE::normal || state == STATE::fix_up
+          || state == STATE::global_rebuild) {
         event_stack.push({copy_node(child), EVENT::point_buffer_underflow});
         event_stack.push({copy_node(child), EVENT::delete_buffer_overflow});
       }
@@ -1688,7 +1738,8 @@ namespace ext {
       parent->child_structure->insert(p);
     }
     node->insert_into_point_buffer(temp);
-    if (state == STATE::normal || state == STATE::fix_up)
+    if (state == STATE::normal || state == STATE::fix_up
+        || state == STATE::global_rebuild)
       event_stack.push({copy_node(node),EVENT::insert_buffer_overflow});
   }
 
@@ -1699,7 +1750,8 @@ namespace ext {
 #endif
     for (range r : node->ranges) {
       //if (it->max_y == INF) continue;
-      if (state == STATE::normal || state == STATE::fix_up)
+      if (state == STATE::normal || state == STATE::fix_up
+          || state == STATE::global_rebuild)
         event_stack.push({
             new buffered_pst_node(r.node_id, buffer_size, epsilon, root),
               EVENT::point_buffer_underflow});
@@ -1860,7 +1912,8 @@ namespace ext {
       DEBUG_MSG(" - " << r);
 #endif
     
-    if ( state == STATE::normal || state == STATE::fix_up ) {
+    if ( state == STATE::normal || state == STATE::fix_up
+         || state == STATE::global_rebuild) {
       event_stack.push({copy_node(node), EVENT::insert_buffer_overflow});
       event_stack.push({copy_node(node), EVENT::delete_buffer_overflow});
     }
@@ -2034,15 +2087,16 @@ namespace ext {
       DEBUG_MSG(" - " << r);
 #endif
 
-    if (state == STATE::normal ||
+    if (state == STATE::normal || state == STATE::global_rebuild ||
         (state == STATE::fix_up && (parent->id != parent_to_stop_at || node->is_root())))
       event_stack.push({copy_node(parent), EVENT::node_degree_overflow});
 
-    if ( node->is_root() && (state == STATE::normal || state == STATE::fix_up))
+    if ( node->is_root() && (state == STATE::normal || state == STATE::fix_up
+                             || state == STATE::global_rebuild))
       event_stack.push({node, EVENT::point_buffer_underflow});
     
     for (auto bpn : new_children) {
-      if (state == STATE::normal || state == STATE::fix_up)
+      if (state == STATE::normal || state == STATE::fix_up || state == STATE::global_rebuild)
         event_stack.push({copy_node(bpn), EVENT::point_buffer_underflow});
       bpn->flush_all();
     }
@@ -2161,7 +2215,7 @@ namespace ext {
       new_leaves[i]->flush_all();
     }
 
-    if (state == STATE::normal)
+    if (state == STATE::normal || state == STATE::global_rebuild)
       event_stack.push({copy_node(parent), EVENT::node_degree_overflow});
 
     if (state == STATE::fix_up && parent->id != parent_to_stop_at)
@@ -2385,17 +2439,18 @@ namespace ext {
 
   void buffered_pst::global_rebuild() {
 
+    DEBUG_MSG_FAIL("Starting GLOBAL REBUILD");
+
+    state = STATE::global_rebuild;
+    
     buffered_pst_node* old_root = root;
     root = new buffered_pst_node(0, 0, buffer_size, B_epsilon, epsilon, 0);
 
     int epoch_end = next_id;
-
+    epoch_begin_point_count = 0;
+    
     std::deque<buffered_pst_node*> q, q_temp;
-    flush_buffers_to_child(old_root, q, q_temp, -INF, INF, -INF);
-
-    for (point p : old_root->point_buffer) {
-      insert(p);
-    }
+    q.push_front(old_root);
 
     while (!q.empty()) {
       buffered_pst_node* node = q.front(); q.pop_front();
@@ -2403,14 +2458,20 @@ namespace ext {
       flush_buffers_to_child(node, q, q_temp, -INF, INF, -INF);
       for (point p : node->point_buffer) {
         insert(p);
+        epoch_begin_point_count++;
       }
       for (point p : node->insert_buffer) {
         insert(p);
+        epoch_begin_point_count++;
       }
+      node->point_buffer.clear();
+      node->delete_buffer.clear();
+      node->insert_buffer.clear();
+      node->ranges.clear();
+      node->child_structure->destroy();
       node->flush_all();
+      delete node;
     }
-
-    delete old_root;
 
     for (int i=epoch_begin; i < epoch_end; i++) {
       DEBUG_MSG("Destructing file " << i);
@@ -2419,6 +2480,9 @@ namespace ext {
     }
 
     epoch_begin = epoch_end;
+    operation_count = 0;
+
+    state = STATE::normal;
     
   }
 
