@@ -2373,9 +2373,9 @@ namespace ext {
       node->flush_info_file();
       event_stack.push({copy_node(node), EVENT::point_buffer_underflow});
       event_stack.push({copy_node(node), EVENT::node_degree_overflow});
-      //event_stack.push({copy_node(&node), EVENT::point_buffer_overflow});
       event_stack.push({copy_node(node), EVENT::insert_buffer_overflow});
       event_stack.push({copy_node(node), EVENT::delete_buffer_overflow});
+      if (!node->is_root()) delete node;
       handle_events();
     }
 
