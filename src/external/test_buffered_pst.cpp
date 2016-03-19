@@ -2662,9 +2662,9 @@ int main() {
   // test_report_random();
   // test_report_random_repeat();
   // test_report_random_2();
-  test_global_rebuild_insert_10();
+  // test_global_rebuild_insert_10();
   // test_global_rebuild_insert_10_delete_5();
-  //test_global_rebuild_insert_100_delete_50();
+  test_global_rebuild_insert_100_delete_50();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   

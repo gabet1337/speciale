@@ -865,12 +865,13 @@ namespace ext {
     DEBUG_MSG("Starting to handle global rebuild");
     if (state == STATE::global_rebuild) return;
     operation_count++;
+    DEBUG_MSG_FAIL("epoch_begin_point_count " << epoch_begin_point_count << " "
+                   << "operation count " << operation_count);
     if (global_rebuild_config.start_rebuild_at >=
         epoch_begin_point_count + operation_count) return;
-    if ((size_t)((double)operation_count * global_rebuild_config.rebuild_factor)
-         >= epoch_begin_point_count) {
+    if (operation_count >=
+        (size_t)((double)epoch_begin_point_count * global_rebuild_config.rebuild_factor))
       global_rebuild();
-    }
   }
   
   void buffered_pst::remove(const point &p) {
