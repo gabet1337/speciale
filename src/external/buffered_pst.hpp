@@ -156,13 +156,15 @@ namespace ext {
       point_buffer_overflow,
       node_degree_overflow,
       point_buffer_underflow,
+      point_buffer_underflow_construct,
       point_buffer_underflow_full_children,
       split_leaf
     };
     enum struct STATE {
       normal,
       fix_up,
-      global_rebuild  
+      global_rebuild,
+      construct
     };
     std::string event_to_string(const EVENT &e);
     std::stack<std::pair<buffered_pst_node*, EVENT> > event_stack;
@@ -1110,40 +1112,27 @@ namespace ext {
           }
         }
         break;
+      case EVENT::point_buffer_underflow_construct:
       case EVENT::point_buffer_underflow:
         {
           node->load_ranges();
           node->load_point_buffer();
           
-          if ( !node->point_buffer_underflow() ) {
+          if ( event == EVENT::point_buffer_underflow &&
+               !node->point_buffer_underflow() ) {
            node->flush_ranges();
            node->flush_point_buffer();
            break;
           }
 
           if ( node->is_leaf() || node->is_virtual_leaf() ) {
-            //TODO REMOVE THIS!
-            assert(true == false);
-            node->load_delete_buffer();
-            node->load_insert_buffer();
-            node->load_info_file();
-            buffered_pst_node* parent = node->parent_id == 0
-              ? root
-              : new buffered_pst_node(node->parent_id,buffer_size,epsilon,root);
-            parent->load_child_structure();
-            
-            handle_point_buffer_underflow_in_virtual_leaf(node, parent);
-            
-            node->flush_delete_buffer();
-            node->flush_insert_buffer();
-            node->flush_info_file();
-            parent->flush_child_structure();
-            if (!parent->is_root()) delete parent;
+           
           } else {
             if (state == STATE::normal || state == STATE::fix_up
-                || state == STATE::global_rebuild)
+                || state == STATE::global_rebuild || state == STATE::construct) {
               event_stack.push({copy_node(node), EVENT::point_buffer_underflow_full_children});
-            handle_point_buffer_underflow_in_children(node);
+              handle_point_buffer_underflow_in_children(node);
+            }
           }
           node->flush_point_buffer();
           node->flush_ranges();
@@ -1177,7 +1166,9 @@ namespace ext {
             c->flush_ranges();
             delete c;
           }
-          handle_point_buffer_underflow_in_children(node);
+           if (state == STATE::normal || state == STATE::fix_up
+               || state == STATE::global_rebuild || state == STATE::construct)
+             handle_point_buffer_underflow_in_children(node);
           node->flush_all();
         }
         break;
@@ -1197,7 +1188,7 @@ namespace ext {
         }
         break;
       default:
-        DEBUG_MSG_FAIL("Illegal event!");
+        DEBUG_MSG_FAIL("Illegal event! " << event_to_string(event));
         break;
       }
       if (!node->is_root()) delete node;
@@ -1222,6 +1213,8 @@ namespace ext {
       return "node degree overflow";
     case EVENT::point_buffer_underflow_full_children:
       return "point buffer underflow with full children";
+    case EVENT::point_buffer_underflow_construct:
+      return "point buffer underflow construct";
     default:
       return "ILLEGAL EVENT!!!";
     }
@@ -1762,11 +1755,11 @@ namespace ext {
 #endif
     for (range r : node->ranges) {
       //if (it->max_y == INF) continue;
-      if (state == STATE::normal || state == STATE::fix_up
-          || state == STATE::global_rebuild)
-        event_stack.push({
-            new buffered_pst_node(r.node_id, buffer_size, epsilon, root),
-              EVENT::point_buffer_underflow});
+      // if (state == STATE::normal || state == STATE::fix_up
+      //     || state == STATE::global_rebuild)
+      event_stack.push({
+          new buffered_pst_node(r.node_id, buffer_size, epsilon, root),
+            EVENT::point_buffer_underflow});
     }
   }
 
@@ -1806,6 +1799,7 @@ namespace ext {
       }
     }
 
+    // TODO: should X.size() <= buffer_size/2 ??
     DEBUG_MSG("Grabbing the B/2 highest y-value points from children and deleting them");
     std::set<point> X;
     while (!pq.empty() && X.size() < buffer_size/2) {
@@ -2500,6 +2494,9 @@ namespace ext {
 
   void buffered_pst::construct_sorted(const std::string &file_name) {
     DEBUG_MSG("Starting construction on sorted file: " << file_name);
+
+    state = STATE::construct;
+    
     io::buffered_stream<point> points(buffer_size);
     points.open(file_name);
     DEBUG_MSG("File contains " << points.size() << " points.");
@@ -2510,23 +2507,13 @@ namespace ext {
     std::vector<buffered_pst_node*> layer_i_plus_1, layer_i;
     std::vector<point> min_points;
     std::vector<int> max_ys;
+    std::vector<buffered_pst_node*> nodes;
     buffered_pst_node* child, *parent;
     point min_point = point(INF, INF);
     int max_y = -INF;
     for (size_t i = 0; !points.eof(); i++) {
       DEBUG_MSG(i);
       if (i % each_leaf_get == 0) {
-        // if (i != 0) {
-        //   parent->add_child(range(min_point, max_y, child->id));
-        //   child->flush_all();
-        // }
-        
-        // if (layer_i_plus_1.size() % B_epsilon == 0) {
-        //   DEBUG_MSG("Make a new parent");
-        //   if (i != 0) { parent->flush_all(); }
-        //   parent = new buffered_pst_node(next_id++, -1, buffer_size, epsilon, B_epsilon, root);
-        //   layer_i.push_back(parent);
-        // }
 
         if (i != 0) {
           max_ys.push_back(max_y);
@@ -2551,9 +2538,6 @@ namespace ext {
     min_points.push_back(min_point);
     child->flush_all();
     
-    //    parent->add_child(range(min_point, max_y, child->id));
-
-    //    parent->flush_all();
     bool leaf_layer = true;
     while (layer_i.size() > (size_t)B_epsilon) {
       DEBUG_MSG("LAYER I NOW HAS: " << layer_i.size() << " nodes");
@@ -2567,6 +2551,7 @@ namespace ext {
           if (i != 0) parent->flush_all();
           parent = new buffered_pst_node(next_id++, -1, buffer_size, epsilon, B_epsilon, root);
           layer_i.push_back(parent);
+          nodes.push_back(copy_node(parent));
         }
         layer_i_plus_1[i]->load_info_file();
         layer_i_plus_1[i]->load_ranges();
@@ -2597,6 +2582,31 @@ namespace ext {
       delete layer_i[i];
     }
 
+    nodes.push_back(copy_node(root));
+
+    for (auto it = nodes.begin(); it != nodes.end(); ++it) {
+      event_stack.push({copy_node(*it), EVENT::point_buffer_underflow_construct});
+    }
+    
+    for (auto it = nodes.rbegin(); it != nodes.rend(); ++it) {
+      event_stack.push({copy_node(*it), EVENT::point_buffer_underflow_construct});
+    }
+
+    // print();
+    
+    // int k;
+    // std::cin >> k;
+    
+    handle_events();
+
+    for (auto node : nodes)
+      if (!node->is_root()) delete node;
+
+    epoch_begin_point_count = points.size();
+
+    points.close();
+    
+    state = STATE::normal;
     // print();
     
   }
