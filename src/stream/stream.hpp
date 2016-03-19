@@ -176,7 +176,7 @@ namespace io {
 
   template <typename T>
   size_t buffered_stream<T>::size() {
-    return std::max((size_t)file_size, file_pos);
+    return std::max((size_t)file_size, file_pos)/sizeof(T);
   }
 
   template <typename T>
