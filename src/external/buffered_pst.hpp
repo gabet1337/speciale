@@ -2487,19 +2487,74 @@ namespace ext {
     
   }
 
-  //void buffered_pst::construct_sorted(const std::string &file_name) {
+  void buffered_pst::construct_sorted(const std::string &file_name) {
 
-  //   io::buffered_stream points(buffer_size);
-  //   points.open(file_name);
+    io::buffered_stream points(buffer_size);
+    points.open(file_name);
 
-  //   int each_leaf_get = buffer_size/2-1;
-  //   DEBUG_MSG_FAIL("Each leaf get " << buffer_size << " / 2 - 1 = " << each_leaf_get);
+    int each_leaf_get = buffer_size/2-1;
+    DEBUG_MSG_FAIL("Each leaf get " << buffer_size << " / 2 - 1 = " << each_leaf_get);
 
+    std::vector<buffered_pst_node*> layer_i_plus_1, layer_i;
+    buffered_pst_node* child, parent;
+    point min_point = point(INF, INF);
+    int max_y = -INF;
+    for (size_t i = 0; !points.eof(); i++) {
+      if (i % each_leaf_get == 0) {
+        if (layer_i_plus_1.size() % B_epsilon) {
+          if (i != 0) parent->flush_ranges();
+          parent = new buffered_pst_node(next_id++, -1, buffer_size, epsilon, B_epsilon, root);
+          layer_i.push_back(parent);
+        }
+        if (i != 0) {
+          parent->add_child(range(min_point, max_y, child->id));
+          child->flush_point_buffer();
+          child->flush_info_file();
+          child = new buffered_pst_node(next_id++, parent->id, buffer_size,
+                                       epsilon, B_epsilon, root);
+          layer_i_plus_1.push_back(child);
+          min_point = point(INF, INF);
+          max_y = -INF;
+        }
+      }
+      point p = points.read();
+      child->point_buffer.insert(points.read());
+      min_point = std::min(min_point, p);
+      max_y = std::max(max_y, p.y);
+    }
+    parent->flush_ranges();
     
+    while (layer_i.size() >= B_epsilon) {
+      std::swap(layer_i, layer_i_plus_1);
+      layer_i.clear();
+      for (int i = 0; i < layer_i_plus_1.size(); i++) {
+        if (i % B_epsilon == 0) {
+          if (i != 0) parent->flush_ranges();
+          parent = new buffered_pst_node(next_id++, -1, buffer_size, epsilon, B_epsilon, root);
+          layer_i.push(parent);
+        }
+        layer_i_plus_1[i]->load_info_file();
+        layer_i_plus_1[i]->load_ranges();
+        layer_i_plus_1[i]->parent_id = parent->id;
+        parent->add_child(range(layer_i_plus_1[i]->ranges.begin()->min, -INF,
+                                layer_i_plus_1[i]->id));
+        layer_i_plus_1[i]->flush_info_file();
+        layer_i_plus_1[i]->flush_ranges();
+      }
+      parent->flush_ranges();
+    }
+
+    for (int i = 0; i < layer_i.size(); i++) {
+      root->add_child(range(layer_i[i]->min, -INF, layer_i[i]->id));
+      layer_i[i]->load_info_file();
+      layer_i[i]->parent_id = 0;
+      layer_i[i]->flush_info_file();
+    }
+
+    print();
     
-    
-    
-  // }
+  }
+  
   
   void buffered_pst::print() {
     assert(root);
