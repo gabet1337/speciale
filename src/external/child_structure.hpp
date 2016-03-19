@@ -1,6 +1,7 @@
 #ifndef CHILD_STRUCTURE_HPP
 #define CHILD_STRUCTURE_HPP
 
+#include "../common/definitions.hpp"
 #include "../common/debug.hpp"
 #include "../common/point.hpp"
 #include "../common/utilities.hpp"
@@ -15,7 +16,6 @@
 #include <bitset>
 #include <assert.h>
 
-#define INF 1000000000
 namespace ext {
 
   class child_structure : public child_structure_interface {

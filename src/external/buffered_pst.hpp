@@ -3,6 +3,7 @@
 #include "../common/point.hpp"
 #include "../common/debug.hpp"
 #include "../common/utilities.hpp"
+#include "../common/definitions.hpp"
 #include "../internal/rb_tree.hpp"
 #include "range.hpp"
 #include "child_structure_interface.hpp"
@@ -23,7 +24,6 @@
 #include <tuple>
 #include <deque>
 
-#define INF 1000000000
 namespace ext {
   int next_id = 1;
 #ifdef DEBUG
