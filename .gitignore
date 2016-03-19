@@ -3,6 +3,7 @@ src/ipst
 src/stream_test
 src/ctest
 src/epst
+src/dump_file
 
 # data folders
 src/c_*

@@ -9,6 +9,7 @@ namespace internal {
   class rb_tree {
   public:
     rb_tree();
+    rb_tree(typename std::set<T>::iterator first, typename std::set<T>::iterator last);
     ~rb_tree();
     void insert(const T &item);
     void insert(typename std::set<T>::iterator it, const T &item);
@@ -28,6 +29,11 @@ namespace internal {
 
   template <typename T>
   rb_tree<T>::rb_tree() {}
+
+  template <typename T>
+  rb_tree<T>::rb_tree(typename std::set<T>::iterator first,
+                      typename std::set<T>::iterator last)
+    : s(first, last) {}
   
   template <typename T>
   rb_tree<T>::~rb_tree() {}
