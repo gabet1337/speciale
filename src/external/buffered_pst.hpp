@@ -196,7 +196,8 @@ namespace ext {
     is_point_buffer_loaded = true;
     is_ranges_loaded = true;
     is_info_file_loaded = true;
-    child_structure = new ext::child_structure(id, buffer_size, epsilon, std::vector<point>());
+    child_structure =
+      new ext::child_structure(id, buffer_size, epsilon, std::vector<point>());
     is_child_structure_loaded = true;
     this->B_epsilon = B_epsilon;
     DEBUG_MSG("Constructed pst_node with id " << id << " and buffer_size: " << buffer_size
@@ -300,6 +301,9 @@ namespace ext {
   
   void buffered_pst::buffered_pst_node::flush_point_buffer() {
     if (is_root()) return;
+#ifdef DEBUG
+    assert(is_point_buffer_loaded);
+#endif
     DEBUG_MSG("Flushing point buffer for node " << id);
     if (!util::file_exists(get_directory(id))) mkdir(get_directory(id).c_str(), 0700);
     util::flush_container_to_file<std::set<point>::iterator,point>
@@ -310,6 +314,9 @@ namespace ext {
 
   void buffered_pst::buffered_pst_node::flush_insert_buffer() {
     if (is_root()) return;
+#ifdef DEBUG
+    assert(is_insert_buffer_loaded);
+#endif
     DEBUG_MSG("Flushing insert buffer for node " << id);
     if (!util::file_exists(get_directory(id))) mkdir(get_directory(id).c_str(), 0700);
     util::flush_container_to_file<std::set<point>::iterator,point>
@@ -321,6 +328,10 @@ namespace ext {
 
   void buffered_pst::buffered_pst_node::flush_ranges() {
     if (is_root()) return;
+#ifdef DEBUG
+    assert(is_ranges_loaded);
+#endif
+
     DEBUG_MSG_FAIL("Flushing ranges for node " << id);
 #ifdef DEBUG
     for (range r : ranges)
@@ -335,6 +346,9 @@ namespace ext {
 
   void buffered_pst::buffered_pst_node::flush_delete_buffer() {
     if (is_root()) return;
+#ifdef DEBUG
+    assert(is_delete_buffer_loaded);
+#endif
     DEBUG_MSG("Flushing delete buffer for node " << id);
     if (!util::file_exists(get_directory(id))) mkdir(get_directory(id).c_str(), 0700);
     util::flush_container_to_file<std::set<point>::iterator,point>
@@ -346,6 +360,9 @@ namespace ext {
 
   void buffered_pst::buffered_pst_node::flush_info_file() {
     if (is_root()) return;
+#ifdef DEBUG
+    assert(is_info_file_loaded);
+#endif
     DEBUG_MSG("Flushing info file for node " << id);
     if (!util::file_exists(get_directory(id))) mkdir(get_directory(id).c_str(), 0700);
     std::vector<size_t> info_file;
@@ -361,6 +378,10 @@ namespace ext {
 
   void buffered_pst::buffered_pst_node::flush_child_structure() {
     if (is_root()) return;
+#ifdef DEBUG
+    assert(is_child_structure_loaded);
+#endif
+
     DEBUG_MSG("Flushing child structure for node " << id);
     delete child_structure;
     child_structure = 0;
@@ -791,7 +812,7 @@ namespace ext {
     }
 
     if (ranges.size() > B_epsilon) {
-      DEBUG_MSG_FAIL("We have too many children in node " << id);
+      DEBUG_MSG_FAIL("We have too many children in node " << id << " with B_epsilon = " << B_epsilon);
       for (range r : ranges) DEBUG_MSG_FAIL(" - " << r);
       return false;
     }
@@ -836,6 +857,8 @@ namespace ext {
                              std::string file_name, bool is_sorted)
     : buffered_pst(buffer_size, epsilon)
   {
+    DEBUG_MSG("Buffer size: " << this->buffer_size);
+    DEBUG_MSG("B epsilon: " << this->B_epsilon);
     if (is_sorted) construct_sorted(file_name);
     //else construct_unsorted(file_name);
   }
@@ -1774,12 +1797,14 @@ namespace ext {
     assert(node->is_delete_buffer_loaded);
     assert(node->is_insert_buffer_loaded);
     assert(node->is_ranges_loaded);
-    assert(node->is_child_structure_loaded);
+    if (state != STATE::construct)
+      assert(node->is_child_structure_loaded);
     for (auto c : children) {
       assert(c->is_point_buffer_loaded);
       assert(c->is_ranges_loaded);
     }
-    assert(parent->is_child_structure_loaded);
+    if (state != STATE::construct)
+      assert(parent->is_child_structure_loaded);
     assert(parent->is_ranges_loaded);
 #endif
 
@@ -1823,7 +1848,8 @@ namespace ext {
       DEBUG_MSG("Removing " << pcp.first << " from " << children[pcp.second]->id);
       children[pcp.second]->point_buffer.erase(pcp.first);
       DEBUG_MSG("Removing " << pcp.first << " from child structure " << node->id);
-      node->child_structure->remove(pcp.first);
+      if (state != STATE::construct)
+        node->child_structure->remove(pcp.first);
     }
 
     DEBUG_MSG("Satisfy heap ordering between Iv and Pv");
@@ -1889,13 +1915,14 @@ namespace ext {
     node->insert_into_point_buffer(X);
     
     //if we are not the root then insert the pulled up points in our parents child structure
-    if (!node->is_root()) {
-      DEBUG_MSG("Insert X into our parents child structure " << parent->id);
-      for (point p : X) {
-        DEBUG_MSG(" - " << p);
-        parent->child_structure->insert(p);
+    if (state != STATE::construct)
+      if (!node->is_root()) {
+        DEBUG_MSG("Insert X into our parents child structure " << parent->id);
+        for (point p : X) {
+          DEBUG_MSG(" - " << p);
+          parent->child_structure->insert(p);
+        }
       }
-    }
     
     int max_y = std::max_element(node->point_buffer.begin(),
                                  node->point_buffer.end(),
@@ -2522,14 +2549,17 @@ namespace ext {
         }
 
         DEBUG_MSG("Make a new child");
-        child = new buffered_pst_node(next_id++, -1, buffer_size,
-                                      epsilon, B_epsilon, root);
+        child = new buffered_pst_node(next_id++, -1, this->buffer_size,
+                                      this->B_epsilon, this->epsilon, root);
         
         layer_i.push_back(child);
         min_point = point(INF, INF);
         max_y = -INF;
       }
       point p = points.read();
+#ifdef DEBUG
+      CONTAINED_POINTS.insert(p);
+#endif
       child->point_buffer.insert(p);
       min_point = std::min(min_point, p);
       max_y = std::max(max_y, p.y);
@@ -2542,14 +2572,15 @@ namespace ext {
     while (layer_i.size() > (size_t)B_epsilon) {
       DEBUG_MSG("LAYER I NOW HAS: " << layer_i.size() << " nodes");
       std::swap(layer_i, layer_i_plus_1);
-      for (auto bpn : layer_i) { bpn->flush_all(); delete bpn; }
+      for (auto bpn : layer_i) { delete bpn; }
       layer_i.clear();
       DEBUG_MSG("LAYER I+1 NOW HAS: " << layer_i_plus_1.size() << " nodes");
       for (size_t i = 0; i < layer_i_plus_1.size(); i++) {
         if (i % B_epsilon == 0) {
           DEBUG_MSG_FAIL("Added new parent");
           if (i != 0) parent->flush_all();
-          parent = new buffered_pst_node(next_id++, -1, buffer_size, epsilon, B_epsilon, root);
+          parent = new buffered_pst_node(next_id++, -1, this->buffer_size,
+                                         this->B_epsilon, this->epsilon, root);
           layer_i.push_back(parent);
           nodes.push_back(copy_node(parent));
         }
@@ -2592,22 +2623,46 @@ namespace ext {
       event_stack.push({copy_node(*it), EVENT::point_buffer_underflow_construct});
     }
 
-    // print();
-    
-    // int k;
-    // std::cin >> k;
-    
     handle_events();
 
     for (auto node : nodes)
       if (!node->is_root()) delete node;
 
-    epoch_begin_point_count = points.size();
+    //construct child structures:
+    std::queue<buffered_pst_node*> bfs_q;
+    bfs_q.push(root);
+    while (!bfs_q.empty()) {
+      buffered_pst_node* bpn = bfs_q.front(); bfs_q.pop();
+      bpn->load_ranges();
+      if (bpn->is_leaf()) {
+        bpn->flush_ranges();
+        delete bpn;
+        continue;
+      }
 
+      bpn->load_child_structure();
+      bpn->child_structure->destroy();
+      delete bpn->child_structure;
+      std::vector<point> accumulated_point_buffers;
+      for (auto r : bpn->ranges) {
+        buffered_pst_node* c = new buffered_pst_node(r.node_id, buffer_size, epsilon, root);
+        c->load_point_buffer();
+        accumulated_point_buffers.insert(accumulated_point_buffers.end(),
+                                         c->point_buffer.begin(), c->point_buffer.end());
+        c->flush_point_buffer();
+        bfs_q.push(c);
+      }
+      bpn->flush_ranges();
+      bpn->child_structure =
+        new ext::child_structure(bpn->id, buffer_size, epsilon, accumulated_point_buffers);
+      bpn->flush_child_structure();
+      if (!bpn->is_root()) delete bpn;
+    }
+
+    epoch_begin_point_count = points.size();
     points.close();
     
     state = STATE::normal;
-    // print();
     
   }
   

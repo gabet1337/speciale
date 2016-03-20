@@ -158,6 +158,7 @@ void test_root_split_insert_overflow() {
   print_description("starting test of insert overflow on root");
 
   ext::buffered_pst epst(9,0.5);
+  epst.set_global_rebuild_configuration(ext::buffered_pst::global_rebuild_configuration(9999,0.5));
   for (int i = 0; i < 9; i++) epst.insert(point(i,i));
 
   assert ((!util::file_exists("1/point_buffer") && !util::file_exists("2/point_buffer"))
@@ -226,6 +227,7 @@ void test_root_split_insert_between_overflow() {
   print_description("starting test of insert buffer overflow on root and insert between");
 
   ext::buffered_pst epst(9,0.5);
+  epst.set_global_rebuild_configuration(ext::buffered_pst::global_rebuild_configuration(9999,0.5));
   for (int i = 1; i <= 2; i++) epst.insert(point(i,i));
   for (int i = 100; i <= 106; i++) epst.insert(point(i,i));
 
@@ -279,6 +281,7 @@ void test_root_split_insert_between_overflow_and_split() {
   print_description("starting test of insert buffer overflow on root and insert between plus split");
 
   ext::buffered_pst epst(9,0.5);
+  epst.set_global_rebuild_configuration(ext::buffered_pst::global_rebuild_configuration(9999,0.5));
   for (int i = 1; i <= 2; i++) epst.insert(point(i,i));
   for (int i = 100; i <= 106; i++) epst.insert(point(i,i));
 
@@ -324,6 +327,7 @@ void test_maintaining_min_max_y_on_insert_buffer_overflow() {
   print_description("starting test of maintaining min and max_y on insert buffer overflow");
 
   ext::buffered_pst epst(9,0.5);
+  epst.set_global_rebuild_configuration(ext::buffered_pst::global_rebuild_configuration(9999,0.5));
   for (int i = 15; i < 17; i++) {
 #ifdef DEBUG
     bool is_valid = epst.is_valid();
@@ -388,6 +392,7 @@ void test_node_degree_overflow() {
   print_description("starting test of node degree overflow");
 
   ext::buffered_pst epst(9,0.5);
+  epst.set_global_rebuild_configuration(ext::buffered_pst::global_rebuild_configuration(9999,0.5));
   // for (int i = 1; i <= 27; i++) epst.insert(point(i,i));
 
   //TODO: ASSERT THIS BITCH UP!
@@ -441,6 +446,7 @@ void test_distribute_evenly() {
   print_description("starting test of splitting evenly");
 
   ext::buffered_pst epst(9,0.5);
+  epst.set_global_rebuild_configuration(ext::buffered_pst::global_rebuild_configuration(9999,0.5));
   for (int i = 1; i <= 5; i++) epst.insert(point(i,i));
   for (int i = 101; i <= 110; i++) epst.insert(point(i,i));
   assert( util::file_exists("1/point_buffer"));
@@ -502,6 +508,8 @@ void test_insert_buffer_overflow_to_non_leaf2() {
   print_description("starting test of insert buffer overflow to non-leaf 2");
 
   ext::buffered_pst epst(9,0.5);
+  epst.set_global_rebuild_configuration(ext::buffered_pst::global_rebuild_configuration(9999,0.5));
+
   for (int i = 1; i <= 5; i++) epst.insert(point(i,i));
   for (int i = 101; i <= 110; i++) epst.insert(point(i,i));
   assert( util::file_exists("1/point_buffer"));
@@ -597,6 +605,8 @@ void test_insert_buffer_overflow_to_non_leaf() {
   print_description("starting test of insert buffer overflow to non-leaf");
 
   ext::buffered_pst epst(9,0.5);
+  epst.set_global_rebuild_configuration(ext::buffered_pst::global_rebuild_configuration(9999,0.5));
+
   for (int i = 1; i <= 5; i++) epst.insert(point(i,i));
   for (int i = 101; i <= 110; i++) epst.insert(point(i,i));
   assert( util::file_exists("1/point_buffer"));
@@ -672,6 +682,8 @@ void test_insert_buffer_overflow_to_non_leaf3() {
   print_description("starting test of insert buffer overflow to non-leaf 2");
 
   ext::buffered_pst epst(9,0.5);
+  epst.set_global_rebuild_configuration(ext::buffered_pst::global_rebuild_configuration(9999,0.5));
+
   for (int i = 1; i <= 5; i++) epst.insert(point(i,i));
   for (int i = 101; i <= 110; i++) epst.insert(point(i,i));
   assert( util::file_exists("1/point_buffer"));
@@ -822,6 +834,8 @@ void test_insert_buffer_overflow_to_non_leaf4() {
   print_description("starting test of insert buffer overflow to non-leaf 2");
 
   ext::buffered_pst epst(9,0.5);
+  epst.set_global_rebuild_configuration(ext::buffered_pst::global_rebuild_configuration(9999,0.5));
+
   for (int i = 1; i <= 5; i++) epst.insert(point(i,i));
   for (int i = 101; i <= 110; i++) epst.insert(point(i,i));
   assert( util::file_exists("1/point_buffer"));
@@ -2615,7 +2629,7 @@ void test_construction_50_points() {
 
   epst.print();
 
-  //assert(epst.is_valid());
+  assert(epst.is_valid());
   print_success();
 }
 
@@ -2639,25 +2653,25 @@ int main() {
   // test_construction();
   // test_insert();
 #endif
-  // test_interval_range_belong_to();
-  // test_test();
-  // test_buffer_points_less_than_point_buffer_points();
-  // test_no_duplicates_in_pv_iv_dv();
-  // test_insert_buffer_overflow();
-  // test_root_split();
-  // test_root_split_insert_overflow();
-  // test_root_split_insert_between_overflow();
-  // test_maintaining_min_max_y_on_insert_buffer_overflow();
-  // test_node_degree_overflow();
-  // test_distribute_evenly();
-  // test_insert_buffer_overflow_to_non_leaf();
-  // test_insert_buffer_overflow_to_non_leaf2();
-  // test_insert_buffer_overflow_to_non_leaf3();
-  // test_insert_buffer_overflow_to_non_leaf4();
-  // test_not_valid_on_manual_insert();
-  // test_deterministic_random();
-  // test_deterministic_random2();
-  // test_random_deterministic3();
+  test_interval_range_belong_to();
+  test_test();
+  test_buffer_points_less_than_point_buffer_points();
+  test_no_duplicates_in_pv_iv_dv();
+  test_insert_buffer_overflow();
+  test_root_split();
+  test_root_split_insert_overflow();
+  test_root_split_insert_between_overflow();
+  test_maintaining_min_max_y_on_insert_buffer_overflow();
+  test_node_degree_overflow();
+  test_distribute_evenly();
+  test_insert_buffer_overflow_to_non_leaf();
+  test_insert_buffer_overflow_to_non_leaf2();
+  test_insert_buffer_overflow_to_non_leaf3();
+  test_insert_buffer_overflow_to_non_leaf4();
+  test_not_valid_on_manual_insert();
+  test_deterministic_random();
+  test_deterministic_random2();
+  test_random_deterministic3();
   // test_random_insert();
   // test_truly_random();
   // test_delete();
