@@ -23,7 +23,8 @@
 #include <stack>
 #include <tuple>
 #include <deque>
-
+#define INF_POINT point(INF,INF)
+#define MINUS_INF_POINT point(-INF,-INF)
 namespace ext {
   int next_id = 1;
 #ifdef DEBUG
@@ -137,8 +138,8 @@ namespace ext {
     void handle_delete_buffer_overflow_in_leaf_and_virtual_leaf(buffered_pst_node* node);
     void handle_point_buffer_overflow_of_leaf_root();
     void handle_point_buffer_underflow_in_children(buffered_pst_node* node);
-    void handle_point_buffer_underflow_in_virtual_leaf(buffered_pst_node* node,
-                                                       buffered_pst_node* parent);
+    // void handle_point_buffer_underflow_in_virtual_leaf(buffered_pst_node* node,
+    //                                                    buffered_pst_node* parent);
     void split_leaf(buffered_pst_node* node, buffered_pst_node* parent);
     void handle_point_buffer_overflow_in_virtual_leaf(buffered_pst_node* parent,
                                                       buffered_pst_node* node,
@@ -150,6 +151,13 @@ namespace ext {
     void handle_invalid_buffer_events(std::deque<buffered_pst_node*> &q);
     void global_rebuild();
     void construct_sorted(const std::string &file_name);
+    struct extrema {
+      point min_x, min_y, max_y;
+      extrema(point _min_x, point _min_y, point _max_y)
+        : min_x(_min_x), min_y(_min_y), max_y(_max_y) {}
+    };
+    template <class Container>
+    extrema find_extrema(const Container &c);
     enum struct EVENT {
       insert_buffer_overflow,
       delete_buffer_overflow,
@@ -508,7 +516,7 @@ namespace ext {
   bool buffered_pst::buffered_pst_node::is_virtual_leaf() {
     assert(is_ranges_loaded);
     bool is_virtual_leaf = true;
-    for (auto r : ranges) if (r.max_y != INF) is_virtual_leaf = false;
+    for (auto r : ranges) if (r.max_y != INF_POINT) is_virtual_leaf = false;
     return is_virtual_leaf;
   }
 
@@ -675,13 +683,14 @@ namespace ext {
       bs.open(get_point_buffer_file_name(it->node_id));
       while (!bs.eof()) {
         point p = bs.read();
-        if (ranges.belong_to(range(p,0,0)) != *it) {
+        if (ranges.belong_to(range(p,INF_POINT,INF_POINT,0)) != *it) {
           DEBUG_MSG_FAIL("point " << p << " is in the wrong child " << it->node_id);
           DEBUG_MSG_FAIL("child " << it->node_id << " is responsible for " << *it
-                         << " but belong to " << ranges.belong_to(range(p,0,0)));
+                         << " but belong to " << ranges.belong_to(range(p,INF_POINT,INF_POINT,0)));
           return false;
         }
-        if (p.y > it->max_y) {
+        if (comp_y(it->max_y, p)) {
+            //        if (p > it->max_y) {
           DEBUG_MSG_FAIL("point " << p << " has y-value larger than range max_y " << it->max_y);
           return false;
         }
@@ -764,8 +773,8 @@ namespace ext {
         for (range ra : bpn.ranges) q.push(buffered_pst_node(ra.node_id, buffer_size,epsilon, root));
       }
       for (point p : points_in_subtree) {
-        if (ranges.belong_to(range(p,-1,-1)) != r) {
-          DEBUG_MSG_FAIL("Point " << p << " was found not belonging to this subtree but was found to belong to " << ranges.belong_to(range(p,-1,-1)));
+        if (ranges.belong_to(range(p,INF_POINT,INF_POINT,0)) != r) {
+          DEBUG_MSG_FAIL("Point " << p << " was found not belonging to this subtree but was found to belong to " << ranges.belong_to(range(p,INF_POINT,INF_POINT,0)));
           for (range ra : ranges) DEBUG_MSG_FAIL(" - " << ra);
           return false;
         }
@@ -778,12 +787,23 @@ namespace ext {
       buffered_pst_node child(r.node_id,buffer_size,epsilon,root);
       child.load_all();
 
-      int max_y = std::max_element(child.point_buffer.begin(),
-                                   child.point_buffer.end(),
-                                   comp_y)->y;
+      point max_y = *std::max_element(child.point_buffer.begin(),
+                                      child.point_buffer.end(),
+                                      comp_y);
 
-      if (child.point_buffer.empty()) max_y = INF;
-      
+      point min_y = *std::min_element(child.point_buffer.begin(),
+                                      child.point_buffer.end(),
+                                      comp_y);
+
+      if (child.point_buffer.empty()) max_y = INF_POINT;
+      if (child.point_buffer.empty()) min_y = INF_POINT;
+
+      if (min_y != r.min_y) {
+        DEBUG_MSG_FAIL("min_y " << r.min_y << " in range of node " << id << " is not equal to "
+                       << "minimum y " << min_y << " in point buffer of child " << r.node_id);
+        return false;
+      }
+
       if (max_y != r.max_y) {
         DEBUG_MSG_FAIL("max_y " << r.max_y << " in range of node " << id << " is not equal to "
                        << "maximum y " << max_y << " in point buffer of child " << r.node_id);
@@ -998,6 +1018,7 @@ namespace ext {
               ? root
               : new buffered_pst_node(node->parent_id,buffer_size,epsilon,root);
             parent->load_child_structure();
+            parent->load_ranges();
             
             std::map<int, buffered_pst_node*> children;
             for (range r : node->ranges) {
@@ -1014,6 +1035,7 @@ namespace ext {
             }
             
             parent->flush_child_structure();
+            parent->flush_ranges();
 
             node->flush_child_structure();
             node->flush_info_file();
@@ -1248,6 +1270,20 @@ namespace ext {
     return new buffered_pst_node(node->id, buffer_size, epsilon, root);
   }
 
+  template <class Container>
+  buffered_pst::extrema buffered_pst::find_extrema(const Container &c) {
+    point min_y = INF_POINT;
+    point max_y = MINUS_INF_POINT;
+    point min_x = INF_POINT;
+    if (c.empty()) return extrema(INF_POINT, INF_POINT, INF_POINT);
+    for (auto p : c) {
+      min_y = std::min(p,min_y,comp_y);
+      max_y = std::max(p,max_y,comp_y);
+      min_x = std::min(p,min_x);
+    }
+    return extrema(min_x, min_y, max_y);
+  }
+
   /*
     Makes the initial split of the root before it has children
    */
@@ -1270,16 +1306,19 @@ namespace ext {
       
     root->point_buffer = std::set<point>(points.begin()+points.size()/2,points.end());
 
-    DEBUG_MSG("Adding new child ranges to root " << root->id);
-    root->add_child(range(*c1.point_buffer.begin(),
-                          std::max_element(c1.point_buffer.begin(),
-                                           c1.point_buffer.end(),
-                                           comp_y)->y, child1_id));
+    auto c1extrema = find_extrema<std::set<point> >(c1.point_buffer);
+    auto c2extrema = find_extrema<std::set<point> >(c2.point_buffer);
 
-    root->add_child(range(*c2.point_buffer.begin(),
-                          std::max_element(c2.point_buffer.begin(),
-                                           c2.point_buffer.end(),
-                                           comp_y)->y, child2_id));
+    DEBUG_MSG("Adding new child ranges to root " << root->id);
+    root->add_child(range(c1extrema.min_x,
+                          c1extrema.min_y,
+                          c1extrema.max_y,
+                          child1_id));
+
+    root->add_child(range(c2extrema.min_x,
+                          c2extrema.min_y,
+                          c2extrema.max_y,
+                          child2_id));
 
     DEBUG_MSG("Rebuild child structure of root in root leaf split" << root->id);
     for (auto it = points.begin(); it != points.begin()+points.size()/2; it++) {
@@ -1338,6 +1377,7 @@ namespace ext {
     assert (node->is_ranges_loaded);
     assert (node->is_child_structure_loaded);
     assert (parent->is_child_structure_loaded);
+    assert (parent->is_ranges_loaded);
     for (auto c : children)
       assert (c.second->is_point_buffer_loaded);
     assert(node->point_buffer.size() > buffer_size);
@@ -1357,7 +1397,7 @@ namespace ext {
       parent->child_structure->remove(p);
       node->child_structure->insert(p);
 
-      range r = node->ranges.belong_to(range(p, -1, -1));
+      range r = node->ranges.belong_to(range(p, INF_POINT,INF_POINT,0));
 
       children[r.node_id]->point_buffer.insert(p);
 
@@ -1366,20 +1406,28 @@ namespace ext {
 
     std::vector<range> new_ranges(node->ranges.begin(), node->ranges.end());
     for (size_t i = 0; i < new_ranges.size(); i++) {
+      auto extrema = find_extrema<std::set<point> >
+        (children[new_ranges[i].node_id]->point_buffer);
       if (i == 0)
-        new_ranges[i].min =
-          std::min(new_ranges[i].min,
-                   children[new_ranges[i].node_id]->point_buffer.empty() ? point(INF,INF) :
-                   *std::min_element(children[new_ranges[i].node_id]->point_buffer.begin(),
-                                     children[new_ranges[i].node_id]->point_buffer.end()));
-      
-      new_ranges[i].max_y = children[new_ranges[i].node_id]->point_buffer.empty() ? INF
-        : std::max_element(children[new_ranges[i].node_id]->point_buffer.begin(),
-                           children[new_ranges[i].node_id]->point_buffer.end(),
-                           comp_y)->y;
+        new_ranges[i].min = std::min(new_ranges[i].min, extrema.min_x);
+      new_ranges[i].max_y = extrema.max_y;
+      new_ranges[i].min_y = extrema.min_y;
     }
     node->ranges.clear();
     for (auto r : new_ranges) node->ranges.insert(r);
+
+    //update range in parent:
+    for (auto r : parent->ranges) {
+      if (r.node_id == node->id) {
+        point min_y = *std::min_element(node->point_buffer.begin(),
+                                        node->point_buffer.end(),
+                                        comp_y);
+        parent->ranges.erase(r);
+        parent->ranges.insert(range(r.min, min_y, r.max_y, r.node_id));
+        break;
+      }
+
+    }
     
     for (auto c : children)
       if (state == STATE::fix_up || state == STATE::normal
@@ -1413,20 +1461,17 @@ namespace ext {
         parent->child_structure->insert(p);
       }
     }
-
-    if (leaf->point_buffer.empty()) {
-      int max_y = std::max_element(ib_temp.begin(), ib_temp.end(), comp_y)->y;
-      if (ib_temp.empty()) max_y = INF;
-      for (range r : parent->ranges) {
-        if (r.node_id == leaf->id) {
-          parent->ranges.erase(r);
-          parent->ranges.insert(range(r.min, max_y, r.node_id));
-          break;
-        }
+    leaf->insert_into_point_buffer(ib_temp);
+    auto extrema = find_extrema<std::set<point> >(leaf->point_buffer);
+    // point max_y = *std::max_element(ib_temp.begin(), ib_temp.end(), comp_y);
+    // if (ib_temp.empty()) max_y = INF_POINT;
+    for (range r : parent->ranges) {
+      if (r.node_id == leaf->id) {
+        parent->ranges.erase(r);
+        parent->ranges.insert(range(r.min, extrema.min_y, extrema.max_y, r.node_id));
+        break;
       }
     }
-
-    leaf->insert_into_point_buffer(ib_temp);
     
     if (state == STATE::normal || state == STATE::fix_up
         || state == STATE::global_rebuild)
@@ -1466,23 +1511,26 @@ namespace ext {
     DEBUG_MSG(node->insert_buffer.size()/B_epsilon);
 
     std::set<point> U;
-    range range_of_child(range(point(-1,-1), -1, -1));
+    range range_of_child(range(INF_POINT, INF_POINT, INF_POINT, -1));
     for (range r : node->ranges)
       if (r.node_id == child->id) {
         range_of_child = r;
         break;
       }
     size_t idx = 0;
-    int max_y = range_of_child.max_y == INF ? -INF : range_of_child.max_y;
+    //TODO NOT SURE HERE!
+    point max_y = range_of_child.max_y == INF_POINT ? MINUS_INF_POINT : range_of_child.max_y;
+    point min_y = range_of_child.min_y == INF_POINT ? INF_POINT : range_of_child.min_y;
     point min = range_of_child.min;
     for (auto p : node->insert_buffer) {
-      if (node->ranges.belong_to(range(p, -1, -1)) != range_of_child) continue;
+      if (node->ranges.belong_to(range(p, INF_POINT, INF_POINT, -1)) != range_of_child) continue;
       DEBUG_MSG(idx);
 
       if (++idx > std::max(node->insert_buffer.size()/B_epsilon,
                            node->insert_buffer.size()-buffer_size)) break;
-      min = std::min(min,p);
-      max_y = std::max(max_y, p.y);
+      min = std::min(min, p);
+      min_y = std::min(min_y, p, comp_y);
+      max_y = std::max(max_y, p, comp_y);
       DEBUG_MSG("point " << p << " is in U");
       U.insert(p);
     }
@@ -1511,12 +1559,8 @@ namespace ext {
     U = new_U;
     
     if (child->is_leaf() || child->is_virtual_leaf()) {
-      
-      if (*(U.begin()) < range_of_child.min || max_y > range_of_child.max_y || range_of_child.max_y == INF) {
-        DEBUG_MSG("Updating range " << min << " " << max_y << " for node_id: " << range_of_child.node_id);
-        node->ranges.erase(range_of_child);
-        node->ranges.insert(range(min,max_y,range_of_child.node_id));
-      }
+      node->ranges.erase(range_of_child);
+      node->ranges.insert(range(min, min_y, max_y, range_of_child.node_id));
 
 #ifdef DEBUG
       DEBUG_MSG("Range now contains:");
@@ -1538,7 +1582,6 @@ namespace ext {
         event_stack.push({copy_node(child), EVENT::point_buffer_overflow});
         //event_stack.push({copy_node(child), EVENT::insert_buffer_overflow});
       }
-
     } else {
 
       /*
@@ -1585,7 +1628,7 @@ namespace ext {
           DEBUG_MSG("Removing point " << sorted_point_buffer[i] << " from child structure");
           node->child_structure->remove(sorted_point_buffer[i]);
           U.insert(sorted_point_buffer[i]);
-        }         
+        }
       }
 
       DEBUG_MSG("Updating range");
@@ -1596,9 +1639,11 @@ namespace ext {
           break;
         }
       }
-
-      range new_range = range(std::min(*child->point_buffer.begin(),old_range.min),
-                              (sorted_point_buffer.end()-1)->y,
+      auto extrema = find_extrema<std::set<point> >(child->point_buffer);
+      range new_range = range(std::min(extrema.min_x, old_range.min),
+                              extrema.min_y,
+                              extrema.max_y,
+                              //*(sorted_point_buffer.end()-1),
                               old_range.node_id);
         
       DEBUG_MSG("Updating range for found_child " << child->id << " from "
@@ -1653,7 +1698,7 @@ namespace ext {
     DEBUG_MSG("Create U to send to child");
     DEBUG_MSG(node->delete_buffer.size()/B_epsilon);
 
-    range range_of_child(range(point(-1,-1),-1,-1));
+    range range_of_child(range(INF_POINT,INF_POINT,INF_POINT,-1));
     for (range r : node->ranges)
       if (child->id == r.node_id) {
         range_of_child = r;
@@ -1663,7 +1708,7 @@ namespace ext {
     size_t idx = 0;
     std::set<point> U;
     for (auto p : node->delete_buffer) {
-      if (node->ranges.belong_to(range(p,-1,-1)) != range_of_child) continue;
+      if (node->ranges.belong_to(range(p,INF_POINT, INF_POINT,-1)) != range_of_child) continue;
 
       if (++idx > std::max(node->delete_buffer.size()/B_epsilon,
                            node->delete_buffer.size()-buffer_size/4)) break;
@@ -1703,17 +1748,19 @@ namespace ext {
 
     }
     U = new_U;
-    
-    int max_y = std::max_element(child->point_buffer.begin(),
-                                 child->point_buffer.end(),
-                                 comp_y)->y;
 
-    if (child->point_buffer.empty()) max_y = INF;
+    auto extrema = find_extrema<std::set<point> >(child->point_buffer);
+    point max_y = *std::max_element(child->point_buffer.begin(),
+                                    child->point_buffer.end(),
+                                    comp_y);
+
+    //if (child->point_buffer.empty()) max_y = INF_POINT;
       
     DEBUG_MSG("Rebuilding range max_y from " << range_of_child.max_y << " to "
               << max_y << " in delete_buffer_overflow() in node " << node->id);
     node->ranges.erase(range_of_child);
-    node->ranges.insert(range(range_of_child.min,max_y,range_of_child.node_id));
+    node->ranges.insert(range(range_of_child.min, extrema.min_y,
+                              extrema.max_y, range_of_child.node_id));
 
 #ifdef DEBUG
     DEBUG_MSG("Range now contains:");
@@ -1742,33 +1789,6 @@ namespace ext {
         event_stack.push({copy_node(child), EVENT::delete_buffer_overflow});
       }
     }
-  }
-
-  /*
-    Invariant: point buffer is empty & we are a virtual leaf
-   */
-  void buffered_pst::handle_point_buffer_underflow_in_virtual_leaf(buffered_pst_node* node,
-                                                                   buffered_pst_node* parent) {
-    DEBUG_MSG("Starting to handle underflow in the point buffer of a virtual leaf");
-
-#ifdef DEBUG
-    assert(node->is_delete_buffer_loaded);
-    assert(node->is_insert_buffer_loaded);
-    assert(parent->is_child_structure_loaded);
-#endif
-
-    node->delete_buffer.clear();
-    std::vector<point> temp(node->insert_buffer.begin(), node->insert_buffer.end());
-    node->insert_buffer.clear();
-    DEBUG_MSG("Moving points from insert buffer to point buffer in virtual leaf " << node->id);
-    for (point p : temp) {
-      DEBUG_MSG(" - " << p);
-      parent->child_structure->insert(p);
-    }
-    node->insert_into_point_buffer(temp);
-    if (state == STATE::normal || state == STATE::fix_up
-        || state == STATE::global_rebuild)
-      event_stack.push({copy_node(node),EVENT::insert_buffer_overflow});
   }
 
   void buffered_pst::handle_point_buffer_underflow_in_children(buffered_pst_node* node) {
@@ -1852,6 +1872,12 @@ namespace ext {
         node->child_structure->remove(pcp.first);
     }
 
+    //TODO:
+    // if we grab all points of a child then that child might have something larger in
+    // that subtree than what is in our insert buffer
+    // if child gets empty during underflow then stop and fill him up before we proceed
+    // and dont satisfy heap ordering
+    // o.w. do as normal
     DEBUG_MSG("Satisfy heap ordering between Iv and Pv");
     std::vector<point> vp_temp(X.begin(), X.end());
     vp_temp.insert(vp_temp.end(), node->insert_buffer.begin(), node->insert_buffer.end());
@@ -1896,14 +1922,9 @@ namespace ext {
    
     internal::rb_tree<range> new_ranges;
     for (range r : node->ranges) {
-      point max_y = *std::max_element(children[node_id_to_index[r.node_id]]->
-                                      point_buffer.begin(),
-                                      children[node_id_to_index[r.node_id]]->
-                                      point_buffer.end(),
-                                      comp_y);
-      if (children[node_id_to_index[r.node_id]]->point_buffer.empty())
-        new_ranges.insert(range(r.min, INF, r.node_id));
-      else new_ranges.insert(range(r.min, max_y.y, r.node_id));
+      auto extrema = find_extrema<std::set<point> >
+        (children[node_id_to_index[r.node_id]]->point_buffer);
+      new_ranges.insert(range(r.min, extrema.min_y, extrema.max_y, r.node_id));
     }
     node->ranges = new_ranges;
     DEBUG_MSG("Our ranges now look LIKE this:");
@@ -1923,18 +1944,14 @@ namespace ext {
           parent->child_structure->insert(p);
         }
       }
-    
-    int max_y = std::max_element(node->point_buffer.begin(),
-                                 node->point_buffer.end(),
-                                 comp_y)->y;
 
-    if (node->point_buffer.empty()) max_y = INF;
+    auto extrema = find_extrema<std::set<point> >(node->point_buffer);
 
     DEBUG_MSG("Updating node " << node->id << " parent ranges on parent id " << parent->id);
     for (range r : parent->ranges) {
       if (r.node_id == node->id) {
         parent->ranges.erase(r);
-        parent->ranges.insert(range(r.min,max_y,r.node_id));
+        parent->ranges.insert(range(r.min, extrema.min_y, extrema.max_y, r.node_id));
         break;
       }
     }
@@ -2046,7 +2063,7 @@ namespace ext {
     }
 
     DEBUG_MSG("Deleting our range in parent " << parent->id << " we are: " << node->id);
-    range our_range(point(INF,INF), -INF, node->id);
+    range our_range(INF_POINT, MINUS_INF_POINT, MINUS_INF_POINT, node->id);
     if (!node->is_root()) {
       for (auto r : parent->ranges) {
         if (r.node_id == node->id) {
@@ -2066,13 +2083,13 @@ namespace ext {
         r.min = std::min(r.min,our_range.min);
         is_first_child = false;
       }
-      parent->add_child(range(r.min, r.max_y, bpn->id));
+      parent->add_child(range(r.min, r.min_y, r.max_y, bpn->id));
     }
 
     DEBUG_MSG("Distributing points from point_buffer");
 
     for (point p : temp_point_buffer) {
-      range r = parent->ranges.belong_to(range(p,-1,-1));
+      range r = parent->ranges.belong_to(range(p,INF_POINT,INF_POINT,-1));
       new_children[node_id_to_idx[r.node_id]]->point_buffer.insert(p);
       DEBUG_MSG("point " << p << " went into " << r.node_id << " node_id_to_idx: " << node_id_to_idx[r.node_id]);
     }
@@ -2087,32 +2104,29 @@ namespace ext {
 
     DEBUG_MSG("Distributing points from insert_buffer");
     for (point p : temp_insert_buffer) {
-      range r = parent->ranges.belong_to(range(p,-1,-1));
+      range r = parent->ranges.belong_to(range(p,INF_POINT,INF_POINT,-1));
       new_children[node_id_to_idx[r.node_id]]->insert_buffer.insert(p);
       DEBUG_MSG("point " << p << " went into " << r.node_id);
     }
 
     DEBUG_MSG("Distributing points from delete_buffer");
     for (point p : temp_delete_buffer) {
-      range r = parent->ranges.belong_to(range(p,-1,-1));
+      range r = parent->ranges.belong_to(range(p,INF_POINT,INF_POINT,-1));
       new_children[node_id_to_idx[r.node_id]]->delete_buffer.insert(p);
       DEBUG_MSG("point " << p << " went into " << r.node_id);
     }
 
     DEBUG_MSG("Rebuild ranges to fit max_y of child");
     for (auto bpn : new_children) {
-      int max_y = std::max_element(bpn->point_buffer.begin(),
-                                   bpn->point_buffer.end(),
-                                   comp_y)->y;
-      if (bpn->point_buffer.empty()) max_y = INF;
-      range ra(point(-1,-1),-1,-1);
+      auto extrema = find_extrema<std::set<point> >(bpn->point_buffer);
+      range ra(INF_POINT, INF_POINT, INF_POINT, -1);
       for (range r : parent->ranges)
         if (r.node_id == bpn->id) {
           ra = r;
           break;
         }
       parent->ranges.erase(ra);
-      parent->ranges.insert(range(ra.min, max_y, ra.node_id));
+      parent->ranges.insert(range(ra.min, extrema.min_y, extrema.max_y, ra.node_id));
     }
 #ifdef DEBUG
     DEBUG_MSG("PARENTS RANGES AFTER:");
@@ -2157,10 +2171,10 @@ namespace ext {
 #endif
     
     std::set<point> tmp,best;
-    range best_range = node->ranges.belong_to(range(*buffer.begin(),-1,-1));
-    range cur_range = node->ranges.belong_to(range(*buffer.begin(),-1,-1));
+    range best_range = node->ranges.belong_to(range(*buffer.begin(),INF_POINT,INF_POINT,-1));
+    range cur_range = node->ranges.belong_to(range(*buffer.begin(),INF_POINT,INF_POINT,-1));
     for (point p : buffer) {
-      range blt = node->ranges.belong_to(range(p,-1,-1));
+      range blt = node->ranges.belong_to(range(p,INF_POINT,INF_POINT,-1));
       DEBUG_MSG("point " << p << " belongs to " << blt);
       if (blt != cur_range) {
         if (tmp.size() > best.size()) {
@@ -2206,15 +2220,16 @@ namespace ext {
     buffered_pst_node* new_leaves[nodes_to_create];
     new_leaves[0] = node;
 
-    parent->ranges.erase(parent->ranges.belong_to(range(*(node->point_buffer).begin(),-1,-1)));
+    parent->ranges.erase(parent->ranges.belong_to(range(*(node->point_buffer).begin(),
+                                                        INF_POINT,INF_POINT,-1)));
     
     std::vector<range> new_ranges;
-    new_ranges.push_back(range(point(INF,INF), -INF, node->id));
+    new_ranges.push_back(range(INF_POINT, INF_POINT, MINUS_INF_POINT, node->id));
     
     for (int i = 1; i < nodes_to_create; i++) {
       new_leaves[i] = new buffered_pst_node(next_id, node->parent_id, buffer_size,
                                             B_epsilon, epsilon, root);
-      new_ranges.push_back(range(point(INF,INF), -INF, next_id));
+      new_ranges.push_back(range(INF_POINT, INF_POINT, MINUS_INF_POINT, next_id));
       next_id++;
     }
     
@@ -2233,7 +2248,8 @@ namespace ext {
                      << std::to_string(new_leaves[idx/each_get]->id) << " in index " << idx);
       new_leaves[idx/each_get]->point_buffer.insert(p);
       new_ranges[idx/each_get].min = std::min(p,new_ranges[idx/each_get].min);
-      new_ranges[idx/each_get].max_y = std::max(p.y,new_ranges[idx/each_get].max_y);
+      new_ranges[idx/each_get].max_y = std::max(p,new_ranges[idx/each_get].max_y,comp_y);
+      new_ranges[idx/each_get].min_y = std::min(p,new_ranges[idx/each_get].min_y,comp_y);
       idx++;
     }
 
@@ -2263,8 +2279,8 @@ namespace ext {
                                             std::deque<buffered_pst_node*> &q,
                                             std::deque<buffered_pst_node*> &fix_up_queue,
                                             int x1, int x2, int y) {
-    auto left_it = node->ranges.belong_to_iterator(range(point(x1,-INF),-1,-1));
-    auto right_it = node->ranges.belong_to_iterator(range(point(x2,INF),-1,-1));
+    auto left_it = node->ranges.belong_to_iterator(range(point(x1,-INF),INF_POINT,INF_POINT,-1));
+    auto right_it = node->ranges.belong_to_iterator(range(point(x2,INF),INF_POINT,INF_POINT,-1));
     internal::rb_tree<range> new_ranges;
     for (range r : node->ranges) new_ranges.insert(r);
     for (auto it=left_it; !(node->is_leaf() && node->is_virtual_leaf()); it++) {
@@ -2275,16 +2291,17 @@ namespace ext {
       child->load_all();
 
       // TODO: min_y value should be on ranges.
-      point min_y = *std::min_element(child->point_buffer.begin(),
-                                      child->point_buffer.end(),
-                                      comp_y);
+      // point min_y = *std::min_element(child->point_buffer.begin(),
+      //                                 child->point_buffer.end(),
+      //                                 comp_y);
+      point min_y = it->min_y;
       if (child->point_buffer.empty()) min_y = point(-INF,-INF);
       DEBUG_MSG("Found min_y of child " << child->id << " to be " << min_y);
       DEBUG_MSG("Looking at delete_buffer of " << node->id);
       std::set<point> new_delete_buffer;
       for (point p : node->delete_buffer) {
         DEBUG_MSG_FAIL("Looking at delete " << p);
-        if (node->ranges.belong_to(range(p,-1,-1)) == *it) {
+        if (node->ranges.belong_to(range(p,INF_POINT,INF_POINT,-1)) == *it) {
           if (child->point_buffer.erase(p)) {
             DEBUG_MSG_FAIL("Removing " << p <<
                            " from childs point buffer and child structure" <<
@@ -2311,7 +2328,7 @@ namespace ext {
       DEBUG_MSG("Looking at insert_buffer of " << node->id);
       std::set<point> new_insert_buffer;
       for (point p : node->insert_buffer) {
-        if (node->ranges.belong_to(range(p,-1,-1)) == *it) {
+        if (node->ranges.belong_to(range(p,INF_POINT, INF_POINT,-1)) == *it) {
           if (child->point_buffer.erase(p))
             node->child_structure->remove(p);       
           child->insert_buffer.erase(p);
@@ -2350,18 +2367,12 @@ namespace ext {
           (sorted_points.begin()+points_to_remove, sorted_points.end());
       }
 
-      // At this point we can rebuild the range of the child!
-      // TODO: rebuild min_y
-      int max_y = std::max_element(child->point_buffer.begin(),
-                                   child->point_buffer.end(),
-                                   comp_y)->y;
-      if (child->point_buffer.empty()) max_y = INF;
+      auto extrema = find_extrema<std::set<point> >(child->point_buffer);
 
-      if (max_y != it->max_y) {
-        DEBUG_MSG("Updated the range: " << *it << " to " << range(it->min, max_y, it->node_id));
-        new_ranges.erase(*it);
-        new_ranges.insert(range(it->min, max_y, it->node_id));
-      }
+      DEBUG_MSG("Updated the range: " << *it << " to " <<
+                range(it->min, extrema.min_y, extrema.max_y, it->node_id));
+      new_ranges.erase(*it);
+      new_ranges.insert(range(it->min, extrema.min_y, extrema.max_y, it->node_id));
 
       child->flush_all();
       
@@ -2392,7 +2403,7 @@ namespace ext {
 
     std::deque<buffered_pst_node*> q, fix_up_queue;
     fix_up_queue.push_front(root);
-    
+    //TODO put root in q and recurse...
     flush_buffers_to_child(root, q, fix_up_queue, x1, x2, y);
 
     // Report
@@ -2536,17 +2547,20 @@ namespace ext {
 
     std::vector<buffered_pst_node*> layer_i_plus_1, layer_i;
     std::vector<point> min_points;
-    std::vector<int> max_ys;
+    std::vector<point> max_ys;
+    std::vector<point> min_ys;
     std::vector<buffered_pst_node*> nodes;
     buffered_pst_node* child, *parent;
     point min_point = point(INF, INF);
-    int max_y = -INF;
+    point max_y = MINUS_INF_POINT;
+    point min_y = INF_POINT;
     for (size_t i = 0; !points.eof(); i++) {
       DEBUG_MSG(i);
       if (i % each_leaf_get == 0) {
 
         if (i != 0) {
           max_ys.push_back(max_y);
+          min_ys.push_back(min_y);
           min_points.push_back(min_point);
           child->flush_all();
         }
@@ -2557,7 +2571,8 @@ namespace ext {
         
         layer_i.push_back(child);
         min_point = point(INF, INF);
-        max_y = -INF;
+        max_y = MINUS_INF_POINT;
+        min_y = INF_POINT;
       }
       point p = points.read();
 #ifdef DEBUG
@@ -2565,9 +2580,11 @@ namespace ext {
 #endif
       child->point_buffer.insert(p);
       min_point = std::min(min_point, p);
-      max_y = std::max(max_y, p.y);
+      max_y = std::max(max_y, p, comp_y);
+      min_y = std::min(min_y, p, comp_y);
     }
     max_ys.push_back(max_y);
+    min_ys.push_back(min_y);
     min_points.push_back(min_point);
     child->flush_all();
     
@@ -2591,10 +2608,10 @@ namespace ext {
         layer_i_plus_1[i]->load_ranges();
         layer_i_plus_1[i]->parent_id = parent->id;
         if (leaf_layer) {
-          parent->add_child(range(min_points[i], max_ys[i], layer_i_plus_1[i]->id));
+          parent->add_child(range(min_points[i], min_ys[i], max_ys[i], layer_i_plus_1[i]->id));
         } else {
-          parent->add_child(range(layer_i_plus_1[i]->ranges.begin()->min, -INF,
-                                  layer_i_plus_1[i]->id));
+          parent->add_child(range(layer_i_plus_1[i]->ranges.begin()->min, INF_POINT,
+                                  MINUS_INF_POINT, layer_i_plus_1[i]->id));
         }
         layer_i_plus_1[i]->flush_info_file();
         layer_i_plus_1[i]->flush_ranges();
@@ -2608,9 +2625,10 @@ namespace ext {
       layer_i[i]->load_ranges();
       layer_i[i]->load_info_file();
       if (leaf_layer)
-        root->add_child(range(min_points[i], max_ys[i], layer_i[i]->id));
+        root->add_child(range(min_points[i], min_ys[i], max_ys[i], layer_i[i]->id));
       else
-        root->add_child(range(layer_i[i]->ranges.begin()->min, -INF, layer_i[i]->id));
+        root->add_child(range(layer_i[i]->ranges.begin()->min,
+                              INF_POINT, MINUS_INF_POINT, layer_i[i]->id));
       layer_i[i]->parent_id = 0;
       layer_i[i]->flush_all();
       delete layer_i[i];

@@ -201,18 +201,19 @@ void test_root_split_insert_overflow() {
 void test_interval_range_belong_to() {
   print_description("starting test of rb tree on ranges");
   internal::rb_tree<range> rbt;
-  rbt.insert(range(point(1,1), 1, 1));
+  point dummy = point(-1,-1);
+  rbt.insert(range(point(1,1), dummy, dummy, 1));
   
-  assert( rbt.belong_to(range(point(-1,-1), -1, 2)) == range(point(1,1), 1, 1));
+  assert( rbt.belong_to(range(point(-1,-1), dummy, dummy, 2)) == range(point(1,1), dummy, dummy, 1));
 
-  assert( rbt.belong_to(range(point(4,4), -1, 2)) == range(point(1,1), 1, 1));
-  assert( rbt.belong_to(range(point(1,1), -1, 2)) == range(point(1,1), 1, 1));
+  assert( rbt.belong_to(range(point(4,4), dummy,dummy, 2)) == range(point(1,1), dummy,dummy, 1));
+  assert( rbt.belong_to(range(point(1,1), dummy,dummy, 2)) == range(point(1,1), dummy,dummy, 1));
 
-  rbt.insert(range(point(100,100), 100, 1));
+  rbt.insert(range(point(100,100), dummy,dummy, 1));
 
-  assert( rbt.belong_to(range(point(50,50), -1, 2)) == range(point(1,1), 1, 1));
+  assert( rbt.belong_to(range(point(50,50), dummy,dummy, 2)) == range(point(1,1), dummy,dummy, 1));
 
-  assert( rbt.belong_to(range(point(101,101), -1, 2)) == range(point(100,100), 100, 1));
+  assert( rbt.belong_to(range(point(101,101), dummy,dummy, 2)) == range(point(100,100), dummy,dummy, 1));
 
   print_success();
 }
@@ -1127,12 +1128,15 @@ void test_deterministic_random() {
   for (int i = 0; i < (int)points.size(); i++) {
     epst.insert(points[i]);
 #ifdef DEBUG
-    if (i > 27)
-      assert (epst.is_valid());
+    bool is_valid = epst.is_valid();
+    if (!is_valid) {
+      epst.print();
+      assert (is_valid);
+    }
 #endif
   }
 
-    print_success();
+  print_success();
 }
 
 void test_deterministic_random2() {
@@ -2649,26 +2653,24 @@ int main() {
   if (!util::file_exists("test")) mkdir("test", 0700);
   
   cout << "\033[0;33m\e[4mSTARTING TEST OF EPST STRUCTURE\e[24m\033[0m" << endl;
-#ifdef DEBUG
   // test_construction();
   // test_insert();
-#endif
-  test_interval_range_belong_to();
-  test_test();
-  test_buffer_points_less_than_point_buffer_points();
-  test_no_duplicates_in_pv_iv_dv();
-  test_insert_buffer_overflow();
-  test_root_split();
-  test_root_split_insert_overflow();
-  test_root_split_insert_between_overflow();
-  test_maintaining_min_max_y_on_insert_buffer_overflow();
-  test_node_degree_overflow();
-  test_distribute_evenly();
-  test_insert_buffer_overflow_to_non_leaf();
-  test_insert_buffer_overflow_to_non_leaf2();
-  test_insert_buffer_overflow_to_non_leaf3();
-  test_insert_buffer_overflow_to_non_leaf4();
-  test_not_valid_on_manual_insert();
+  // test_interval_range_belong_to();
+  // test_test();
+  // test_buffer_points_less_than_point_buffer_points();
+  // test_no_duplicates_in_pv_iv_dv();
+  // test_insert_buffer_overflow();
+  // test_root_split();
+  // test_root_split_insert_overflow();
+  // test_root_split_insert_between_overflow();
+  // test_maintaining_min_max_y_on_insert_buffer_overflow();
+  // test_node_degree_overflow();
+  // test_distribute_evenly();
+  // test_insert_buffer_overflow_to_non_leaf();
+  // test_insert_buffer_overflow_to_non_leaf2();
+  // test_insert_buffer_overflow_to_non_leaf3();
+  // test_insert_buffer_overflow_to_non_leaf4();
+  // test_not_valid_on_manual_insert();
   test_deterministic_random();
   test_deterministic_random2();
   test_random_deterministic3();
@@ -2684,19 +2686,19 @@ int main() {
   // test_delete_truly_random_points_from_file("test_points_fail_1");
   // test_delete_truly_random_n_points(10000);
   // test_delete_truly_random_n_points_from_file("test_points");
-  // test_report_points_deterministic();
-  // test_report_points_deterministic2();
-  // test_report_points_deterministic3();
-  // test_report_points_deterministic_delete();
-  // test_report_points_deterministic_repeat_report();
-  // test_report_points_underflowing_point_buffer();
-  // test_report_200_delete_20_points();
+  test_report_points_deterministic();
+  test_report_points_deterministic2();
+  test_report_points_deterministic3();
+  test_report_points_deterministic_delete();
+  test_report_points_deterministic_repeat_report();
+  test_report_points_underflowing_point_buffer();
+  test_report_200_delete_20_points();
   //test_report_random();
   // test_report_random_repeat();
-  // test_report_random_2();
-  // test_global_rebuild_insert_10();
-  // test_global_rebuild_insert_10_delete_5();
-  // test_global_rebuild_insert_100_delete_50();
+  //test_report_random_2();
+  test_global_rebuild_insert_10();
+  test_global_rebuild_insert_10_delete_5();
+  test_global_rebuild_insert_100_delete_50();
   test_construction_50_points();
 
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
