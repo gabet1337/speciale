@@ -2129,9 +2129,12 @@ namespace ext {
       event_stack.push({node, EVENT::point_buffer_underflow});
     
     for (auto bpn : new_children) {
-      if (state == STATE::normal || state == STATE::fix_up || state == STATE::global_rebuild)
+      if (state == STATE::normal || state == STATE::fix_up || state == STATE::global_rebuild) {
         event_stack.push({copy_node(bpn), EVENT::point_buffer_underflow});
-      bpn->flush_all();
+        event_stack.push({copy_node(bpn), EVENT::insert_buffer_overflow});
+        event_stack.push({copy_node(bpn), EVENT::delete_buffer_overflow});
+      }
+       bpn->flush_all();
     }
     
     for (int i = node->is_root() ? 0 : 1; i < nodes_to_create; i++) {
