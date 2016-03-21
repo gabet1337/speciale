@@ -1214,7 +1214,8 @@ namespace ext {
           if (state == STATE::normal || state == STATE::fix_up
               || state == STATE::global_rebuild || state == STATE::construct) {
             if (node->point_buffer_underflow())
-              event_stack.push({copy_node(node), EVENT::point_buffer_underflow_full_children});            handle_point_buffer_underflow_in_children(node);
+              event_stack.push({copy_node(node), EVENT::point_buffer_underflow_full_children});
+            handle_point_buffer_underflow_in_children(node);
           }
           node->flush_all();
         }
