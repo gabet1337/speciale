@@ -2306,6 +2306,8 @@ namespace ext {
       for (point p : node->delete_buffer) {
         DEBUG_MSG_FAIL("Looking at delete " << p);
         if (node->ranges.belong_to(range(p,INF_POINT,INF_POINT,-1)) == *it) {
+          DEBUG_MSG_FAIL("Found point p " << p << " belongs to " << child->id);
+           // TODO: We should propagate delete all the way to leaf when reporting.
           if (child->point_buffer.erase(p)) {
             DEBUG_MSG_FAIL("Removing " << p <<
                            " from childs point buffer and child structure" <<
@@ -2315,16 +2317,19 @@ namespace ext {
             CONTAINED_POINTS.erase(p);
 #endif
           } else if (child->insert_buffer.erase(p)) {
+            DEBUG_MSG_FAIL("Found matching point " << p << " in insert buffer of child " << child->id << ". Deleting " << p);
 #ifdef DEBUG
             CONTAINED_POINTS.erase(p);
 #endif
-          } else if ( (p.y < min_y.y || (p.y == min_y.y && p.x < min_y.x)) && !child->is_leaf() ) {
+          }
+          if ( (p.y < min_y.y || (p.y == min_y.y && p.x < min_y.x)) && !child->is_leaf() ) {
             DEBUG_MSG_FAIL("Inserting delete " << p << " into child " << child->id
                            << " delete_buffer");
             child->delete_buffer.insert(p);
-          }
-          
+          } else DEBUG_MSG_FAIL("Delete can not cancel anything further down. Deleteting delete " << p);
+              
         } else {
+          DEBUG_MSG_FAIL("Found point p " << p << " does not belong to " << child->id);
           new_delete_buffer.insert(p);
         }
       }
