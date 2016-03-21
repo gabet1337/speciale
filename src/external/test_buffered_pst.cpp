@@ -1037,6 +1037,7 @@ void test_not_valid_on_manual_insert() {
   print_description("starting test of manual insert to break is_valid");
 
   ext::buffered_pst epst(9,0.5);
+    
   for (int i = 15; i < 17; i++) epst.insert(point(i,i));
   for (int i = 100; i <= 106; i++) epst.insert(point(i,i));
 
@@ -2434,7 +2435,9 @@ void test_report_random_2() {
 
   std::set<point> true_points;
   ext::buffered_pst epst(9,0.5);
-
+  epst.set_global_rebuild_configuration(ext::buffered_pst::global_rebuild_configuration
+                                        (9999,0.5));
+ 
   test::random r;
   
   for (int i=0; i<200; i++) {
@@ -2638,13 +2641,22 @@ void test_construction_50_points() {
 }
 
 void cleanup() {
-  for (int i = 0; i < 1000; i++)
-    util::remove_directory(to_string(i));
-  for (int i = 0; i < 1000; i++) {
-    util::remove_directory("c_"+to_string(i));
-    util::remove_directory("tree_"+to_string(i)+".png");
+
+  for (int i = 0; i < 10000 ; i++) {
+    if (util::file_exists(to_string(i))) {
+      util::remove_directory(to_string(i));
+      util::remove_directory("c_"+to_string(i));
+    } //else break;
   }
+  
+  for (int i = 0; i < 10000 ; i++) {
+    if (util::file_exists("tree_"+to_string(i)+".png"))
+      util::remove_directory("tree_"+to_string(i)+".png");
+    //else break;
+  }
+  
   util::remove_directory("test");
+  
 }
 
 int main() {
@@ -2671,35 +2683,35 @@ int main() {
   // test_insert_buffer_overflow_to_non_leaf3();
   // test_insert_buffer_overflow_to_non_leaf4();
   // test_not_valid_on_manual_insert();
-  test_deterministic_random();
-  test_deterministic_random2();
-  test_random_deterministic3();
+  // test_deterministic_random();
+  // test_deterministic_random2();
+  // test_random_deterministic3();
   // test_random_insert();
-  // test_truly_random();
+  // // test_truly_random();
   // test_delete();
   // test_delete_overflow();
   // test_delete_overflow_underflow_node();
   // test_delete_overflow_many_points();
   // test_delete_all_points();
   // test_insert_200_delete_20_points();
-  // test_delete_truly_random();
-  // test_delete_truly_random_points_from_file("test_points_fail_1");
-  // test_delete_truly_random_n_points(10000);
-  // test_delete_truly_random_n_points_from_file("test_points");
-  test_report_points_deterministic();
-  test_report_points_deterministic2();
-  test_report_points_deterministic3();
-  test_report_points_deterministic_delete();
-  test_report_points_deterministic_repeat_report();
-  test_report_points_underflowing_point_buffer();
-  test_report_200_delete_20_points();
-  //test_report_random();
+  // // test_delete_truly_random();
+  // // test_delete_truly_random_points_from_file("test_points_fail_1");
+  // // test_delete_truly_random_n_points(10000);
+  // // test_delete_truly_random_n_points_from_file("test_points");
+  // test_report_points_deterministic();
+  // test_report_points_deterministic2();
+  // test_report_points_deterministic3();
+  // test_report_points_deterministic_delete();
+  // test_report_points_deterministic_repeat_report();
+  // test_report_points_underflowing_point_buffer();
+  // test_report_200_delete_20_points();
+  // test_report_random();
   // test_report_random_repeat();
-  //test_report_random_2();
-  test_global_rebuild_insert_10();
-  test_global_rebuild_insert_10_delete_5();
-  test_global_rebuild_insert_100_delete_50();
-  test_construction_50_points();
+  test_report_random_2();
+  // test_global_rebuild_insert_10();
+  // test_global_rebuild_insert_10_delete_5();
+  // test_global_rebuild_insert_100_delete_50();
+  // test_construction_50_points();
 
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   

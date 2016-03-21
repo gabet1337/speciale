@@ -1211,9 +1211,11 @@ namespace ext {
             c->flush_ranges();
             delete c;
           }
-           if (state == STATE::normal || state == STATE::fix_up
-               || state == STATE::global_rebuild || state == STATE::construct)
-             handle_point_buffer_underflow_in_children(node);
+          if (state == STATE::normal || state == STATE::fix_up
+              || state == STATE::global_rebuild || state == STATE::construct) {
+            if (node->point_buffer_underflow())
+              event_stack.push({copy_node(node), EVENT::point_buffer_underflow_full_children});            handle_point_buffer_underflow_in_children(node);
+          }
           node->flush_all();
         }
         break;
@@ -1847,7 +1849,8 @@ namespace ext {
     // TODO: should X.size() <= buffer_size/2 ??
     DEBUG_MSG("Grabbing the B/2 highest y-value points from children and deleting them");
     std::set<point> X;
-    while (!pq.empty() && X.size() < buffer_size/2) {
+    for (size_t i = 0; !pq.empty() && i < buffer_size/2; i++) {
+      //while (!pq.empty() && X.size() < buffer_size/2) {
       point_child_pair pcp = pq.top(); pq.pop();
       if ( node->delete_buffer.erase(pcp.first) ) {
         DEBUG_MSG("Point " << pcp.first << " was canceled by delete in node " << node->id);
