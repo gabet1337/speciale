@@ -2446,8 +2446,11 @@ void test_report_random_2() {
     true_points.insert(p);
   }
 
-  epst.print();
-  assert( epst.is_valid() );
+  bool is_valid = epst.is_valid();
+  if (!is_valid) {
+    epst.print();
+    assert( is_valid );
+  }
   
   for (int i = 0; i < 10; i++) {
 
@@ -2459,7 +2462,11 @@ void test_report_random_2() {
       true_points.erase(rand_deletes[i]);
     }
 
-    assert( epst.is_valid() );
+    is_valid = epst.is_valid();
+    if (!is_valid) {
+      epst.print();
+      assert( is_valid );
+    }
 
     for (int j = 0; j < 10; j++) {
     
@@ -2482,14 +2489,19 @@ void test_report_random_2() {
         if (util::in_range(p,x1,x2,y))
           true_reported_points.push_back(p);
 
-      epst.print();
-  
-      assert (true_reported_points == actual_points);
-      assert ( epst.is_valid() );
+      if (true_reported_points != actual_points) {
+        epst.print();        
+        assert (true_reported_points == actual_points);
+      }
+
+      is_valid = epst.is_valid();
+      if (!is_valid) {
+        epst.print();
+        assert( is_valid );
+      }
+   
       util::remove_directory("test/report_rand_2");
     }
-
-
 
     for (int j=0; j<50; j++) {
       point p(r.next(200),r.next(200));
@@ -2497,8 +2509,11 @@ void test_report_random_2() {
       true_points.insert(p);
     }
 
-    epst.print();
-    assert( epst.is_valid() );
+    is_valid = epst.is_valid();
+    if (!is_valid) {
+      epst.print();
+      assert( is_valid );
+    }
     
   }
     
