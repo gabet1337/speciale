@@ -2439,6 +2439,8 @@ void test_report_random_2() {
                                         (9999,0.5));
  
   test::random r;
+
+  cerr << "- inserting 200 points" << endl;
   
   for (int i=0; i<200; i++) {
     point p(r.next(200),r.next(200));
@@ -2453,10 +2455,12 @@ void test_report_random_2() {
   }
   
   for (int i = 0; i < 10; i++) {
-
+   
     std::vector<point> rand_deletes(true_points.begin(), true_points.end());
     std::random_shuffle(rand_deletes.begin(), rand_deletes.end());
 
+    cerr << "- round " << i+1 << " of 10: deleting 50 points" << endl;
+    
     for (int j=0; j<50; j++) {
       epst.remove(rand_deletes[i]);
       true_points.erase(rand_deletes[i]);
@@ -2468,8 +2472,10 @@ void test_report_random_2() {
       assert( is_valid );
     }
 
+    cerr << "- round " << i+1 << " of 10: reporting 10 times" << endl;
+
     for (int j = 0; j < 10; j++) {
-    
+      
       int x1 = r.next(200);
       int x2 = r.next(200);
       int y = r.next(200);
@@ -2503,6 +2509,8 @@ void test_report_random_2() {
       util::remove_directory("test/report_rand_2");
     }
 
+    cerr << "- round " << i+1 << " of 10: inserting 50 points" << endl;
+    
     for (int j=0; j<50; j++) {
       point p(r.next(200),r.next(200));
       epst.insert(p);
