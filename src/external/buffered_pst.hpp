@@ -1726,7 +1726,8 @@ namespace ext {
     
     DEBUG_MSG("Remove points in U from Dv, Ic, Dc, Pc, Cv");
 
-    std::set<point> new_U;
+    // TODO: We should propagate deletes as far down the tree as possible.
+    //std::set<point> new_U;
     for (point p : U) {
       if (node->delete_buffer.erase(p)) {
         DEBUG_MSG("Removing " << p << " from delete buffer");
@@ -1746,11 +1747,10 @@ namespace ext {
         node->child_structure->remove(p);
       } else if (child->delete_buffer.erase(p)) {
         DEBUG_MSG("Removing " << p << " from delete buffer of found child");
-        new_U.insert(p);
-      } else new_U.insert(p);
-
+        //new_U.insert(p);
+      }
     }
-    U = new_U;
+    //U = new_U;
 
     auto extrema = find_extrema<std::set<point> >(child->point_buffer);
     point max_y = *std::max_element(child->point_buffer.begin(),
@@ -1861,9 +1861,14 @@ namespace ext {
       } else {
         auto it = node->insert_buffer.find(pcp.first);
         if ( it != node->insert_buffer.end() ) {
+#ifdef DEBUG
+          asert ( it != 0 );
+#endif
           DEBUG_MSG("Move more recent updates of p from Iv to X in node " << node->id);
-          node->insert_buffer.erase(*it);
+          node->insert_buffer.erase(*it); //TODO: This has thrown a null pointer exception??
+          DEBUG_MSG("Succeded in erasing point from node->insert_buffer");
           X.insert(*it);
+          DEBUG_MSG("Succeded in insert point in X");
         } else {
           DEBUG_MSG("Inserting point " << pcp.first << " into X in node id " << node->id);
           X.insert(pcp.first);
