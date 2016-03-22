@@ -1862,10 +1862,10 @@ namespace ext {
         auto it = node->insert_buffer.find(pcp.first);
         if ( it != node->insert_buffer.end() ) {
           DEBUG_MSG("Move more recent updates of p from Iv to X in node " << node->id);
-          node->insert_buffer.erase(*it); //TODO: This has thrown a null pointer exception??
-          DEBUG_MSG("Succeded in erasing point from node->insert_buffer");
-          X.insert(*it);
+          X.insert(*it); //TODO: This has thrown a null pointer exception?? 
           DEBUG_MSG("Succeded in insert point in X");
+          node->insert_buffer.erase(*it); 
+          DEBUG_MSG("Succeded in erasing point from node->insert_buffer");
         } else {
           DEBUG_MSG("Inserting point " << pcp.first << " into X in node id " << node->id);
           X.insert(pcp.first);
