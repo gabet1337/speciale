@@ -1861,9 +1861,6 @@ namespace ext {
       } else {
         auto it = node->insert_buffer.find(pcp.first);
         if ( it != node->insert_buffer.end() ) {
-#ifdef DEBUG
-          asert ( it != 0 );
-#endif
           DEBUG_MSG("Move more recent updates of p from Iv to X in node " << node->id);
           node->insert_buffer.erase(*it); //TODO: This has thrown a null pointer exception??
           DEBUG_MSG("Succeded in erasing point from node->insert_buffer");
