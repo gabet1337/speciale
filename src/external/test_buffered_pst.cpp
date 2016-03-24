@@ -2529,6 +2529,104 @@ void test_report_random_2() {
   
 }
 
+void test_report_random_buffer_size_512() {
+
+  print_description("starting test of report random buffer_size 512");
+
+  std::set<point> true_points;
+  ext::buffered_pst epst(512,0.5);
+ 
+  test::random r;
+
+  cerr << "- inserting 12000 points" << endl;
+  
+  for (int i=0; i<12000; i++) {
+    point p(r.next(99999),r.next(99999));
+    epst.insert(p);
+    true_points.insert(p);
+  }
+
+  bool is_valid = epst.is_valid();
+  if (!is_valid) {
+    epst.print();
+    assert( is_valid );
+  }
+  
+  for (int i = 0; i < 10; i++) {
+   
+    std::vector<point> rand_deletes(true_points.begin(), true_points.end());
+    std::random_shuffle(rand_deletes.begin(), rand_deletes.end());
+
+    cerr << "- round " << i+1 << " of 10: deleting 3000 points" << endl;
+    
+    for (int j=0; j<3000; j++) {
+      epst.remove(rand_deletes[i]);
+      true_points.erase(rand_deletes[i]);
+    }
+
+    is_valid = epst.is_valid();
+    if (!is_valid) {
+      epst.print();
+      assert( is_valid );
+    }
+
+    cerr << "- round " << i+1 << " of 10: reporting 10 times" << endl;
+
+    for (int j = 0; j < 10; j++) {
+      
+      int x1 = r.next(99999);
+      int x2 = r.next(99999);
+      int y = r.next(99999);
+    
+      if (x2 < x1) std::swap(x1,x2);
+  
+      epst.report(x1,x2,y,"test/report_rand_buf_size_512");
+
+      std::vector<point> actual_points;
+      util::load_file_to_container<std::vector<point>, point>
+        (actual_points, "test/report_rand_buf_size_512", 4096);
+    
+      std::sort(actual_points.begin(),actual_points.end());
+
+      std::vector<point> true_reported_points;
+      for (point p : true_points)
+        if (util::in_range(p,x1,x2,y))
+          true_reported_points.push_back(p);
+
+      if (true_reported_points != actual_points) {
+        epst.print();        
+        assert (true_reported_points == actual_points);
+      }
+
+      is_valid = epst.is_valid();
+      if (!is_valid) {
+        epst.print();
+        assert( is_valid );
+      }
+   
+      util::remove_directory("test/report_rand_buf_size_512");
+    }
+
+    cerr << "- round " << i+1 << " of 10: inserting 3000 points" << endl;
+    
+    for (int j=0; j<3000; j++) {
+      point p(r.next(99999),r.next(99999));
+      epst.insert(p);
+      true_points.insert(p);
+    }
+
+    is_valid = epst.is_valid();
+    if (!is_valid) {
+      epst.print();
+      assert( is_valid );
+    }
+    
+  }
+    
+  print_success();
+  
+}
+
 void test_global_rebuild_insert_10() {
 
   print_description("starting test of global rebuild insert 10");
@@ -2730,7 +2828,7 @@ int main() {
   // test_report_200_delete_20_points() ;
   // test_report_random();
   // test_report_random_repeat();
-  test_report_random_2();
+  //test_report_random_2();
   // test_global_rebuild_insert_10();
   // test_global_rebuild_insert_10_delete_5();
   // test_global_rebuild_insert_100_delete_50();
@@ -2738,6 +2836,8 @@ int main() {
   // TODO: test_insert_delete_all_insert_half_report()
   // TODO: test_insert_delete_half_insert_half_report();
   // TODO: test_insert_delete_half_insert_all_report();
+  test_report_random_buffer_size_512();
+  
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   
   cleanup();
