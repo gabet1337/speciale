@@ -28,7 +28,7 @@ namespace ext {
     void remove(const point &p);
     std::vector<point> report(int x1, int x2, int y);
     void destroy();
-#ifdef DEBUG
+
     std::vector<point> get_points()
     {
       if (!L_in_memory) {
@@ -46,7 +46,7 @@ namespace ext {
       //L_new should now be equivalent to L' in article
       return L_new;
     }
-#endif
+
 #ifdef VALIDATE
     bool valid_disk();
     bool valid_memory();

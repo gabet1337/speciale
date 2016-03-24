@@ -26,10 +26,9 @@ namespace ext {
     bool valid_memory() { return true; }
     bool valid_disk() { return true; }
 #endif
-#ifdef DEBUG
-    std::vector<point> get_points()
-    {return std::vector<point>(points.begin(), points.end());}
-#endif
+    std::vector<point> get_points() {
+      return std::vector<point>(points.begin(), points.end());
+    }
   private:
     std::string get_directory();
     std::string get_L_file();
