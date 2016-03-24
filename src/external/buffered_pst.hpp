@@ -2,6 +2,7 @@
 #define BUFFERED_PST_HPP
 #include "../common/point.hpp"
 #include "../common/debug.hpp"
+#include "../common/validate.hpp"
 #include "../common/utilities.hpp"
 #include "../common/definitions.hpp"
 #include "../internal/rb_tree.hpp"
@@ -27,7 +28,7 @@
 #define MINUS_INF_POINT point(-INF,-INF)
 namespace ext {
   int next_id = 1;
-#ifdef DEBUG
+#ifdef VALIDATE
   std::set<point> CONTAINED_POINTS;
 #endif
   class buffered_pst {
@@ -50,7 +51,7 @@ namespace ext {
       double rebuild_factor;
     };
     void set_global_rebuild_configuration(const global_rebuild_configuration &config);
-#ifdef DEBUG
+#ifdef VALIDATE
     bool is_valid();
 #endif
   private:
@@ -103,7 +104,7 @@ namespace ext {
       ext::child_structure_interface *child_structure;
       internal::rb_tree<range> ranges;
       int parent_id;
-#ifdef DEBUG
+#ifdef VALIDATE
       bool is_valid();
 #endif
     private:
@@ -556,44 +557,44 @@ namespace ext {
   }
 
 
-#ifdef DEBUG
+#ifdef VALIDATE
   bool buffered_pst::buffered_pst_node::is_valid() {
 
-    DEBUG_MSG("STARTING IS VALID TEST");
+    VALIDATE_MSG("STARTING IS VALID TEST");
     load_all();
     
     // TODO check all invariants. Recurse on children.
     if ( insert_buffer_overflow() ) {
-      DEBUG_MSG_FAIL("Insert buffer overflow in node " << id);
+      VALIDATE_MSG_FAIL("Insert buffer overflow in node " << id);
       return false;
     }
     if ( delete_buffer_overflow() ) {
-      DEBUG_MSG_FAIL("Delete buffer overflow in node " << id);
+      VALIDATE_MSG_FAIL("Delete buffer overflow in node " << id);
       return false;
     }
     if ( point_buffer_overflow() ) {
-      DEBUG_MSG_FAIL("Point buffer overflow in node " << id);
+      VALIDATE_MSG_FAIL("Point buffer overflow in node " << id);
       return false;
     }
     if ( point_buffer_underflow() ) {
-      DEBUG_MSG_FAIL("Point buffer underflow in node " << id);
+      VALIDATE_MSG_FAIL("Point buffer underflow in node " << id);
       return false;
     }
 
     if ( ( is_leaf() || is_virtual_leaf() ) && (!delete_buffer.empty() )) {
-      DEBUG_MSG_FAIL("We are a leaf or a virtual leaf without empty delete or insert buffer " << id);
-      DEBUG_MSG("Delete buffer contains");
-      for (point p : delete_buffer) DEBUG_MSG(" - " << p);
-      DEBUG_MSG("Insert buffer contains");
-      for (point p : insert_buffer) DEBUG_MSG(" - " << p);
+      VALIDATE_MSG_FAIL("We are a leaf or a virtual leaf without empty delete or insert buffer " << id);
+      VALIDATE_MSG("Delete buffer contains");
+      for (point p : delete_buffer) VALIDATE_MSG(" - " << p);
+      VALIDATE_MSG("Insert buffer contains");
+      for (point p : insert_buffer) VALIDATE_MSG(" - " << p);
       return false;
     }
 
     if (is_root()) {
       for (range r : ranges)
         if (r.node_id == 0) {
-          DEBUG_MSG_FAIL("We have node id 0 range in root");
-          for (range r : ranges) DEBUG_MSG_FAIL(" - " << r);
+          VALIDATE_MSG_FAIL("We have node id 0 range in root");
+          for (range r : ranges) VALIDATE_MSG_FAIL(" - " << r);
           return false;
         }
     }
@@ -610,9 +611,9 @@ namespace ext {
                           delete_buffer.begin(), delete_buffer.end(),
                           std::back_inserter(intersection));
     if (!intersection.empty()) {
-      DEBUG_MSG_FAIL("Duplicate in insert buffer and delete buffer");
+      VALIDATE_MSG_FAIL("Duplicate in insert buffer and delete buffer");
       for (point p : intersection)
-        DEBUG_MSG_FAIL(p);
+        VALIDATE_MSG_FAIL(p);
       return false;
     }
     intersection.clear();
@@ -621,9 +622,9 @@ namespace ext {
                           point_buffer.begin(), point_buffer.end(),
                           std::back_inserter(intersection));
     if (!intersection.empty()) {
-      DEBUG_MSG_FAIL("Duplicate in insert buffer and point buffer");
+      VALIDATE_MSG_FAIL("Duplicate in insert buffer and point buffer");
       for (point p : intersection)
-        DEBUG_MSG_FAIL(p);
+        VALIDATE_MSG_FAIL(p);
       return false;
     }
     intersection.clear();
@@ -632,9 +633,9 @@ namespace ext {
                           point_buffer.begin(), point_buffer.end(),
                           std::back_inserter(intersection));
     if (!intersection.empty()) {
-      DEBUG_MSG_FAIL("Duplicate in insert buffer and point buffer");
+      VALIDATE_MSG_FAIL("Duplicate in insert buffer and point buffer");
       for (point p : intersection)
-        DEBUG_MSG_FAIL(p);
+        VALIDATE_MSG_FAIL(p);
       return false;
     }
 
@@ -649,21 +650,22 @@ namespace ext {
                     [&min_y] (point p) {
                       return min_y.y < p.y || (min_y.y == p.y && min_y.x < p.x);
                     })) {
-      DEBUG_MSG_FAIL("A point in Iv or Dv has larger y value than a point in Pv on node " << id);
-      DEBUG_MSG_FAIL("Points in Iv:");
-      for (auto p : insert_buffer) DEBUG_MSG_FAIL(" - " << p);
-      DEBUG_MSG_FAIL("Points in Dv:");
-      for (auto p : delete_buffer) DEBUG_MSG_FAIL(" - " << p);
-      DEBUG_MSG_FAIL("Points in Pv:");
-      for (auto p : point_buffer) DEBUG_MSG_FAIL(" - " << p);
+      VALIDATE_MSG_FAIL("A point in Iv or Dv has larger y value than a point in Pv on node "
+                        << id);
+      VALIDATE_MSG_FAIL("Points in Iv:");
+      for (auto p : insert_buffer) VALIDATE_MSG_FAIL(" - " << p);
+      VALIDATE_MSG_FAIL("Points in Dv:");
+      for (auto p : delete_buffer) VALIDATE_MSG_FAIL(" - " << p);
+      VALIDATE_MSG_FAIL("Points in Pv:");
+      for (auto p : point_buffer) VALIDATE_MSG_FAIL(" - " << p);
       return false;
     }
 
     // Point buffer should not have points that is also in delete buffer
     for (point p : point_buffer) {
       if (delete_buffer.find(p) != delete_buffer.end()) {
-        DEBUG_MSG_FAIL("Point " << p << " is both in delete_buffer and point_buffer at node "
-                       << id);
+        VALIDATE_MSG_FAIL("Point " << p
+                          << " is both in delete_buffer and point_buffer at node " << id);
         return false;
       }
     }
@@ -671,8 +673,8 @@ namespace ext {
     // Insert buffer should not have points that is also in delete buffer
     for (point p : insert_buffer) {
       if (delete_buffer.find(p) != delete_buffer.end()) {
-        DEBUG_MSG_FAIL("Point " << p << " is both in delete_buffer and insert_buffer at node "
-                       << id);
+        VALIDATE_MSG_FAIL("Point " << p
+                          << " is both in delete_buffer and insert_buffer at node " << id);
         return false;
       }
     }
@@ -684,14 +686,16 @@ namespace ext {
       while (!bs.eof()) {
         point p = bs.read();
         if (ranges.belong_to(range(p,INF_POINT,INF_POINT,0)) != *it) {
-          DEBUG_MSG_FAIL("point " << p << " is in the wrong child " << it->node_id);
-          DEBUG_MSG_FAIL("child " << it->node_id << " is responsible for " << *it
-                         << " but belong to " << ranges.belong_to(range(p,INF_POINT,INF_POINT,0)));
+          VALIDATE_MSG_FAIL("point " << p << " is in the wrong child " << it->node_id);
+          VALIDATE_MSG_FAIL("child " << it->node_id << " is responsible for " << *it
+                            << " but belong to "
+                            << ranges.belong_to(range(p,INF_POINT,INF_POINT,0)));
           return false;
         }
         if (comp_y(it->max_y, p)) {
-            //        if (p > it->max_y) {
-          DEBUG_MSG_FAIL("point " << p << " has y-value larger than range max_y " << it->max_y);
+          //        if (p > it->max_y) {
+          VALIDATE_MSG_FAIL("point " << p << " has y-value larger than range max_y "
+                            << it->max_y);
           return false;
         }
       }
@@ -699,30 +703,30 @@ namespace ext {
     }
 
     if (ranges.size() == 0 && is_leaf() != true) {
-      DEBUG_MSG_FAIL("We have children but is a leaf in node: " << id);
+      VALIDATE_MSG_FAIL("We have children but is a leaf in node: " << id);
       return false;
     }
 
     if (ranges.size() != 0 && is_leaf() != false) {
-      DEBUG_MSG_FAIL("We dont have children but we are not a leaf! in node: " << id);
+      VALIDATE_MSG_FAIL("We dont have children but we are not a leaf! in node: " << id);
       return false;
     }
 
     // tests the heap order on point buffers
-    DEBUG_MSG("Test the heap order on " << id);
+    VALIDATE_MSG("Test the heap order on " << id);
     for (auto r : ranges) {
-      DEBUG_MSG("Opening child " << r.node_id);
+      VALIDATE_MSG("Opening child " << r.node_id);
       buffered_pst_node child(r.node_id, buffer_size,epsilon,root);
       child.load_point_buffer();
       if (std::any_of(child.point_buffer.begin(), child.point_buffer.end(),
                       [&min_y] (point p) {
                         return min_y.y < p.y || (min_y.y == p.y && min_y.x < p.x);
                       })) {
-        DEBUG_MSG_FAIL("A point in child has larger y value than a point in Pv");
-        DEBUG_MSG_FAIL("We have points: ");
-        for (point p : point_buffer) DEBUG_MSG_FAIL(" - " << p);
-        DEBUG_MSG_FAIL("Child has points:");
-        for (point p : child.point_buffer) DEBUG_MSG_FAIL(" - " << p);
+        VALIDATE_MSG_FAIL("A point in child has larger y value than a point in Pv");
+        VALIDATE_MSG_FAIL("We have points: ");
+        for (point p : point_buffer) VALIDATE_MSG_FAIL(" - " << p);
+        VALIDATE_MSG_FAIL("Child has points:");
+        for (point p : child.point_buffer) VALIDATE_MSG_FAIL(" - " << p);
         return false;
       }
     }
@@ -743,19 +747,21 @@ namespace ext {
         bpn.load_all();
         for (point p : bpn.insert_buffer) collected_points.insert(p);
         for (point p : bpn.point_buffer) collected_points.insert(p);
-        for (range r : bpn.ranges) q.push(buffered_pst_node(r.node_id, buffer_size, epsilon, root));
+        for (range r : bpn.ranges) q.push(buffered_pst_node(r.node_id, buffer_size, epsilon,
+                                                            root));
       }
       if (collected_points != CONTAINED_POINTS) {
-        DEBUG_MSG_FAIL("CONTAINED_POINTS:");
-        for (point p : CONTAINED_POINTS) DEBUG_MSG_FAIL(" - " << p);
-        DEBUG_MSG_FAIL("collected_points:");
-        for (point p : collected_points) DEBUG_MSG_FAIL(" - " << p);
-        DEBUG_MSG_FAIL("The collected points in our structure is not equal to the inserted points");
+        VALIDATE_MSG_FAIL("CONTAINED_POINTS:");
+        for (point p : CONTAINED_POINTS) VALIDATE_MSG_FAIL(" - " << p);
+        VALIDATE_MSG_FAIL("collected_points:");
+        for (point p : collected_points) VALIDATE_MSG_FAIL(" - " << p);
+        VALIDATE_MSG_FAIL("The collected points in our structure is " <<
+                          "not equal to the inserted points");
         std::vector<point> diff;
         std::set_difference(CONTAINED_POINTS.begin(), CONTAINED_POINTS.end(),
                             collected_points.begin(), collected_points.end(),
                             std::back_inserter(diff));
-        for (point p : diff) DEBUG_MSG_FAIL(" - " << p);
+        for (point p : diff) VALIDATE_MSG_FAIL(" - " << p);
         return false;
       }
     }
@@ -770,12 +776,15 @@ namespace ext {
         bpn.load_all();
         for (point p : bpn.point_buffer) points_in_subtree.insert(p);
         for (point p : bpn.insert_buffer) points_in_subtree.insert(p);
-        for (range ra : bpn.ranges) q.push(buffered_pst_node(ra.node_id, buffer_size,epsilon, root));
+        for (range ra : bpn.ranges) q.push(buffered_pst_node(ra.node_id, buffer_size,epsilon,
+                                                             root));
       }
       for (point p : points_in_subtree) {
         if (ranges.belong_to(range(p,INF_POINT,INF_POINT,0)) != r) {
-          DEBUG_MSG_FAIL("Point " << p << " was found not belonging to this subtree but was found to belong to " << ranges.belong_to(range(p,INF_POINT,INF_POINT,0)));
-          for (range ra : ranges) DEBUG_MSG_FAIL(" - " << ra);
+          VALIDATE_MSG_FAIL("Point " << p << " was found not belonging to this subtree but " <<
+                            "was found to belong to " <<
+                            ranges.belong_to(range(p,INF_POINT,INF_POINT,0)));
+          for (range ra : ranges) VALIDATE_MSG_FAIL(" - " << ra);
           return false;
         }
       }
@@ -783,7 +792,7 @@ namespace ext {
 
     // testing correct max y in child
     for (auto r : ranges) {
-      DEBUG_MSG("Opening child " << r.node_id);
+      VALIDATE_MSG("Opening child " << r.node_id);
       buffered_pst_node child(r.node_id,buffer_size,epsilon,root);
       child.load_all();
 
@@ -799,14 +808,17 @@ namespace ext {
       if (child.point_buffer.empty()) min_y = INF_POINT;
 
       if (min_y != r.min_y) {
-        DEBUG_MSG_FAIL("min_y " << r.min_y << " in range of node " << id << " is not equal to "
-                       << "minimum y " << min_y << " in point buffer of child " << r.node_id);
+        VALIDATE_MSG_FAIL("min_y " << r.min_y << " in range of node "
+                          << id << " is not equal to "
+                          << "minimum y " << min_y << " in point buffer of child "
+                          << r.node_id);
         return false;
       }
 
       if (max_y != r.max_y) {
-        DEBUG_MSG_FAIL("max_y " << r.max_y << " in range of node " << id << " is not equal to "
-                       << "maximum y " << max_y << " in point buffer of child " << r.node_id);
+        VALIDATE_MSG_FAIL("max_y " << r.max_y << " in range of node " << id <<
+                          " is not equal to " << "maximum y " << max_y <<
+                          " in point buffer of child " << r.node_id);
         return false;
       }
     }
@@ -815,31 +827,33 @@ namespace ext {
     std::vector<point> child_structure_points = child_structure->get_points();
     std::vector<point> collected_points;
     for (auto r : ranges) {
-      DEBUG_MSG("Opening child " << r.node_id);
+      VALIDATE_MSG("Opening child " << r.node_id);
       buffered_pst_node child(r.node_id, buffer_size, epsilon, root);
       child.load_point_buffer();
-      for (point p : child.point_buffer) DEBUG_MSG(" - " << p);
+      for (point p : child.point_buffer) VALIDATE_MSG(" - " << p);
       collected_points.insert(collected_points.end(), child.point_buffer.begin(),
                               child.point_buffer.end());
     }
     if (child_structure_points != collected_points) {
-      DEBUG_MSG_FAIL("Child structure of node " << id << " does not have the same points as the children");
-      DEBUG_MSG_FAIL("points in child_structure:");
-      for (point p : child_structure_points) DEBUG_MSG_FAIL(" - " << p);
-      DEBUG_MSG_FAIL("points in children:");
-      for (point p : collected_points) DEBUG_MSG_FAIL(" - " << p);
+      VALIDATE_MSG_FAIL("Child structure of node " << id
+                        << " does not have the same points as the children");
+      VALIDATE_MSG_FAIL("points in child_structure:");
+      for (point p : child_structure_points) VALIDATE_MSG_FAIL(" - " << p);
+      VALIDATE_MSG_FAIL("points in children:");
+      for (point p : collected_points) VALIDATE_MSG_FAIL(" - " << p);
       return false;
     }
 
     if (ranges.size() > B_epsilon) {
-      DEBUG_MSG_FAIL("We have too many children in node " << id << " with B_epsilon = " << B_epsilon);
-      for (range r : ranges) DEBUG_MSG_FAIL(" - " << r);
+      VALIDATE_MSG_FAIL("We have too many children in node " << id
+                        << " with B_epsilon = " << B_epsilon);
+      for (range r : ranges) VALIDATE_MSG_FAIL(" - " << r);
       return false;
     }
     
     // ALWAYS AT THE BUTT
     for (auto r : ranges) {
-      DEBUG_MSG("Opening child " << r.node_id);
+      VALIDATE_MSG("Opening child " << r.node_id);
       buffered_pst_node child(r.node_id,buffer_size,epsilon,root);
       if (child.is_valid() == false) {
         return false;
@@ -847,7 +861,7 @@ namespace ext {
     }
     
     flush_all();
-    DEBUG_MSG("IS VALID IS DONE AND GOOD!");
+    VALIDATE_MSG("IS VALID IS DONE AND GOOD!");
     return true;
   }
 #endif
@@ -868,7 +882,7 @@ namespace ext {
     DEBUG_MSG("Constructing buffered_pst with buffer_size: "
               << buffer_size << " epsilon: " << epsilon << " B_epsilon: " << B_epsilon);
     next_id = 1;
-#ifdef DEBUG
+#ifdef VALIDATE
     CONTAINED_POINTS.clear();
 #endif
   }
@@ -885,7 +899,7 @@ namespace ext {
 
   void buffered_pst::insert(const point &p) {
     DEBUG_MSG("Inserting point " << p << " into root");
-#ifdef DEBUG
+#ifdef VALIDATE
     if (state == STATE::normal)
       CONTAINED_POINTS.insert(p);
 #endif
@@ -902,7 +916,8 @@ namespace ext {
       root->insert_buffer.erase(p);
       root->delete_buffer.erase(p);
       DEBUG_MSG("Check if put into Ir or Pr");
-      point min_y = *std::min_element(root->point_buffer.begin(), root->point_buffer.end(), comp_y);
+      point min_y = *std::min_element(root->point_buffer.begin(),
+                                      root->point_buffer.end(), comp_y);
       if (p.y < min_y.y || (p.y == min_y.y && p.x < min_y.x)) {
         root->insert_into_insert_buffer(p);
         if (state == STATE::normal || state == STATE::global_rebuild)
@@ -932,7 +947,7 @@ namespace ext {
   
   void buffered_pst::remove(const point &p) {
     DEBUG_MSG("Removing point " << p << " in root");
-#ifdef DEBUG
+#ifdef VALIDATE
     if (state == STATE::normal) {
       if (root->point_buffer.find(p) != root->point_buffer.end()) CONTAINED_POINTS.erase(p);
       if (root->insert_buffer.find(p) != root->insert_buffer.end()) CONTAINED_POINTS.erase(p);
@@ -1695,7 +1710,6 @@ namespace ext {
     assert(child->is_insert_buffer_loaded);
 
     assert(node->delete_buffer.size() > buffer_size/4);
-
 #endif
       
     DEBUG_MSG("Create U to send to child");
@@ -1735,12 +1749,12 @@ namespace ext {
       
       if (child->insert_buffer.erase(p)) {
         DEBUG_MSG("Removing " << p << " from insert buffer of found child");
-#ifdef DEBUG
+#ifdef VALIDATE
         CONTAINED_POINTS.erase(p);
 #endif
       } else if (child->point_buffer.erase(p)) {
         DEBUG_MSG("Removing " << p << " from point buffer of found child");
-#ifdef DEBUG
+#ifdef VALIDATE
         CONTAINED_POINTS.erase(p);
 #endif
         DEBUG_MSG("Removing " << p << " from child structure of found child");
@@ -1855,7 +1869,7 @@ namespace ext {
       point_child_pair pcp = pq.top(); pq.pop();
       if ( node->delete_buffer.erase(pcp.first) ) {
         DEBUG_MSG("Point " << pcp.first << " was canceled by delete in node " << node->id);
-#ifdef DEBUG
+#ifdef VALIDATE
         CONTAINED_POINTS.erase(pcp.first);
 #endif
       } else {
@@ -2315,12 +2329,13 @@ namespace ext {
                            " from childs point buffer and child structure" <<
                            " of node " << node->id);
             node->child_structure->remove(p);
-#ifdef DEBUG
+#ifdef VALIDATE
             CONTAINED_POINTS.erase(p);
 #endif
           } else if (child->insert_buffer.erase(p)) {
-            DEBUG_MSG_FAIL("Found matching point " << p << " in insert buffer of child " << child->id << ". Deleting " << p);
-#ifdef DEBUG
+            DEBUG_MSG_FAIL("Found matching point " << p << " in insert buffer of child "
+                           << child->id << ". Deleting " << p);
+#ifdef VALIDATE
             CONTAINED_POINTS.erase(p);
 #endif
           }
@@ -2328,8 +2343,8 @@ namespace ext {
             DEBUG_MSG_FAIL("Inserting delete " << p << " into child " << child->id
                            << " delete_buffer");
             child->delete_buffer.insert(p);
-          } else DEBUG_MSG_FAIL("Delete can not cancel anything further down. Deleteting delete " << p);
-              
+          } else DEBUG_MSG_FAIL("Delete can not cancel anything further down. Removing " << p);
+          
         } else {
           DEBUG_MSG_FAIL("Found point p " << p << " does not belong to " << child->id);
           new_delete_buffer.insert(p);
@@ -2367,7 +2382,8 @@ namespace ext {
           ? sorted_points.size() - (buffer_size / 2 - 1)
           : sorted_points.size() - buffer_size;
         
-        DEBUG_MSG("we remove " << points_to_remove << " points of a total of " << sorted_points.size());
+        DEBUG_MSG("we remove " << points_to_remove << " points of a total of "
+                  << sorted_points.size());
         
         for (size_t i = 0; i < points_to_remove; i++) {
           node->child_structure->remove(sorted_points[i]);
@@ -2586,7 +2602,7 @@ namespace ext {
         min_y = INF_POINT;
       }
       point p = points.read();
-#ifdef DEBUG
+#ifdef VALIDATE
       CONTAINED_POINTS.insert(p);
 #endif
       child->point_buffer.insert(p);
@@ -2751,7 +2767,7 @@ namespace ext {
     }
   }
 
-#ifdef DEBUG
+#ifdef VALIDATE
   bool buffered_pst::is_valid() {
     return root->is_valid();
   }

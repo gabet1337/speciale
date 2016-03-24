@@ -1,7 +1,7 @@
 CC = c++ -std=c++0x -O2
 DOFF = -DDEBUG
 VALID = -DVALIDATE
-DEBUG = -g -Wall -fsanitize=address $(DOFF) $(VALID) common/debug.hpp
+DEBUG = -g -Wall -fsanitize=address $(DOFF) $(VALID) common/debug.hpp common/validate.hpp
 LFLAGS = $(DEBUG)
 CFLAGS = $(DEBUG) -c
 
