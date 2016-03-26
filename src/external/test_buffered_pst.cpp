@@ -1702,8 +1702,9 @@ void test_delete_truly_random_n_points(int n) {
   bool insert = true;
   for (size_t i=0; i<points_random.size(); i++) {
 #ifdef VALIDATE
-    for (int j=0; j<1; j++)
-      DEBUG_MSG_FAIL("Handling update " << ++count);
+    count++;
+    // for (int j=0; j<1; j++)
+    DEBUG_MSG_FAIL("Handling update " << count);
 #endif
     bs.write(points_random[i]);
     if (insert) {
