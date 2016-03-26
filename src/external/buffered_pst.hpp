@@ -242,7 +242,10 @@ namespace ext {
   
   void buffered_pst::buffered_pst_node::load_point_buffer() {
     if (is_root()) return;
-    assert(!is_point_buffer_loaded);
+#ifdef DEBUG
+    assert(!
+is_point_buffer_loaded);
+#endif
     DEBUG_MSG("Loading point buffer for node " << id);
     util::load_file_to_container<std::set<point>, point>
       (point_buffer, get_point_buffer_file_name(id), buffer_size);
@@ -252,7 +255,9 @@ namespace ext {
 
   void buffered_pst::buffered_pst_node::load_insert_buffer() {
     if (is_root()) return;
+#ifdef DEBUG
     assert(!is_insert_buffer_loaded);
+#endif
     DEBUG_MSG("Loading insert buffer for node " << id);
     util::load_file_to_container<std::set<point>, point>
       (insert_buffer, get_insert_buffer_file_name(id), buffer_size);
@@ -261,7 +266,9 @@ namespace ext {
 
   void buffered_pst::buffered_pst_node::load_ranges() {
     if (is_root()) return;
+#ifdef DEBUG
     assert(!is_ranges_loaded);
+#endif
     DEBUG_MSG("Loading ranges for node " << id);
     util::load_file_to_container<internal::rb_tree<range>, range>
       (ranges, get_ranges_file_name(id), buffer_size);
@@ -270,7 +277,9 @@ namespace ext {
 
   void buffered_pst::buffered_pst_node::load_delete_buffer() {
     if (is_root()) return;
+#ifdef DEBUG
     assert(!is_delete_buffer_loaded);
+#endif
     DEBUG_MSG("Loading delete buffer for node " << id);
     util::load_file_to_container<std::set<point>, point>
       (delete_buffer, get_delete_buffer_file_name(id), buffer_size);
@@ -279,7 +288,9 @@ namespace ext {
 
   void buffered_pst::buffered_pst_node::load_info_file() {
     if (is_root()) return;
+#ifdef DEBUG
     assert(!is_info_file_loaded);
+#endif
     DEBUG_MSG("Loading info file for node " << id);
     std::vector<size_t> info_file;
     util::load_file_to_container<std::vector<size_t>, size_t>
@@ -292,7 +303,9 @@ namespace ext {
 
   void buffered_pst::buffered_pst_node::load_child_structure() {
     if (is_root()) return;
+#ifdef DEBUG
     assert(!is_child_structure_loaded);
+#endif
     DEBUG_MSG("Loading child structure for node " << id);
     assert(!child_structure);
     child_structure = new ext::child_structure(id);
@@ -443,16 +456,14 @@ namespace ext {
 
   template <class Container>
   void buffered_pst::buffered_pst_node::insert_into_insert_buffer(const Container &points) {
-    assert(is_insert_buffer_loaded);
     DEBUG_MSG("inserting point(s) into insert buffer");
 #ifdef DEBUG
+    assert(is_insert_buffer_loaded);
     for (point p : points)
       DEBUG_MSG(" - " << p);
 #endif
 
     insert_buffer.insert(points.begin(), points.end());
-
-    //if (insert_buffer_overflow()) handle_insert_buffer_overflow();
   }
   
   void buffered_pst::buffered_pst_node::insert_into_point_buffer(const point &p) {
@@ -463,13 +474,11 @@ namespace ext {
 
   template <class Container>
   void buffered_pst::buffered_pst_node::insert_into_point_buffer(const Container &points) {
-    assert(is_point_buffer_loaded);
     DEBUG_MSG("inserting point(s) into point buffer: ");
-
 #ifdef DEBUG
+    assert(is_point_buffer_loaded);
     for (point p : points) DEBUG_MSG(" - " << p);
 #endif
-    
     point_buffer.insert(points.begin(), points.end());
 
 #ifdef DEBUG
@@ -477,7 +486,6 @@ namespace ext {
     for (point p : point_buffer)
       DEBUG_MSG_FAIL(" - " << p);
 #endif
-    //if (point_buffer_overflow()) handle_point_buffer_overflow();
   }
 
   void buffered_pst::buffered_pst_node::insert_into_delete_buffer(const point &p) {
@@ -488,61 +496,73 @@ namespace ext {
 
   template <class Container>
   void buffered_pst::buffered_pst_node::insert_into_delete_buffer(const Container &points) {
-    assert(is_delete_buffer_loaded);
     DEBUG_MSG("inserting point(s) into delete buffer of node " << id);
 
 #ifdef DEBUG
+    assert(is_delete_buffer_loaded);
     for (auto p : points) DEBUG_MSG(" - " << p);
 #endif
 
     delete_buffer.insert(points.begin(), points.end());
-
-    //if (delete_buffer_overflow()) handle_delete_buffer_overflow();
   }
 
   bool buffered_pst::buffered_pst_node::point_buffer_overflow() {
+#ifdef DEBUG
     assert(is_point_buffer_loaded);
     assert(is_ranges_loaded);
+#endif
     if ( is_leaf() && !is_root() ) return point_buffer.size() >= buffer_size/2;
     return point_buffer.size() > buffer_size;
   }
 
   bool buffered_pst::buffered_pst_node::point_buffer_underflow() {
+#ifdef DEBUG
     assert(is_point_buffer_loaded);
     assert(is_ranges_loaded);
+#endif
     if ( is_leaf() || is_virtual_leaf() ) return false;
     return point_buffer.size() < buffer_size/2;
   }
 
   bool buffered_pst::buffered_pst_node::is_virtual_leaf() {
+#ifdef DEBUG
     assert(is_ranges_loaded);
+#endif
     bool is_virtual_leaf = true;
     for (auto r : ranges) if (r.max_y != INF_POINT) is_virtual_leaf = false;
     return is_virtual_leaf;
   }
 
   bool buffered_pst::buffered_pst_node::insert_buffer_overflow() {
+#ifdef DEBUG
     assert(is_insert_buffer_loaded);
     assert(is_ranges_loaded);
+#endif
     if (is_leaf() || is_virtual_leaf()) return !insert_buffer.empty();
     return insert_buffer.size() > buffer_size;
   }
   
   bool buffered_pst::buffered_pst_node::delete_buffer_overflow() {
+#ifdef DEBUG
     assert(is_delete_buffer_loaded);
     assert(is_ranges_loaded);
+#endif
     if (is_leaf() || is_virtual_leaf()) return !delete_buffer.empty();
     return delete_buffer.size() > buffer_size/4;
   }
 
   bool buffered_pst::buffered_pst_node::node_degree_overflow() {
+#ifdef DEBUG
     assert(is_info_file_loaded);
     assert(is_ranges_loaded);
+#endif
     return ranges.size() > B_epsilon;
   }
 
   bool buffered_pst::buffered_pst_node::is_leaf() {
+#ifdef DEBUG
     assert(is_ranges_loaded);
+#endif
     return ranges.empty();
   }
 
@@ -552,7 +572,9 @@ namespace ext {
 
   void buffered_pst::buffered_pst_node::add_child(const range &r) {
     DEBUG_MSG("Adding range " << r << " to node " << id);
+#ifdef DEBUG
     assert(is_ranges_loaded);
+#endif
     ranges.insert(r);
   }
 
@@ -2716,7 +2738,9 @@ namespace ext {
   
   
   void buffered_pst::print() {
+#ifdef DEBUG
     assert(root);
+#endif
     std::ofstream dot_file;
     dot_file.open("temp.dot");
     dot_file << "digraph {\n";
