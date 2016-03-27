@@ -205,12 +205,20 @@ This gives the following defintion of a B-tree:
 $\mathcal{T}$ is a B-tree with branching parameter $b$ if
 \begin{itemize}
 	\item All leaves have the same depth
-	\item All nodes except for the root have degree between $\frac{1}{2}b$ and $b$ elements.
+	\item All nodes store atmost $b-1$ elements.
+	\item All nodes except for the root have degree between $\frac{1}{2}b$ and $b$.
 	\item The root has degree between $2$ and $b$.
 	\item Elements are stored in non-decreasing order in the nodes.
 	\item The keys of node $x$, $x.key_i$, seperate the children's elements into ranges such that if $k_i$ is a key stored in child $c_i$ then $k_1 \leq x.key_1 \leq k_2 \leq x.key_2 \leq \cdots$
 \end{itemize}
 \end{definition}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\textwidth]{../figures/b-tree}
+	\caption{A B-tree with $b = 4$}
+	\label{fig:b-tree}
+\end{figure}
 
 It follows from the definition that if $b=\Theta(B)$ then a B-tree will have height $\mathcal{O}(\log_B N)$.
 
