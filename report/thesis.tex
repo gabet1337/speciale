@@ -346,8 +346,26 @@ The points to reinsert are found by doing a top-down traversal of the tree while
 \includegraphics[width=\textwidth]{../handwritten notes/Notes on global rebuilding analysis.jpg}
 
 \todo{Three sided range queries}
+\subsection{Three sided range queries}
+Reporting a query $Q = \left[ x_1,x_2 \right] \times \left[y, \infty \right]$ is done in a breadth first search of the tree. Starting from the root we identify, from the query ranges, the relevant children and push all relevant updates in the root to the identified children. After having done this we know that the point buffers of the children do not change further and we can thus report all points in the query range from the child structure of the root and the point buffer of the root. The children are added to the back of the bfs queue. All nodes except for the root do not need to report from their point buffers as the parent of the node has already reported the relevant points.
 
-\todo{Construction}
+During the breadth first search some buffers might temporarily overflow. This is handled using the update operations described earlier. This can be done in a bottom up fashion starting from the leaf layer of the tree while maintaining the invariant that the subtree at the current node is in a good state and making sure that no recursions recurse above the current node and into a subtree which potentially is in a bad state.
+
+\todo{Describe with more detailed descriptions what is done or refer to implementation details for more?}
+
+\textbf{Analysis}
+\todo{Insert analysis of three sided range queries here}
+
+\subsection{Construction}
+The structure can be initialized with an initial set of $N$ points using just $\mathcal{O}(\text{Sort}(N))$ I/O's. If the points are already sorted on $x$ we just need $\mathcal{O}(\text{Scan}(N))$. For the remainder of this Section we assume that the points are initially sorted with regards to $x$.
+
+The first step of the construction is to construct a B-tree with each internal node having a degree of $\Delta/2$ over the $x$-values such that each leaf stores $\nicefrac{B}{2}$ points with the exception of the rightmost leaf which might contain less than $\nicefrac{B}{2}$ points and the rightmost internal nodes having a degree less than $\Delta/2$.
+
+The point buffers of the internal nodes are now filled bottom up pulling the top $B/2$ highest $y$-value points up. If this results in a child having an underflowing point buffer we recursively fill that child before proceding. In a second iteration we do the same but in a top-down fashion.
+
+All insertion and deletion buffers are initially empty and the child structures are constructed from the point buffers of the children.
+
+\todo{Analysis}
 
 \todo{Figures}
 
