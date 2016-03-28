@@ -139,6 +139,7 @@ namespace ext {
     void handle_delete_buffer_overflow_in_leaf_and_virtual_leaf(buffered_pst_node* node);
     void handle_point_buffer_overflow_of_leaf_root();
     void handle_point_buffer_underflow_in_children(buffered_pst_node* node);
+    void handle_point_buffer_underflow_in_children(std::vector<buffered_pst_node*> children);
     // void handle_point_buffer_underflow_in_virtual_leaf(buffered_pst_node* node,
     //                                                    buffered_pst_node* parent);
     void split_leaf(buffered_pst_node* node, buffered_pst_node* parent);
@@ -1231,7 +1232,7 @@ is_point_buffer_loaded);
           
           std::vector<buffered_pst_node*> children;
           for (range r : node->ranges) {
-            //TODO if max_y...
+            if (r.max_y == INF_POINT) continue;
             buffered_pst_node* child =
               new buffered_pst_node(r.node_id, buffer_size,
                                     epsilon, root);
@@ -1243,16 +1244,16 @@ is_point_buffer_loaded);
           parent->flush_child_structure();
           parent->flush_ranges();
           if (!parent->is_root()) delete parent;
-          for (auto c : children) {
-            c->flush_point_buffer();
-            c->flush_ranges();
-            delete c;
-          }
           if (state == STATE::normal || state == STATE::fix_up
               || state == STATE::global_rebuild || state == STATE::construct) {
             if (node->point_buffer_underflow())
               event_stack.push({copy_node(node), EVENT::point_buffer_underflow_full_children});
-            handle_point_buffer_underflow_in_children(node);
+            handle_point_buffer_underflow_in_children(children);
+          }
+          for (auto c : children) {
+            c->flush_point_buffer();
+            c->flush_ranges();
+            delete c;
           }
           node->flush_all();
         }
@@ -1836,12 +1837,19 @@ is_point_buffer_loaded);
     assert(node->is_ranges_loaded);
 #endif
     for (range r : node->ranges) {
-      //if (it->max_y == INF) continue;
-      // if (state == STATE::normal || state == STATE::fix_up
-      //     || state == STATE::global_rebuild)
+      if (r.max_y == INF_POINT) continue;
       event_stack.push({
           new buffered_pst_node(r.node_id, buffer_size, epsilon, root),
             EVENT::point_buffer_underflow});
+    }
+  }
+
+  void buffered_pst::handle_point_buffer_underflow_in_children(std::vector<buffered_pst_node*>
+                                                               children) {
+    DEBUG_MSG("Pushing all children to the stack to handle underflowing point buffer");
+
+    for (auto c : children) {
+      event_stack.push({copy_node(c), EVENT::point_buffer_underflow});
     }
   }
 
@@ -1887,7 +1895,6 @@ is_point_buffer_loaded);
     DEBUG_MSG("Grabbing the B/2 highest y-value points from children and deleting them");
     std::set<point> X;
     for (size_t i = 0; !pq.empty() && i < buffer_size/2; i++) {
-      //while (!pq.empty() && X.size() < buffer_size/2) {
       point_child_pair pcp = pq.top(); pq.pop();
       if ( node->delete_buffer.erase(pcp.first) ) {
         DEBUG_MSG("Point " << pcp.first << " was canceled by delete in node " << node->id);
@@ -1898,7 +1905,7 @@ is_point_buffer_loaded);
         auto it = node->insert_buffer.find(pcp.first);
         if ( it != node->insert_buffer.end() ) {
           DEBUG_MSG("Move more recent updates of p from Iv to X in node " << node->id);
-          X.insert(*it); //TODO: This has thrown a null pointer exception?? 
+          X.insert(*it);
           DEBUG_MSG("Succeded in insert point in X");
           node->insert_buffer.erase(*it); 
           DEBUG_MSG("Succeded in erasing point from node->insert_buffer");
@@ -1964,9 +1971,12 @@ is_point_buffer_loaded);
    
     internal::rb_tree<range> new_ranges;
     for (range r : node->ranges) {
-      auto extrema = find_extrema<std::set<point> >
-        (children[node_id_to_index[r.node_id]]->point_buffer);
-      new_ranges.insert(range(r.min, extrema.min_y, extrema.max_y, r.node_id));
+      if (r.max_y == INF_POINT) new_ranges.insert(range(r.min, r.min_y, r.max_y, r.node_id));
+      else {
+        auto extrema = find_extrema<std::set<point> >
+          (children[node_id_to_index[r.node_id]]->point_buffer);
+        new_ranges.insert(range(r.min, extrema.min_y, extrema.max_y, r.node_id));
+      }
     }
     node->ranges = new_ranges;
     DEBUG_MSG("Our ranges now look LIKE this:");

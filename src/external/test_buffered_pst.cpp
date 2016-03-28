@@ -2882,24 +2882,24 @@ int main() {
   // // test_delete_truly_random_points_from_file("test_points_fail_1");
   // // test_delete_truly_random_n_points(10000);
   // // test_delete_truly_random_n_points_from_file("test_points");
-  // test_report_points_deterministic();
-  // test_report_points_deterministic2();
-  // test_report_points_deterministic3();
-  // test_report_points_deterministic_delete();
+  test_report_points_deterministic();
+  test_report_points_deterministic2();
+  test_report_points_deterministic3();
+  test_report_points_deterministic_delete();
   // test_report_points_deterministic_repeat_report();
   // test_report_points_underflowing_point_buffer();
   // test_report_200_delete_20_points() ;
   // test_report_random();
   // test_report_random_repeat();
-  //test_report_random_2();
+  // test_report_random_2();
   // test_global_rebuild_insert_10();
   // test_global_rebuild_insert_10_delete_5();
   // test_global_rebuild_insert_100_delete_50();
-  // test_construction_50_points();
+  test_construction_50_points();
   // TODO: test_insert_delete_all_insert_half_report()
   // TODO: test_insert_delete_half_insert_half_report();
   // TODO: test_insert_delete_half_insert_all_report();
-  test_report_random_buffer_size_512();
+  // test_report_random_buffer_size_512();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   
