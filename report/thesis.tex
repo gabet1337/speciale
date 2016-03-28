@@ -401,7 +401,26 @@ The points to reinsert are found by doing a top-down traversal of the tree while
 
 \textbf{Analysis}
 
-\includegraphics[width=\textwidth]{../handwritten notes/Notes on global rebuilding analysis.jpg}
+Elements at level $i$ (leaf layer being level 0) can at most be flushed $i$ levels down.
+The structure holds at most $\frac{3\bar{N}}{2B}$ nodes in total and at level $i$ the structure has at most $\frac{3\bar{N}}{2B} \frac{1}{\Delta^i}$ nodes. The cost of flushing all the buffers at level $i$ becomes:
+
+$$ i \cdot \frac{3\bar{N}}{2B} \frac{1}{\Delta^i}$$
+
+By summing over all layers of the tree we get the total cost of flushing all buffers to be:
+\begin{align*}
+\sum\limits_{i=0}^{\mathcal{O}(\log_\Delta \frac{3N}{2B})} i \cdot \frac{3\bar{N}}{2B} \frac{1}{\Delta^i} &< 
+\sum\limits_{i=0}^{\infty} i \cdot \frac{3\bar{N}}{2B} \frac{1}{\Delta^i} \\
+&= \frac{3\bar{N}}{2B} \sum\limits_{i=0}^{\infty} \frac{i}{\Delta^i} \\
+&= \frac{3\bar{N}}{2B} \sum\limits_{i=0}^{\infty} \left(\frac{1}{\Delta}\right)^i \\
+&= \frac{3\bar{N}}{2B} \frac{1}{1-\Delta} \\
+&= \mathcal{O}(N/B)
+\end{align*}
+
+This gives an amortized cost of $\mathcal{O}(1/B)$ per update to flush all buffers.
+
+The $\mathcal{O}(\bar{N})$ reinsertions into the new tree can be done in amortized $\mathcal{O}(\nicefrac{\bar{N}}{\epsilon B^{1-\epsilon}} \log_B N)$ I/O's is are paid by the $\bar{N}/2$ updates during the epoch.
+
+%\includegraphics[width=\textwidth]{../handwritten notes/Notes on global rebuilding analysis.jpg}
 
 \subsection{Three sided range queries}
 Reporting a query $Q = \left[ x_1,x_2 \right] \times \left[y, \infty \right]$ is done in a breadth first search of the tree. Starting from the root we identify, from the query ranges, the relevant children and push all relevant updates in the root to the identified children. After having done this we know that the point buffers of the children do not change further and we can thus report all points in the query range from the child structure of the root and the point buffer of the root. The children are added to the back of the bfs queue. All nodes except for the root do not need to report from their point buffers as the parent of the node has already reported the relevant points.
