@@ -21,6 +21,11 @@
 \usepackage{algorithmic}
 \usepackage{multirow}
 
+% Inline list
+\usepackage[inline]{enumitem}
+\newlist{inlinelist}{enumerate*}{1}
+\setlist[inlinelist]{label=(\roman*)}
+
 % Code comments like [CLRS]
 \renewcommand{\algorithmiccomment}[1]{\makebox[5cm][l]{$\triangleright$ \textit{#1}}}
 \usepackage{framed,graphicx,xcolor}
@@ -334,7 +339,30 @@ For a node $v$ in the main data structure the following invariants must be true:
 
 \todo{Updates}
 \subsection{Updates}
-To be able to maintain the above invariants we must be very careful whenever we update the data structure.
+To be able to maintain the above invariants we must be very careful whenever we update the data structure. During an update the insertion or deletion buffers might overflow. This is handled in the following five steps:
+\begin{inlinelist}
+	\item handle overflowing deletion buffers
+	\item handle overflowing insertion buffers
+	\item split leaves with overflowing point buffers
+	\item split nodes of degree $\Delta+1$
+	\item fill underflowing point buffers
+\end{inlinelist}
+
+We will in the following look at each step individually and argue their complexity.
+
+\begin{enumerate}[label=(\roman*)]
+	\item A deletion buffer at node $v$ overflows when $\vert D_v \vert > B/4$. The pigeonhole principle dictates that there must exist a child $c$ such that we can push $U \subseteq \lceil \vert D_v \vert / \Delta \rceil$. Points in $U$ from $D_v$, $I_c$, $D_c$, $P_c$, and $C_v$ are removed. Any point $p$ in $U$ lexicographically larger than the minimum point in $P_c$ (w.r.t. $y$) is removed from $U$ as the deletion cannot cancel any updates further down in the tree.
+	
+	If $v$ is a leaf we do not need to do more. If not, the remaining points in $U$ are inserted in $D_c$ which might recursively overflow. In the worst case we might recursively overflow along a path from the root to a leaf each time causing $\mathcal{O}(\lceil \vert B \vert / \Delta \rceil)$ deletes to be pushed one level down. Updating $C_v$ with $\mathcal{O}(\lceil \vert B \vert / \Delta \rceil)$ updates takes amortized $\mathcal{O}(1+ (B/\Delta) / B^{1-\epsilon}) = \mathcal{O}(1)$ I/O's.
+	
+	\item An insertion buffer at $v$ overflows
+	
+	\item A point buffer overflows at $v$ when
+	
+	\item A node with a degree larger than .. is split
+	
+	\item A point buffer underflows at $v$ when
+\end{enumerate}
 
 \todo{Analysis}
 
