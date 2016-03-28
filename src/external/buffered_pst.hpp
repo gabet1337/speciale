@@ -100,6 +100,13 @@ namespace ext {
       bool point_buffer_underflow();
       bool node_degree_overflow();
       bool is_virtual_leaf();
+      bool b_is_leaf;
+      bool b_is_virtual_leaf;
+      bool b_point_buffer_overflow;
+      bool b_point_buffer_underflow;
+      bool b_insert_buffer_overflow;
+      bool b_delete_buffer_overflow;
+      bool b_node_degree_overflow;
       std::set<point> insert_buffer, delete_buffer, point_buffer;
       ext::child_structure_interface *child_structure;
       internal::rb_tree<range> ranges;
@@ -206,6 +213,14 @@ namespace ext {
     is_point_buffer_loaded = true;
     is_ranges_loaded = true;
     is_info_file_loaded = true;
+    b_is_leaf = false;
+    b_is_virtual_leaf = false;
+    b_point_buffer_overflow = false;
+    b_point_buffer_underflow = false;
+    b_insert_buffer_overflow = false;
+    b_delete_buffer_overflow = false;
+    b_node_degree_overflow = false;
+   
     child_structure =
       new ext::child_structure(id, buffer_size, epsilon, std::vector<point>());
     is_child_structure_loaded = true;
@@ -222,6 +237,13 @@ namespace ext {
     this->root = root;
     this->buffer_size = buffer_size;
     this->epsilon = epsilon;
+    b_is_leaf = false;
+    b_is_virtual_leaf = false;
+    b_point_buffer_overflow = false;
+    b_point_buffer_underflow = false;
+    b_insert_buffer_overflow = false;
+    b_delete_buffer_overflow = false;
+    b_node_degree_overflow = false;
     is_insert_buffer_loaded = false;
     is_delete_buffer_loaded = false;
     is_point_buffer_loaded = false;
@@ -299,6 +321,14 @@ is_point_buffer_loaded);
     this->buffer_size = info_file[0];
     this->B_epsilon = info_file[1];
     this->parent_id = (int)info_file[2];
+    this->b_is_leaf = (bool)info_file[3];
+    this->b_is_virtual_leaf = (bool)info_file[4];
+    this->b_point_buffer_overflow = (bool)info_file[5];
+    this->b_point_buffer_underflow = (bool)info_file[6];
+    this->b_insert_buffer_overflow = (bool)info_file[7];
+    this->b_delete_buffer_overflow = (bool)info_file[8];
+    this->b_node_degree_overflow = (bool)info_file[9];
+    
     is_info_file_loaded = true;
   }
 
@@ -327,10 +357,18 @@ is_point_buffer_loaded);
 #ifdef DEBUG
     assert(is_point_buffer_loaded);
 #endif
+    
     DEBUG_MSG("Flushing point buffer for node " << id);
     if (!util::file_exists(get_directory(id))) mkdir(get_directory(id).c_str(), 0700);
     util::flush_container_to_file<std::set<point>::iterator,point>
       (point_buffer.begin(),point_buffer.end(), get_point_buffer_file_name(id), buffer_size);
+
+    // make sure info_file reflects any changes before flushing buffer
+    if (is_info_file_loaded) {
+      b_point_buffer_overflow = point_buffer_overflow();
+      b_point_buffer_underflow = point_buffer_underflow();
+    }
+
     point_buffer.clear();
     is_point_buffer_loaded = false;
   }
@@ -340,11 +378,17 @@ is_point_buffer_loaded);
 #ifdef DEBUG
     assert(is_insert_buffer_loaded);
 #endif
+   
     DEBUG_MSG("Flushing insert buffer for node " << id);
     if (!util::file_exists(get_directory(id))) mkdir(get_directory(id).c_str(), 0700);
     util::flush_container_to_file<std::set<point>::iterator,point>
       (insert_buffer.begin(),insert_buffer.end(),
        get_insert_buffer_file_name(id), buffer_size);
+    
+    // make sure info_file reflects any changes before flushing buffer
+    if (is_info_file_loaded)
+      b_insert_buffer_overflow = insert_buffer_overflow();
+    
     insert_buffer.clear();
     is_insert_buffer_loaded = false;
   }
@@ -354,7 +398,6 @@ is_point_buffer_loaded);
 #ifdef DEBUG
     assert(is_ranges_loaded);
 #endif
-
     DEBUG_MSG_FAIL("Flushing ranges for node " << id);
 #ifdef DEBUG
     for (range r : ranges)
@@ -363,6 +406,14 @@ is_point_buffer_loaded);
     if (!util::file_exists(get_directory(id))) mkdir(get_directory(id).c_str(), 0700);
     util::flush_container_to_file<std::set<range>::iterator, range>
       (ranges.begin(), ranges.end(), get_ranges_file_name(id), buffer_size);
+
+    // make sure info_file reflects any changes before flushing ranges
+    if (is_info_file_loaded) {
+      b_is_leaf = is_leaf();
+      b_is_virtual_leaf = is_virtual_leaf();
+      b_node_degree_overflow = node_degree_overflow();      
+    }
+    
     ranges.clear();
     is_ranges_loaded = false;
   }
@@ -372,12 +423,18 @@ is_point_buffer_loaded);
 #ifdef DEBUG
     assert(is_delete_buffer_loaded);
 #endif
+
     DEBUG_MSG("Flushing delete buffer for node " << id);
     if (!util::file_exists(get_directory(id))) mkdir(get_directory(id).c_str(), 0700);
     util::flush_container_to_file<std::set<point>::iterator,point>
       (delete_buffer.begin(),delete_buffer.end(),
        get_delete_buffer_file_name(id), buffer_size);
-    delete_buffer.clear();
+
+    // make sure info_file reflects any changes before flushing buffer
+    if (is_info_file_loaded)
+      b_delete_buffer_overflow = delete_buffer_overflow();
+    
+    delete_buffer.clear();    
     is_delete_buffer_loaded = false;
   }
 
@@ -392,6 +449,13 @@ is_point_buffer_loaded);
     info_file.push_back(buffer_size);
     info_file.push_back(B_epsilon);
     info_file.push_back((size_t)parent_id);
+    info_file.push_back((size_t)is_leaf());
+    info_file.push_back((size_t)is_virtual_leaf());
+    info_file.push_back((size_t)point_buffer_overflow());
+    info_file.push_back((size_t)point_buffer_underflow());
+    info_file.push_back((size_t)insert_buffer_overflow());
+    info_file.push_back((size_t)delete_buffer_overflow());
+    info_file.push_back((size_t)node_degree_overflow());
     
     util::flush_container_to_file<std::vector<size_t>::iterator, size_t>
       (info_file.begin(), info_file.end(), get_info_file_file_name(id), buffer_size);
@@ -412,11 +476,12 @@ is_point_buffer_loaded);
   }
 
   void buffered_pst::buffered_pst_node::flush_all() {
+    DEBUG_MSG("Flushing all in node " << id);
     if (is_point_buffer_loaded) flush_point_buffer();
     if (is_insert_buffer_loaded) flush_insert_buffer();
     if (is_delete_buffer_loaded) flush_delete_buffer();
-    if (is_info_file_loaded) flush_info_file();
     if (is_ranges_loaded) flush_ranges();
+    if (is_info_file_loaded) flush_info_file();
     if (is_child_structure_loaded) flush_child_structure();
   }
 
@@ -508,24 +573,34 @@ is_point_buffer_loaded);
   }
 
   bool buffered_pst::buffered_pst_node::point_buffer_overflow() {
+
+    if (!is_point_buffer_loaded && is_info_file_loaded)
+      return b_point_buffer_overflow;
+    
 #ifdef DEBUG
     assert(is_point_buffer_loaded);
-    assert(is_ranges_loaded);
 #endif
     if ( is_leaf() && !is_root() ) return point_buffer.size() >= buffer_size/2;
     return point_buffer.size() > buffer_size;
   }
 
   bool buffered_pst::buffered_pst_node::point_buffer_underflow() {
+
+    if (!is_point_buffer_loaded && is_info_file_loaded)
+      return b_point_buffer_underflow;
+    
 #ifdef DEBUG
     assert(is_point_buffer_loaded);
-    assert(is_ranges_loaded);
 #endif
     if ( is_leaf() || is_virtual_leaf() ) return false;
     return point_buffer.size() < buffer_size/2;
   }
 
   bool buffered_pst::buffered_pst_node::is_virtual_leaf() {
+
+    if (!is_ranges_loaded && is_info_file_loaded)
+      return b_is_virtual_leaf;
+    
 #ifdef DEBUG
     assert(is_ranges_loaded);
 #endif
@@ -535,24 +610,34 @@ is_point_buffer_loaded);
   }
 
   bool buffered_pst::buffered_pst_node::insert_buffer_overflow() {
+
+    if (!is_insert_buffer_loaded && is_info_file_loaded)
+      return b_insert_buffer_overflow;
+    
 #ifdef DEBUG
     assert(is_insert_buffer_loaded);
-    assert(is_ranges_loaded);
 #endif
     if (is_leaf() || is_virtual_leaf()) return !insert_buffer.empty();
     return insert_buffer.size() > buffer_size;
   }
   
   bool buffered_pst::buffered_pst_node::delete_buffer_overflow() {
+
+    if (!is_delete_buffer_loaded && is_info_file_loaded)
+      return b_delete_buffer_overflow;
+    
 #ifdef DEBUG
     assert(is_delete_buffer_loaded);
-    assert(is_ranges_loaded);
 #endif
     if (is_leaf() || is_virtual_leaf()) return !delete_buffer.empty();
     return delete_buffer.size() > buffer_size/4;
   }
 
   bool buffered_pst::buffered_pst_node::node_degree_overflow() {
+
+    if (!is_ranges_loaded && is_info_file_loaded)
+      return b_node_degree_overflow;
+    
 #ifdef DEBUG
     assert(is_info_file_loaded);
     assert(is_ranges_loaded);
@@ -561,6 +646,10 @@ is_point_buffer_loaded);
   }
 
   bool buffered_pst::buffered_pst_node::is_leaf() {
+
+    if (!is_ranges_loaded && is_info_file_loaded)
+      return b_is_leaf;
+    
 #ifdef DEBUG
     assert(is_ranges_loaded);
 #endif
@@ -585,6 +674,56 @@ is_point_buffer_loaded);
 
     VALIDATE_MSG("STARTING IS VALID TEST");
     load_all();
+
+    if (id != 0 && b_is_leaf != is_leaf()) {
+      VALIDATE_MSG_FAIL("invalid shadow variable in info file in node " << id);
+      VALIDATE_MSG_FAIL("b_is_leaf != is_leaf(): "
+                        << b_is_leaf << " != " << is_leaf());
+      
+      return false;
+    }
+
+    if (id != 0 && b_is_virtual_leaf != is_virtual_leaf()) {
+      VALIDATE_MSG_FAIL("invalid shadow variable in info file in node " << id);
+      VALIDATE_MSG_FAIL("b_is_virtual_leaf != is_virtual_leaf(): "
+                        << b_is_virtual_leaf << " != " << is_virtual_leaf());
+      return false;
+    }
+
+    if (id != 0 && b_insert_buffer_overflow != insert_buffer_overflow()) {
+      VALIDATE_MSG_FAIL("invalid shadow variable in info file in node " << id);
+      VALIDATE_MSG_FAIL("b_insert_buffer_overflow != insert_buffer_overflow(): "
+                        << b_insert_buffer_overflow << " != " << insert_buffer_overflow());
+      return false;
+    }
+    
+    if (id != 0 && b_point_buffer_overflow != point_buffer_overflow()) {
+      VALIDATE_MSG_FAIL("invalid shadow variable in info file in node " << id);
+      VALIDATE_MSG_FAIL("b_point_buffer_overflow != point_buffer_overflow(): "
+                        << b_point_buffer_overflow << " != " << point_buffer_overflow());
+      return false;
+    }
+    
+    if (id != 0 && b_point_buffer_underflow != point_buffer_underflow()) {
+      VALIDATE_MSG_FAIL("invalid shaddow variable in info file in node " << id);
+      VALIDATE_MSG_FAIL("b_point_buffer_underflow != point_buffer_underflow(): "
+                        << b_point_buffer_underflow << " != " << point_buffer_underflow());
+      return false;
+    }
+    
+    if (id != 0 && b_delete_buffer_overflow != delete_buffer_overflow()) {
+      VALIDATE_MSG_FAIL("invalid shaddow variable in info file in node " << id);
+      VALIDATE_MSG_FAIL("b_delete_buffer_overflow != delete_buffer_overflow(): "
+                        << b_delete_buffer_overflow << " != " << delete_buffer_overflow());
+      return false;
+    }
+
+    if (id != 0 && b_node_degree_overflow != node_degree_overflow()) {
+      VALIDATE_MSG_FAIL("invalid shaddow variable in info file in node " << id);
+      VALIDATE_MSG_FAIL("b_node_degree_overflow != node_degree_overflow(): "
+                        << b_node_degree_overflow << " != " << node_degree_overflow());
+      return false;
+    }
     
     // TODO check all invariants. Recurse on children.
     if ( insert_buffer_overflow() ) {
@@ -603,7 +742,7 @@ is_point_buffer_loaded);
       VALIDATE_MSG_FAIL("Point buffer underflow in node " << id);
       return false;
     }
-
+    
     if ( ( is_leaf() || is_virtual_leaf() ) && (!delete_buffer.empty() )) {
       VALIDATE_MSG_FAIL("We are a leaf or a virtual leaf without empty delete or insert buffer " << id);
       VALIDATE_MSG("Delete buffer contains");
@@ -1025,75 +1164,76 @@ is_point_buffer_loaded);
         
       case EVENT::point_buffer_overflow:
         {
-          node->load_ranges();
-          node->load_point_buffer();
+          node->load_info_file();
           if (!node->point_buffer_overflow()) {
-            node->flush_ranges();
-            node->flush_point_buffer();
+            node->flush_info_file();
             break;
           }
-
           if ( node->is_root() && node->is_leaf() )
             handle_point_buffer_overflow_of_leaf_root();
           else if ( node->is_root() )
             handle_point_buffer_overflow_in_root(node);
           else if ( node->is_leaf() ) {
-            node->load_info_file();
+            node->load_point_buffer();
             buffered_pst_node* parent = node->parent_id == 0
               ? root
               : new buffered_pst_node(node->parent_id,buffer_size,epsilon,root);
             parent->load_ranges();
+            parent->load_info_file();
             
             split_leaf(node, parent);
             
+            parent->flush_info_file();
             parent->flush_ranges();
             if (!parent->is_root()) delete parent;
-            node->flush_info_file();
           } else if ( node->is_virtual_leaf() ) {
-            node->load_info_file();
+            node->load_ranges();
+            node->load_point_buffer();
             node->load_child_structure();
             buffered_pst_node* parent = node->parent_id == 0
               ? root
               : new buffered_pst_node(node->parent_id,buffer_size,epsilon,root);
             parent->load_child_structure();
             parent->load_ranges();
+            parent->load_info_file();
             
             std::map<int, buffered_pst_node*> children;
             for (range r : node->ranges) {
-              buffered_pst_node* child = new buffered_pst_node(r.node_id, buffer_size, epsilon, root);
+              buffered_pst_node* child =
+                new buffered_pst_node(r.node_id, buffer_size, epsilon, root);
               children[r.node_id] = child;
               child->load_point_buffer();
+              child->load_info_file();
             }
 
             handle_point_buffer_overflow_in_virtual_leaf(parent, node, children);
 
             for (auto c : children) {
               c.second->flush_point_buffer();
+              c.second->flush_info_file();
               delete c.second;
             }
             
             parent->flush_child_structure();
             parent->flush_ranges();
-
+            parent->flush_info_file();
+            
             node->flush_child_structure();
-            node->flush_info_file();
+            node->flush_ranges();
           } else assert(true==false);
-          
-          node->flush_ranges();
           node->flush_point_buffer();
+          node->flush_info_file();
         }
         break;
       case EVENT::insert_buffer_overflow:
         {
-          node->load_insert_buffer();
-          node->load_ranges();
+          node->load_info_file();
           if ( !node->insert_buffer_overflow() ) {
-            node->flush_insert_buffer();
-            node->flush_ranges();
+            node->flush_info_file();
             break;
           }
           node->load_point_buffer();
-          node->load_info_file();
+          node->load_insert_buffer();
           if ( node->is_leaf() || node->is_virtual_leaf() ) {
             buffered_pst_node* parent = node->parent_id == 0
               ? root
@@ -1105,6 +1245,7 @@ is_point_buffer_loaded);
             parent->flush_ranges();
             if (!parent->is_root()) delete parent;
           } else {
+            node->load_ranges();
             node->load_delete_buffer();
             node->load_child_structure();
             while (node->insert_buffer_overflow()) {
@@ -1114,44 +1255,30 @@ is_point_buffer_loaded);
               child->flush_all();
               delete child;
             }
-            node->flush_delete_buffer();
-            node->flush_child_structure();
           }
-          node->flush_info_file();
-          node->flush_ranges();
-          node->flush_insert_buffer();
-          node->flush_point_buffer();
+          node->flush_all();
         }
         break;
       case EVENT::delete_buffer_overflow:
         {
-          node->load_delete_buffer();
-          node->load_ranges();
-          
+          node->load_info_file();
           if ( !node->delete_buffer_overflow() ) {
-            node->flush_delete_buffer();
-            node->flush_ranges();
+            node->flush_info_file();
             break;
           }
-          
+          node->load_delete_buffer();
+          node->load_ranges();
           if (node->is_leaf() || node->is_virtual_leaf()) {
             handle_delete_buffer_overflow_in_leaf_and_virtual_leaf(node);
           } else {
             node->load_point_buffer();
             node->load_insert_buffer();
-            node->load_info_file();
             node->load_child_structure();
             while (node->delete_buffer_overflow()) {
               buffered_pst_node* child = find_child(node, node->delete_buffer);
-              child->load_ranges();
-              child->load_point_buffer();
-              child->load_delete_buffer();
-              child->load_insert_buffer();
+              child->load_all();
               handle_delete_buffer_overflow(node, child);
-              child->flush_ranges();
-              child->flush_point_buffer();
-              child->flush_delete_buffer();
-              child->flush_insert_buffer();
+              child->flush_all();
               delete child;
             }
           }
@@ -1160,13 +1287,12 @@ is_point_buffer_loaded);
         break;
       case EVENT::node_degree_overflow:
         {
-          node->load_ranges();
           node->load_info_file();
           if ( !node->node_degree_overflow() ) {
-            node->flush_ranges();
             node->flush_info_file();
             break;
           }
+          node->load_ranges();
           node->load_point_buffer();
           node->load_insert_buffer();
           node->load_delete_buffer();
@@ -1176,6 +1302,7 @@ is_point_buffer_loaded);
             ? root
             : new buffered_pst_node(node->parent_id,buffer_size,epsilon,root);
           parent->load_ranges();
+          parent->load_info_file();
           std::map<int, buffered_pst_node*> children;
           for (range r : node->ranges) {
             buffered_pst_node* child = new buffered_pst_node(r.node_id, buffer_size,
@@ -1187,6 +1314,7 @@ is_point_buffer_loaded);
           handle_node_degree_overflow(node, parent, children);
           node->flush_all();
           parent->flush_ranges();
+          parent->flush_info_file();
           if (!parent->is_root()) delete parent;
           for (auto c : children) {
             c.second->flush_point_buffer();
@@ -1198,16 +1326,15 @@ is_point_buffer_loaded);
       case EVENT::point_buffer_underflow_construct:
       case EVENT::point_buffer_underflow:
         {
+          node->load_info_file();
+          if ( event == EVENT::point_buffer_underflow && !node->point_buffer_underflow() ) {
+            node->flush_info_file();
+            break;
+          }
+
           node->load_ranges();
           node->load_point_buffer();
           
-          if ( event == EVENT::point_buffer_underflow &&
-               !node->point_buffer_underflow() ) {
-           node->flush_ranges();
-           node->flush_point_buffer();
-           break;
-          }
-
           if ( node->is_leaf() || node->is_virtual_leaf() ) {
            
           } else {
@@ -1219,16 +1346,19 @@ is_point_buffer_loaded);
           }
           node->flush_point_buffer();
           node->flush_ranges();
+          node->flush_info_file();
         }
         break;
       case EVENT::point_buffer_underflow_full_children:
         {
           node->load_all();
+          
           buffered_pst_node* parent = node->parent_id == 0
             ? root
             : new buffered_pst_node(node->parent_id,buffer_size,epsilon,root);
           parent->load_child_structure();
           parent->load_ranges();
+          parent->load_info_file();
           
           std::vector<buffered_pst_node*> children;
           for (range r : node->ranges) {
@@ -1238,11 +1368,15 @@ is_point_buffer_loaded);
                                     epsilon, root);
             child->load_point_buffer();
             child->load_ranges();
+            child->load_info_file();
             children.push_back(child);
           }
+          
           handle_point_buffer_underflow(parent, node, children);
+          
           parent->flush_child_structure();
           parent->flush_ranges();
+          parent->flush_info_file();
           if (!parent->is_root()) delete parent;
           if (state == STATE::normal || state == STATE::fix_up
               || state == STATE::global_rebuild || state == STATE::construct) {
@@ -1253,6 +1387,7 @@ is_point_buffer_loaded);
           for (auto c : children) {
             c->flush_point_buffer();
             c->flush_ranges();
+            c->flush_info_file();
             delete c;
           }
           node->flush_all();
