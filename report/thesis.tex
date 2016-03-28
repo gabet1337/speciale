@@ -365,12 +365,16 @@ We will in the following look at each step individually and argue their complexi
 	
 	\item A node $v$ with a degree larger than $\Delta$ is split into two new nodes $v'$ and $v''$. $I_v$, $D_v$, and $P_v$ are distributed among $v'$ and $v''$ according to the $x$-value. Finally the child structures of $v'$ and $v''$ are rebuilt from the children's point buffers. The split might cause the parent of $v$ to have a degree overflow and in the worst case we need to split along a path from a leaf to the root. The splitting of a single node costs $\mathcal{O}(\Delta)$ I/O's due to the reconstruction of the child structures.
 	
-	\item A point buffer underflows at $v$ when
+	\item A point buffer underflows at $v$ when $\vert P_v \vert < B/2$. In that case we try to move the highest $B/2$ points from the children of $v$ into $P_v$. If $v$'s subtree does not store any points then we remove all points from $D_v$ and move points from $I_v$ to $P_v$ until $\vert P_v \vert = B$ or $I_v = \emptyset$.
+	Otherwise we use $\mathcal{O}(\Delta)$ I/O's to identify $X$ as the top $B/2$ points from the children of $v$ and remove the identified points from the point buffers of the children and the child structure of $v$.
+	All points in $X \cap D_v$ are removed from $X$.
+	\todo{Describe what is done about moving points from $I_v$, refilling empty children, grabbing again if still empty etc.}
+	
+	Finally the remaining points of $X$ are inserted into $P_v$ and the child structure of the parent of $v$.
 \end{enumerate}
 
 \todo{Analysis}
 
-\todo{Global rebuilding}
 \subsection{Global rebuilding}
 \todo{Reference to earlier section on global rebuilding}
 As we do not fuse nodes with a too low node degree we might end up with an unbalanced tree. We use global rebuilding to guarantee that the tree is rebalanced and thus that our amortized bounds hold.
@@ -385,7 +389,6 @@ The points to reinsert are found by doing a top-down traversal of the tree while
 
 \includegraphics[width=\textwidth]{../handwritten notes/Notes on global rebuilding analysis.jpg}
 
-\todo{Three sided range queries}
 \subsection{Three sided range queries}
 Reporting a query $Q = \left[ x_1,x_2 \right] \times \left[y, \infty \right]$ is done in a breadth first search of the tree. Starting from the root we identify, from the query ranges, the relevant children and push all relevant updates in the root to the identified children. After having done this we know that the point buffers of the children do not change further and we can thus report all points in the query range from the child structure of the root and the point buffer of the root. The children are added to the back of the bfs queue. All nodes except for the root do not need to report from their point buffers as the parent of the node has already reported the relevant points.
 
