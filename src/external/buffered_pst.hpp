@@ -10,6 +10,7 @@
 #include "child_structure_interface.hpp"
 #include "child_structure.hpp"
 #include "child_structure_stub.hpp"
+#include "pst_interface.hpp"
 #include <vector>
 #include <string>
 #include <cmath>
@@ -31,7 +32,7 @@ namespace ext {
 #ifdef VALIDATE
   std::set<point> CONTAINED_POINTS;
 #endif
-  class buffered_pst {
+  class buffered_pst : public pst_interface {
   public:
     buffered_pst(size_t buffer_size, double epsilon);
     buffered_pst(size_t buffer_size, double epsilon,
