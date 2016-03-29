@@ -10,16 +10,14 @@ namespace ext {
   public:
     child_structure_interface() {};
     child_structure_interface(std::size_t id, std::size_t buffer_size,
-                              double epsilon, std::vector<point> points) {};
+                              double epsilon, const std::vector<point> &points) {};
     child_structure_interface(std::size_t id) {};
     virtual ~child_structure_interface() {};
     virtual void insert(const point &p) = 0;
     virtual void remove(const point &p) = 0;
     virtual std::vector<point> report(int x1, int x2, int y) = 0;
     virtual void destroy() = 0;
-#ifdef DEBUG
     virtual std::vector<point> get_points() = 0;
-#endif
   };
 
 };

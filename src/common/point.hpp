@@ -13,6 +13,9 @@ public:
   bool operator<(const point& p) {
     return x < p.x || (x == p.x && y < p.y);
   }
+  bool operator>(const point& p) {
+    return x > p.x || (x == p.x && y > p.y);
+  }
   bool operator==(const point& p) {
     return x == p.x && y == p.y;
   }
@@ -28,6 +31,10 @@ public:
 
 bool operator<(const point &p1, const point &p2) {
   return p1.x < p2.x || (p1.x == p2.x && p1.y < p2.y);
+}
+
+bool operator>(const point &p1, const point &p2) {
+  return p2 < p1;
 }
 
 bool operator==(const point &p1, const point &p2) {

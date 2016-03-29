@@ -41,3 +41,5 @@ ERRORS IN ARTICLE
 - Inserts and deletes should not cancel each other before they hit a point buffer
 - Spelling mistake of construction in 5. Global rebuilding
 - Weird sentence: To be able to filter out deleted points etc., we maintain the buffer Pv, Iv and Dv in lexicographically sorted. Section 5.
+- When does a leaf's point buffer overflow? B or B/2?
+- Point buffer of children can go empty during underflowing point buffer handling. Child should be refilled before continuing.

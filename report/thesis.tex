@@ -21,6 +21,11 @@
 \usepackage{algorithmic}
 \usepackage{multirow}
 
+% Inline list
+\usepackage[inline]{enumitem}
+\newlist{inlinelist}{enumerate*}{1}
+\setlist[inlinelist]{label=(\roman*)}
+
 % Code comments like [CLRS]
 \renewcommand{\algorithmiccomment}[1]{\makebox[5cm][l]{$\triangleright$ \textit{#1}}}
 \usepackage{framed,graphicx,xcolor}
@@ -205,12 +210,20 @@ This gives the following defintion of a B-tree:
 $\mathcal{T}$ is a B-tree with branching parameter $b$ if
 \begin{itemize}
 	\item All leaves have the same depth
-	\item All nodes except for the root have degree between $\frac{1}{2}b$ and $b$ elements.
+	\item All nodes store atmost $b-1$ elements.
+	\item All nodes except for the root have degree between $\frac{1}{2}b$ and $b$.
 	\item The root has degree between $2$ and $b$.
 	\item Elements are stored in non-decreasing order in the nodes.
 	\item The keys of node $x$, $x.key_i$, seperate the children's elements into ranges such that if $k_i$ is a key stored in child $c_i$ then $k_1 \leq x.key_1 \leq k_2 \leq x.key_2 \leq \cdots$
 \end{itemize}
 \end{definition}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\textwidth]{../figures/b-tree}
+	\caption{A B-tree with $b = 4$}
+	\label{fig:b-tree}
+\end{figure}
 
 It follows from the definition that if $b=\Theta(B)$ then a B-tree will have height $\mathcal{O}(\log_B N)$.
 
@@ -324,13 +337,58 @@ For a node $v$ in the main data structure the following invariants must be true:
 	\item An internal node in the tree has $B/2 \leq \vert P_v \vert \leq B$, $\vert D_v \vert \leq B/4$, and $\vert I_v \vert \leq B$.
 \end{itemize}
 
-\todo{Updates}
 \subsection{Updates}
-To be able to maintain the above invariants we must be very careful whenever we update the data structure.
+To be able to maintain the above invariants we must be very careful whenever we update the data structure. During an update the insertion or deletion buffers might overflow. This is handled in the following five steps:
+\begin{inlinelist}
+	\item handle overflowing deletion buffers
+	\item handle overflowing insertion buffers
+	\item split leaves with overflowing point buffers
+	\item split nodes of degree $\Delta+1$
+	\item fill underflowing point buffers
+\end{inlinelist}
 
-\todo{Analysis}
+We will in the following look at each step individually and argue their complexity.
 
-\todo{Global rebuilding}
+\begin{enumerate}[label=(\roman*)]
+	\item\label{update:del} A deletion buffer at node $v$ overflows when $\vert D_v \vert > B/4$. The pigeonhole principle dictates that there must exist a child $c$ such that we can push $U \subseteq D_v$ of $\lceil \vert D_v \vert / \Delta \rceil$ deletions to $c$. Points in $U$ are removed from $D_v$, $I_c$, $D_c$, $P_c$, and $C_v$. Any point $p$ in $U$ lexicographically larger than the minimum point in $P_c$ (w.r.t. $y$) is removed from $U$ as the deletion cannot cancel any updates further down in the tree.
+	
+	If $v$ is a leaf we do not need to do more. If not, the remaining points in $U$ are inserted in $D_c$ which might recursively overflow. In the worst case we might recursively overflow along a path from the root to a leaf each time causing $\mathcal{O}(\lceil \vert B \vert / \Delta \rceil)$ deletes to be pushed one level down. Updating $C_v$ with $\mathcal{O}(\lceil \vert B \vert / \Delta \rceil)$ updates takes amortized $\mathcal{O}(1+ (B/\Delta) / B^{1-\epsilon}) = \mathcal{O}(1)$ I/O's.
+	
+	\item\label{update:ins} An insertion buffer at $v$ overflows when $\vert I_v \vert > B$. Similar to handling a deletion buffer overflow we find a child $c$ such that we can push $U \subseteq I_v$ of $\lceil \vert D_v \vert / \Delta \rceil$ insertions to $c$. Points in $U$ are removed from $I_v$, $I_c$, $D_c$, $P_c$, and $C_v$.
+	Any point $p$ in $U$ lexicographically larger than the minimum point in $P_c$ (w.r.t. $y$) is removed from $U$ and inserted into $P_c$ and $C_v$.
+	If $P_c$ overflows, the lexicographically smallest points w.r.t. $y$ are moved from $P_c$ to $U$ until $P_c$ no longer overflows.
+	If $c$ is a leaf then all points are inserted into $P_c$ and $U$ is now empty.
+	Otherwise, the remaining points in $U$ are added to $I_c$ which might overflow and cause a similar overflow along a path from the root to a leaf in the worst case as in the case of the deletion buffer overflow.
+	
+	\item\label{update:pbo} A point buffer overflows at a leaf $v$ when $\vert P_v \vert > B/2$. If this is the case then we split the leaf into two nodes and evenly distribute the points in $P_v$ among the two new nodes using $\mathcal{O}(1)$ I/O's. The splitting of the node might cause the parent to get a degree of $\Delta+1$.
+	
+	\item\label{update:deg} A node $v$ with a degree larger than $\Delta$ is split into two new nodes $v'$ and $v''$. $I_v$, $D_v$, and $P_v$ are distributed among $v'$ and $v''$ according to the $x$-value. Finally the child structures of $v'$ and $v''$ are rebuilt from the children's point buffers. The split might cause the parent of $v$ to have a degree overflow and in the worst case we need to split along a path from a leaf to the root. The splitting of a single node costs $\mathcal{O}(\Delta)$ I/O's due to the reconstruction of the child structures.
+	
+	\item\label{update:pbu} A point buffer underflows at $v$ when $\vert P_v \vert < B/2$. In that case we try to move the highest $B/2$ points from the children of $v$ into $P_v$. If $v$'s subtree does not store any points then we remove all points from $D_v$ and move points from $I_v$ to $P_v$ until $\vert P_v \vert = B$ or $I_v = \emptyset$.
+	Otherwise we use $\mathcal{O}(\Delta)$ I/O's to identify $X$ as the top $B/2$ points from the children of $v$ and remove the identified points from the point buffers of the children and the child structure of $v$.
+	All points in $X \cap D_v$ are removed from $X$.
+	\todo{Describe what is done about moving points from $I_v$, refilling empty children, grabbing again if still empty etc.}
+	
+	Finally the remaining points of $X$ are inserted into $P_v$ and the child structure of the parent of $v$.
+\end{enumerate}
+
+\textbf{Analysis}
+
+The tree grows in height during insertions by splitting leaves and internal nodes which also keeps the tree balanced. In the B-tree we handle rebalancing using fusion of nodes. We do not apply this method here but instead apply global rebuilding when a linear number of updates have been performed. By~\ref{update:pbo} it follows that the total number of leaves created during $N$ insertions can be at most $\mathcal{O}(N/B)$ implying that at most $\mathcal{O}(\frac{N}{\Delta B})$ internal nodes can be created by splitting internal nodes. From this it follows that the tree has height $\mathcal{O}(\log_\Delta \frac{N}{B}) = \mathcal{O}(\frac{1}{\epsilon} \log_B N)$.
+
+We can now argue that every update in~\ref{update:del} and~\ref{update:ins} requires amortized $\mathcal{O}(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N)$ I/O's. As every $\Theta (B/\Delta)$ update require $\mathcal{O}(1)$ I/O's on every layer of the tree we get correct amortized bound:
+\begin{align*}
+\mathcal{O}(\frac{1}{B/\Delta} \log_\Delta \frac{N}{B}) &= \frac{B^\epsilon}{B} \log_{B^\epsilon} \frac{N}{B} \\
+&= \frac{B^\epsilon}{B} \frac{1}{\epsilon} \log_{B} N \\
+&= \frac{1}{B^{1-\epsilon}\epsilon} \log_B N
+\end{align*}
+
+In~\ref{update:pbo}, we know that at most $\mathcal{O}(N/B)$ leaves are created each requiring $\mathcal{O}(1)$ I/O's giving amortized $\mathcal{O}(1/B)$ I/O's per update.
+
+In~\ref{update:deg}, we know that at most $\mathcal{O}(\frac{N}{B\Delta})$ internal nodes are created. The creation of such a node costs $\mathcal{O}(\Delta)$ giving an amortized cost of $\mathcal{O}(1/B)$ I/O's per update.
+
+\todo{Analysis of \ref{update:pbu}}
+
 \subsection{Global rebuilding}
 \todo{Reference to earlier section on global rebuilding}
 As we do not fuse nodes with a too low node degree we might end up with an unbalanced tree. We use global rebuilding to guarantee that the tree is rebalanced and thus that our amortized bounds hold.
@@ -343,11 +401,47 @@ The points to reinsert are found by doing a top-down traversal of the tree while
 
 \textbf{Analysis}
 
-\includegraphics[width=\textwidth]{../handwritten notes/Notes on global rebuilding analysis.jpg}
+Elements at level $i$ (leaf layer being level 0) can at most be flushed $i$ levels down.
+The structure holds at most $\frac{3\bar{N}}{2B}$ nodes in total and at level $i$ the structure has at most $\frac{3\bar{N}}{2B} \frac{1}{\Delta^i}$ nodes. The cost of flushing all the buffers at level $i$ becomes:
 
-\todo{Three sided range queries}
+$$ i \cdot \frac{3\bar{N}}{2B} \frac{1}{\Delta^i}$$
 
-\todo{Construction}
+By summing over all layers of the tree we get the total cost of flushing all buffers to be:
+\begin{align*}
+\sum\limits_{i=0}^{\mathcal{O}(\log_\Delta \frac{3N}{2B})} i \cdot \frac{3\bar{N}}{2B} \frac{1}{\Delta^i} &< 
+\sum\limits_{i=0}^{\infty} i \cdot \frac{3\bar{N}}{2B} \frac{1}{\Delta^i} \\
+&= \frac{3\bar{N}}{2B} \sum\limits_{i=0}^{\infty} \frac{i}{\Delta^i} \\
+&= \frac{3\bar{N}}{2B} \sum\limits_{i=0}^{\infty} \left(\frac{1}{\Delta}\right)^i \\
+&= \frac{3\bar{N}}{2B} \frac{1}{1-\Delta} \\
+&= \mathcal{O}(N/B)
+\end{align*}
+
+This gives an amortized cost of $\mathcal{O}(1/B)$ per update to flush all buffers.
+
+The $\mathcal{O}(\bar{N})$ reinsertions into the new tree can be done in amortized $\mathcal{O}(\nicefrac{\bar{N}}{\epsilon B^{1-\epsilon}} \log_B N)$ I/O's is are paid by the $\bar{N}/2$ updates during the epoch.
+
+%\includegraphics[width=\textwidth]{../handwritten notes/Notes on global rebuilding analysis.jpg}
+
+\subsection{Three sided range queries}
+Reporting a query $Q = \left[ x_1,x_2 \right] \times \left[y, \infty \right]$ is done in a breadth first search of the tree. Starting from the root we identify, from the query ranges, the relevant children and push all relevant updates in the root to the identified children. After having done this we know that the point buffers of the children do not change further and we can thus report all points in the query range from the child structure of the root and the point buffer of the root. The children are added to the back of the bfs queue. All nodes except for the root do not need to report from their point buffers as the parent of the node has already reported the relevant points.
+
+During the breadth first search some buffers might temporarily overflow. This is handled using the update operations described earlier. This can be done in a bottom up fashion starting from the leaf layer of the tree while maintaining the invariant that the subtree at the current node is in a good state and making sure that no recursions recurse above the current node and into a subtree which potentially is in a bad state.
+
+\todo{Describe with more detailed descriptions what is done or refer to implementation details for more?}
+
+\textbf{Analysis}
+\todo{Insert analysis of three sided range queries here}
+
+\subsection{Construction}
+The structure can be initialized with an initial set of $N$ points using just $\mathcal{O}(\text{Sort}(N))$ I/O's. If the points are already sorted on $x$ we just need $\mathcal{O}(\text{Scan}(N))$. For the remainder of this Section we assume that the points are initially sorted with regards to $x$.
+
+The first step of the construction is to construct a B-tree with each internal node having a degree of $\Delta/2$ over the $x$-values such that each leaf stores $\nicefrac{B}{2}$ points with the exception of the rightmost leaf which might contain less than $\nicefrac{B}{2}$ points and the rightmost internal nodes having a degree less than $\Delta/2$.
+
+The point buffers of the internal nodes are now filled bottom up pulling the top $B/2$ highest $y$-value points up. If this results in a child having an underflowing point buffer we recursively fill that child before proceding. In a second iteration we do the same but in a top-down fashion.
+
+All insertion and deletion buffers are initially empty and the child structures are constructed from the point buffers of the children.
+
+\todo{Analysis}
 
 \todo{Figures}
 

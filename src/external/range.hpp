@@ -4,17 +4,22 @@
 #include <iostream>
 class range {
 public:
-  point min;
-  int max_y, node_id;
+  point min, min_y, max_y;
+  int node_id;
   range() {}
   ~range() {}
-  range(point _min, int _max_y, int _node_id) :
-    min(_min), max_y(_max_y), node_id(_node_id) {}
+  range(point _min, point _min_y, point _max_y, int _node_id) :
+    min(_min), min_y(_min_y), max_y(_max_y), node_id(_node_id) {}
+
   bool operator<(const range &r) {
     return min < r.min;
   }
+  
   friend std::ostream& operator<<(std::ostream& os, const range &r) {
-    os << r.min << ", " << r.max_y << ", " << r.node_id;
+    os << "minx: " << r.min << " "
+       << "miny: " << r.min_y << std::endl
+       << "maxy: " << r.max_y << " "
+       << "id: " << r.node_id;
     return os;
   }
 };

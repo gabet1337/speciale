@@ -11,12 +11,12 @@
 
 namespace util {
 
-  bool file_exists(std::string file_name) {
+  bool file_exists(const std::string &file_name) {
     struct stat st;
     return stat(file_name.c_str(),&st) == 0;
   }
 
-  void remove_file(std::string file_name) {
+  void remove_file(const std::string &file_name) {
     int s = system(std::string("rm -rf ").append(file_name).c_str());
     if (s != 0) {
       perror(std::string("could not remove file: ").append(file_name).c_str());
@@ -24,13 +24,13 @@ namespace util {
     }
   }
 
-  void remove_directory(std::string directory_name) {
+  void remove_directory(const std::string &directory_name) {
     remove_file(directory_name);
   }
 
   template <class InputIterator, typename T>
   void flush_container_to_file
-  (InputIterator first, InputIterator last, std::string file_name, size_t buffer_size) {
+  (InputIterator first, InputIterator last, const std::string &file_name, size_t buffer_size) {
     if (file_exists(file_name)) remove_file(file_name);
     io::buffered_stream<T> file(buffer_size);
     file.open(file_name);
@@ -42,7 +42,7 @@ namespace util {
   }
 
   template <class Container, typename T>
-  void load_file_to_container(Container &c, std::string file_name, size_t buffer_size) {
+  void load_file_to_container(Container &c, const std::string &file_name, size_t buffer_size) {
     io::buffered_stream<T> file(buffer_size);
     file.open(file_name);
     DEBUG_MSG("file_size: " << file.size() / sizeof(T));

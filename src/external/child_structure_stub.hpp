@@ -15,7 +15,7 @@ namespace ext {
   class child_structure_stub : public child_structure_interface {
   public:
     child_structure_stub(std::size_t id, std::size_t buffer_size,
-                         double epsilon, std::vector<point> points);
+                         double epsilon, const std::vector<point> &points);
     child_structure_stub(std::size_t id);
     ~child_structure_stub();
     void insert(const point &p);
@@ -26,10 +26,9 @@ namespace ext {
     bool valid_memory() { return true; }
     bool valid_disk() { return true; }
 #endif
-#ifdef DEBUG
-    std::vector<point> get_points()
-    {return std::vector<point>(points.begin(), points.end());}
-#endif
+    std::vector<point> get_points() {
+      return std::vector<point>(points.begin(), points.end());
+    }
   private:
     std::string get_directory();
     std::string get_L_file();
@@ -40,7 +39,8 @@ namespace ext {
   };
 
   child_structure_stub::child_structure_stub
-  (std::size_t id, std::size_t buffer_size, double epsilon, std::vector<point> _points)
+  (std::size_t id, std::size_t buffer_size, double epsilon,
+   const std::vector<point> &_points)
     : points(_points.begin(), _points.end()) {
     this->id = id;
     this->buffer_size = 1024;
