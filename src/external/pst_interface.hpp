@@ -7,6 +7,7 @@ namespace ext {
   class pst_interface {
   public:
     pst_interface() {};
+    pst_interface(size_t buffer_size, double epsilon) {};
     virtual ~pst_interface() {};
     virtual void insert(const point &p) = 0;
     virtual void remove(const point &p) = 0;
