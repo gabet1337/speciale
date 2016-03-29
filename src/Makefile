@@ -5,7 +5,7 @@ DEBUG = -g -Wall -fsanitize=address $(DOFF) $(VALID) common/debug.hpp common/val
 LFLAGS = $(DEBUG)
 CFLAGS = $(DEBUG) -c
 
-PROGRAMS = ipst stream_test ctest1 ctest2 ctest epst
+PROGRAMS = ipst stream_test ctest1 ctest2 ctest epst apst
 
 DEFINITIONS = common/definitions.hpp
 UTILITIES = common/utilities.hpp

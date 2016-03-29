@@ -4,6 +4,8 @@ src/stream_test
 src/ctest
 src/epst
 src/dump_file
+src/apst
+src/bpst
 
 # data folders
 src/c_*
