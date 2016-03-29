@@ -183,6 +183,21 @@ namespace ext {
       global_rebuild,
       construct
     };
+    enum struct DATA {
+      point_buffer,
+      info_file,
+      insert_buffer,
+      ranges,
+      child_structure,
+      delete_buffer,
+      all
+    };
+    buffered_pst::buffered_pst_node* get_cached_node(buffered_pst_node* node,
+                                                     std::set<buffered_pst_node*> &prev_cache,
+                                                     std::set<buffered_pst_node*> &cur_cache);
+    void load_data_in_node(buffered_pst_node* node, const DATA &data);
+    void clear_cache(std::set<buffered_pst_node*> &prev_cache,
+                     std::set<buffered_pst_node*> &cur_cache);
     std::string event_to_string(const EVENT &e);
     std::stack<std::pair<buffered_pst_node*, EVENT> > event_stack;
     global_rebuild_configuration global_rebuild_config;
@@ -1143,6 +1158,117 @@ is_point_buffer_loaded);
     global_rebuild_config = config;
   }
 
+
+  buffered_pst::buffered_pst_node* buffered_pst::get_cached_node(buffered_pst_node* node,
+                                                                 std::set<buffered_pst_node*>
+                                                                 &prev_cache,
+                                                                 std::set<buffered_pst_node*>
+                                                                 &cur_cache) {
+
+    DEBUG_MSG("Asking cache for " << node->id);
+    if (node->is_root()) {
+      DEBUG_MSG("Root is cached per default");
+      return node;
+    }
+    if (cur_cache.find(node) != cur_cache.end()) {
+      DEBUG_MSG("We have already cached node " << node->id);
+      return node;
+    }
+    
+    for (auto bpn : prev_cache) {
+      //TODO: Consider using a comparator on buffered_pst_node instead of iterator
+      if (bpn->id == node->id) {
+        DEBUG_MSG("Cache-hit for node " << node->id);
+        cur_cache.insert(bpn);
+        prev_cache.erase(bpn);
+        delete node;
+        return bpn;
+      }
+    }
+    DEBUG_MSG("No cache-hit. Adding node " << node->id << " to cache.");
+    cur_cache.insert(node);
+    return node;
+  }
+
+  void buffered_pst::clear_cache(std::set<buffered_pst_node*> &prev_cache,
+                                 std::set<buffered_pst_node*> &cur_cache) {
+
+    DEBUG_MSG("Starting to clear cache");
+    for (auto bpn : prev_cache) {
+      bpn->flush_all();
+      delete bpn;
+    }
+    prev_cache.clear();
+    DEBUG_MSG("Finished clearing cache");
+
+    std::swap(prev_cache, cur_cache);
+
+    DEBUG_MSG_FAIL("Current_cache now contains");
+#ifdef DEBUG
+    for (auto bpn : cur_cache)
+      DEBUG_MSG_FAIL(" - " << bpn->id);
+#endif
+
+    DEBUG_MSG_FAIL("Previous_cache now contains");
+#ifdef DEBUG
+    for (auto bpn : prev_cache)
+      DEBUG_MSG_FAIL(" - " << bpn->id);
+#endif
+  }
+
+  void buffered_pst::load_data_in_node(buffered_pst_node* node, const DATA &data) {
+
+    switch (data) {
+
+    case DATA::info_file:
+      {
+        if (!node->is_info_file_loaded) node->load_info_file();
+        break;
+      }
+    case DATA::point_buffer:
+      {
+        if (!node->is_point_buffer_loaded) node->load_point_buffer();
+        break;
+      }
+    case DATA::ranges:
+      {
+        if (!node->is_ranges_loaded) node->load_ranges();
+        break;
+      }
+    case DATA::child_structure:
+      {
+        if (!node->is_child_structure_loaded) node->load_child_structure();
+        break;
+      }
+    case DATA::delete_buffer:
+      {
+        if (!node->is_delete_buffer_loaded) node->load_delete_buffer();
+        break;
+      }
+    case DATA::insert_buffer:
+      {
+        if (!node->is_insert_buffer_loaded) node->load_insert_buffer();
+        break;
+      }
+    case DATA::all:
+      {
+        if (!node->is_info_file_loaded) node->load_info_file();
+        if (!node->is_point_buffer_loaded) node->load_point_buffer();
+        if (!node->is_ranges_loaded) node->load_ranges();
+        if (!node->is_child_structure_loaded) node->load_child_structure();
+        if (!node->is_delete_buffer_loaded) node->load_delete_buffer();
+        if (!node->is_insert_buffer_loaded) node->load_insert_buffer();
+        break;
+      }
+    default:
+      {
+        DEBUG_MSG_FAIL("No mathching DATA");
+        break;
+      }
+    }
+    
+  }
+  
   /*
     This is the main event loop
   */
@@ -1150,6 +1276,7 @@ is_point_buffer_loaded);
   void buffered_pst::handle_events() {
     std::pair<buffered_pst_node*, EVENT> prev_event = {0, EVENT::point_buffer_overflow};
 
+    std::set<buffered_pst_node*> prev_cache, cur_cache;
 
     while (!event_stack.empty()) {
       auto cur_event = event_stack.top();
@@ -1158,182 +1285,177 @@ is_point_buffer_loaded);
       EVENT event;
 
       std::tie(node, event) = cur_event;
+
+      node = get_cached_node(node, prev_cache, cur_cache);
+      
       DEBUG_MSG("STARTING TO HANDLE EVENT: " << event_to_string(event) << " in node " <<
                 node->id);
       switch (cur_event.second) {
-        
+
       case EVENT::point_buffer_overflow:
         {
-          node->load_info_file();
+          load_data_in_node(node, DATA::info_file);
           if (!node->point_buffer_overflow()) {
-            node->flush_info_file();
+            clear_cache(prev_cache, cur_cache);
             break;
           }
-          if ( node->is_root() && node->is_leaf() )
+          if ( node->is_root() && node->is_leaf() ) {
+            clear_cache(prev_cache, cur_cache);
             handle_point_buffer_overflow_of_leaf_root();
-          else if ( node->is_root() )
+          } else if ( node->is_root() ) {
+            clear_cache(prev_cache, cur_cache);
             handle_point_buffer_overflow_in_root(node);
-          else if ( node->is_leaf() ) {
-            node->load_point_buffer();
+          } else if ( node->is_leaf() ) {
+            load_data_in_node(node, DATA::point_buffer);
             buffered_pst_node* parent = node->parent_id == 0
               ? root
               : new buffered_pst_node(node->parent_id,buffer_size,epsilon,root);
-            parent->load_ranges();
-            parent->load_info_file();
-            
+            parent = get_cached_node(parent, prev_cache, cur_cache);
+            load_data_in_node(parent, DATA::ranges);
+            load_data_in_node(parent, DATA::info_file);
+
+            clear_cache(prev_cache, cur_cache);
             split_leaf(node, parent);
             
-            parent->flush_info_file();
-            parent->flush_ranges();
-            if (!parent->is_root()) delete parent;
           } else if ( node->is_virtual_leaf() ) {
-            node->load_ranges();
-            node->load_point_buffer();
-            node->load_child_structure();
+            load_data_in_node(node, DATA::ranges);
+            load_data_in_node(node, DATA::point_buffer);
+            load_data_in_node(node, DATA::child_structure);
+
             buffered_pst_node* parent = node->parent_id == 0
               ? root
               : new buffered_pst_node(node->parent_id,buffer_size,epsilon,root);
-            parent->load_child_structure();
-            parent->load_ranges();
-            parent->load_info_file();
+            parent = get_cached_node(parent, prev_cache, cur_cache);
+            load_data_in_node(parent, DATA::child_structure);
+            load_data_in_node(parent, DATA::ranges);
+            load_data_in_node(parent, DATA::info_file);
             
             std::map<int, buffered_pst_node*> children;
             for (range r : node->ranges) {
               buffered_pst_node* child =
                 new buffered_pst_node(r.node_id, buffer_size, epsilon, root);
+              child = get_cached_node(child, prev_cache, cur_cache);
               children[r.node_id] = child;
-              child->load_point_buffer();
-              child->load_info_file();
+              load_data_in_node(child, DATA::point_buffer);
+              load_data_in_node(child, DATA::info_file);
             }
 
+            clear_cache(prev_cache, cur_cache);
             handle_point_buffer_overflow_in_virtual_leaf(parent, node, children);
 
-            for (auto c : children) {
-              c.second->flush_point_buffer();
-              c.second->flush_info_file();
-              delete c.second;
-            }
-            
-            parent->flush_child_structure();
-            parent->flush_ranges();
-            parent->flush_info_file();
-            
-            node->flush_child_structure();
-            node->flush_ranges();
           } else assert(true==false);
-          node->flush_point_buffer();
-          node->flush_info_file();
         }
         break;
       case EVENT::insert_buffer_overflow:
         {
-          node->load_info_file();
+          load_data_in_node(node, DATA::info_file);
           if ( !node->insert_buffer_overflow() ) {
-            node->flush_info_file();
+            clear_cache(prev_cache, cur_cache);
             break;
           }
-          node->load_point_buffer();
-          node->load_insert_buffer();
+
+          load_data_in_node(node, DATA::point_buffer);
+          load_data_in_node(node, DATA::insert_buffer);
           if ( node->is_leaf() || node->is_virtual_leaf() ) {
             buffered_pst_node* parent = node->parent_id == 0
               ? root
               : new buffered_pst_node(node->parent_id,buffer_size,epsilon,root);
-            parent->load_child_structure();
-            parent->load_ranges();
+            parent = get_cached_node(parent, prev_cache, cur_cache);
+            load_data_in_node(parent, DATA::child_structure);
+            load_data_in_node(parent, DATA::ranges);
+
+            clear_cache(prev_cache, cur_cache);
             handle_insert_buffer_overflow_in_leaf_and_virtual_leaf(node, parent);
-            parent->flush_child_structure();
-            parent->flush_ranges();
-            if (!parent->is_root()) delete parent;
+
           } else {
-            node->load_ranges();
-            node->load_delete_buffer();
-            node->load_child_structure();
+            load_data_in_node(node, DATA::ranges);
+            load_data_in_node(node, DATA::delete_buffer);
+            load_data_in_node(node, DATA::child_structure);
             while (node->insert_buffer_overflow()) {
+              node = get_cached_node(node, prev_cache, cur_cache);
               buffered_pst_node* child = find_child(node, node->insert_buffer);
-              child->load_all();
+              child = get_cached_node(child, prev_cache, cur_cache);
+              load_data_in_node(child, DATA::all);
+              clear_cache(prev_cache, cur_cache);
               handle_insert_buffer_overflow(node, child);
-              child->flush_all();
-              delete child;
             }
           }
-          node->flush_all();
         }
         break;
       case EVENT::delete_buffer_overflow:
         {
-          node->load_info_file();
+          load_data_in_node(node, DATA::info_file);
           if ( !node->delete_buffer_overflow() ) {
-            node->flush_info_file();
+            clear_cache(prev_cache, cur_cache);
             break;
           }
-          node->load_delete_buffer();
-          node->load_ranges();
+
+          load_data_in_node(node, DATA::delete_buffer);
+          load_data_in_node(node, DATA::ranges);
           if (node->is_leaf() || node->is_virtual_leaf()) {
+            clear_cache(prev_cache, cur_cache);
             handle_delete_buffer_overflow_in_leaf_and_virtual_leaf(node);
           } else {
-            node->load_point_buffer();
-            node->load_insert_buffer();
-            node->load_child_structure();
+            load_data_in_node(node, DATA::point_buffer);
+            load_data_in_node(node, DATA::insert_buffer);
+            load_data_in_node(node, DATA::child_structure);
             while (node->delete_buffer_overflow()) {
+              node = get_cached_node(node, prev_cache, cur_cache);
               buffered_pst_node* child = find_child(node, node->delete_buffer);
-              child->load_all();
+              child = get_cached_node(child, prev_cache, cur_cache);
+              load_data_in_node(child, DATA::all);
+
+              clear_cache(prev_cache, cur_cache);
               handle_delete_buffer_overflow(node, child);
-              child->flush_all();
-              delete child;
             }
           }
-          node->flush_all();
         }
         break;
       case EVENT::node_degree_overflow:
         {
-          node->load_info_file();
+          load_data_in_node(node, DATA::info_file);
           if ( !node->node_degree_overflow() ) {
-            node->flush_info_file();
+            clear_cache(prev_cache, cur_cache);
             break;
           }
-          node->load_ranges();
-          node->load_point_buffer();
-          node->load_insert_buffer();
-          node->load_delete_buffer();
-          node->load_child_structure();
-
+          load_data_in_node(node, DATA::ranges);
+          load_data_in_node(node, DATA::point_buffer);
+          load_data_in_node(node, DATA::insert_buffer);
+          load_data_in_node(node, DATA::delete_buffer);
+          load_data_in_node(node, DATA::child_structure);
+          
           buffered_pst_node* parent = node->parent_id == 0
             ? root
             : new buffered_pst_node(node->parent_id,buffer_size,epsilon,root);
-          parent->load_ranges();
-          parent->load_info_file();
+          parent = get_cached_node(parent, prev_cache, cur_cache);
+           load_data_in_node(parent, DATA::ranges);
+          load_data_in_node(parent, DATA::info_file);
+          
           std::map<int, buffered_pst_node*> children;
           for (range r : node->ranges) {
             buffered_pst_node* child = new buffered_pst_node(r.node_id, buffer_size,
                                                              epsilon, root);
+            child = get_cached_node(child, prev_cache, cur_cache);
             children[r.node_id] = child;
-            child->load_point_buffer();
-            child->load_info_file();
+
+            load_data_in_node(child, DATA::point_buffer);
+            load_data_in_node(child, DATA::info_file);
           }
+          clear_cache(prev_cache, cur_cache);
           handle_node_degree_overflow(node, parent, children);
-          node->flush_all();
-          parent->flush_ranges();
-          parent->flush_info_file();
-          if (!parent->is_root()) delete parent;
-          for (auto c : children) {
-            c.second->flush_point_buffer();
-            c.second->flush_info_file();
-            delete c.second;
-          }
         }
         break;
       case EVENT::point_buffer_underflow_construct:
       case EVENT::point_buffer_underflow:
         {
-          node->load_info_file();
+          load_data_in_node(node, DATA::info_file);
           if ( event == EVENT::point_buffer_underflow && !node->point_buffer_underflow() ) {
-            node->flush_info_file();
+            clear_cache(prev_cache, cur_cache);
             break;
           }
 
-          node->load_ranges();
-          node->load_point_buffer();
+          load_data_in_node(node, DATA::ranges);
+          load_data_in_node(node, DATA::point_buffer);
           
           if ( node->is_leaf() || node->is_virtual_leaf() ) {
            
@@ -1341,24 +1463,23 @@ is_point_buffer_loaded);
             if (state == STATE::normal || state == STATE::fix_up
                 || state == STATE::global_rebuild || state == STATE::construct) {
               event_stack.push({copy_node(node), EVENT::point_buffer_underflow_full_children});
+              clear_cache(prev_cache, cur_cache);
               handle_point_buffer_underflow_in_children(node);
             }
           }
-          node->flush_point_buffer();
-          node->flush_ranges();
-          node->flush_info_file();
         }
         break;
       case EVENT::point_buffer_underflow_full_children:
         {
-          node->load_all();
+          load_data_in_node(node, DATA::all);
           
           buffered_pst_node* parent = node->parent_id == 0
             ? root
             : new buffered_pst_node(node->parent_id,buffer_size,epsilon,root);
-          parent->load_child_structure();
-          parent->load_ranges();
-          parent->load_info_file();
+          parent = get_cached_node(parent, prev_cache, cur_cache);
+          load_data_in_node(parent, DATA::child_structure);
+          load_data_in_node(parent, DATA::ranges);
+          load_data_in_node(parent, DATA::info_file);
           
           std::vector<buffered_pst_node*> children;
           for (range r : node->ranges) {
@@ -1366,56 +1487,34 @@ is_point_buffer_loaded);
             buffered_pst_node* child =
               new buffered_pst_node(r.node_id, buffer_size,
                                     epsilon, root);
-            child->load_point_buffer();
-            child->load_ranges();
-            child->load_info_file();
+            child = get_cached_node(child, prev_cache, cur_cache);
+            load_data_in_node(child, DATA::point_buffer);
+            load_data_in_node(child, DATA::ranges);
+            load_data_in_node(child, DATA::info_file);
             children.push_back(child);
           }
-          
+          clear_cache(prev_cache, cur_cache);
           handle_point_buffer_underflow(parent, node, children);
           
-          parent->flush_child_structure();
-          parent->flush_ranges();
-          parent->flush_info_file();
-          if (!parent->is_root()) delete parent;
           if (state == STATE::normal || state == STATE::fix_up
               || state == STATE::global_rebuild || state == STATE::construct) {
             if (node->point_buffer_underflow())
               event_stack.push({copy_node(node), EVENT::point_buffer_underflow_full_children});
             handle_point_buffer_underflow_in_children(children);
           }
-          for (auto c : children) {
-            c->flush_point_buffer();
-            c->flush_ranges();
-            c->flush_info_file();
-            delete c;
-          }
-          node->flush_all();
-        }
-        break;
-      case EVENT::split_leaf:
-        {
-          node->load_point_buffer();
-          node->load_info_file();
-          buffered_pst_node* parent = node->parent_id == 0
-            ? root
-            : new buffered_pst_node(node->parent_id,buffer_size,epsilon,root);
-          parent->load_ranges();
-          split_leaf(node, parent);
-          parent->flush_ranges();
-          if (!parent->is_root()) delete parent;
-          node->flush_point_buffer();
-          node->flush_info_file();
         }
         break;
       default:
         DEBUG_MSG_FAIL("Illegal event! " << event_to_string(event));
         break;
       }
-      if (!node->is_root()) delete node;
       prev_event = cur_event;
     }
-
+    clear_cache(prev_cache, cur_cache);
+#ifdef DEBUG
+    assert(prev_cache.empty());
+    assert(cur_cache.empty());
+#endif
   }
 
   std::string buffered_pst::event_to_string(const EVENT &e) {
