@@ -193,12 +193,9 @@ namespace ext {
       delete_buffer,
       all
     };
-    buffered_pst::buffered_pst_node* get_cached_node(buffered_pst_node* node,
-                                                     std::set<buffered_pst_node*> &prev_cache,
-                                                     std::set<buffered_pst_node*> &cur_cache);
+    buffered_pst::buffered_pst_node* get_cached_node(buffered_pst_node* node);
     void load_data_in_node(buffered_pst_node* node, const DATA &data);
-    void clear_cache(std::set<buffered_pst_node*> &prev_cache,
-                     std::set<buffered_pst_node*> &cur_cache);
+    void clear_cache();
     std::string event_to_string(const EVENT &e);
     std::stack<std::pair<buffered_pst_node*, EVENT> > event_stack;
     global_rebuild_configuration global_rebuild_config;
@@ -209,6 +206,7 @@ namespace ext {
     int epoch_begin;
     STATE state;
     int parent_to_stop_at;
+    std::map<int, buffered_pst_node*> prev_cache, cur_cache;
   };
 
   // BUFFERED_PST_NODE /////////////////////////////////////////////////////
@@ -1160,44 +1158,41 @@ is_point_buffer_loaded);
   }
 
 
-  buffered_pst::buffered_pst_node* buffered_pst::get_cached_node(buffered_pst_node* node,
-                                                                 std::set<buffered_pst_node*>
-                                                                 &prev_cache,
-                                                                 std::set<buffered_pst_node*>
-                                                                 &cur_cache) {
+  buffered_pst::buffered_pst_node* buffered_pst::get_cached_node(buffered_pst_node* node) {
 
     DEBUG_MSG("Asking cache for " << node->id);
+    
     if (node->is_root()) {
       DEBUG_MSG("Root is cached per default");
       return node;
     }
-    if (cur_cache.find(node) != cur_cache.end()) {
+    
+    if (cur_cache.find(node->id) != cur_cache.end()) {
       DEBUG_MSG("We have already cached node " << node->id);
       return node;
     }
+
+    auto bpn = prev_cache.find(node->id);
     
-    for (auto bpn : prev_cache) {
-      //TODO: Consider using a comparator on buffered_pst_node instead of iterator
-      if (bpn->id == node->id) {
+    if (bpn != prev_cache.end()) {
         DEBUG_MSG("Cache-hit for node " << node->id);
-        cur_cache.insert(bpn);
+        buffered_pst_node* res = bpn->second;
+        cur_cache[res->id] = res;
         prev_cache.erase(bpn);
         delete node;
-        return bpn;
-      }
+        return res;
     }
     DEBUG_MSG("No cache-hit. Adding node " << node->id << " to cache.");
-    cur_cache.insert(node);
+    cur_cache[node->id] = node;
     return node;
   }
 
-  void buffered_pst::clear_cache(std::set<buffered_pst_node*> &prev_cache,
-                                 std::set<buffered_pst_node*> &cur_cache) {
+  void buffered_pst::clear_cache() {
 
     DEBUG_MSG("Starting to clear cache");
     for (auto bpn : prev_cache) {
-      bpn->flush_all();
-      delete bpn;
+      bpn.second->flush_all();
+      delete bpn.second;
     }
     prev_cache.clear();
     DEBUG_MSG("Finished clearing cache");
@@ -1207,13 +1202,13 @@ is_point_buffer_loaded);
     DEBUG_MSG_FAIL("Current_cache now contains");
 #ifdef DEBUG
     for (auto bpn : cur_cache)
-      DEBUG_MSG_FAIL(" - " << bpn->id);
+      DEBUG_MSG_FAIL(" - " << bpn.second->id);
 #endif
 
     DEBUG_MSG_FAIL("Previous_cache now contains");
 #ifdef DEBUG
     for (auto bpn : prev_cache)
-      DEBUG_MSG_FAIL(" - " << bpn->id);
+      DEBUG_MSG_FAIL(" - " << bpn.second->id);
 #endif
   }
 
@@ -1277,8 +1272,6 @@ is_point_buffer_loaded);
   void buffered_pst::handle_events() {
     std::pair<buffered_pst_node*, EVENT> prev_event = {0, EVENT::point_buffer_overflow};
 
-    std::set<buffered_pst_node*> prev_cache, cur_cache;
-
     while (!event_stack.empty()) {
       auto cur_event = event_stack.top();
       event_stack.pop();
@@ -1287,7 +1280,7 @@ is_point_buffer_loaded);
 
       std::tie(node, event) = cur_event;
 
-      node = get_cached_node(node, prev_cache, cur_cache);
+      node = get_cached_node(node);
       
       DEBUG_MSG("STARTING TO HANDLE EVENT: " << event_to_string(event) << " in node " <<
                 node->id);
@@ -1297,25 +1290,25 @@ is_point_buffer_loaded);
         {
           load_data_in_node(node, DATA::info_file);
           if (!node->point_buffer_overflow()) {
-            clear_cache(prev_cache, cur_cache);
+            clear_cache();
             break;
           }
           if ( node->is_root() && node->is_leaf() ) {
-            clear_cache(prev_cache, cur_cache);
+            clear_cache();
             handle_point_buffer_overflow_of_leaf_root();
           } else if ( node->is_root() ) {
-            clear_cache(prev_cache, cur_cache);
+            clear_cache();
             handle_point_buffer_overflow_in_root(node);
           } else if ( node->is_leaf() ) {
             load_data_in_node(node, DATA::point_buffer);
             buffered_pst_node* parent = node->parent_id == 0
               ? root
               : new buffered_pst_node(node->parent_id,buffer_size,epsilon,root);
-            parent = get_cached_node(parent, prev_cache, cur_cache);
+            parent = get_cached_node(parent);
             load_data_in_node(parent, DATA::ranges);
             load_data_in_node(parent, DATA::info_file);
 
-            clear_cache(prev_cache, cur_cache);
+            clear_cache();
             split_leaf(node, parent);
             
           } else if ( node->is_virtual_leaf() ) {
@@ -1326,7 +1319,7 @@ is_point_buffer_loaded);
             buffered_pst_node* parent = node->parent_id == 0
               ? root
               : new buffered_pst_node(node->parent_id,buffer_size,epsilon,root);
-            parent = get_cached_node(parent, prev_cache, cur_cache);
+            parent = get_cached_node(parent);
             load_data_in_node(parent, DATA::child_structure);
             load_data_in_node(parent, DATA::ranges);
             load_data_in_node(parent, DATA::info_file);
@@ -1335,13 +1328,13 @@ is_point_buffer_loaded);
             for (range r : node->ranges) {
               buffered_pst_node* child =
                 new buffered_pst_node(r.node_id, buffer_size, epsilon, root);
-              child = get_cached_node(child, prev_cache, cur_cache);
+              child = get_cached_node(child);
               children[r.node_id] = child;
               load_data_in_node(child, DATA::point_buffer);
               load_data_in_node(child, DATA::info_file);
             }
 
-            clear_cache(prev_cache, cur_cache);
+            clear_cache();
             handle_point_buffer_overflow_in_virtual_leaf(parent, node, children);
 
           } else assert(true==false);
@@ -1351,7 +1344,7 @@ is_point_buffer_loaded);
         {
           load_data_in_node(node, DATA::info_file);
           if ( !node->insert_buffer_overflow() ) {
-            clear_cache(prev_cache, cur_cache);
+            clear_cache();
             break;
           }
 
@@ -1361,11 +1354,11 @@ is_point_buffer_loaded);
             buffered_pst_node* parent = node->parent_id == 0
               ? root
               : new buffered_pst_node(node->parent_id,buffer_size,epsilon,root);
-            parent = get_cached_node(parent, prev_cache, cur_cache);
+            parent = get_cached_node(parent);
             load_data_in_node(parent, DATA::child_structure);
             load_data_in_node(parent, DATA::ranges);
 
-            clear_cache(prev_cache, cur_cache);
+            clear_cache();
             handle_insert_buffer_overflow_in_leaf_and_virtual_leaf(node, parent);
 
           } else {
@@ -1373,11 +1366,11 @@ is_point_buffer_loaded);
             load_data_in_node(node, DATA::delete_buffer);
             load_data_in_node(node, DATA::child_structure);
             while (node->insert_buffer_overflow()) {
-              node = get_cached_node(node, prev_cache, cur_cache);
+              node = get_cached_node(node);
               buffered_pst_node* child = find_child(node, node->insert_buffer);
-              child = get_cached_node(child, prev_cache, cur_cache);
+              child = get_cached_node(child);
               load_data_in_node(child, DATA::all);
-              clear_cache(prev_cache, cur_cache);
+              clear_cache();
               handle_insert_buffer_overflow(node, child);
             }
           }
@@ -1387,26 +1380,26 @@ is_point_buffer_loaded);
         {
           load_data_in_node(node, DATA::info_file);
           if ( !node->delete_buffer_overflow() ) {
-            clear_cache(prev_cache, cur_cache);
+            clear_cache();
             break;
           }
 
           load_data_in_node(node, DATA::delete_buffer);
           load_data_in_node(node, DATA::ranges);
           if (node->is_leaf() || node->is_virtual_leaf()) {
-            clear_cache(prev_cache, cur_cache);
+            clear_cache();
             handle_delete_buffer_overflow_in_leaf_and_virtual_leaf(node);
           } else {
             load_data_in_node(node, DATA::point_buffer);
             load_data_in_node(node, DATA::insert_buffer);
             load_data_in_node(node, DATA::child_structure);
             while (node->delete_buffer_overflow()) {
-              node = get_cached_node(node, prev_cache, cur_cache);
+              node = get_cached_node(node);
               buffered_pst_node* child = find_child(node, node->delete_buffer);
-              child = get_cached_node(child, prev_cache, cur_cache);
+              child = get_cached_node(child);
               load_data_in_node(child, DATA::all);
 
-              clear_cache(prev_cache, cur_cache);
+              clear_cache();
               handle_delete_buffer_overflow(node, child);
             }
           }
@@ -1416,7 +1409,7 @@ is_point_buffer_loaded);
         {
           load_data_in_node(node, DATA::info_file);
           if ( !node->node_degree_overflow() ) {
-            clear_cache(prev_cache, cur_cache);
+            clear_cache();
             break;
           }
           load_data_in_node(node, DATA::ranges);
@@ -1428,7 +1421,7 @@ is_point_buffer_loaded);
           buffered_pst_node* parent = node->parent_id == 0
             ? root
             : new buffered_pst_node(node->parent_id,buffer_size,epsilon,root);
-          parent = get_cached_node(parent, prev_cache, cur_cache);
+          parent = get_cached_node(parent);
            load_data_in_node(parent, DATA::ranges);
           load_data_in_node(parent, DATA::info_file);
           
@@ -1436,13 +1429,13 @@ is_point_buffer_loaded);
           for (range r : node->ranges) {
             buffered_pst_node* child = new buffered_pst_node(r.node_id, buffer_size,
                                                              epsilon, root);
-            child = get_cached_node(child, prev_cache, cur_cache);
+            child = get_cached_node(child);
             children[r.node_id] = child;
 
             load_data_in_node(child, DATA::point_buffer);
             load_data_in_node(child, DATA::info_file);
           }
-          clear_cache(prev_cache, cur_cache);
+          clear_cache();
           handle_node_degree_overflow(node, parent, children);
         }
         break;
@@ -1451,7 +1444,7 @@ is_point_buffer_loaded);
         {
           load_data_in_node(node, DATA::info_file);
           if ( event == EVENT::point_buffer_underflow && !node->point_buffer_underflow() ) {
-            clear_cache(prev_cache, cur_cache);
+            clear_cache();
             break;
           }
 
@@ -1464,7 +1457,7 @@ is_point_buffer_loaded);
             if (state == STATE::normal || state == STATE::fix_up
                 || state == STATE::global_rebuild || state == STATE::construct) {
               event_stack.push({copy_node(node), EVENT::point_buffer_underflow_full_children});
-              clear_cache(prev_cache, cur_cache);
+              clear_cache();
               handle_point_buffer_underflow_in_children(node);
             }
           }
@@ -1477,7 +1470,7 @@ is_point_buffer_loaded);
           buffered_pst_node* parent = node->parent_id == 0
             ? root
             : new buffered_pst_node(node->parent_id,buffer_size,epsilon,root);
-          parent = get_cached_node(parent, prev_cache, cur_cache);
+          parent = get_cached_node(parent);
           load_data_in_node(parent, DATA::child_structure);
           load_data_in_node(parent, DATA::ranges);
           load_data_in_node(parent, DATA::info_file);
@@ -1488,13 +1481,13 @@ is_point_buffer_loaded);
             buffered_pst_node* child =
               new buffered_pst_node(r.node_id, buffer_size,
                                     epsilon, root);
-            child = get_cached_node(child, prev_cache, cur_cache);
+            child = get_cached_node(child);
             load_data_in_node(child, DATA::point_buffer);
             load_data_in_node(child, DATA::ranges);
             load_data_in_node(child, DATA::info_file);
             children.push_back(child);
           }
-          clear_cache(prev_cache, cur_cache);
+          clear_cache();
           handle_point_buffer_underflow(parent, node, children);
           
           if (state == STATE::normal || state == STATE::fix_up
@@ -1511,7 +1504,7 @@ is_point_buffer_loaded);
       }
       prev_event = cur_event;
     }
-    clear_cache(prev_cache, cur_cache);
+    clear_cache();
 #ifdef DEBUG
     assert(prev_cache.empty());
     assert(cur_cache.empty());
