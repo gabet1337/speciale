@@ -239,6 +239,9 @@ namespace ext {
       new ext::child_structure(id, buffer_size, epsilon, std::vector<point>());
     is_child_structure_loaded = true;
     this->B_epsilon = B_epsilon;
+
+    if (!util::file_exists(get_directory(id))) mkdir(get_directory(id).c_str(), 0700);
+    
     DEBUG_MSG("Constructed pst_node with id " << id << " and buffer_size: " << buffer_size
               << " and B_epsilon " << B_epsilon << " and parent_id " << parent_id);
   }
@@ -373,7 +376,7 @@ is_point_buffer_loaded);
 #endif
     
     DEBUG_MSG("Flushing point buffer for node " << id);
-    if (!util::file_exists(get_directory(id))) mkdir(get_directory(id).c_str(), 0700);
+
     util::flush_container_to_file<std::set<point>::iterator,point>
       (point_buffer.begin(),point_buffer.end(), get_point_buffer_file_name(id), buffer_size);
 
@@ -394,7 +397,7 @@ is_point_buffer_loaded);
 #endif
    
     DEBUG_MSG("Flushing insert buffer for node " << id);
-    if (!util::file_exists(get_directory(id))) mkdir(get_directory(id).c_str(), 0700);
+
     util::flush_container_to_file<std::set<point>::iterator,point>
       (insert_buffer.begin(),insert_buffer.end(),
        get_insert_buffer_file_name(id), buffer_size);
@@ -417,7 +420,7 @@ is_point_buffer_loaded);
     for (range r : ranges)
       DEBUG_MSG_FAIL(" - " << r);
 #endif
-    if (!util::file_exists(get_directory(id))) mkdir(get_directory(id).c_str(), 0700);
+
     util::flush_container_to_file<std::set<range>::iterator, range>
       (ranges.begin(), ranges.end(), get_ranges_file_name(id), buffer_size);
 
@@ -439,7 +442,7 @@ is_point_buffer_loaded);
 #endif
 
     DEBUG_MSG("Flushing delete buffer for node " << id);
-    if (!util::file_exists(get_directory(id))) mkdir(get_directory(id).c_str(), 0700);
+
     util::flush_container_to_file<std::set<point>::iterator,point>
       (delete_buffer.begin(),delete_buffer.end(),
        get_delete_buffer_file_name(id), buffer_size);
@@ -458,7 +461,7 @@ is_point_buffer_loaded);
     assert(is_info_file_loaded);
 #endif
     DEBUG_MSG("Flushing info file for node " << id);
-    if (!util::file_exists(get_directory(id))) mkdir(get_directory(id).c_str(), 0700);
+
     std::vector<size_t> info_file;
     info_file.push_back(buffer_size);
     info_file.push_back(B_epsilon);
