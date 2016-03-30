@@ -14,6 +14,8 @@
 
 using namespace std;
 
+const size_t buffer_size = 1024;
+
 typedef ext::external_priority_search_tree apst;
 
 void cleanup() {
@@ -45,6 +47,15 @@ void set_width() {
 void print_description(string description) {
   set_width();
   cout << description;
+}
+
+std::vector<point> get_points_from_file(const std::string &file_name) {
+  std::vector<std::pair<point,size_t> > result_t;
+  util::load_file_to_container<std::vector<pair<point, size_t> >, pair<point,size_t> >
+    (result_t, file_name, buffer_size);
+  std::vector<point> result;
+  for (auto p : result_t) result.push_back(p.first);
+  return result;
 }
 
 void test_set_upper_bound() {
@@ -90,6 +101,15 @@ void test_insert5() {
   t.insert(point(4,4));
   t.insert(point(5,5));
   t.print();
+
+  std::vector<point> points_in_2, points_in_1;
+  points_in_2.push_back(point(1,1));
+  points_in_2.push_back(point(2,2));
+  points_in_1.push_back(point(4,4));
+  points_in_1.push_back(point(5,5));
+  assert(get_points_from_file("1/points") == points_in_1);
+  assert(get_points_from_file("2/points") == points_in_2);
+
   print_success();
 }
 
