@@ -30,7 +30,7 @@
 namespace ext {
   int next_id = 1;
 #ifdef VALIDATE
-  std::set<point> CONTAINED_POINTS;
+  std::multiset<point> CONTAINED_POINTS;
 #endif
   class buffered_pst : public pst_interface {
   public:
@@ -239,6 +239,9 @@ namespace ext {
       new ext::child_structure(id, buffer_size, epsilon, std::vector<point>());
     is_child_structure_loaded = true;
     this->B_epsilon = B_epsilon;
+
+    if (!util::file_exists(get_directory(id))) mkdir(get_directory(id).c_str(), 0700);
+    
     DEBUG_MSG("Constructed pst_node with id " << id << " and buffer_size: " << buffer_size
               << " and B_epsilon " << B_epsilon << " and parent_id " << parent_id);
   }
@@ -373,7 +376,7 @@ is_point_buffer_loaded);
 #endif
     
     DEBUG_MSG("Flushing point buffer for node " << id);
-    if (!util::file_exists(get_directory(id))) mkdir(get_directory(id).c_str(), 0700);
+
     util::flush_container_to_file<std::set<point>::iterator,point>
       (point_buffer.begin(),point_buffer.end(), get_point_buffer_file_name(id), buffer_size);
 
@@ -394,7 +397,7 @@ is_point_buffer_loaded);
 #endif
    
     DEBUG_MSG("Flushing insert buffer for node " << id);
-    if (!util::file_exists(get_directory(id))) mkdir(get_directory(id).c_str(), 0700);
+
     util::flush_container_to_file<std::set<point>::iterator,point>
       (insert_buffer.begin(),insert_buffer.end(),
        get_insert_buffer_file_name(id), buffer_size);
@@ -417,7 +420,7 @@ is_point_buffer_loaded);
     for (range r : ranges)
       DEBUG_MSG_FAIL(" - " << r);
 #endif
-    if (!util::file_exists(get_directory(id))) mkdir(get_directory(id).c_str(), 0700);
+
     util::flush_container_to_file<std::set<range>::iterator, range>
       (ranges.begin(), ranges.end(), get_ranges_file_name(id), buffer_size);
 
@@ -439,7 +442,7 @@ is_point_buffer_loaded);
 #endif
 
     DEBUG_MSG("Flushing delete buffer for node " << id);
-    if (!util::file_exists(get_directory(id))) mkdir(get_directory(id).c_str(), 0700);
+
     util::flush_container_to_file<std::set<point>::iterator,point>
       (delete_buffer.begin(),delete_buffer.end(),
        get_delete_buffer_file_name(id), buffer_size);
@@ -458,7 +461,7 @@ is_point_buffer_loaded);
     assert(is_info_file_loaded);
 #endif
     DEBUG_MSG("Flushing info file for node " << id);
-    if (!util::file_exists(get_directory(id))) mkdir(get_directory(id).c_str(), 0700);
+
     std::vector<size_t> info_file;
     info_file.push_back(buffer_size);
     info_file.push_back(B_epsilon);
@@ -926,15 +929,20 @@ is_point_buffer_loaded);
         for (range r : bpn.ranges) q.push(buffered_pst_node(r.node_id, buffer_size, epsilon,
                                                             root));
       }
-      if (collected_points != CONTAINED_POINTS) {
+      std::set<point> CONTAINED_POINTS_NO_DUPLICATES;
+      for (auto p : CONTAINED_POINTS)
+        CONTAINED_POINTS_NO_DUPLICATES.insert(p);
+      
+      if (collected_points != CONTAINED_POINTS_NO_DUPLICATES) {
         VALIDATE_MSG_FAIL("CONTAINED_POINTS:");
-        for (point p : CONTAINED_POINTS) VALIDATE_MSG_FAIL(" - " << p);
+        for (point p : CONTAINED_POINTS_NO_DUPLICATES) VALIDATE_MSG_FAIL(" - " << p);
         VALIDATE_MSG_FAIL("collected_points:");
         for (point p : collected_points) VALIDATE_MSG_FAIL(" - " << p);
         VALIDATE_MSG_FAIL("The collected points in our structure is " <<
                           "not equal to the inserted points");
         std::vector<point> diff;
-        std::set_difference(CONTAINED_POINTS.begin(), CONTAINED_POINTS.end(),
+        std::set_difference(CONTAINED_POINTS_NO_DUPLICATES.begin(),
+                            CONTAINED_POINTS_NO_DUPLICATES.end(),
                             collected_points.begin(), collected_points.end(),
                             std::back_inserter(diff));
         for (point p : diff) VALIDATE_MSG_FAIL(" - " << p);
@@ -1125,8 +1133,10 @@ is_point_buffer_loaded);
     DEBUG_MSG("Removing point " << p << " in root");
 #ifdef VALIDATE
     if (state == STATE::normal) {
-      if (root->point_buffer.find(p) != root->point_buffer.end()) CONTAINED_POINTS.erase(p);
-      if (root->insert_buffer.find(p) != root->insert_buffer.end()) CONTAINED_POINTS.erase(p);
+      if (root->point_buffer.find(p) != root->point_buffer.end())
+        CONTAINED_POINTS.erase(CONTAINED_POINTS.find(p));
+      if (root->insert_buffer.find(p) != root->insert_buffer.end())
+        CONTAINED_POINTS.erase(CONTAINED_POINTS.find(p));
     }
 #endif
     point min_y = *std::min_element(root->point_buffer.begin(),
@@ -2001,12 +2011,12 @@ is_point_buffer_loaded);
       if (child->insert_buffer.erase(p)) {
         DEBUG_MSG("Removing " << p << " from insert buffer of found child");
 #ifdef VALIDATE
-        CONTAINED_POINTS.erase(p);
+        CONTAINED_POINTS.erase(CONTAINED_POINTS.find(p));
 #endif
       } else if (child->point_buffer.erase(p)) {
         DEBUG_MSG("Removing " << p << " from point buffer of found child");
 #ifdef VALIDATE
-        CONTAINED_POINTS.erase(p);
+        CONTAINED_POINTS.erase(CONTAINED_POINTS.find(p));
 #endif
         DEBUG_MSG("Removing " << p << " from child structure of found child");
         node->child_structure->remove(p);
@@ -2127,7 +2137,7 @@ is_point_buffer_loaded);
       if ( node->delete_buffer.erase(pcp.first) ) {
         DEBUG_MSG("Point " << pcp.first << " was canceled by delete in node " << node->id);
 #ifdef VALIDATE
-        CONTAINED_POINTS.erase(pcp.first);
+        CONTAINED_POINTS.erase(CONTAINED_POINTS.find(pcp.first));
 #endif
       } else {
         auto it = node->insert_buffer.find(pcp.first);
@@ -2591,13 +2601,13 @@ is_point_buffer_loaded);
                            " of node " << node->id);
             node->child_structure->remove(p);
 #ifdef VALIDATE
-            CONTAINED_POINTS.erase(p);
+            CONTAINED_POINTS.erase(CONTAINED_POINTS.find(p));
 #endif
           } else if (child->insert_buffer.erase(p)) {
             DEBUG_MSG_FAIL("Found matching point " << p << " in insert buffer of child "
                            << child->id << ". Deleting " << p);
 #ifdef VALIDATE
-            CONTAINED_POINTS.erase(p);
+            CONTAINED_POINTS.erase(CONTAINED_POINTS.find(p));
 #endif
           }
           if ( (p.y < min_y.y || (p.y == min_y.y && p.x < min_y.x)) && !child->is_leaf() ) {
