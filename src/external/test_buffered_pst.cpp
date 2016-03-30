@@ -2373,23 +2373,31 @@ void test_report_random_2() {
                                         (9999,0.5));
  
   test::random r;
-
+  io::buffered_stream<point> bs(1);
+  bs.open("testpoints_report_random_2");
+  
   cerr << "- inserting 200 points" << endl;
   
   for (int i=0; i<200; i++) {
     point p(r.next(200),r.next(200));
     epst.insert(p);
     true_points.insert(p);
+    bs.write(p);
+#ifdef VALIDATE
+    streambuf* cout_strbuf(cout.rdbuf());
+    ostringstream output;
+    cout.rdbuf(output.rdbuf());
+    bool is_valid = epst.is_valid();
+    if (!is_valid) {
+      epst.print();
+      cout.rdbuf(cout_strbuf);
+      epst.is_valid();
+    }
+    cout.rdbuf(cout_strbuf);
+    assert ( is_valid );
+#endif
   }
 
-#ifdef VALIDATE
-  bool is_valid = epst.is_valid();
-  if (!is_valid) {
-    epst.print();
-    assert( is_valid );
-  }
-#endif
-  
   for (int i = 0; i < 10; i++) {
    
     std::vector<point> rand_deletes(true_points.begin(), true_points.end());
@@ -2400,15 +2408,21 @@ void test_report_random_2() {
     for (int j=0; j<50; j++) {
       epst.remove(rand_deletes[j]);
       true_points.erase(rand_deletes[j]);
-    }
-
+      bs.write(rand_deletes[j]);
 #ifdef VALIDATE
-    is_valid = epst.is_valid();
-    if (!is_valid) {
-      epst.print();
-      assert( is_valid );
-    }
+      streambuf* cout_strbuf(cout.rdbuf());
+      ostringstream output;
+      cout.rdbuf(output.rdbuf());
+      bool is_valid = epst.is_valid();
+      if (!is_valid) {
+        epst.print();
+        cout.rdbuf(cout_strbuf);
+        epst.is_valid();
+      }
+      cout.rdbuf(cout_strbuf);
+      assert ( is_valid );
 #endif
+  }
 
     cerr << "- round " << i+1 << " of 10: reporting 10 times" << endl;
 
@@ -2419,7 +2433,11 @@ void test_report_random_2() {
       int y = r.next(200);
     
       if (x2 < x1) std::swap(x1,x2);
-  
+
+      bs.write(point(x1,x1));
+      bs.write(point(x2,x2));
+      bs.write(point(y,y));
+      
       epst.report(x1,x2,y,"test/report_rand_2");
 
       std::vector<point> actual_points;
@@ -2439,33 +2457,47 @@ void test_report_random_2() {
       }
 
 #ifdef VALIDATE
-      is_valid = epst.is_valid();
+      streambuf* cout_strbuf(cout.rdbuf());
+      ostringstream output;
+      cout.rdbuf(output.rdbuf());
+      bool is_valid = epst.is_valid();
       if (!is_valid) {
         epst.print();
-        assert( is_valid );
+        cout.rdbuf(cout_strbuf);
+        epst.is_valid();
       }
+      cout.rdbuf(cout_strbuf);
+      assert ( is_valid );
 #endif
    
       util::remove_directory("test/report_rand_2");
     }
 
     cerr << "- round " << i+1 << " of 10: inserting 50 points" << endl;
-    
+   
     for (int j=0; j<50; j++) {
       point p(r.next(200),r.next(200));
       epst.insert(p);
       true_points.insert(p);
-    }
-
+      bs.write(p);
 #ifdef VALIDATE
-    is_valid = epst.is_valid();
-    if (!is_valid) {
-      epst.print();
-      assert( is_valid );
-    }
+      streambuf* cout_strbuf(cout.rdbuf());
+      ostringstream output;
+      cout.rdbuf(output.rdbuf());
+      bool is_valid = epst.is_valid();
+      if (!is_valid) {
+        epst.print();
+        cout.rdbuf(cout_strbuf);
+        epst.is_valid();
+      }
+      cout.rdbuf(cout_strbuf);
+      assert ( is_valid );
 #endif
+    }
     
   }
+
+  bs.close();
     
   print_success();
   
@@ -2736,6 +2768,47 @@ void cleanup() {
   
 }
 
+void test_contained_points_error() {
+
+  print_description("starting test of report random 2");
+
+  std::set<point> true_points;
+  ext::buffered_pst epst(9,0.5);
+  epst.set_global_rebuild_configuration(ext::buffered_pst::global_rebuild_configuration
+                                        (9999,0.5));
+
+  for (int i = 0; i < 20; i++) {
+    epst.insert(point(i,i));
+    assert(epst.is_valid());
+  }
+
+  for (int i = 40; i < 60; i++) {
+    epst.insert(point(i,i));
+    assert(epst.is_valid());
+  }
+
+  for (int i = 5; i < 8; i++) {
+    epst.remove(point(i,i));
+    assert(epst.is_valid());
+  }
+
+  assert(epst.is_valid());
+
+  epst.print();
+  
+  epst.remove(point(44,44));
+  assert(epst.is_valid());
+  epst.insert(point(5,5));
+  assert(epst.is_valid());
+  epst.remove(point(10,10));
+  assert(epst.is_valid());
+  
+  epst.print();
+  
+  print_success();
+  
+}
+
 int main() {
 
   cleanup();
@@ -2784,7 +2857,7 @@ int main() {
   // test_report_200_delete_20_points();
   // test_report_random();
   // test_report_random_repeat();
-  test_report_random_2();
+  // test_report_random_2();
   // test_global_rebuild_insert_10();
   // test_global_rebuild_insert_10_delete_5();
   // test_global_rebuild_insert_100_delete_50();
@@ -2793,6 +2866,7 @@ int main() {
   // TODO: test_insert_delete_half_insert_half_report();
   // TODO: test_insert_delete_half_insert_all_report();
   // test_report_random_buffer_size_512();
+  test_contained_points_error();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   
