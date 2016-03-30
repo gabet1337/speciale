@@ -138,6 +138,50 @@ void test_insert6() {
 
 }
 
+void test_insert8() {
+
+  print_description("Starting to test insert of 8 elements with 2 splits and correct placement of elements");
+  apst t(4);
+  t.insert(point(1,1));
+  t.insert(point(2,2));
+  t.insert(point(3,3));
+  t.insert(point(4,4));
+  t.insert(point(5,5));
+  t.insert(point(6,6));
+  t.insert(point(7,7));
+  t.print();
+
+  std::vector<point> points_in_2, points_in_1, points_in_3;
+  points_in_2.push_back(point(1,1));
+  points_in_2.push_back(point(2,2));
+  points_in_1.push_back(point(4,4));
+  points_in_1.push_back(point(5,5));
+  points_in_1.push_back(point(6,6));
+  points_in_1.push_back(point(7,7));
+  assert(get_points_from_file("1/points") == points_in_1);
+  assert(get_points_from_file("2/points") == points_in_2);
+
+  t.insert(point(8,8));
+  //node 1 should split now!
+  t.print();
+
+  points_in_2.clear(); points_in_1.clear();
+  points_in_1.push_back(point(7,7));
+  points_in_1.push_back(point(8,8));
+  points_in_2.push_back(point(1,1));
+  points_in_2.push_back(point(2,2));
+  points_in_3.push_back(point(4,4));
+  points_in_3.push_back(point(5,5));
+  
+  assert(get_points_from_file("1/points") == points_in_1);
+  assert(get_points_from_file("2/points") == points_in_2);
+  assert(get_points_from_file("3/points") == points_in_3);
+
+
+  print_success();
+
+}
+
 
 int main() {
   cleanup();
@@ -148,6 +192,7 @@ int main() {
   test_insert1();
   test_insert5();
   test_insert6();
+  test_insert8();
 
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   cleanup();
