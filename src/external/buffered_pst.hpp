@@ -1365,7 +1365,8 @@ is_point_buffer_loaded);
             clear_cache();
             break;
           }
-
+          // TODO: Can a virtual leaf overflow when fix_up?
+          // if (state == STATE::fix_up) load_data_in_node(node, DATA::ranges);
           load_data_in_node(node, DATA::point_buffer);
           load_data_in_node(node, DATA::insert_buffer);
           if ( node->is_leaf() || node->is_virtual_leaf() ) {
@@ -1373,6 +1374,7 @@ is_point_buffer_loaded);
               ? root
               : new buffered_pst_node(node->parent_id,buffer_size,epsilon,root);
             parent = get_cached_node(parent);
+            load_data_in_node(parent, DATA::info_file); // TODO: Not sure?
             load_data_in_node(parent, DATA::child_structure);
             load_data_in_node(parent, DATA::ranges);
 
@@ -2790,6 +2792,7 @@ is_point_buffer_loaded);
     while (!q.empty()) {
       buffered_pst_node* node = q.back(); q.pop_back();
       DEBUG_MSG_FAIL("We are about to fix node " << node->id);
+      // TODO: This can be optimized using cache-mechanism. Load_all?
       node->load_info_file();
       parent_to_stop_at = node->parent_id;
       node->flush_info_file();
@@ -3065,6 +3068,7 @@ is_point_buffer_loaded);
 
 #ifdef VALIDATE
   bool buffered_pst::is_valid() {
+    DEBUG_MSG("Starting is_valid test in root and recursing");
     return root->is_valid();
   }
 #endif
