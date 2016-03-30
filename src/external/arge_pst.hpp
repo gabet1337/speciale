@@ -233,13 +233,17 @@ namespace ext {
       switch (cur_event.type) {
       case EVENT_TYPE::insert_in_base_tree:
 	load_data(n, DATA_TYPE::points);
+	load_data(n, DATA_TYPE::info_file);
 	handle_insert_in_base_tree(n, p);
 	flush_data(n, DATA_TYPE::points);
+	flush_data(n, DATA_TYPE::info_file);
 	break;
       case EVENT_TYPE::insert_point_in_node:
 	load_data(n, DATA_TYPE::points);
+	load_data(n, DATA_TYPE::info_file);
 	insert_point_in_node(n, p);
 	flush_data(n, DATA_TYPE::points);
+	flush_data(n, DATA_TYPE::info_file);
 	break;
       case EVENT_TYPE::split_node:
 	load_data(n, DATA_TYPE::points);
@@ -260,13 +264,12 @@ namespace ext {
 	  n->parent_id = root->id;
 	  n->b_is_leaf = root->is_leaf();
 	  root->b_is_leaf = false;
-	  
 
 	  handle_split_child(root, n, new_node, true);
 	  //flush and delete properly here!
 	  flush_data(n, DATA_TYPE::all);
-	  //flush_data(root, DATA_TYPE::points);
 	  flush_data(new_node, DATA_TYPE::all);
+	  delete new_node;
 	} else {
 	  node *parent = retrieve_node(n->parent_id);
 	  load_data(parent, DATA_TYPE::points);
@@ -279,6 +282,7 @@ namespace ext {
 	break;
 
       };
+      if ( !n->is_root() ) delete n;
     }
     
   }
@@ -322,7 +326,8 @@ namespace ext {
   void external_priority_search_tree::handle_insert_in_base_tree(node* n, const point &p) {
     DEBUG_MSG("Handling insert of " << p << " in base tree at node " << n->id);
 #ifdef DEBUG
-    assert(n->is_points_loaded);
+    assert( n->is_points_loaded );
+    assert( n->is_info_file_loaded );
 #endif
     if ( n->is_leaf() ) {
       add_event(event(EVENT_TYPE::split_node, copy_node(n), INF_POINT));
@@ -373,6 +378,7 @@ namespace ext {
     DEBUG_MSG("Inserting point " << p << " in node " << n->id);
 #ifdef DEBUG
     assert(n->is_points_loaded);
+    assert(n->is_info_file_loaded);
 #endif
     if ( n->is_leaf() )
       n->points.insert({p, -1});
@@ -387,6 +393,7 @@ namespace ext {
     DEBUG_MSG("Find child for point " << p << " in node " << n->id);
 #ifdef DEBUG
     assert(n->is_points_loaded);
+    assert(n->is_info_file_loaded);
     assert(!n->is_leaf());
 #endif
     size_t child_id = -1;
