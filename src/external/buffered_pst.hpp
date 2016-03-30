@@ -1515,10 +1515,15 @@ is_point_buffer_loaded);
       prev_event = cur_event;
     }
     clear_cache();
+    
+    if (state == STATE::construct)
+      clear_cache();
+
 #ifdef DEBUG
     assert(prev_cache.empty());
     assert(cur_cache.empty());
 #endif
+    
   }
 
   std::string buffered_pst::event_to_string(const EVENT &e) {
@@ -2129,10 +2134,9 @@ is_point_buffer_loaded);
       }
     }
 
-    // TODO: should X.size() <= buffer_size/2 ??
     DEBUG_MSG("Grabbing the B/2 highest y-value points from children and deleting them");
     std::set<point> X;
-    while (!pq.empty() && X.size() <= buffer_size/2) {
+    while (!pq.empty() && X.size() < buffer_size/2) {
       point_child_pair pcp = pq.top(); pq.pop();
       if ( node->delete_buffer.erase(pcp.first) ) {
         DEBUG_MSG("Point " << pcp.first << " was canceled by delete in node " << node->id);
@@ -2887,14 +2891,14 @@ is_point_buffer_loaded);
     child->flush_all();
     
     bool leaf_layer = true;
-    while (layer_i.size() > (size_t)B_epsilon) {
+    while (layer_i.size() > (size_t)std::max(ceil(B_epsilon/2), 2.0)) {
       DEBUG_MSG("LAYER I NOW HAS: " << layer_i.size() << " nodes");
       std::swap(layer_i, layer_i_plus_1);
       for (auto bpn : layer_i) { delete bpn; }
       layer_i.clear();
       DEBUG_MSG("LAYER I+1 NOW HAS: " << layer_i_plus_1.size() << " nodes");
       for (size_t i = 0; i < layer_i_plus_1.size(); i++) {
-        if (i % B_epsilon == 0) {
+        if (i % (int)std::max(ceil(B_epsilon/2), 2.0) == 0) {
           DEBUG_MSG_FAIL("Added new parent");
           if (i != 0) parent->flush_all();
           parent = new buffered_pst_node(next_id++, -1, this->buffer_size,
