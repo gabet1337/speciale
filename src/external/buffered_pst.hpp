@@ -2156,6 +2156,9 @@ is_point_buffer_loaded);
         if ( it != node->insert_buffer.end() ) {
           DEBUG_MSG("Move more recent updates of p from Iv to X in node " << node->id);
           X.insert(*it);
+#ifdef VALIDATE
+          CONTAINED_POINTS.erase(CONTAINED_POINTS.find(*it));
+#endif          
           DEBUG_MSG("Succeded in insert point in X");
           node->insert_buffer.erase(*it); 
           DEBUG_MSG("Succeded in erasing point from node->insert_buffer");
@@ -2638,9 +2641,17 @@ is_point_buffer_loaded);
       std::set<point> new_insert_buffer;
       for (point p : node->insert_buffer) {
         if (node->ranges.belong_to(range(p,INF_POINT, INF_POINT,-1)) == *it) {
-          if (child->point_buffer.erase(p))
-            node->child_structure->remove(p);       
-          child->insert_buffer.erase(p);
+          if (child->point_buffer.erase(p)) {
+            node->child_structure->remove(p);
+#ifdef VALIDATE
+            CONTAINED_POINTS.erase(CONTAINED_POINTS.find(p));
+#endif
+          }
+          if (child->insert_buffer.erase(p)) {
+#ifdef VALIDATE
+            CONTAINED_POINTS.erase(CONTAINED_POINTS.find(p));
+#endif
+          }
           child->delete_buffer.erase(p);
           if (p.y < min_y.y || (p.y == min_y.y && p.x < min_y.x)) {
             child->insert_buffer.insert(p);
