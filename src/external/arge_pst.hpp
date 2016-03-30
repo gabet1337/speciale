@@ -41,6 +41,12 @@ namespace ext {
     void report(int x1, int x2, int y, const std::string &output_file);
     void print();
   private:
+    //Type definitions:
+    typedef std::pair<point, size_t> point_type;
+    typedef std::set<point_type> points_type;
+    typedef size_t info_file_entry_type;
+    typedef std::vector<info_file_entry_type> info_file_type;
+
     class node {
     public:
       node(size_t id);
@@ -50,9 +56,12 @@ namespace ext {
 	Variables
       */
       size_t id;
-      std::set<std::pair<point,size_t> > points;
+      size_t parent_id;
+      points_type points;
       size_t right_most_child;
       bool is_points_loaded;
+      bool is_info_file_loaded;
+      bool b_is_leaf;
     };
     
     enum struct EVENT_TYPE {
@@ -83,8 +92,17 @@ namespace ext {
     };
 
     enum struct DATA_TYPE {
-      points
+      points,
+      info_file,
+      all
     };
+
+        
+    static std::string data_type_to_string(DATA_TYPE dt);
+    friend std::ostream& operator<<(std::ostream& o, DATA_TYPE dt) {
+      o << data_type_to_string(dt);
+      return o;
+    }
     
     /*****************
       Event handling
@@ -92,6 +110,7 @@ namespace ext {
     void handle_events();
     void add_event(event e);
     void handle_insert_in_base_tree(node* n, const point &p);
+    void handle_split_child(node* parent, node* n, node* new_node, bool split_root);
 
     /*
       Helper methods
@@ -100,16 +119,21 @@ namespace ext {
     node* copy_node(node* n);
     node* find_child(node* n, const point &p);
     void load_data(node* n, DATA_TYPE dt);
+    void flush_data(node* n, DATA_TYPE dt);
     void load_points(node* n);
+    void load_info_file(node* n);
     void flush_points(node* n);
+    void flush_info_file(node* n);
     std::string get_points_file_name(size_t id);
+    std::string get_info_file_file_name(size_t id);
     std::string get_directory(size_t id);
-    node* allocate_node(size_t id);
+    node* allocate_node();
     node* retrieve_node(size_t id);
-
+    bool is_degree_overflow(node* n);
     /*
       Private variables
     */
+    size_t next_id;
     size_t buffer_size;
     size_t leaf_parameter;
     size_t branching_parameter;
@@ -126,11 +150,12 @@ namespace ext {
   */
   
   external_priority_search_tree::external_priority_search_tree(size_t buffer_size) {
+    this->next_id = 0;
     this->buffer_size = buffer_size;
     this->leaf_parameter = buffer_size;
     this->branching_parameter = ceil((double)buffer_size/4);
 
-    this->root = allocate_node(0);
+    this->root = allocate_node();
 
     DEBUG_MSG("Constructing with buffer_size = " << buffer_size);
     DEBUG_MSG("leaf parameter = " << leaf_parameter);
@@ -158,7 +183,41 @@ namespace ext {
 
   void external_priority_search_tree::report(int x1, int x2, int y, const std::string &output_file) {}
 
-  void external_priority_search_tree::print() {}
+  void external_priority_search_tree::print() {
+    DEBUG_MSG("Starting to print");
+    std::ofstream dot_file;
+    dot_file.open("temp.dot");
+    dot_file << "digraph {\n";
+    
+    std::queue<node*> q;
+    q.push(root);
+    while (!q.empty()) {
+      node* n = q.front(); q.pop();
+      load_data(n, DATA_TYPE::all);
+      //print label:
+      dot_file << n->id << " [label=\"" << n->id << "\nParent: " << n->parent_id << "\nis_leaf: " << n->is_leaf() << "\nPoints: ";
+      for (auto p : n->points) dot_file << p.first << ", ";
+      dot_file << "\"]\n";
+      //print children:
+      if ( !n->is_leaf() ) {
+	for (auto p : n->points) {
+	  dot_file << n->id << " -> " << p.second << "\n";
+	  q.push(retrieve_node(p.second));
+	}
+	if (n->right_most_child != (size_t)-1) {
+	  dot_file << n->id << " -> " << n->right_most_child << "\n";
+	  q.push(retrieve_node(n->right_most_child));
+	}
+      }
+      flush_data(n, DATA_TYPE::all);
+      if ( !n->is_root() ) delete n;
+    }
+    dot_file << "}";
+    dot_file.close();
+    int r = system("dot -Tpng -o tree.png temp.dot");
+    //r = system("eog tree.png");
+    r++;
+  }
 
   /*
     EVENT HANDLING
@@ -174,13 +233,56 @@ namespace ext {
       switch (cur_event.type) {
       case EVENT_TYPE::insert_in_base_tree:
 	load_data(n, DATA_TYPE::points);
+	load_data(n, DATA_TYPE::info_file);
 	handle_insert_in_base_tree(n, p);
+	flush_data(n, DATA_TYPE::points);
+	flush_data(n, DATA_TYPE::info_file);
+	break;
+      case EVENT_TYPE::insert_point_in_node:
+	load_data(n, DATA_TYPE::points);
+	load_data(n, DATA_TYPE::info_file);
+	insert_point_in_node(n, p);
+	flush_data(n, DATA_TYPE::points);
+	flush_data(n, DATA_TYPE::info_file);
+	break;
+      case EVENT_TYPE::split_node:
+	load_data(n, DATA_TYPE::points);
+	if ( !is_degree_overflow(n) ) {
+	  flush_data(n, DATA_TYPE::points);
+	  break;
+	}
+	if ( n->is_root() ) {
+	  load_data(n, DATA_TYPE::all);
+	  //make the root the child of a new empty node
+	  node* empty_node = allocate_node();
+	  node* new_node = allocate_node();
+
+	  root = empty_node;
+	  n->id = root->id;
+	  root->id = 0;
+	  root->parent_id = -1;
+	  n->parent_id = root->id;
+	  n->b_is_leaf = root->is_leaf();
+	  root->b_is_leaf = false;
+
+	  handle_split_child(root, n, new_node, true);
+	  //flush and delete properly here!
+	  flush_data(n, DATA_TYPE::all);
+	  flush_data(new_node, DATA_TYPE::all);
+	  delete new_node;
+	} else {
+	  node *parent = retrieve_node(n->parent_id);
+	  load_data(parent, DATA_TYPE::points);
+	  //handle_split_child(parent, n, new_node);
+	  flush_data(parent, DATA_TYPE::points);
+	}
 	break;
       default:
 	DEBUG_MSG_FAIL("UNHANDLED EVENT!");
 	break;
 
       };
+      if ( !n->is_root() ) delete n;
     }
     
   }
@@ -197,9 +299,22 @@ namespace ext {
     case EVENT_TYPE::split_node:
       return "split node";
     case EVENT_TYPE::insert_point_in_node:
-      return "insert point in node";
+      return "insert point";
     default:
       return "invalid event type";
+    }
+  }
+
+  std::string external_priority_search_tree::data_type_to_string(DATA_TYPE dt) {
+    switch (dt) {
+    case DATA_TYPE::points:
+      return "points";
+    case DATA_TYPE::info_file:
+      return "info file";
+    case DATA_TYPE::all:
+      return "all";
+    default:
+      return "invalid data type";
     }
   }
 
@@ -211,7 +326,8 @@ namespace ext {
   void external_priority_search_tree::handle_insert_in_base_tree(node* n, const point &p) {
     DEBUG_MSG("Handling insert of " << p << " in base tree at node " << n->id);
 #ifdef DEBUG
-    assert(n->is_points_loaded);
+    assert( n->is_points_loaded );
+    assert( n->is_info_file_loaded );
 #endif
     if ( n->is_leaf() ) {
       add_event(event(EVENT_TYPE::split_node, copy_node(n), INF_POINT));
@@ -223,6 +339,36 @@ namespace ext {
     }
   }
 
+  void external_priority_search_tree::handle_split_child(node* parent, node* n, node* new_node, bool split_root) {
+    DEBUG_MSG("Handling split of node " << n->id << " with parent " << parent->id);
+#ifdef DEBUG
+    assert( n->is_points_loaded );
+    assert( parent->is_points_loaded );
+#endif
+    //allocate new node and distribute points around median.
+    //move median to parent and possibly recurse on parent
+    new_node->parent_id = parent->id;
+    new_node->b_is_leaf = n->is_leaf();
+    
+    size_t median = n->points.size() / 2;
+    points_type points(n->points.begin(), n->points.end());
+
+    n->points.clear();
+
+    size_t idx = 0;
+    for (point_type p : points) {
+      if (idx < median) new_node->points.insert(p);
+      else if (idx == median) parent->points.insert({p.first, new_node->id});
+      else n->points.insert(p);
+      idx++;
+    }
+
+    if (split_root) {
+      parent->right_most_child = n->id;
+    }
+
+    add_event(event(EVENT_TYPE::split_node, copy_node(parent), INF_POINT));
+  }
 
 
   /*
@@ -232,6 +378,7 @@ namespace ext {
     DEBUG_MSG("Inserting point " << p << " in node " << n->id);
 #ifdef DEBUG
     assert(n->is_points_loaded);
+    assert(n->is_info_file_loaded);
 #endif
     if ( n->is_leaf() )
       n->points.insert({p, -1});
@@ -239,16 +386,21 @@ namespace ext {
   }
 
   // Locates the child that point p belongs to
+  // each point k stores a pointer to a child c.
+  // Invariant: k-1 < all keys of c < k
+  // If p > all keys of n then we have pointer to that in right_most_child
   external_priority_search_tree::node* external_priority_search_tree::find_child(node *n, const point &p) {
     DEBUG_MSG("Find child for point " << p << " in node " << n->id);
 #ifdef DEBUG
     assert(n->is_points_loaded);
+    assert(n->is_info_file_loaded);
     assert(!n->is_leaf());
 #endif
     size_t child_id = -1;
     auto it = n->points.upper_bound({p,-1});
     if (it == n->points.end()) child_id = n->right_most_child;
     else child_id = it->second;
+    //    child_id = it->second;
     return retrieve_node(child_id);
   }
 
@@ -259,14 +411,52 @@ namespace ext {
   }
 
   void external_priority_search_tree::load_data(node* n, DATA_TYPE dt) {
+    DEBUG_MSG("Loading data: " << dt << " in node " << n->id);
+    if ( n->is_root() ) return;
     switch (dt) {
     case DATA_TYPE::points:
       {
-	// if ( n->is_root() ) break;
 	if ( !n->is_points_loaded ) load_points(n);
 	break;
       }
+    case DATA_TYPE::info_file:
+      {
+	if ( !n->is_info_file_loaded ) load_info_file(n);
+	break;
+      }
+    case DATA_TYPE::all:
+      {
+	if ( !n->is_points_loaded ) load_points(n);
+	if ( !n->is_info_file_loaded ) load_info_file(n);
+	break;
+      }
+    default:
+      DEBUG_MSG_FAIL("Cannot load the given data type");
+      break;
 
+    };
+  }
+
+  void external_priority_search_tree::flush_data(node* n, DATA_TYPE dt) {
+    DEBUG_MSG("Flushing data: " << dt << " in node " << n->id);
+    if ( n->is_root() ) return;
+    switch (dt) {
+    case DATA_TYPE::points:
+      {
+	if ( n->is_points_loaded ) flush_points(n);
+	break;
+      }
+    case DATA_TYPE::info_file:
+      {
+	if ( n->is_info_file_loaded ) flush_info_file(n);
+	break;
+      }
+    case DATA_TYPE::all:
+      {
+	if ( n->is_points_loaded ) flush_points(n);
+	if ( n->is_info_file_loaded ) flush_info_file(n);
+	break;
+      }
     default:
       DEBUG_MSG_FAIL("Cannot load the given data type");
       break;
@@ -278,32 +468,70 @@ namespace ext {
 #ifdef DEBUG
     assert( !n->is_points_loaded );
 #endif
-    util::load_file_to_container<std::set<std::pair<point,size_t> >, std::pair<point,size_t> >
+    util::load_file_to_container<points_type, point_type>
       (n->points, get_points_file_name(n->id), buffer_size);
     n->is_points_loaded = true;
+  }
+
+  void external_priority_search_tree::load_info_file(node* n) {
+#ifdef DEBUG
+    assert( !n->is_info_file_loaded );
+#endif
+    info_file_type temp;
+    util::load_file_to_container<info_file_type, info_file_entry_type>
+      (temp, get_info_file_file_name(n->id), buffer_size);
+    n->b_is_leaf = (bool)temp[0];
+    n->parent_id = temp[1];
+    n->right_most_child = temp[2];
+    n->is_info_file_loaded = true;
   }
 
   void external_priority_search_tree::flush_points(node* n) {
 #ifdef DEBUG
     assert( n->is_points_loaded );
 #endif
-    util::flush_container_to_file<std::set<std::pair<point, size_t> >::iterator, std::pair<point,size_t> >
+    util::flush_container_to_file<points_type::iterator, point_type>
       (n->points.begin(), n->points.end(), get_points_file_name(n->id), buffer_size);
+    n->is_points_loaded = false;
+  }
+
+  void external_priority_search_tree::flush_info_file(node* n) {
+#ifdef DEBUG
+    assert( n->is_info_file_loaded );
+#endif
+    info_file_type info_file;
+    info_file.push_back((info_file_entry_type)n->b_is_leaf);
+    info_file.push_back((info_file_entry_type)n->parent_id);
+    info_file.push_back((info_file_entry_type)n->right_most_child);
+    util::flush_container_to_file<info_file_type::iterator, info_file_entry_type>
+      (info_file.begin(), info_file.end(), get_info_file_file_name(n->id), buffer_size);
+    n->is_info_file_loaded = false;
   }
 
   std::string external_priority_search_tree::get_points_file_name(size_t id) {
     return get_directory(id) + "/points";
+  }
+  
+  std::string external_priority_search_tree::get_info_file_file_name(size_t id) {
+    return get_directory(id) + "/info_file";
   }
 
   std::string external_priority_search_tree::get_directory(size_t id) {
     return std::to_string(id);
   }
 
-  external_priority_search_tree::node* external_priority_search_tree::allocate_node(size_t id) {
+  external_priority_search_tree::node* external_priority_search_tree::allocate_node() {
+    size_t id = next_id++;
     node* n = new node(id);
     n->is_points_loaded = true;
+    n->is_info_file_loaded = true;
+    n->b_is_leaf = true;
+    n->parent_id = -1;
+    n->right_most_child = -1;
+
     //create the necessary folder
     mkdir(get_directory(id).c_str(), 0700);
+    DEBUG_MSG("Created a node with id: " << id);
     return n;
   }
 
@@ -312,6 +540,13 @@ namespace ext {
     return n;
   }
 
+  bool external_priority_search_tree::is_degree_overflow(node* n) {
+#ifdef DEBUG
+    assert( n->is_points_loaded );
+#endif
+    if ( n->is_leaf() ) return n->points.size() > leaf_parameter;
+    else return n->points.size() > branching_parameter;
+  }
 
   /*
     METHODS OF THE NODE
@@ -319,11 +554,10 @@ namespace ext {
 
   external_priority_search_tree::node::node(size_t id) {
     this->id = id;
-    DEBUG_MSG("Created a node with id: " << id);
   }
 
   bool external_priority_search_tree::node::is_leaf() {
-    return true;
+    return b_is_leaf;
   }
 
   bool external_priority_search_tree::node::is_root() {

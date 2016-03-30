@@ -14,6 +14,8 @@
 
 using namespace std;
 
+const size_t buffer_size = 1024;
+
 typedef ext::external_priority_search_tree apst;
 
 void cleanup() {
@@ -47,18 +49,13 @@ void print_description(string description) {
   cout << description;
 }
 
-void test_constructors() {
-  print_description("Starting to test construction");
-  apst t(9);
-  apst t2(9,0.5);
-  print_success();
-}
-
-void test_insert1() {
-  print_description("Starting to test insert of 1 element");
-  apst t(9);
-  t.insert(point(1,1));
-  print_success();
+std::vector<point> get_points_from_file(const std::string &file_name) {
+  std::vector<std::pair<point,size_t> > result_t;
+  util::load_file_to_container<std::vector<pair<point, size_t> >, pair<point,size_t> >
+    (result_t, file_name, buffer_size);
+  std::vector<point> result;
+  for (auto p : result_t) result.push_back(p.first);
+  return result;
 }
 
 void test_set_upper_bound() {
@@ -80,13 +77,77 @@ void test_set_upper_bound() {
   print_success();
 }
 
+void test_constructors() {
+  print_description("Starting to test construction");
+  apst t(9);
+  apst t2(9,0.5);
+  print_success();
+}
+
+void test_insert1() {
+  print_description("Starting to test insert of 1 element");
+  apst t(9);
+  t.insert(point(1,1));
+  t.print();
+  print_success();
+}
+
+void test_insert5() {
+  print_description("Starting to test insert of 5 element with split");
+  apst t(4);
+  t.insert(point(1,1));
+  t.insert(point(2,2));
+  t.insert(point(3,3));
+  t.insert(point(4,4));
+  t.insert(point(5,5));
+  t.print();
+
+  std::vector<point> points_in_2, points_in_1;
+  points_in_2.push_back(point(1,1));
+  points_in_2.push_back(point(2,2));
+  points_in_1.push_back(point(4,4));
+  points_in_1.push_back(point(5,5));
+  assert(get_points_from_file("1/points") == points_in_1);
+  assert(get_points_from_file("2/points") == points_in_2);
+
+  print_success();
+}
+
+void test_insert6() {
+
+  print_description("Starting to test insert of 6 element with split and correct element placement of 6th element");
+  apst t(4);
+  t.insert(point(1,1));
+  t.insert(point(2,2));
+  t.insert(point(3,3));
+  t.insert(point(4,4));
+  t.insert(point(5,5));
+  t.insert(point(6,6));
+  t.print();
+
+  std::vector<point> points_in_2, points_in_1;
+  points_in_2.push_back(point(1,1));
+  points_in_2.push_back(point(2,2));
+  points_in_1.push_back(point(4,4));
+  points_in_1.push_back(point(5,5));
+  points_in_1.push_back(point(6,6));
+  assert(get_points_from_file("1/points") == points_in_1);
+  assert(get_points_from_file("2/points") == points_in_2);
+
+  print_success();
+
+}
+
+
 int main() {
   cleanup();
   cout << "\033[0;33m\e[4mSTARTING TEST OF APST STRUCTURE\e[24m\033[0m" << endl;
 
+  test_set_upper_bound();
   test_constructors();
   test_insert1();
-  test_set_upper_bound();
+  test_insert5();
+  test_insert6();
 
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   cleanup();

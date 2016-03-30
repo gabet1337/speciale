@@ -45,7 +45,7 @@ namespace util {
   void load_file_to_container(Container &c, const std::string &file_name, size_t buffer_size) {
     io::buffered_stream<T> file(buffer_size);
     file.open(file_name);
-    DEBUG_MSG("file_size: " << file.size() / sizeof(T));
+    //DEBUG_MSG("file_size: " << file.size() / sizeof(T));
     while (!file.eof()) {
       c.insert(c.end(), file.read());
     }
