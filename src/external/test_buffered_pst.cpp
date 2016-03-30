@@ -482,8 +482,8 @@ void test_distribute_evenly() {
   bs.close();
 
   bs.open("3/point_buffer");
-  assert ( bs.read() == point(101,101) && bs.read() == point(102,102)
-           && bs.read() == point(103,103) &&  bs.eof() );
+  assert ( bs.read() == point(101,101) && bs.read() == point(102,102) &&
+           bs.read() == point(103,103) && bs.eof() );
   bs.close();
 
   bs.open("4/point_buffer");
@@ -491,9 +491,10 @@ void test_distribute_evenly() {
   bs.close();
 
   bs.open("5/point_buffer");
-  assert( bs.read() == point(54,114) && bs.read() == point(55,115)
-          && bs.read() == point(56,116) && bs.read() == point(57,117)
-          && bs.eof());
+  assert( bs.read() == point(54,114) && bs.read() == point(55,115) &&
+          bs.read() == point(56,116)&& bs.read() == point(57,117) &&
+          bs.read() == point(58,118) && bs.eof());
+
   bs.close();
 
   bs.open("5/insert_buffer");
@@ -563,8 +564,8 @@ void test_insert_buffer_overflow_to_non_leaf2() {
 
   bs.open("5/point_buffer");
   assert( bs.read() == point(54,114) && bs.read() == point(55,115) &&
-          bs.read() == point(56,116)
-          && bs.read() == point(57,117) && bs.eof());
+          bs.read() == point(56,116) && bs.read() == point(57,117) &&
+          bs.read() == point(58,118) && bs.eof());
   bs.close();
 
   bs.open("5/insert_buffer");
@@ -599,7 +600,8 @@ void test_insert_buffer_overflow_to_non_leaf2() {
   assert ( bs.read() == point(54,114) && bs.read() == point(55,115) &&
            bs.read() == point(56,116) && bs.read() == point(57,117) &&
            bs.read() == point(58,118) );
-  assert ( bs.read() == point(59,119) && bs.read() == point(60,120) && bs.eof() );
+  assert ( bs.read() == point(59,119) && bs.read() == point(60,120) &&
+           bs.read() == point(61,121) && bs.eof() );
   bs.close();
   
 #ifdef VALIDATE
@@ -611,18 +613,18 @@ void test_insert_buffer_overflow_to_non_leaf2() {
   epst.print();
   
   bs.open("5/point_buffer");
-  assert( bs.read() == point(55,115) && bs.read() == point(56,116) &&
+  assert( bs.read() == point(56,116) &&
           bs.read() == point(57,117) &&
           bs.read() == point(58,118) && bs.read() == point(59,119) &&
           bs.read() == point(60,120) && bs.read() == point(61,121) &&
           bs.read() == point(62,122) && bs.read() == point(63,123) &&
-          bs.eof());
+          bs.read() == point(64,124) && bs.eof());
   bs.close();
 
   bs.open("5/insert_buffer");
   assert( bs.read() == point(51,111) && bs.read() == point(52,112) &&
           bs.read() == point(53,113) && bs.read() == point(54,114) &&
-          bs.eof());
+          bs.read() == point(55,115) && bs.eof());
   bs.close();
 
 #ifdef VALIDATE
@@ -676,8 +678,8 @@ void test_insert_buffer_overflow_to_non_leaf() {
 
   bs.open("5/point_buffer");
   assert( bs.read() == point(54,114) && bs.read() == point(55,115)
-          && bs.read() == point(56,116)
-          && bs.read() == point(57,117) && bs.eof());
+          && bs.read() == point(56,116) && bs.read() == point(57,117)
+          && bs.read() == point(58,118) && bs.eof());
   bs.close();
 
   bs.open("5/insert_buffer");
@@ -712,7 +714,8 @@ void test_insert_buffer_overflow_to_non_leaf() {
   assert ( bs.read() == point(54,114) && bs.read() == point(55,115) &&
            bs.read() == point(56,116) && bs.read() == point(57,117) &&
            bs.read() == point(58,118) );
-  assert ( bs.read() == point(59,119) && bs.read() == point(60,120) && bs.eof() );
+  assert ( bs.read() == point(59,119) && bs.read() == point(60,120) &&
+           bs.read() == point(61,121) && bs.eof() );
   bs.close();
   
 #ifdef VALIDATE
@@ -766,8 +769,8 @@ void test_insert_buffer_overflow_to_non_leaf3() {
 
   bs.open("5/point_buffer");
   assert( bs.read() == point(54,114) && bs.read() == point(55,115) &&
-          bs.read() == point(56,116)
-          && bs.read() == point(57,117) && bs.eof());
+          bs.read() == point(56,116) && bs.read() == point(57,117) &&
+          bs.read() == point(58,118) && bs.eof());
   bs.close();
 
   bs.open("5/insert_buffer");
@@ -802,7 +805,8 @@ void test_insert_buffer_overflow_to_non_leaf3() {
   assert ( bs.read() == point(54,114) && bs.read() == point(55,115) &&
            bs.read() == point(56,116) && bs.read() == point(57,117) &&
            bs.read() == point(58,118) );
-  assert ( bs.read() == point(59,119) && bs.read() == point(60,120) && bs.eof() );
+  assert ( bs.read() == point(59,119) && bs.read() == point(60,120) &&
+           bs.read() == point(61,121) && bs.eof() );
   bs.close();
   
 #ifdef VALIDATE
@@ -814,18 +818,18 @@ void test_insert_buffer_overflow_to_non_leaf3() {
   epst.print();
   
   bs.open("5/point_buffer");
-  assert( bs.read() == point(55,115) && bs.read() == point(56,116) &&
+  assert( bs.read() == point(56,116) &&
           bs.read() == point(57,117) &&
           bs.read() == point(58,118) && bs.read() == point(59,119) &&
           bs.read() == point(60,120) && bs.read() == point(61,121) &&
           bs.read() == point(62,122) && bs.read() == point(63,123) &&
-          bs.eof());
+          bs.read() == point(64,124) && bs.eof());
   bs.close();
 
   bs.open("5/insert_buffer");
   assert( bs.read() == point(51,111) && bs.read() == point(52,112) &&
           bs.read() == point(53,113) && bs.read() == point(54,114) &&
-          bs.eof());
+          bs.read() == point(55,115) && bs.eof());
   bs.close();
 
 #ifdef VALIDATE
@@ -837,18 +841,20 @@ void test_insert_buffer_overflow_to_non_leaf3() {
   epst.print();
   
   bs.open("5/point_buffer");
-  assert( bs.read() == point(58,118) && bs.read() == point(59,119) &&
+  assert( bs.read() == point(59,119) &&
           bs.read() == point(60,120) && bs.read() == point(61,121) &&
           bs.read() == point(62,122) && bs.read() == point(63,123) &&
           bs.read() == point(64,124) && bs.read() == point(65,125) &&
-          bs.read() == point(66,126) && bs.eof());
+          bs.read() == point(66,126) && bs.read() == point(67,127) &&
+          bs.eof());
   bs.close();
 
   bs.open("5/insert_buffer");
   assert( bs.read() == point(51,111) && bs.read() == point(52,112) &&
           bs.read() == point(53,113) && bs.read() == point(54,114) &&
           bs.read() == point(55,115) && bs.read() == point(56,116) &&
-          bs.read() == point(57,117) && bs.eof());
+          bs.read() == point(57,117) && bs.read() == point(58,118) &&
+          bs.eof());
   bs.close();
 
 #ifdef VALIDATE
@@ -860,12 +866,12 @@ void test_insert_buffer_overflow_to_non_leaf3() {
   epst.print();
   
   bs.open("5/point_buffer");
-  assert( bs.read() == point(61,121) && bs.read() == point(62,122) &&
+  assert( bs.read() == point(62,122) &&
           bs.read() == point(63,123) &&
           bs.read() == point(64,124) && bs.read() == point(65,125) &&
           bs.read() == point(66,126) && bs.read() == point(67,127) &&
           bs.read() == point(68,128) && bs.read() == point(69,129) &&
-          bs.eof());
+          bs.read() == point(70,130) && bs.eof());
   bs.close();
 
   bs.open("5/insert_buffer");
@@ -873,7 +879,7 @@ void test_insert_buffer_overflow_to_non_leaf3() {
           bs.read() == point(55,115) && bs.read() == point(56,116) &&
           bs.read() == point(57,117) && bs.read() == point(58,118) &&
           bs.read() == point(59,119) && bs.read() == point(60,120) &&
-          bs.eof());
+          bs.read() == point(61,121) && bs.eof());
   bs.close();
 
   bs.open("7/point_buffer");
@@ -2829,35 +2835,35 @@ int main() {
   if (!util::file_exists("test")) mkdir("test", 0700);
   
   cout << "\033[0;33m\e[4mSTARTING TEST OF EPST STRUCTURE\e[24m\033[0m" << endl;
-  test_construction();
-  test_insert();
-  test_interval_range_belong_to();
-  test_test();
-  test_buffer_points_less_than_point_buffer_points();
-  test_no_duplicates_in_pv_iv_dv();
-  test_insert_buffer_overflow();
-  test_root_split();
-  test_root_split_insert_overflow();
-  test_root_split_insert_between_overflow();
-  test_maintaining_min_max_y_on_insert_buffer_overflow();
-  test_node_degree_overflow();
-  test_distribute_evenly();
-  test_insert_buffer_overflow_to_non_leaf();
-  test_insert_buffer_overflow_to_non_leaf2();
-  test_insert_buffer_overflow_to_non_leaf3();
-  test_insert_buffer_overflow_to_non_leaf4();
-  test_not_valid_on_manual_insert();
-  test_deterministic_random();
-  test_deterministic_random2();
-  test_random_deterministic3() ;
-  test_random_insert();
+  // test_construction();
+  // test_insert();
+  // test_interval_range_belong_to();
+  // test_test();
+  // test_buffer_points_less_than_point_buffer_points();
+  // test_no_duplicates_in_pv_iv_dv();
+  // test_insert_buffer_overflow();
+  // test_root_split();
+  // test_root_split_insert_overflow();
+  // test_root_split_insert_between_overflow();
+  // test_maintaining_min_max_y_on_insert_buffer_overflow();
+  // test_node_degree_overflow();
+  // test_distribute_evenly();
+  // test_insert_buffer_overflow_to_non_leaf();
+  // test_insert_buffer_overflow_to_non_leaf2();
+  // test_insert_buffer_overflow_to_non_leaf3();
+  // test_insert_buffer_overflow_to_non_leaf4();
+  // test_not_valid_on_manual_insert();
+  // test_deterministic_random();
+  // test_deterministic_random2();
+  // test_random_deterministic3() ;
+  // test_random_insert();
   // test_truly_random();
   // test_delete();
-  test_delete_overflow();
-  test_delete_overflow_underflow_node();
-  test_delete_overflow_many_points();
-  test_delete_all_points();
-  test_insert_200_delete_20_points();
+  // test_delete_overflow();
+  // test_delete_overflow_underflow_node();
+  // test_delete_overflow_many_points();
+  // test_delete_all_points();
+  // test_insert_200_delete_20_points();
   // test_delete_truly_random();
   // test_delete_truly_random_points_from_file("test_points_fail_1");
   // test_delete_truly_random_n_points(10000);
@@ -2871,7 +2877,7 @@ int main() {
   // test_report_200_delete_20_points();
   // test_report_random();
   // test_report_random_repeat();
-  // test_report_random_2();
+  test_report_random_2();
   // test_global_rebuild_insert_10();
   // test_global_rebuild_insert_10_delete_5();
   // test_global_rebuild_insert_100_delete_50();
@@ -2880,7 +2886,7 @@ int main() {
   // TODO: test_insert_delete_half_insert_half_report();
   // TODO: test_insert_delete_half_insert_all_report();
   // test_report_random_buffer_size_512();
-  //test_contained_points_error();
+  // test_contained_points_error();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   
