@@ -2398,8 +2398,8 @@ void test_report_random_2() {
     cerr << "- round " << i+1 << " of 10: deleting 50 points" << endl;
     
     for (int j=0; j<50; j++) {
-      epst.remove(rand_deletes[i]);
-      true_points.erase(rand_deletes[i]);
+      epst.remove(rand_deletes[j]);
+      true_points.erase(rand_deletes[j]);
     }
 
 #ifdef VALIDATE
@@ -2504,8 +2504,8 @@ void test_report_random_buffer_size_512() {
     cerr << "- round " << i+1 << " of 10: deleting 3000 points" << endl;
     
     for (int j=0; j<3000; j++) {
-      epst.remove(rand_deletes[i]);
-      true_points.erase(rand_deletes[i]);
+      epst.remove(rand_deletes[j]);
+      true_points.erase(rand_deletes[j]);
     }
 
 #ifdef VALIDATE
