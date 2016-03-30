@@ -1097,8 +1097,16 @@ is_point_buffer_loaded);
         root->point_buffer.insert(p);
         return;
       }
-      root->insert_buffer.erase(p);
-      root->delete_buffer.erase(p);
+      if (root->insert_buffer.erase(p)) {
+#ifdef VALIDATE
+        CONTAINED_POINTS.erase(CONTAINED_POINTS.find(p));
+#endif
+      }
+      if (root->delete_buffer.erase(p)) {
+#ifdef VALIDATE
+        CONTAINED_POINTS.erase(CONTAINED_POINTS.find(p));
+#endif
+      }
       DEBUG_MSG("Check if put into Ir or Pr");
       point min_y = *std::min_element(root->point_buffer.begin(),
                                       root->point_buffer.end(), comp_y);
