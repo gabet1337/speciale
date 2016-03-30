@@ -47,20 +47,6 @@ void print_description(string description) {
   cout << description;
 }
 
-void test_constructors() {
-  print_description("Starting to test construction");
-  apst t(9);
-  apst t2(9,0.5);
-  print_success();
-}
-
-void test_insert1() {
-  print_description("Starting to test insert of 1 element");
-  apst t(9);
-  t.insert(point(1,1));
-  print_success();
-}
-
 void test_set_upper_bound() {
   print_description("Starting test of set upper bound functionality");
   set<pair<point, size_t> > points;
@@ -80,13 +66,42 @@ void test_set_upper_bound() {
   print_success();
 }
 
+void test_constructors() {
+  print_description("Starting to test construction");
+  apst t(9);
+  apst t2(9,0.5);
+  print_success();
+}
+
+void test_insert1() {
+  print_description("Starting to test insert of 1 element");
+  apst t(9);
+  t.insert(point(1,1));
+  t.print();
+  print_success();
+}
+
+void test_insert5() {
+  print_description("Starting to test insert of 5 element with split");
+  apst t(4);
+  t.insert(point(1,1));
+  t.insert(point(2,2));
+  t.insert(point(3,3));
+  t.insert(point(4,4));
+  t.insert(point(5,5));
+  t.print();
+  print_success();
+}
+
+
 int main() {
   cleanup();
   cout << "\033[0;33m\e[4mSTARTING TEST OF APST STRUCTURE\e[24m\033[0m" << endl;
 
+  test_set_upper_bound();
   test_constructors();
   test_insert1();
-  test_set_upper_bound();
+  test_insert5();
 
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   cleanup();
