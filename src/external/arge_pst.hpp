@@ -153,7 +153,7 @@ namespace ext {
     this->next_id = 0;
     this->buffer_size = buffer_size;
     this->leaf_parameter = buffer_size;
-    this->branching_parameter = ceil((double)buffer_size/4);
+    this->branching_parameter = std::max((size_t)2,(size_t)ceil((double)buffer_size/4));
 
     this->root = allocate_node();
 
@@ -201,11 +201,11 @@ namespace ext {
       //print children:
       if ( !n->is_leaf() ) {
 	for (auto p : n->points) {
-	  dot_file << n->id << " -> " << p.second << "\n";
+	  dot_file << n->id << " -> " << p.second << "[label=\"" << p.first << "\"]\n";
 	  q.push(retrieve_node(p.second));
 	}
 	if (n->right_most_child != (size_t)-1) {
-	  dot_file << n->id << " -> " << n->right_most_child << "\n";
+	  dot_file << n->id << " -> " << n->right_most_child << "[label=\"rm\"]\n";
 	  q.push(retrieve_node(n->right_most_child));
 	}
       }
@@ -246,13 +246,12 @@ namespace ext {
 	flush_data(n, DATA_TYPE::info_file);
 	break;
       case EVENT_TYPE::split_node:
-	load_data(n, DATA_TYPE::points);
+	load_data(n, DATA_TYPE::all);
 	if ( !is_degree_overflow(n) ) {
-	  flush_data(n, DATA_TYPE::points);
+	  flush_data(n, DATA_TYPE::all);
 	  break;
 	}
 	if ( n->is_root() ) {
-	  load_data(n, DATA_TYPE::all);
 	  //make the root the child of a new empty node
 	  node* empty_node = allocate_node();
 	  node* new_node = allocate_node();
@@ -271,10 +270,18 @@ namespace ext {
 	  flush_data(new_node, DATA_TYPE::all);
 	  delete new_node;
 	} else {
-	  node *parent = retrieve_node(n->parent_id);
+	  node* parent = retrieve_node(n->parent_id);
+	  node* new_node = allocate_node();
+	  
 	  load_data(parent, DATA_TYPE::points);
-	  //handle_split_child(parent, n, new_node);
-	  flush_data(parent, DATA_TYPE::points);
+	  load_data(parent, DATA_TYPE::info_file);
+
+	  handle_split_child(parent, n, new_node, false);
+	  flush_data(parent, DATA_TYPE::all);
+	  flush_data(new_node, DATA_TYPE::all);
+	  flush_data(n, DATA_TYPE::all);
+	  delete new_node;
+	  if (!parent->is_root()) delete parent;
 	}
 	break;
       default:
@@ -536,6 +543,7 @@ namespace ext {
   }
 
   external_priority_search_tree::node* external_priority_search_tree::retrieve_node(size_t id) {
+    if (id == 0) return root;
     node* n = new node(id);
     return n;
   }
