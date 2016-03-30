@@ -36,13 +36,13 @@ ctest : clean ctest1 ctest2
 	./ctest1 && ./ctest2
 
 epst : $(POINT) $(RANGE) $(STREAM) $(RB) $(DEFINITIONS) $(BUFFERED_PST) $(EXTERNAL_CHILD_STRUCTURE) $(UTILITIES) $(EXTERNAL_CHILD_STRUCTURE_STUB) external/test_buffered_pst.cpp
-	$(CC) $(LFLAGS) $(RANGE) $(POINT) $(DEFINITIONS) $(RB) $(STREAM) $(BUFFERED_PST) $(EXTERNAL_CHILD_STRUCTURE) $(EXTERNAL_CHILD_STRUCTURE_STUB) $(UTILITIES) external/test_buffered_pst.cpp -o epst
+	$(CC) $(LFLAGS) external/test_buffered_pst.cpp -o epst
 
 bpst : $(POINT) $(INTERNAL_PRIORITY_SEARCH_TREE) internal/test_balanced_pst.cpp
 	$(CC) $(LFLAGS) $(POINT) $(INTERNAL_PRIORITY_SEARCH_TREE) internal/test_balanced_pst.cpp -o bpst
 
 apst : $(POINT) $(EXTERNAL_PST) $(STREAM) $(DEFINITIONS) $(EXTERNAL_CHILD_STRUCTURE) $(UTILITIES) external/test_arge_pst.cpp
-	$(CC) $(LFLAGS) $(POINT) $(EXTERNAL_PST) $(STREAM) $(DEFINITIONS) $(EXTERNAL_CHILD_STRUCTURE) $(UTILITIES) external/test_arge_pst.cpp -o apst
+	$(CC) $(LFLAGS) external/test_arge_pst.cpp -o apst
 
 testall : clean	stream_test ctest epst
 	./stream_test && ./ctest && ./epst
