@@ -1837,7 +1837,7 @@ is_point_buffer_loaded);
 
       if (child->insert_buffer.erase(p)) {
         DEBUG_MSG("Removing " << p << " from insert buffer of found child");
-#ifdev VALIDATE
+#ifdef VALIDATE
         CONTAINED_POINTS.erase(CONTAINED_POINTS.find(p));
 #endif
       }
@@ -1848,7 +1848,7 @@ is_point_buffer_loaded);
       if (child->point_buffer.erase(p)) { 
         DEBUG_MSG("Removing " << p << " from point buffer of found child");
         child->point_buffer.insert(p);
-#ifdev VALIDATE
+#ifdef VALIDATE
         CONTAINED_POINTS.erase(CONTAINED_POINTS.find(p));
 #endif
         continue;
