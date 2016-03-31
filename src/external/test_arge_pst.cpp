@@ -84,6 +84,20 @@ void test_constructors() {
   print_success();
 }
 
+void test_destructor() {
+  print_description("Starting to test construction");
+  apst* t = new apst(4);
+  t->insert(point(1,1));
+  t->insert(point(2,2));
+  t->insert(point(3,3));
+  t->insert(point(4,4));
+  t->insert(point(5,5));
+  assert(util::file_exists("1/points"));
+  delete t;
+  assert(!util::file_exists("1/points"));
+  print_success();
+}
+
 void test_insert1() {
   print_description("Starting to test insert of 1 element");
   apst t(9);
@@ -328,6 +342,7 @@ int main() {
 
   test_set_upper_bound();
   test_constructors();
+  test_destructor();
   test_insert1();
   test_insert5();
   test_insert6();

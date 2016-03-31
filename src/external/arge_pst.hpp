@@ -174,7 +174,12 @@ namespace ext {
     : external_priority_search_tree(buffer_size)
   {}
 
-  external_priority_search_tree::~external_priority_search_tree() {}
+  external_priority_search_tree::~external_priority_search_tree() {
+    for (size_t i = 0; i <= next_id; i++) {
+      util::remove_directory(std::to_string(i));
+    }
+    delete root;
+  }
 
   void external_priority_search_tree::insert(const point &p) {
     DEBUG_MSG("Starting to insert point " << p);
