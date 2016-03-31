@@ -298,6 +298,30 @@ void test_insert50_odd_then_even() {
   print_success();
 }
 
+void test_100_random_inserts() {
+  print_description("Starting to test insert of 100 randomly selected points");
+  test::random r;
+  apst t(4);
+  for (int i = 0; i < 100; i++) t.insert(point(r.next(99),r.next(99)));
+  t.print();
+#ifdef VALIDATE
+  assert(t.is_valid());
+#endif
+  print_success();
+}
+
+void test_1000_random_inserts() {
+  print_description("Starting to test insert of 100 randomly selected points");
+  test::random r;
+  apst t(64);
+  for (int i = 0; i < 1000; i++) t.insert(point(r.next(999),r.next(999)));
+  t.print();
+#ifdef VALIDATE
+  assert(t.is_valid());
+#endif
+  print_success();
+}
+
 int main() {
   cleanup();
   cout << "\033[0;33m\e[4mSTARTING TEST OF APST STRUCTURE\e[24m\033[0m" << endl;
@@ -312,6 +336,8 @@ int main() {
   test_insert50();
   test_insert50_reverse();
   test_insert50_odd_then_even();
+  test_100_random_inserts();
+  test_1000_random_inserts();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   cleanup();

@@ -207,8 +207,9 @@ namespace ext {
       node* n = q.front(); q.pop();
       load_data(n, DATA_TYPE::all);
       //print label:
-      dot_file << n->id << " [label=\"" << n->id << "\nParent: " << n->parent_id << "\nis_leaf: " << n->is_leaf() << "\nPoints: ";
-      for (auto p : n->points) dot_file << p.first << ", ";
+      dot_file << n->id << " [shape=folder label=\"" << n->id << "\nParent: " << n->parent_id << "\nis_leaf: " << n->is_leaf() << "\nPoints: ";
+      size_t idx = 1;
+      for (auto p : n->points) { dot_file << p.first << ", "; if (++idx % 8 == 0) dot_file << "\n"; }
       dot_file << "\"]\n";
       //print children:
       if ( !n->is_leaf() ) {
@@ -245,11 +246,13 @@ namespace ext {
       node* n = s.top(); s.pop();
       pp range = ranges.top(); ranges.pop();
       load_data(n, DATA_TYPE::all);
-      // add points to collected points:
-      for (auto p : n->points) collected_points.insert(p.first);
 
-      // test if points are in the correct range:
+      // ITERATES ALL POINTS, SO DO CHECKS OF THEM IN HERE:
       for (auto p : n->points) {
+        // add points to collected points:
+        collected_points.insert(p.first);
+
+        // test if points are in the correct range:
         //VALIDATE_MSG(p.first << " testing range: " << "[" << range.first << ", " << range.second << "]");
         if (p.first < range.first || p.first > range.second) {
           VALIDATE_MSG_FAIL(p.first << " is not in the range [" << range.first << ", " << range.second << "]");
@@ -272,8 +275,8 @@ namespace ext {
         s.push(retrieve_node(n->right_most_child));
         ranges.push({ranges.top().second, range.second});
       }
-
       flush_data(n, DATA_TYPE::all);
+      if ( !n->is_root() ) delete n;
     }
 
     if (collected_points != CONTAINED_POINTS) {
