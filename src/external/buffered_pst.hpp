@@ -64,6 +64,7 @@ namespace ext {
       ~buffered_pst_node();
       int id;
       void add_child(const range &r);
+      void set_new_child_structure(std::vector<point> points);
       void insert_into_point_buffer(const point &p);
       void load_point_buffer();
       void load_insert_buffer();
@@ -123,8 +124,7 @@ namespace ext {
       std::string get_info_file_file_name(int id);
       std::string get_ranges_file_name(int id);
       std::string get_directory(int id);
-      size_t buffer_size;
-      size_t B_epsilon;
+      size_t buffer_size, B_epsilon, virtual_id;
       double epsilon;
       buffered_pst_node* root;
     };
@@ -218,10 +218,14 @@ namespace ext {
     assert( util::file_exists(get_info_file_file_name(id)) == false);
 #endif
     this->id = id;
+    this->virtual_id = id;
     this->epsilon = epsilon;
     this->parent_id = parent_id;
-    if ( is_root() ) this->root = this;
-    else this->root = root;
+    this->root = root;
+    if ( is_root() ) {
+      this->root = this;
+      this->virtual_id = next_id++;
+    }
     is_insert_buffer_loaded = true;
     is_delete_buffer_loaded = true;
     is_point_buffer_loaded = true;
@@ -234,13 +238,16 @@ namespace ext {
     b_insert_buffer_overflow = false;
     b_delete_buffer_overflow = false;
     b_node_degree_overflow = false;
-   
+
+    DEBUG_MSG_FAIL("Creating child_structure with virtual_id " << virtual_id);
     child_structure =
-      new ext::child_structure(id, buffer_size, epsilon, std::vector<point>());
+      new ext::child_structure(virtual_id, buffer_size, epsilon, std::vector<point>());
+    DEBUG_MSG_FAIL("Succeeded in creating child_structure");
     is_child_structure_loaded = true;
     this->B_epsilon = B_epsilon;
 
-    if (!util::file_exists(get_directory(id))) mkdir(get_directory(id).c_str(), 0700);
+    if (!util::file_exists(get_directory(virtual_id)))
+      mkdir(get_directory(virtual_id).c_str(), 0700);
     
     DEBUG_MSG("Constructed pst_node with id " << id << " and buffer_size: " << buffer_size
               << " and B_epsilon " << B_epsilon << " and parent_id " << parent_id);
@@ -251,6 +258,7 @@ namespace ext {
                                                      buffered_pst_node* root) {
     DEBUG_MSG("Opening existing node " << id);
     this->id = id;
+    this->virtual_id = id;
     this->root = root;
     this->buffer_size = buffer_size;
     this->epsilon = epsilon;
@@ -268,6 +276,11 @@ namespace ext {
     is_info_file_loaded = false;
     is_child_structure_loaded = false;
     child_structure = 0;
+  }
+
+  void buffered_pst::buffered_pst_node::set_new_child_structure(std::vector<point> points) {
+    child_structure =
+      new ext::child_structure(virtual_id, buffer_size, epsilon, points);
   }
 
   buffered_pst::buffered_pst_node::~buffered_pst_node() {
@@ -288,7 +301,7 @@ is_point_buffer_loaded);
 #endif
     DEBUG_MSG("Loading point buffer for node " << id);
     util::load_file_to_container<std::set<point>, point>
-      (point_buffer, get_point_buffer_file_name(id), buffer_size);
+      (point_buffer, get_point_buffer_file_name(virtual_id), buffer_size);
     is_point_buffer_loaded = true;
     DEBUG_MSG("Finished loading point buffer");
   }
@@ -350,13 +363,13 @@ is_point_buffer_loaded);
   }
 
   void buffered_pst::buffered_pst_node::load_child_structure() {
-    if (is_root()) return;
+    //if (is_root()) return;
 #ifdef DEBUG
     assert(!is_child_structure_loaded);
 #endif
     DEBUG_MSG("Loading child structure for node " << id);
     assert(!child_structure);
-    child_structure = new ext::child_structure(id);
+    child_structure = new ext::child_structure(virtual_id);
     is_child_structure_loaded = true;
   }
 
@@ -481,7 +494,7 @@ is_point_buffer_loaded);
   }
 
   void buffered_pst::buffered_pst_node::flush_child_structure() {
-    if (is_root()) return;
+    //if (is_root()) return;
 #ifdef DEBUG
     assert(is_child_structure_loaded);
 #endif
@@ -1052,6 +1065,7 @@ is_point_buffer_loaded);
 
   // BUFFERED_PST /////////////////////////////////////////////////////////
   buffered_pst::buffered_pst(size_t buffer_size, double epsilon) {
+    next_id = 0;
     this->epoch_begin_point_count = 0;
     this->operation_count = 0;
     this->global_rebuild_config = global_rebuild_configuration();
@@ -1063,9 +1077,9 @@ is_point_buffer_loaded);
     this->B_epsilon = (epsilon == 0.5) ? (int)sqrt(buffer_size) :
       (int)pow((double)buffer_size,epsilon);
     root = new buffered_pst_node(0,0,buffer_size, B_epsilon, epsilon, 0);
+    root->flush_child_structure();
     DEBUG_MSG("Constructing buffered_pst with buffer_size: "
               << buffer_size << " epsilon: " << epsilon << " B_epsilon: " << B_epsilon);
-    next_id = 1;
 #ifdef VALIDATE
     CONTAINED_POINTS.clear();
 #endif
@@ -1188,19 +1202,20 @@ is_point_buffer_loaded);
     auto cur_hit = cur_cache.find(node->id);
     if (cur_hit  != cur_cache.end()) {
       DEBUG_MSG("We have already cached node " << node->id);
-      if (cur_hit->second != node) delete node;
+      if (cur_hit->second != node)
+        delete node;
       return cur_hit->second;
     }
 
     auto bpn = prev_cache.find(node->id);
     
     if (bpn != prev_cache.end()) {
-        DEBUG_MSG("Cache-hit for node " << node->id);
-        buffered_pst_node* res = bpn->second;
-        cur_cache[res->id] = res;
-        prev_cache.erase(bpn);
-        delete node;
-        return res;
+      DEBUG_MSG("Cache-hit for node " << node->id);
+      buffered_pst_node* res = bpn->second;
+      cur_cache[res->id] = res;
+      prev_cache.erase(bpn);
+      delete node;
+      return res;
     }
     DEBUG_MSG("No cache-hit. Adding node " << node->id << " to cache.");
     cur_cache[node->id] = node;
@@ -1300,6 +1315,9 @@ is_point_buffer_loaded);
 
       std::tie(node, event) = cur_event;
 
+      if (!node->is_root() && root->is_child_structure_loaded)
+        root->flush_child_structure();
+      
       node = get_cached_node(node);
       
       DEBUG_MSG("STARTING TO HANDLE EVENT: " << event_to_string(event) << " in node " <<
@@ -1365,8 +1383,6 @@ is_point_buffer_loaded);
           if ( !node->insert_buffer_overflow() ) {
             break;
           }
-          // TODO: Can a virtual leaf overflow when fix_up?
-          // if (state == STATE::fix_up) load_data_in_node(node, DATA::ranges);
           load_data_in_node(node, DATA::point_buffer);
           load_data_in_node(node, DATA::insert_buffer);
           if ( node->is_leaf() || node->is_virtual_leaf() ) {
@@ -1525,6 +1541,9 @@ is_point_buffer_loaded);
 
     if (!prev_cache.empty())
       clear_cache();
+
+    if (root->is_child_structure_loaded)
+        root->flush_child_structure();
     
 #ifdef DEBUG
     assert(prev_cache.empty());
@@ -1612,11 +1631,12 @@ is_point_buffer_loaded);
                           child2_id));
 
     DEBUG_MSG("Rebuild child structure of root in root leaf split" << root->id);
+    root->load_child_structure();
     for (auto it = points.begin(); it != points.begin()+points.size()/2; it++) {
       DEBUG_MSG("Inserting " << *it << " into child structure of root " << root->id);
       root->child_structure->insert(*it);
     }
-      
+    root->flush_child_structure();
 
 #ifdef DEBUG
     DEBUG_MSG("Points in point_buffer of root " << root->id);
@@ -2370,8 +2390,7 @@ is_point_buffer_loaded);
       bpn->child_structure->destroy();
       delete bpn->child_structure;
       std::sort(children_points[idx].begin(), children_points[idx].end());
-      bpn->child_structure =
-        new ext::child_structure(bpn->id, buffer_size, epsilon, children_points[idx]);
+      bpn->set_new_child_structure(children_points[idx]);
       idx++;
     }
 
@@ -2411,8 +2430,7 @@ is_point_buffer_loaded);
       DEBUG_MSG("Inserting points from temp_point_buffer into roots child structure");
       std::vector<point> root_child_structure(temp_point_buffer.begin(),
                                               temp_point_buffer.end());
-      node->child_structure = new ext::child_structure(node->id, buffer_size, epsilon,
-                                                       root_child_structure);
+      node->set_new_child_structure(root_child_structure);
     }
 
     DEBUG_MSG("Distributing points from insert_buffer");
@@ -2603,10 +2621,6 @@ is_point_buffer_loaded);
 
       child->load_all();
 
-      // TODO: min_y value should be on ranges.
-      // point min_y = *std::min_element(child->point_buffer.begin(),
-      //                                 child->point_buffer.end(),
-      //                                 comp_y);
       point min_y = it->min_y;
       if (child->point_buffer.empty()) min_y = point(-INF,-INF);
       DEBUG_MSG("Found min_y of child " << child->id << " to be " << min_y);
@@ -2616,7 +2630,6 @@ is_point_buffer_loaded);
         DEBUG_MSG_FAIL("Looking at delete " << p);
         if (node->ranges.belong_to(range(p,INF_POINT,INF_POINT,-1)) == *it) {
           DEBUG_MSG_FAIL("Found point p " << p << " belongs to " << child->id);
-           // TODO: We should propagate delete all the way to leaf when reporting.
           if (child->point_buffer.erase(p)) {
             DEBUG_MSG_FAIL("Removing " << p <<
                            " from childs point buffer and child structure" <<
@@ -2731,6 +2744,7 @@ is_point_buffer_loaded);
 
     std::deque<buffered_pst_node*> q, fix_up_queue;
     fix_up_queue.push_front(root);
+    root->load_child_structure();
     //TODO put root in q and recurse...
     flush_buffers_to_child(root, q, fix_up_queue, x1, x2, y);
 
@@ -2754,6 +2768,7 @@ is_point_buffer_loaded);
       DEBUG_MSG_FAIL("- reporting point p " << p << " from Cr");
       result.write(p);
     }
+    root->flush_child_structure();
 
     /* *****************************************************************************
        RECURSE ON CHILDREN !!!!
@@ -2797,15 +2812,13 @@ is_point_buffer_loaded);
     while (!q.empty()) {
       buffered_pst_node* node = q.back(); q.pop_back();
       DEBUG_MSG_FAIL("We are about to fix node " << node->id);
-      // TODO: This can be optimized using cache-mechanism. Load_all?
-      node->load_info_file();
+      node = get_cached_node(node);
+      load_data_in_node(node, DATA::info_file);
       parent_to_stop_at = node->parent_id;
-      node->flush_info_file();
       event_stack.push({copy_node(node), EVENT::point_buffer_underflow});
       event_stack.push({copy_node(node), EVENT::node_degree_overflow});
       event_stack.push({copy_node(node), EVENT::insert_buffer_overflow});
       event_stack.push({copy_node(node), EVENT::delete_buffer_overflow});
-      if (!node->is_root()) delete node;
       handle_events();
     }
 
@@ -2818,11 +2831,13 @@ is_point_buffer_loaded);
     DEBUG_MSG_FAIL("Starting GLOBAL REBUILD");
 
     state = STATE::global_rebuild;
+
+    int epoch_end = next_id;
     
     buffered_pst_node* old_root = root;
     root = new buffered_pst_node(0, 0, buffer_size, B_epsilon, epsilon, 0);
+    root->flush_child_structure();
 
-    int epoch_end = next_id;
     epoch_begin_point_count = 0;
     
     std::deque<buffered_pst_node*> q, q_temp;
@@ -3031,8 +3046,10 @@ is_point_buffer_loaded);
     dot_file << "\ndb: ";
     for (point p : root->delete_buffer) dot_file << p << ", ";
     dot_file << "\nCS: ";
+    root->load_child_structure();
     for (point p : root->child_structure->get_points()) dot_file << p << ", ";
     dot_file << "\"]\n";
+    root->flush_child_structure();
     std::queue<buffered_pst_node> q;
     for (auto r : root->ranges) {
       q.push(buffered_pst_node(r.node_id, buffer_size, epsilon, root));
@@ -3063,8 +3080,9 @@ is_point_buffer_loaded);
   }
 
   buffered_pst::~buffered_pst() {
+    DEBUG_MSG_FAIL("DESSTRUCTING EPST! " << next_id);
     delete root;
-    for (int i=0; i < next_id; i++) {
+    for (int i=0; i < std::max(next_id,1); i++) {
       DEBUG_MSG("Destructing file " << i);
       util::remove_directory(std::to_string(i));
       util::remove_directory("c_"+std::to_string(i));

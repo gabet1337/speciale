@@ -33,11 +33,13 @@ void test_test() {
 #ifdef DEBUG
 void test_construction() {
   print_description("starting test_construction");
-  ext::buffered_pst epst(9,0.5);
+  ext::buffered_pst* epst = new ext::buffered_pst(9,0.5);
 #ifdef VALIDATE
-  assert ( (epst.is_valid() == true) && "invariants broken");
-  ext::buffered_pst epst2(15,0.5);
-  assert ( (epst2.is_valid() == true) && "invariants broken");
+  assert ( (epst->is_valid() == true) && "invariants broken");
+  delete epst;
+  ext::buffered_pst* epst2 = new ext::buffered_pst(15,0.5);
+  assert ( (epst2->is_valid() == true) && "invariants broken");
+  delete epst2;
 #endif
   print_success();
 }
@@ -132,6 +134,8 @@ void test_root_split() {
   print_description("starting test of root split");
 
   ext::buffered_pst epst(9,0.5);
+  epst.set_global_rebuild_configuration(ext::buffered_pst::global_rebuild_configuration(9999,0.5));
+
   for (int i = 0; i < 9; i++) epst.insert(point(i,i));
 
   assert ((!util::file_exists("1/point_buffer") && !util::file_exists("2/point_buffer"))
@@ -930,7 +934,8 @@ void test_not_valid_on_manual_insert() {
   print_description("starting test of manual insert to break is_valid");
 
   ext::buffered_pst epst(9,0.5);
-    
+  epst.set_global_rebuild_configuration(ext::buffered_pst::global_rebuild_configuration(9999,0.5));
+     
   for (int i = 15; i < 17; i++) epst.insert(point(i,i));
   for (int i = 100; i <= 106; i++) epst.insert(point(i,i));
 
@@ -3009,39 +3014,39 @@ int main() {
   test_not_valid_on_manual_insert();
   test_deterministic_random();
   test_deterministic_random2();
-  // test_random_deterministic3() ;
-  // test_random_insert();
-  // test_truly_random();
-  // test_delete();
+  // // test_random_deterministic3() ;
+  // // test_random_insert();
+  // // test_truly_random();
+  // // test_delete();
   test_delete_overflow();
   test_delete_overflow_underflow_node();
   test_delete_overflow_many_points();
   test_delete_all_points();
-  // test_insert_200_delete_20_points();
-  // test_delete_truly_random();
-  // test_delete_truly_random_points_from_file("test_points_fail_1");
-  // test_delete_truly_random_n_points(10000);
-  // test_delete_truly_random_n_points_from_file("test_points");
+  // // test_insert_200_delete_20_points();
+  // // test_delete_truly_random();
+  // // test_delete_truly_random_points_from_file("test_points_fail_1");
+  // // test_delete_truly_random_n_points(10000);
+  // // test_delete_truly_random_n_points_from_file("test_points");
   test_report_points_deterministic();
   test_report_points_deterministic2();
   test_report_points_deterministic3();
   test_report_points_deterministic_delete();
-  // test_report_points_deterministic_repeat_report();
-  // test_report_points_underflowing_point_buffer();
-  // test_report_200_delete_20_points();
-  // test_report_random();
-  // test_report_random_repeat();
-  // test_report_random_2() ;
-  // test_report_random_2_repeat("test/missing_point_error");
-  // test_report_random_2_repeat("test/invalid_meta_data_error");
+  // // test_report_points_deterministic_repeat_report();
+  // // test_report_points_underflowing_point_buffer();
+  // // test_report_200_delete_20_points();
+  // // test_report_random();
+  // // test_report_random_repeat();
+  // // test_report_random_2() ;
+  // // test_report_random_2_repeat("test/missing_point_error");
+  // // test_report_random_2_repeat("test/invalid_meta_data_error");
   test_global_rebuild_insert_10();
   test_global_rebuild_insert_10_delete_5();
-  // test_global_rebuild_insert_100_delete_50();
+  // // test_global_rebuild_insert_100_delete_50();
   test_construction_50_points();
-  // TODO: test_insert_delete_all_insert_half_report()
-  // TODO: test_insert_delete_half_insert_half_report();
-  // TODO: test_insert_delete_half_insert_all_report();
-  // test_report_random_buffer_size_512();
+  // // TODO: test_insert_delete_all_insert_half_report()
+  // // TODO: test_insert_delete_half_insert_half_report();
+  // // TODO: test_insert_delete_half_insert_all_report();
+  // // test_report_random_buffer_size_512();
   test_contained_points_error();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
