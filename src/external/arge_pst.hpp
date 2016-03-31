@@ -53,7 +53,7 @@ namespace ext {
       bool is_leaf();
       bool is_root();
       /*
-	Variables
+        Variables
       */
       size_t id;
       size_t parent_id;
@@ -86,9 +86,9 @@ namespace ext {
       ~event() {}
       friend std::ostream& operator<<(std::ostream& o, const event &e) {
         o << e.type << " in node "
-	  << e.n->id << " with point "
-	  << e.p;
-	return o;
+          << e.n->id << " with point "
+          << e.p;
+        return o;
       }
     };
 
@@ -202,14 +202,14 @@ namespace ext {
       dot_file << "\"]\n";
       //print children:
       if ( !n->is_leaf() ) {
-	for (auto p : n->points) {
-	  dot_file << n->id << " -> " << p.second << "[label=\"" << p.first << "\"]\n";
-	  q.push(retrieve_node(p.second));
-	}
-	if (n->right_most_child != (size_t)-1) {
-	  dot_file << n->id << " -> " << n->right_most_child << "[label=\"rm\"]\n";
-	  q.push(retrieve_node(n->right_most_child));
-	}
+        for (auto p : n->points) {
+          dot_file << n->id << " -> " << p.second << "[label=\"" << p.first << "\"]\n";
+          q.push(retrieve_node(p.second));
+        }
+        if (n->right_most_child != (size_t)-1) {
+          dot_file << n->id << " -> " << n->right_most_child << "[label=\"rm\"]\n";
+          q.push(retrieve_node(n->right_most_child));
+        }
       }
       flush_data(n, DATA_TYPE::all);
       if ( !n->is_root() ) delete n;
@@ -234,87 +234,87 @@ namespace ext {
       point p = cur_event.p;
       switch (cur_event.type) {
       case EVENT_TYPE::insert_in_base_tree:
-	load_data(n, DATA_TYPE::points);
-	load_data(n, DATA_TYPE::info_file);
-	handle_insert_in_base_tree(n, p);
-	flush_data(n, DATA_TYPE::points);
-	flush_data(n, DATA_TYPE::info_file);
-	break;
+        load_data(n, DATA_TYPE::points);
+        load_data(n, DATA_TYPE::info_file);
+        handle_insert_in_base_tree(n, p);
+        flush_data(n, DATA_TYPE::points);
+        flush_data(n, DATA_TYPE::info_file);
+        break;
       case EVENT_TYPE::insert_point_in_node:
-	load_data(n, DATA_TYPE::points);
-	load_data(n, DATA_TYPE::info_file);
-	insert_point_in_node(n, p);
-	flush_data(n, DATA_TYPE::points);
-	flush_data(n, DATA_TYPE::info_file);
-	break;
+        load_data(n, DATA_TYPE::points);
+        load_data(n, DATA_TYPE::info_file);
+        insert_point_in_node(n, p);
+        flush_data(n, DATA_TYPE::points);
+        flush_data(n, DATA_TYPE::info_file);
+        break;
       case EVENT_TYPE::split_node:
-	load_data(n, DATA_TYPE::all);
-	if ( !is_degree_overflow(n) ) {
-	  flush_data(n, DATA_TYPE::all);
-	  break;
-	}
-	if ( n->is_root() ) {
-	  root = n;
-	  //make the root the child of a new empty node
-	  node* empty_node = allocate_node(); // this is going to be the new root!
-	  node* new_node = allocate_node();
+        load_data(n, DATA_TYPE::all);
+        if ( !is_degree_overflow(n) ) {
+          flush_data(n, DATA_TYPE::all);
+          break;
+        }
+        if ( n->is_root() ) {
+          root = n;
+          //make the root the child of a new empty node
+          node* empty_node = allocate_node(); // this is going to be the new root!
+          node* new_node = allocate_node();
 
-	  root->parent_id = 0;
-	  root->id = empty_node->id;
-	  empty_node->id = 0;
-	  empty_node->b_is_leaf = false;
+          root->parent_id = 0;
+          root->id = empty_node->id;
+          empty_node->id = 0;
+          empty_node->b_is_leaf = false;
 
-	  handle_split_child(empty_node, root, new_node, true);
-	  //flush and delete properly here!
-	  flush_data(root, DATA_TYPE::all);
-	  flush_data(new_node, DATA_TYPE::all);
-	  root = empty_node;
-	  delete new_node;
-	} else {
-	  node* parent = retrieve_node(n->parent_id);
-	  node* new_node = allocate_node();
-	  
-	  load_data(parent, DATA_TYPE::points);
-	  load_data(parent, DATA_TYPE::info_file);
+          handle_split_child(empty_node, root, new_node, true);
+          //flush and delete properly here!
+          flush_data(root, DATA_TYPE::all);
+          flush_data(new_node, DATA_TYPE::all);
+          root = empty_node;
+          delete new_node;
+        } else {
+          node* parent = retrieve_node(n->parent_id);
+          node* new_node = allocate_node();
+          
+          load_data(parent, DATA_TYPE::points);
+          load_data(parent, DATA_TYPE::info_file);
 
-	  handle_split_child(parent, n, new_node, false);
-	  flush_data(parent, DATA_TYPE::all);
-	  flush_data(new_node, DATA_TYPE::all);
-	  flush_data(n, DATA_TYPE::all);
-	  delete new_node;
-	  if (!parent->is_root()) delete parent;
-	}
-	break;
+          handle_split_child(parent, n, new_node, false);
+          flush_data(parent, DATA_TYPE::all);
+          flush_data(new_node, DATA_TYPE::all);
+          flush_data(n, DATA_TYPE::all);
+          delete new_node;
+          if (!parent->is_root()) delete parent;
+        }
+        break;
       case EVENT_TYPE::set_parent_of_children:
-	{
-	  std::vector<node*> children;
-	  load_data(n, DATA_TYPE::info_file);
-	  if ( n->is_leaf() ) {
-	    flush_data(n, DATA_TYPE::info_file);
-	    break;
-	  }
-	  load_data(n, DATA_TYPE::points);
-	  for (auto c : n->points) {
-	    children.push_back(retrieve_node(c.second));
-	    load_data(children.back(), DATA_TYPE::info_file);
-	  }
-	  flush_data(n, DATA_TYPE::points);
-	  children.push_back(retrieve_node(n->right_most_child));
-	  load_data(children.back(), DATA_TYPE::info_file);
-	  
-	  handle_set_parent_of_children(n, children);
-	  
-	  for (auto c : children) {
-	    flush_data(c, DATA_TYPE::info_file);
-	    delete c;
-	  }
+        {
+          std::vector<node*> children;
+          load_data(n, DATA_TYPE::info_file);
+          if ( n->is_leaf() ) {
+            flush_data(n, DATA_TYPE::info_file);
+            break;
+          }
+          load_data(n, DATA_TYPE::points);
+          for (auto c : n->points) {
+            children.push_back(retrieve_node(c.second));
+            load_data(children.back(), DATA_TYPE::info_file);
+          }
+          flush_data(n, DATA_TYPE::points);
+          children.push_back(retrieve_node(n->right_most_child));
+          load_data(children.back(), DATA_TYPE::info_file);
+          
+          handle_set_parent_of_children(n, children);
+          
+          for (auto c : children) {
+            flush_data(c, DATA_TYPE::info_file);
+            delete c;
+          }
 
-	  flush_data(n, DATA_TYPE::info_file);
-	}
-	break;
+          flush_data(n, DATA_TYPE::info_file);
+        }
+        break;
       default:
-	DEBUG_MSG_FAIL("UNHANDLED EVENT!");
-	break;
+        DEBUG_MSG_FAIL("UNHANDLED EVENT!");
+        break;
 
       };
       if ( !n->is_root() ) delete n;
@@ -396,8 +396,8 @@ namespace ext {
     for (point_type p : points) {
       if (idx < median) new_node->points.insert(p);
       else if (idx == median) {
-	parent->points.insert({p.first, new_node->id});
-	new_node->right_most_child = p.second;
+        parent->points.insert({p.first, new_node->id});
+        new_node->right_most_child = p.second;
       }
       else n->points.insert(p);
       idx++;
@@ -466,19 +466,19 @@ namespace ext {
     switch (dt) {
     case DATA_TYPE::points:
       {
-	if ( !n->is_points_loaded ) load_points(n);
-	break;
+        if ( !n->is_points_loaded ) load_points(n);
+        break;
       }
     case DATA_TYPE::info_file:
       {
-	if ( !n->is_info_file_loaded ) load_info_file(n);
-	break;
+        if ( !n->is_info_file_loaded ) load_info_file(n);
+        break;
       }
     case DATA_TYPE::all:
       {
-	if ( !n->is_points_loaded ) load_points(n);
-	if ( !n->is_info_file_loaded ) load_info_file(n);
-	break;
+        if ( !n->is_points_loaded ) load_points(n);
+        if ( !n->is_info_file_loaded ) load_info_file(n);
+        break;
       }
     default:
       DEBUG_MSG_FAIL("Cannot load the given data type");
@@ -493,19 +493,19 @@ namespace ext {
     switch (dt) {
     case DATA_TYPE::points:
       {
-	if ( n->is_points_loaded ) flush_points(n);
-	break;
+        if ( n->is_points_loaded ) flush_points(n);
+        break;
       }
     case DATA_TYPE::info_file:
       {
-	if ( n->is_info_file_loaded ) flush_info_file(n);
-	break;
+        if ( n->is_info_file_loaded ) flush_info_file(n);
+        break;
       }
     case DATA_TYPE::all:
       {
-	if ( n->is_points_loaded ) flush_points(n);
-	if ( n->is_info_file_loaded ) flush_info_file(n);
-	break;
+        if ( n->is_points_loaded ) flush_points(n);
+        if ( n->is_info_file_loaded ) flush_info_file(n);
+        break;
       }
     default:
       DEBUG_MSG_FAIL("Cannot load the given data type");
