@@ -1188,9 +1188,8 @@ is_point_buffer_loaded);
     auto cur_hit = cur_cache.find(node->id);
     if (cur_hit  != cur_cache.end()) {
       DEBUG_MSG("We have already cached node " << node->id);
-      if (cur_hit->second != node) delete node; // not sure
+      if (cur_hit->second != node) delete node;
       return cur_hit->second;
-      //return node;
     }
 
     auto bpn = prev_cache.find(node->id);
@@ -1311,7 +1310,6 @@ is_point_buffer_loaded);
         {
           load_data_in_node(node, DATA::info_file);
           if (!node->point_buffer_overflow()) {
-            //clear_cache();
             break;
           }
           if ( node->is_root() && node->is_leaf() ) {
@@ -1365,7 +1363,6 @@ is_point_buffer_loaded);
         {
           load_data_in_node(node, DATA::info_file);
           if ( !node->insert_buffer_overflow() ) {
-            //clear_cache();
             break;
           }
           // TODO: Can a virtual leaf overflow when fix_up?
@@ -1403,7 +1400,6 @@ is_point_buffer_loaded);
         {
           load_data_in_node(node, DATA::info_file);
           if ( !node->delete_buffer_overflow() ) {
-            //clear_cache();
             break;
           }
 
@@ -1432,7 +1428,6 @@ is_point_buffer_loaded);
         {
           load_data_in_node(node, DATA::info_file);
           if ( !node->node_degree_overflow() ) {
-            //clear_cache();
             break;
           }
           load_data_in_node(node, DATA::ranges);
@@ -1467,7 +1462,6 @@ is_point_buffer_loaded);
         {
           load_data_in_node(node, DATA::info_file);
           if ( event == EVENT::point_buffer_underflow && !node->point_buffer_underflow() ) {
-            //clear_cache();
             break;
           }
 
@@ -1532,9 +1526,6 @@ is_point_buffer_loaded);
     if (!prev_cache.empty())
       clear_cache();
     
-    //if (state == STATE::construct)
-    //  clear_cache();
-
 #ifdef DEBUG
     assert(prev_cache.empty());
     assert(cur_cache.empty());
@@ -1823,10 +1814,11 @@ is_point_buffer_loaded);
     point min_y = range_of_child.min_y == INF_POINT ? INF_POINT : range_of_child.min_y;
     point min = range_of_child.min;
     for (auto p : node->insert_buffer) {
-      if (node->ranges.belong_to(range(p, INF_POINT, INF_POINT, -1)) != range_of_child) continue;
+      if (node->ranges.belong_to(range(p, INF_POINT, INF_POINT, -1)) != range_of_child)
+        continue;
       DEBUG_MSG(idx);
 
-      if (++idx > std::max(node->insert_buffer.size()/B_epsilon,
+      if (++idx > std::max((size_t)ceil(node->insert_buffer.size()/B_epsilon),
                            node->insert_buffer.size()-buffer_size)) break;
       min = std::min(min, p);
       min_y = std::min(min_y, p, comp_y);
@@ -2016,7 +2008,7 @@ is_point_buffer_loaded);
     for (auto p : node->delete_buffer) {
       if (node->ranges.belong_to(range(p,INF_POINT, INF_POINT,-1)) != range_of_child) continue;
 
-      if (++idx > std::max(node->delete_buffer.size()/B_epsilon,
+      if (++idx > std::max((size_t)ceil(node->delete_buffer.size()/B_epsilon),
                            node->delete_buffer.size()-buffer_size/4)) break;
       DEBUG_MSG("point " << p << " is in U");
       U.insert(p);
