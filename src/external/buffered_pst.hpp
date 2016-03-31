@@ -1184,10 +1184,13 @@ is_point_buffer_loaded);
       DEBUG_MSG("Root is cached per default");
       return node;
     }
-    
-    if (cur_cache.find(node->id) != cur_cache.end()) {
+
+    auto cur_hit = cur_cache.find(node->id);
+    if (cur_hit  != cur_cache.end()) {
       DEBUG_MSG("We have already cached node " << node->id);
-      return node;
+      if (cur_hit->second != node) delete node; // not sure
+      return cur_hit->second;
+      //return node;
     }
 
     auto bpn = prev_cache.find(node->id);
@@ -1308,7 +1311,7 @@ is_point_buffer_loaded);
         {
           load_data_in_node(node, DATA::info_file);
           if (!node->point_buffer_overflow()) {
-            clear_cache();
+            //clear_cache();
             break;
           }
           if ( node->is_root() && node->is_leaf() ) {
@@ -1362,7 +1365,7 @@ is_point_buffer_loaded);
         {
           load_data_in_node(node, DATA::info_file);
           if ( !node->insert_buffer_overflow() ) {
-            clear_cache();
+            //clear_cache();
             break;
           }
           // TODO: Can a virtual leaf overflow when fix_up?
@@ -1400,7 +1403,7 @@ is_point_buffer_loaded);
         {
           load_data_in_node(node, DATA::info_file);
           if ( !node->delete_buffer_overflow() ) {
-            clear_cache();
+            //clear_cache();
             break;
           }
 
@@ -1429,7 +1432,7 @@ is_point_buffer_loaded);
         {
           load_data_in_node(node, DATA::info_file);
           if ( !node->node_degree_overflow() ) {
-            clear_cache();
+            //clear_cache();
             break;
           }
           load_data_in_node(node, DATA::ranges);
@@ -1442,7 +1445,7 @@ is_point_buffer_loaded);
             ? root
             : new buffered_pst_node(node->parent_id,buffer_size,epsilon,root);
           parent = get_cached_node(parent);
-           load_data_in_node(parent, DATA::ranges);
+          load_data_in_node(parent, DATA::ranges);
           load_data_in_node(parent, DATA::info_file);
           
           std::map<int, buffered_pst_node*> children;
@@ -1464,7 +1467,7 @@ is_point_buffer_loaded);
         {
           load_data_in_node(node, DATA::info_file);
           if ( event == EVENT::point_buffer_underflow && !node->point_buffer_underflow() ) {
-            clear_cache();
+            //clear_cache();
             break;
           }
 
@@ -1525,9 +1528,12 @@ is_point_buffer_loaded);
       prev_event = cur_event;
     }
     clear_cache();
-    
-    if (state == STATE::construct)
+
+    if (!prev_cache.empty())
       clear_cache();
+    
+    //if (state == STATE::construct)
+    //  clear_cache();
 
 #ifdef DEBUG
     assert(prev_cache.empty());
