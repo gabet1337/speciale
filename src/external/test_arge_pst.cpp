@@ -346,6 +346,41 @@ void test_1000_random_inserts() {
   print_success();
 }
 
+void test_insert5_delete_1() {
+  print_description("Starting to test insert of 5 element with split and delete 1 element");
+  apst t(4);
+  t.insert(point(1,1));
+  t.insert(point(2,2));
+  t.insert(point(3,3));
+  t.insert(point(4,4));
+  t.insert(point(5,5));
+  t.print();
+
+  std::vector<point> points_in_2, points_in_1;
+  points_in_2.push_back(point(1,1));
+  points_in_2.push_back(point(2,2));
+  points_in_1.push_back(point(4,4));
+  points_in_1.push_back(point(5,5));
+  assert(get_points_from_file("1/points") == points_in_1);
+  assert(get_points_from_file("2/points") == points_in_2);
+
+#ifdef VALIDATE
+  assert(t.is_valid());
+#endif
+
+  // we now delete 1 element
+  t.remove(point(4,4));
+
+  t.print();
+
+#ifdef VALIDATE
+  assert(t.is_valid());
+#endif
+
+
+  print_success();
+}
+
 int main() {
   cleanup();
   cout << "\033[0;33m\e[4mSTARTING TEST OF APST STRUCTURE\e[24m\033[0m" << endl;
@@ -362,7 +397,8 @@ int main() {
   test_insert50_reverse();
   test_insert50_odd_then_even();
   test_100_random_inserts();
-  test_1000_random_inserts();
+  //  test_1000_random_inserts();
+  test_insert5_delete_1();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   cleanup();

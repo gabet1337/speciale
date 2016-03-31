@@ -80,6 +80,7 @@ namespace ext {
     
     enum struct EVENT_TYPE {
       insert_in_base_tree,
+      delete_in_base_tree,
       split_node,
       insert_point_in_node,
       set_parent_of_children
@@ -125,12 +126,13 @@ namespace ext {
     void handle_events();
     void add_event(event e);
     void handle_insert_in_base_tree(node* n, const point &p);
+    void handle_delete_in_base_tree(node* n, const point &p);
     void handle_split_child(node* parent, node* n, node* new_node, bool split_root);
     void handle_set_parent_of_children(node* n, std::vector<node*> &children);
 
-    /*
+    /***************
       Helper methods
-    */
+    ****************/
     void insert_point_in_node(node* n, const point &p);
     node* copy_node(node* n);
     node* find_child(node* n, const point &p);
@@ -146,9 +148,9 @@ namespace ext {
     node* allocate_node();
     node* retrieve_node(size_t id);
     bool is_degree_overflow(node* n);
-    /*
+    /*******************
       Private variables
-    */
+    ********************/
     size_t next_id;
     size_t buffer_size;
     size_t leaf_parameter;
@@ -203,6 +205,7 @@ namespace ext {
 
   void external_priority_search_tree::remove(const point &p) {
     DEBUG_MSG("Starting to remove point " << p);
+    add_event(event(EVENT_TYPE::delete_in_base_tree, root, p));
 #ifdef VALIDATE
     CONTAINED_POINTS.erase(p);
 #endif
@@ -267,7 +270,8 @@ namespace ext {
       // ITERATES ALL POINTS, SO DO CHECKS OF THEM IN HERE:
       for (auto p : n->points) {
         // add points to collected points:
-        collected_points.insert(p.pt);
+        if (!p.deleted)
+          collected_points.insert(p.pt);
 
         // test if points are in the correct range:
         //VALIDATE_MSG(p.first << " testing range: " << "[" << range.first << ", " << range.second << "]");
@@ -324,6 +328,13 @@ namespace ext {
         load_data(n, DATA_TYPE::points);
         load_data(n, DATA_TYPE::info_file);
         handle_insert_in_base_tree(n, p);
+        flush_data(n, DATA_TYPE::points);
+        flush_data(n, DATA_TYPE::info_file);
+        break;
+      case EVENT_TYPE::delete_in_base_tree:
+        load_data(n, DATA_TYPE::points);
+        load_data(n, DATA_TYPE::info_file);
+        handle_delete_in_base_tree(n, p);
         flush_data(n, DATA_TYPE::points);
         flush_data(n, DATA_TYPE::info_file);
         break;
@@ -418,6 +429,8 @@ namespace ext {
     switch (e) {
     case EVENT_TYPE::insert_in_base_tree:
       return "insert point in base tree";
+    case EVENT_TYPE::delete_in_base_tree:
+      return "delete point in base tree";
     case EVENT_TYPE::split_node:
       return "split node";
     case EVENT_TYPE::insert_point_in_node:
@@ -461,6 +474,23 @@ namespace ext {
     } else {
       add_event(event(EVENT_TYPE::insert_in_base_tree, find_child(n, p), p));
     }
+  }
+
+  void external_priority_search_tree::handle_delete_in_base_tree(node* n, const point &p) {
+    DEBUG_MSG("Handling delete of " << p << " in base tree at node " << n->id);
+#ifdef DEBUG
+    assert( n->is_points_loaded );
+    assert( n->is_info_file_loaded );
+#endif
+    points_type::iterator it = n->points.find(point_type(p,-1));
+    if (it != n->points.end()) {
+      point_type deref_it = *it;
+      deref_it.deleted = true;
+      n->points.erase(it);
+      n->points.insert(deref_it);
+      
+    } else if ( !n->is_leaf() )
+      add_event(event(EVENT_TYPE::delete_in_base_tree, find_child(n, p), p));
   }
 
   void external_priority_search_tree::handle_split_child(node* parent, node* n, node* new_node, bool split_root) {
