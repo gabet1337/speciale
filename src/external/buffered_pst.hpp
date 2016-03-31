@@ -2610,115 +2610,121 @@ is_point_buffer_loaded);
                                             std::deque<buffered_pst_node*> &q,
                                             std::deque<buffered_pst_node*> &fix_up_queue,
                                             int x1, int x2, int y) {
-    auto left_it = node->ranges.belong_to_iterator(range(point(x1,-INF),INF_POINT,INF_POINT,-1));
-    auto right_it = node->ranges.belong_to_iterator(range(point(x2,INF),INF_POINT,INF_POINT,-1));
+    auto left_it = node->ranges.belong_to_iterator
+      (range(point(x1,-INF),INF_POINT,INF_POINT,-1));
+    auto right_it = node->ranges.belong_to_iterator
+      (range(point(x2,INF),INF_POINT,INF_POINT,-1));
     internal::rb_tree<range> new_ranges;
     for (range r : node->ranges) new_ranges.insert(r);
     for (auto it=left_it; !(node->is_leaf() || node->is_virtual_leaf()); it++) {
-      DEBUG_MSG_FAIL("Opening child " << it->node_id);
-      buffered_pst_node* child =
-        new buffered_pst_node(it->node_id, buffer_size, epsilon, root);
 
-      child->load_all();
-
-      point min_y = it->min_y;
-      if (child->point_buffer.empty()) min_y = point(-INF,-INF);
-      DEBUG_MSG("Found min_y of child " << child->id << " to be " << min_y);
-      DEBUG_MSG("Looking at delete_buffer of " << node->id);
-      std::set<point> new_delete_buffer;
-      for (point p : node->delete_buffer) {
-        DEBUG_MSG_FAIL("Looking at delete " << p);
-        if (node->ranges.belong_to(range(p,INF_POINT,INF_POINT,-1)) == *it) {
-          DEBUG_MSG_FAIL("Found point p " << p << " belongs to " << child->id);
-          if (child->point_buffer.erase(p)) {
-            DEBUG_MSG_FAIL("Removing " << p <<
-                           " from childs point buffer and child structure" <<
-                           " of node " << node->id);
-            node->child_structure->remove(p);
-#ifdef VALIDATE
-            CONTAINED_POINTS.erase(CONTAINED_POINTS.find(p));
-#endif
-          } else if (child->insert_buffer.erase(p)) {
-            DEBUG_MSG_FAIL("Found matching point " << p << " in insert buffer of child "
-                           << child->id << ". Deleting " << p);
-#ifdef VALIDATE
-            CONTAINED_POINTS.erase(CONTAINED_POINTS.find(p));
-#endif
-          }
-          if ( (p.y < min_y.y || (p.y == min_y.y && p.x < min_y.x)) && !child->is_leaf() ) {
-            DEBUG_MSG_FAIL("Inserting delete " << p << " into child " << child->id
-                           << " delete_buffer");
-            child->delete_buffer.insert(p);
-          } else DEBUG_MSG_FAIL("Delete can not cancel anything further down. Removing " << p);
-          
-        } else {
-          DEBUG_MSG_FAIL("Found point p " << p << " does not belong to " << child->id);
-          new_delete_buffer.insert(p);
-        }
-      }
-      node->delete_buffer = new_delete_buffer;
-      DEBUG_MSG("Looking at insert_buffer of " << node->id);
-      std::set<point> new_insert_buffer;
-      for (point p : node->insert_buffer) {
-        if (node->ranges.belong_to(range(p,INF_POINT, INF_POINT,-1)) == *it) {
-          if (child->point_buffer.erase(p)) {
-            node->child_structure->remove(p);
-#ifdef VALIDATE
-            CONTAINED_POINTS.erase(CONTAINED_POINTS.find(p));
-#endif
-          }
-          if (child->insert_buffer.erase(p)) {
-#ifdef VALIDATE
-            CONTAINED_POINTS.erase(CONTAINED_POINTS.find(p));
-#endif
-          }
-          child->delete_buffer.erase(p);
-          if (p.y < min_y.y || (p.y == min_y.y && p.x < min_y.x)) {
-            child->insert_buffer.insert(p);
-          } else {
-            child->point_buffer.insert(p);
-            node->child_structure->insert(p);
-          }
-        } else {
-          new_insert_buffer.insert(p);
-        }
-      }
-      node->insert_buffer = new_insert_buffer;
-
-      DEBUG_MSG("Check if point_buffer overflows at child " << child->id);
-      if (child->point_buffer_overflow()) {
-        
-        std::vector<point> sorted_points(child->point_buffer.begin(),
-                                         child->point_buffer.end());
-        std::sort(sorted_points.begin(),sorted_points.end(),comp_y);
-
-        size_t points_to_remove = child->is_leaf()
-          ? sorted_points.size() - (buffer_size / 2 - 1)
-          : sorted_points.size() - buffer_size;
-        
-        DEBUG_MSG("we remove " << points_to_remove << " points of a total of "
-                  << sorted_points.size());
-        
-        for (size_t i = 0; i < points_to_remove; i++) {
-          node->child_structure->remove(sorted_points[i]);
-          child->insert_buffer.insert(sorted_points[i]);
-        }
-
-        child->point_buffer = std::set<point>
-          (sorted_points.begin()+points_to_remove, sorted_points.end());
-      }
-
-      auto extrema = find_extrema<std::set<point> >(child->point_buffer);
-
-      DEBUG_MSG("Updated the range: " << *it << " to " <<
-                range(it->min, extrema.min_y, extrema.max_y, it->node_id));
-      new_ranges.erase(*it);
-      new_ranges.insert(range(it->min, extrema.min_y, extrema.max_y, it->node_id));
-
-      child->flush_all();
+      if (comp_y(point(x2,y), it->max_y)) {
       
-      q.push_back(child);
-      fix_up_queue.push_back(child);
+        DEBUG_MSG_FAIL("Opening child " << it->node_id);
+        buffered_pst_node* child =
+          new buffered_pst_node(it->node_id, buffer_size, epsilon, root);
+        
+        child->load_all();
+        
+        point min_y = it->min_y;
+        if (child->point_buffer.empty()) min_y = point(-INF,-INF);
+        DEBUG_MSG("Found min_y of child " << child->id << " to be " << min_y);
+        DEBUG_MSG("Looking at delete_buffer of " << node->id);
+        std::set<point> new_delete_buffer;
+        for (point p : node->delete_buffer) {
+          DEBUG_MSG_FAIL("Looking at delete " << p);
+          if (node->ranges.belong_to(range(p,INF_POINT,INF_POINT,-1)) == *it) {
+            DEBUG_MSG_FAIL("Found point p " << p << " belongs to " << child->id);
+            if (child->point_buffer.erase(p)) {
+              DEBUG_MSG_FAIL("Removing " << p <<
+                             " from childs point buffer and child structure" <<
+                             " of node " << node->id);
+              node->child_structure->remove(p);
+#ifdef VALIDATE
+              CONTAINED_POINTS.erase(CONTAINED_POINTS.find(p));
+#endif
+            } else if (child->insert_buffer.erase(p)) {
+              DEBUG_MSG_FAIL("Found matching point " << p << " in insert buffer of child "
+                             << child->id << ". Deleting " << p);
+#ifdef VALIDATE
+              CONTAINED_POINTS.erase(CONTAINED_POINTS.find(p));
+#endif
+            }
+            if ( (p.y < min_y.y || (p.y == min_y.y && p.x < min_y.x)) && !child->is_leaf() ) {
+              DEBUG_MSG_FAIL("Inserting delete " << p << " into child " << child->id
+                             << " delete_buffer");
+              child->delete_buffer.insert(p);
+            } else DEBUG_MSG_FAIL("Delete can not cancel anything further down. Removing " << p);
+          
+          } else {
+            DEBUG_MSG_FAIL("Found point p " << p << " does not belong to " << child->id);
+            new_delete_buffer.insert(p);
+          }
+        }
+        node->delete_buffer = new_delete_buffer;
+        DEBUG_MSG("Looking at insert_buffer of " << node->id);
+        std::set<point> new_insert_buffer;
+        for (point p : node->insert_buffer) {
+          if (node->ranges.belong_to(range(p,INF_POINT, INF_POINT,-1)) == *it) {
+            if (child->point_buffer.erase(p)) {
+              node->child_structure->remove(p);
+#ifdef VALIDATE
+              CONTAINED_POINTS.erase(CONTAINED_POINTS.find(p));
+#endif
+            }
+            if (child->insert_buffer.erase(p)) {
+#ifdef VALIDATE
+              CONTAINED_POINTS.erase(CONTAINED_POINTS.find(p));
+#endif
+            }
+              child->delete_buffer.erase(p);
+              if (p.y < min_y.y || (p.y == min_y.y && p.x < min_y.x)) {
+              child->insert_buffer.insert(p);
+            } else {
+              child->point_buffer.insert(p);
+              node->child_structure->insert(p);
+              }
+          } else {
+            new_insert_buffer.insert(p);
+          }
+        }
+        node->insert_buffer = new_insert_buffer;
+
+        DEBUG_MSG("Check if point_buffer overflows at child " << child->id);
+        if (child->point_buffer_overflow()) {
+        
+          std::vector<point> sorted_points(child->point_buffer.begin(),
+                                           child->point_buffer.end());
+          std::sort(sorted_points.begin(),sorted_points.end(),comp_y);
+          
+          size_t points_to_remove = child->is_leaf()
+            ? sorted_points.size() - (buffer_size / 2 - 1)
+            : sorted_points.size() - buffer_size;
+          
+          DEBUG_MSG("we remove " << points_to_remove << " points of a total of "
+                    << sorted_points.size());
+          
+          for (size_t i = 0; i < points_to_remove; i++) {
+            node->child_structure->remove(sorted_points[i]);
+            child->insert_buffer.insert(sorted_points[i]);
+          }
+          
+          child->point_buffer = std::set<point>
+            (sorted_points.begin()+points_to_remove, sorted_points.end());
+        }
+        
+        auto extrema = find_extrema<std::set<point> >(child->point_buffer);
+        
+        DEBUG_MSG("Updated the range: " << *it << " to " <<
+                  range(it->min, extrema.min_y, extrema.max_y, it->node_id));
+        new_ranges.erase(*it);
+        new_ranges.insert(range(it->min, extrema.min_y, extrema.max_y, it->node_id));
+        
+        child->flush_all();
+        
+        q.push_back(child);
+        fix_up_queue.push_back(child);
+      }
       
       if (it == right_it) break;
     }
