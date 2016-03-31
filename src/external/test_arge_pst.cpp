@@ -50,11 +50,21 @@ void print_description(string description) {
 }
 
 std::vector<point> get_points_from_file(const std::string &file_name) {
-  std::vector<std::pair<point,size_t> > result_t;
-  util::load_file_to_container<std::vector<pair<point, size_t> >, pair<point,size_t> >
+  typedef struct point_type {
+    point pt;
+    size_t c;
+    bool deleted;
+    point_type() {}
+    point_type(point _p, size_t _c) : pt(_p), c(_c), deleted(false) {}
+    bool operator<(const point_type &p) const {
+      return pt < p.pt;
+    }
+  } point_type;
+  std::vector<point_type> result_t;
+  util::load_file_to_container<vector<point_type>, point_type>
     (result_t, file_name, buffer_size);
   std::vector<point> result;
-  for (auto p : result_t) result.push_back(p.first);
+  for (auto p : result_t) result.push_back(p.pt);
   return result;
 }
 

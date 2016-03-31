@@ -44,8 +44,19 @@ namespace ext {
     bool is_valid();
 #endif
   private:
+    typedef struct point_type {
+      point pt;
+      size_t c;
+      bool deleted;
+      point_type() {}
+      point_type(point _p, size_t _c) : pt(_p), c(_c), deleted(false) {}
+      bool operator<(const point_type &p) const {
+        return pt < p.pt;
+      }
+    } point_type;
+
     //Type definitions:
-    typedef std::pair<point, size_t> point_type;
+    //typedef std::pair<point, size_t> point_type;
     typedef std::set<point_type> points_type;
     typedef size_t info_file_entry_type;
     typedef std::vector<info_file_entry_type> info_file_type;
@@ -213,14 +224,15 @@ namespace ext {
       load_data(n, DATA_TYPE::all);
       //print label:
       dot_file << n->id << " [shape=folder label=\"" << n->id << "\nParent: " << n->parent_id << "\nis_leaf: " << n->is_leaf() << "\nPoints: ";
+      //print points:
       size_t idx = 1;
-      for (auto p : n->points) { dot_file << p.first << ", "; if (++idx % 8 == 0) dot_file << "\n"; }
+      for (auto p : n->points) { dot_file << (p.deleted ? "x" : "") << p.pt << ", "; if (++idx % 8 == 0) dot_file << "\n"; }
       dot_file << "\"]\n";
       //print children:
       if ( !n->is_leaf() ) {
         for (auto p : n->points) {
-          dot_file << n->id << " -> " << p.second << "[label=\"" << p.first << "\"]\n";
-          q.push(retrieve_node(p.second));
+          dot_file << n->id << " -> " << p.c << "[label=\"" << p.pt << "\"]\n";
+          q.push(retrieve_node(p.c));
         }
         if (n->right_most_child != (size_t)-1) {
           dot_file << n->id << " -> " << n->right_most_child << "[label=\"rm\"]\n";
@@ -255,12 +267,12 @@ namespace ext {
       // ITERATES ALL POINTS, SO DO CHECKS OF THEM IN HERE:
       for (auto p : n->points) {
         // add points to collected points:
-        collected_points.insert(p.first);
+        collected_points.insert(p.pt);
 
         // test if points are in the correct range:
         //VALIDATE_MSG(p.first << " testing range: " << "[" << range.first << ", " << range.second << "]");
-        if (p.first < range.first || p.first > range.second) {
-          VALIDATE_MSG_FAIL(p.first << " is not in the range [" << range.first << ", " << range.second << "]");
+        if (p.pt < range.first || p.pt > range.second) {
+          VALIDATE_MSG_FAIL(p.pt << " is not in the range [" << range.first << ", " << range.second << "]");
           return false;
         }
       }
@@ -269,12 +281,12 @@ namespace ext {
       if ( !n->is_leaf() ) {
         bool first = true;
         for (auto p : n->points) {
-          s.push(retrieve_node(p.second));
+          s.push(retrieve_node(p.c));
           if (first) {
-            ranges.push({range.first, p.first});
+            ranges.push({range.first, p.pt});
             first = false;
           } else {
-            ranges.push({ranges.top().second, p.first});
+            ranges.push({ranges.top().second, p.pt});
           }
         }
         s.push(retrieve_node(n->right_most_child));
@@ -370,7 +382,7 @@ namespace ext {
           }
           load_data(n, DATA_TYPE::points);
           for (auto c : n->points) {
-            children.push_back(retrieve_node(c.second));
+            children.push_back(retrieve_node(c.c));
             load_data(children.back(), DATA_TYPE::info_file);
           }
           flush_data(n, DATA_TYPE::points);
@@ -471,8 +483,8 @@ namespace ext {
     for (point_type p : points) {
       if (idx < median) new_node->points.insert(p);
       else if (idx == median) {
-        parent->points.insert({p.first, new_node->id});
-        new_node->right_most_child = p.second;
+        parent->points.insert(point_type(p.pt, new_node->id));
+        new_node->right_most_child = p.c;
       }
       else n->points.insert(p);
       idx++;
@@ -506,7 +518,7 @@ namespace ext {
     assert(n->is_info_file_loaded);
 #endif
     if ( n->is_leaf() )
-      n->points.insert({p, -1});
+      n->points.insert(point_type(p, -1));
     // handle for non leafs!
   }
 
@@ -522,9 +534,9 @@ namespace ext {
     assert(!n->is_leaf());
 #endif
     size_t child_id = -1;
-    auto it = n->points.upper_bound({p,-1});
+    auto it = n->points.upper_bound(point_type(p,-1));
     if (it == n->points.end()) child_id = n->right_most_child;
-    else child_id = it->second;
+    else child_id = it->c;
     //    child_id = it->second;
     return retrieve_node(child_id);
   }
