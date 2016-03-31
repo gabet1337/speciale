@@ -66,12 +66,14 @@ namespace ext {
       /*
         Variables
       */
+      ext::child_structure* query_data_structure;
       size_t id;
       size_t parent_id;
-      points_type points;
       size_t right_most_child;
+      points_type points;
       bool is_points_loaded;
       bool is_info_file_loaded;
+      bool is_query_data_structure_loaded;
       bool b_is_leaf;
     };
     
@@ -107,6 +109,7 @@ namespace ext {
     enum struct DATA_TYPE {
       points,
       info_file,
+      query_data_structure,
       all
     };
 
@@ -137,8 +140,10 @@ namespace ext {
     void flush_data(node* n, DATA_TYPE dt);
     void load_points(node* n);
     void load_info_file(node* n);
+    void load_query_data_structure(node* n);
     void flush_points(node* n);
     void flush_info_file(node* n);
+    void flush_query_data_structure(node* n);
     std::string get_points_file_name(size_t id);
     std::string get_info_file_file_name(size_t id);
     std::string get_directory(size_t id);
@@ -187,6 +192,7 @@ namespace ext {
   external_priority_search_tree::~external_priority_search_tree() {
     for (size_t i = 0; i <= next_id; i++) {
       util::remove_directory(std::to_string(i));
+      util::remove_directory("c_"+std::to_string(i));
     }
     delete root;
   }
@@ -358,12 +364,16 @@ namespace ext {
           root->id = empty_node->id;
           empty_node->id = 0;
           empty_node->b_is_leaf = false;
-
+          std::swap(root->query_data_structure, empty_node->query_data_structure);
+          
           handle_split_child(empty_node, root, new_node, true);
           //flush and delete properly here!
+
+          flush_data(empty_node, DATA_TYPE::all);
           flush_data(root, DATA_TYPE::all);
           flush_data(new_node, DATA_TYPE::all);
           root = empty_node;
+          // since root = n and n now no longer is root then we delete it later after switch. so dont worry.
           delete new_node;
         } else {
           node* parent = retrieve_node(n->parent_id);
@@ -445,6 +455,8 @@ namespace ext {
       return "points";
     case DATA_TYPE::info_file:
       return "info file";
+    case DATA_TYPE::query_data_structure:
+      return "query data structure";
     case DATA_TYPE::all:
       return "all";
     default:
@@ -546,7 +558,7 @@ namespace ext {
 #endif
     if ( n->is_leaf() )
       n->points.insert(point_type(p, -1));
-    // handle for non leafs!
+    // handle for non leafs if we should replace a point!
   }
 
   // Locates the child that point p belongs to
@@ -564,7 +576,6 @@ namespace ext {
     auto it = n->points.upper_bound(point_type(p,-1));
     if (it == n->points.end()) child_id = n->right_most_child;
     else child_id = it->c;
-    //    child_id = it->second;
     return retrieve_node(child_id);
   }
 
@@ -588,10 +599,16 @@ namespace ext {
         if ( !n->is_info_file_loaded ) load_info_file(n);
         break;
       }
+    case DATA_TYPE::query_data_structure:
+      {
+        if ( !n->is_query_data_structure_loaded ) load_query_data_structure(n);
+        break;
+      }
     case DATA_TYPE::all:
       {
         if ( !n->is_points_loaded ) load_points(n);
         if ( !n->is_info_file_loaded ) load_info_file(n);
+        if ( !n->is_query_data_structure_loaded ) load_query_data_structure(n);
         break;
       }
     default:
@@ -615,10 +632,16 @@ namespace ext {
         if ( n->is_info_file_loaded ) flush_info_file(n);
         break;
       }
+    case DATA_TYPE::query_data_structure:
+      {
+        if ( n->is_query_data_structure_loaded ) flush_query_data_structure(n);
+        break;
+      }
     case DATA_TYPE::all:
       {
         if ( n->is_points_loaded ) flush_points(n);
         if ( n->is_info_file_loaded ) flush_info_file(n);
+        if ( n->is_query_data_structure_loaded ) flush_query_data_structure(n);
         break;
       }
     default:
@@ -650,6 +673,14 @@ namespace ext {
     n->is_info_file_loaded = true;
   }
 
+  void external_priority_search_tree::load_query_data_structure(node *n) {
+#ifdef DEBUG
+    assert ( !n->is_query_data_structure_loaded );
+#endif
+    n->query_data_structure = new ext::child_structure(n->id);
+    n->is_query_data_structure_loaded = true;
+  }
+
   void external_priority_search_tree::flush_points(node* n) {
 #ifdef DEBUG
     assert( n->is_points_loaded );
@@ -672,6 +703,15 @@ namespace ext {
     n->is_info_file_loaded = false;
   }
 
+  void external_priority_search_tree::flush_query_data_structure(node* n) {
+#ifdef DEBUG
+    assert ( n->is_query_data_structure_loaded );
+#endif
+    delete n->query_data_structure;
+    n->query_data_structure = 0;
+    n->is_query_data_structure_loaded = false;
+  }
+
   std::string external_priority_search_tree::get_points_file_name(size_t id) {
     return get_directory(id) + "/points";
   }
@@ -692,6 +732,8 @@ namespace ext {
     n->b_is_leaf = true;
     n->parent_id = -1;
     n->right_most_child = -1;
+    n->query_data_structure = new ext::child_structure(id, buffer_size, 1, std::vector<point>());
+    n->is_query_data_structure_loaded = true;
 
     //create the necessary folder
     mkdir(get_directory(id).c_str(), 0700);

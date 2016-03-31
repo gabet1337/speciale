@@ -24,7 +24,7 @@ void cleanup() {
   for (int i = 0; i < 10000 ; i++) {
     if (util::file_exists(to_string(i))) {
       util::remove_directory(to_string(i));
-      //util::remove_directory("c_"+to_string(i));
+      util::remove_directory("c_"+to_string(i));
     } //else break;
   }
   
@@ -376,8 +376,21 @@ void test_insert5_delete_1() {
 #ifdef VALIDATE
   assert(t.is_valid());
 #endif
+  print_success();
+}
 
-
+void test_insert100_delete50() {
+  print_description("Starting to test insert of 100 element and delete 50 elements");
+  apst t(4);
+  for (int i = 0; i < 100; i++) t.insert(point(i,i));
+#ifdef VALIDATE
+  assert(t.is_valid());
+#endif
+  for (int i = 0; i < 100; i++) if (i%2==0) t.remove(point(i,i));
+#ifdef VALIDATE
+  assert(t.is_valid());
+#endif
+  t.print();
   print_success();
 }
 
@@ -399,6 +412,7 @@ int main() {
   test_100_random_inserts();
   //  test_1000_random_inserts();
   test_insert5_delete_1();
+  test_insert100_delete50();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   cleanup();
