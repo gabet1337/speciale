@@ -89,6 +89,9 @@ void test_insert1() {
   apst t(9);
   t.insert(point(1,1));
   t.print();
+#ifdef VALIDATE
+  assert(t.is_valid());
+#endif
   print_success();
 }
 
@@ -109,6 +112,10 @@ void test_insert5() {
   points_in_1.push_back(point(5,5));
   assert(get_points_from_file("1/points") == points_in_1);
   assert(get_points_from_file("2/points") == points_in_2);
+
+#ifdef VALIDATE
+  assert(t.is_valid());
+#endif
 
   print_success();
 }
@@ -133,6 +140,10 @@ void test_insert6() {
   points_in_1.push_back(point(6,6));
   assert(get_points_from_file("1/points") == points_in_1);
   assert(get_points_from_file("2/points") == points_in_2);
+
+#ifdef VALIDATE
+  assert(t.is_valid());
+#endif
 
   print_success();
 
@@ -176,6 +187,10 @@ void test_insert8() {
   assert(get_points_from_file("1/points") == points_in_1);
   assert(get_points_from_file("2/points") == points_in_2);
   assert(get_points_from_file("3/points") == points_in_3);
+
+#ifdef VALIDATE
+  assert(t.is_valid());
+#endif
 
   print_success();
 
@@ -242,11 +257,46 @@ void test_insert11() {
   assert(get_points_from_file("5/points") == points_in_5);
   assert(get_points_from_file("6/points") == points_in_6);
 
+#ifdef VALIDATE
+  assert(t.is_valid());
+#endif
 
   print_success();
-
 }
 
+void test_insert50() {
+  print_description("Starting to test insert of 50 elements with tons of splits");
+  apst t(4);
+  for (int i = 0; i < 50; i++) t.insert(point(i,i));
+  t.print();
+#ifdef VALIDATE
+  assert(t.is_valid());
+#endif
+  print_success();
+} 
+
+void test_insert50_reverse() {
+  print_description("Starting to test insert of 50 elements with tons of splits in reverse");
+  apst t(4);
+  for (int i = 49; i >= 0; i--) t.insert(point(i,i));
+  t.print();
+#ifdef VALIDATE
+  assert(t.is_valid());
+#endif
+  print_success();
+}
+
+void test_insert50_odd_then_even() {
+  print_description("Starting to test insert of 50 elements with tons of splits odd then even");
+  apst t(4);
+  for (int i = 0; i < 50; i++) if (i%2 == 0) t.insert(point(i,i));
+  for (int i = 0; i < 50; i++) if (i%2) t.insert(point(i,i));
+  t.print();
+#ifdef VALIDATE
+  assert(t.is_valid());
+#endif
+  print_success();
+}
 
 int main() {
   cleanup();
@@ -259,7 +309,10 @@ int main() {
   test_insert6();
   test_insert8();
   test_insert11();
-
+  test_insert50();
+  test_insert50_reverse();
+  test_insert50_odd_then_even();
+  
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   cleanup();
   return 0;

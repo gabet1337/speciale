@@ -40,6 +40,9 @@ namespace ext {
     void remove(const point &p);
     void report(int x1, int x2, int y, const std::string &output_file);
     void print();
+#ifdef VALIDATE
+    bool is_valid();
+#endif
   private:
     //Type definitions:
     typedef std::pair<point, size_t> point_type;
@@ -144,6 +147,9 @@ namespace ext {
 
     node* root;
 
+#ifdef VALIDATE
+    std::set<point> CONTAINED_POINTS;
+#endif
 
   };
 
@@ -173,13 +179,17 @@ namespace ext {
   void external_priority_search_tree::insert(const point &p) {
     DEBUG_MSG("Starting to insert point " << p);
     add_event(event(EVENT_TYPE::insert_in_base_tree, root, p));
-
+#ifdef VALIDATE
+    CONTAINED_POINTS.insert(p);
+#endif
     handle_events();
   }
 
   void external_priority_search_tree::remove(const point &p) {
     DEBUG_MSG("Starting to remove point " << p);
-
+#ifdef VALIDATE
+    CONTAINED_POINTS.erase(p);
+#endif
     handle_events();
   }
 
@@ -220,6 +230,40 @@ namespace ext {
     //r = system("eog tree.png");
     r++;
   }
+#ifdef VALIDATE
+  bool external_priority_search_tree::is_valid() {
+    VALIDATE_MSG("Starting to test if structure is valid");
+    std::stack<node*> s;
+    s.push(root);
+
+    std::set<point> collected_points;
+
+    while (!s.empty()) {
+      node* n = s.top(); s.pop();
+      load_data(n, DATA_TYPE::all);
+      // add points to collected points:
+      for (auto p : n->points) collected_points.insert(p.first);
+
+      // Add children to stack:
+      if ( !n->is_leaf() ) {
+        for (auto p : n->points) s.push(retrieve_node(p.second));
+        s.push(retrieve_node(n->right_most_child));
+      }
+
+      flush_data(n, DATA_TYPE::all);
+    }
+
+    if (collected_points != CONTAINED_POINTS) {
+      VALIDATE_MSG_FAIL("The collected points were not equal to the actual points");
+      VALIDATE_MSG_FAIL("Collected points:");
+      for (point p : collected_points) VALIDATE_MSG_FAIL(" - " << p);
+      VALIDATE_MSG_FAIL("Contained points:");
+      for (point p : CONTAINED_POINTS) VALIDATE_MSG_FAIL(" - " << p);
+      return false;
+    }
+    return true;
+  }
+#endif
 
   /*
     EVENT HANDLING
