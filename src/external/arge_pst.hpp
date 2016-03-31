@@ -233,21 +233,44 @@ namespace ext {
 #ifdef VALIDATE
   bool external_priority_search_tree::is_valid() {
     VALIDATE_MSG("Starting to test if structure is valid");
+    typedef std::pair<point,point> pp;
     std::stack<node*> s;
+    std::stack<pp> ranges;
     s.push(root);
+    ranges.push({MINUS_INF_POINT, INF_POINT});
 
     std::set<point> collected_points;
 
     while (!s.empty()) {
       node* n = s.top(); s.pop();
+      pp range = ranges.top(); ranges.pop();
       load_data(n, DATA_TYPE::all);
       // add points to collected points:
       for (auto p : n->points) collected_points.insert(p.first);
 
-      // Add children to stack:
+      // test if points are in the correct range:
+      for (auto p : n->points) {
+        //VALIDATE_MSG(p.first << " testing range: " << "[" << range.first << ", " << range.second << "]");
+        if (p.first < range.first || p.first > range.second) {
+          VALIDATE_MSG_FAIL(p.first << " is not in the range [" << range.first << ", " << range.second << "]");
+          return false;
+        }
+      }
+
+      // Add children and ranges to stacks:
       if ( !n->is_leaf() ) {
-        for (auto p : n->points) s.push(retrieve_node(p.second));
+        bool first = true;
+        for (auto p : n->points) {
+          s.push(retrieve_node(p.second));
+          if (first) {
+            ranges.push({range.first, p.first});
+            first = false;
+          } else {
+            ranges.push({ranges.top().second, p.first});
+          }
+        }
         s.push(retrieve_node(n->right_most_child));
+        ranges.push({ranges.top().second, range.second});
       }
 
       flush_data(n, DATA_TYPE::all);
