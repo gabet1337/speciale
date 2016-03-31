@@ -6,8 +6,6 @@
 #include "../common/validate.hpp"
 #include "../common/utilities.hpp"
 #include "../common/definitions.hpp"
-//#include "../internal/rb_tree.hpp"
-//#include "range.hpp"
 #include "child_structure_interface.hpp"
 #include "child_structure.hpp"
 //#include "child_structure_stub.hpp"
@@ -56,7 +54,6 @@ namespace ext {
     } point_type;
 
     //Type definitions:
-    //typedef std::pair<point, size_t> point_type;
     typedef std::set<point_type> points_type;
     typedef size_t info_file_entry_type;
     typedef std::vector<info_file_entry_type> info_file_type;
@@ -731,12 +728,5 @@ namespace ext {
   bool external_priority_search_tree::node::is_root() {
     return id == 0;
   }
-
-
-
-  
-  
 };
-
-
 #endif
