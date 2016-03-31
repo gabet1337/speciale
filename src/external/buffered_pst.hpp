@@ -2598,7 +2598,7 @@ is_point_buffer_loaded);
     auto right_it = node->ranges.belong_to_iterator(range(point(x2,INF),INF_POINT,INF_POINT,-1));
     internal::rb_tree<range> new_ranges;
     for (range r : node->ranges) new_ranges.insert(r);
-    for (auto it=left_it; !(node->is_leaf() && node->is_virtual_leaf()); it++) {
+    for (auto it=left_it; !(node->is_leaf() || node->is_virtual_leaf()); it++) {
       DEBUG_MSG_FAIL("Opening child " << it->node_id);
       buffered_pst_node* child =
         new buffered_pst_node(it->node_id, buffer_size, epsilon, root);
