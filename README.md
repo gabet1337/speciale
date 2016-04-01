@@ -29,6 +29,7 @@ NOTES
 - Use sorted vector as pq
 - xfig, ipe, tex from arxiv
 - Decorator pattern: Test individual methods
+- Look into comparing against a R-tree.
 
 ERRORS IN ARTICLE
 =================

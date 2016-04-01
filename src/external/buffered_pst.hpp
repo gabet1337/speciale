@@ -703,6 +703,12 @@ is_point_buffer_loaded);
   bool buffered_pst::buffered_pst_node::is_valid() {
 
     VALIDATE_MSG("STARTING IS VALID TEST");
+
+    if (is_root() && is_child_structure_loaded) {
+      VALIDATE_MSG_FAIL("Root should not have child_structure loaded!");
+      return false;
+    }
+    
     load_all();
 
     if (id != 0 && b_is_leaf != is_leaf()) {
@@ -884,6 +890,7 @@ is_point_buffer_loaded);
                             << ranges.belong_to(range(p,INF_POINT,INF_POINT,0)));
           return false;
         }
+
         if (comp_y(it->max_y, p)) {
           //        if (p > it->max_y) {
           VALIDATE_MSG_FAIL("point " << p << " has y-value larger than range max_y "
@@ -2618,7 +2625,8 @@ is_point_buffer_loaded);
     for (range r : node->ranges) new_ranges.insert(r);
     for (auto it=left_it; !(node->is_leaf() || node->is_virtual_leaf()); it++) {
 
-      if (comp_y(point(x2,y), it->max_y)) {
+      //if (comp_y(point(x2,y), it->max_y)) {
+      if (y <= it->max_y.y || (y == it->max_y.y && x2 <= it->max_y.x)) {
       
         DEBUG_MSG_FAIL("Opening child " << it->node_id);
         buffered_pst_node* child =
