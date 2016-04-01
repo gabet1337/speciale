@@ -142,6 +142,7 @@ namespace ext {
     node* copy_node(node* n);
     node* find_child(node* n, const point &p);
     range_type find_range(node* n, const point &p);
+    point find_top_most_point(node* n);
     void load_data(node* n, DATA_TYPE dt);
     void flush_data(node* n, DATA_TYPE dt);
     void load_points(node* n);
@@ -596,6 +597,16 @@ namespace ext {
     assert(parent->is_query_data_structure_loaded);
     assert(n->is_query_data_structure_loaded);
 #endif
+
+    point top_most = find_top_most_point(n);
+    n->query_data_structure->remove(top_most);
+    parent->query_data_structure->insert(top_most);
+
+    node* child_of_point = find_child(n, top_most);
+
+    add_event(event(EVENT_TYPE::bubble_up, copy_node(child_of_point), INF_POINT));
+
+    delete child_of_point;
   }
   
 
@@ -648,6 +659,15 @@ namespace ext {
       auto right = it;
       return range_type((--it)->pt, right->pt);
     }
+  }
+
+  point external_priority_search_tree::find_top_most_point(node* n) {
+#ifdef DEBUG
+    assert(n->is_query_data_structure_loaded);
+#endif
+    // not implemented yet !
+    // return n->query_data_structure->get_top_most_point();
+    return INF_POINT;
   }
 
   
