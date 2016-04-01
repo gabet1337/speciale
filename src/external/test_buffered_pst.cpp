@@ -3036,8 +3036,8 @@ int main() {
   // // test_report_200_delete_20_points();
   // // test_report_random();
   // // test_report_random_repeat();
-  // test_report_random_2() ;
-  test_report_random_2_repeat("testpoints_report_random_2");
+  test_report_random_2() ;
+  //test_report_random_2_repeat("testpoints_report_random_2");
   // test_report_random_2() ;
   // // test_report_random_2_repeat("test/missing_point_error");
   // // test_report_random_2_repeat("test/invalid_meta_data_error");

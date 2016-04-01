@@ -1115,6 +1115,9 @@ is_point_buffer_loaded);
     } else {
       DEBUG_MSG("remove duplicates of p from Pr, Ir, Dr");
       if (root->point_buffer.erase(p)) {
+#ifdef VALIDATE
+        CONTAINED_POINTS.erase(CONTAINED_POINTS.find(p));
+#endif
         root->point_buffer.insert(p);
         return;
       }
@@ -1162,10 +1165,14 @@ is_point_buffer_loaded);
     DEBUG_MSG("Removing point " << p << " in root");
 #ifdef VALIDATE
     if (state == STATE::normal) {
-      if (root->point_buffer.find(p) != root->point_buffer.end())
+      if (root->point_buffer.find(p) != root->point_buffer.end()) {
+        DEBUG_MSG("Removed point " << p << " from CONTAINED_POINTS");
         CONTAINED_POINTS.erase(CONTAINED_POINTS.find(p));
-      if (root->insert_buffer.find(p) != root->insert_buffer.end())
+      }
+      if (root->insert_buffer.find(p) != root->insert_buffer.end()) {
+        DEBUG_MSG("Removed point " << p << " from CONTAINED_POINTS");
         CONTAINED_POINTS.erase(CONTAINED_POINTS.find(p));
+      }
     }
 #endif
     point min_y = *std::min_element(root->point_buffer.begin(),
@@ -1203,7 +1210,8 @@ is_point_buffer_loaded);
     
     if (node->is_root()) {
       DEBUG_MSG("Root is cached per default");
-      return node;
+      if (node != root) delete node;
+      return root;
     }
 
     auto cur_hit = cur_cache.find(node->id);
@@ -3060,7 +3068,8 @@ is_point_buffer_loaded);
     dot_file << "\ndb: ";
     for (point p : root->delete_buffer) dot_file << p << ", ";
     dot_file << "\nCS: ";
-    root->load_child_structure();
+    if (!root->is_child_structure_loaded)
+      root->load_child_structure();
     for (point p : root->child_structure->get_points()) dot_file << p << ", ";
     dot_file << "\"]\n";
     root->flush_child_structure();
