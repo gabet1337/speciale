@@ -57,6 +57,7 @@ namespace ext {
     typedef std::set<point_type> points_type;
     typedef size_t info_file_entry_type;
     typedef std::vector<info_file_entry_type> info_file_type;
+    typedef std::pair<point,point> range_type;
 
     class node {
     public:
@@ -82,7 +83,9 @@ namespace ext {
       delete_in_base_tree,
       split_node,
       insert_point_in_node,
-      set_parent_of_children
+      set_parent_of_children,
+      bubble_down,
+      bubble_up
     };
     
     static std::string event_type_to_string(EVENT_TYPE e);
@@ -129,6 +132,8 @@ namespace ext {
     void handle_delete_in_base_tree(node* n, const point &p);
     void handle_split_child(node* parent, node* n, node* new_node, bool split_root);
     void handle_set_parent_of_children(node* n, std::vector<node*> &children);
+    void handle_bubble_down(node* n, const point &p);
+    void handle_bubble_up(node* parent, node* n);
 
     /***************
       Helper methods
@@ -136,6 +141,7 @@ namespace ext {
     void insert_point_in_node(node* n, const point &p);
     node* copy_node(node* n);
     node* find_child(node* n, const point &p);
+    range_type find_range(node* n, const point &p);
     void load_data(node* n, DATA_TYPE dt);
     void flush_data(node* n, DATA_TYPE dt);
     void load_points(node* n);
@@ -150,6 +156,7 @@ namespace ext {
     node* allocate_node();
     node* retrieve_node(size_t id);
     bool is_degree_overflow(node* n);
+    bool point_below_all(const point &p, const std::vector<point> &points);
     /*******************
       Private variables
     ********************/
@@ -233,6 +240,9 @@ namespace ext {
       //print points:
       size_t idx = 1;
       for (auto p : n->points) { dot_file << (p.deleted ? "x" : "") << p.pt << ", "; if (++idx % 8 == 0) dot_file << "\n"; }
+      //print query data structure:
+      idx = 1;
+      for (auto p : n->query_data_structure->get_points()) { dot_file << p << ", "; if (++idx % 8 == 0) dot_file << "\n"; }      
       dot_file << "\"]\n";
       //print children:
       if ( !n->is_leaf() ) {
@@ -444,6 +454,10 @@ namespace ext {
       return "insert point";
     case EVENT_TYPE::set_parent_of_children:
       return "set parent of children";
+    case EVENT_TYPE::bubble_down:
+      return "bubble down";
+    case EVENT_TYPE::bubble_up:
+      return "bubble up";
     default:
       return "invalid event type";
     }
@@ -546,6 +560,44 @@ namespace ext {
     for (auto c : children) c->parent_id = n->id;
   }
 
+  void external_priority_search_tree::handle_bubble_down(node *n, const point &p) {
+    DEBUG_MSG("Bubble down " << p << " in node " << n->id);
+#ifdef DEBUG
+    assert( n->is_points_loaded );
+    assert( n->is_query_data_structure_loaded );
+    assert( n->is_info_file_loaded );
+#endif
+    if ( n->is_leaf() ) {
+      //TODO: insert into Lv but for now just insert in query data structure for simplicity
+      n->query_data_structure->insert(p);
+      return;
+    }
+    range_type range_of_child = find_range(n,p);
+    //TODO: when we only search on x values we might take too many points with us from other Y-sets due to the total ordering...
+    // possibly introduce a report on (point x1, point x2, y) in child structure to resolve this.
+    std::vector<point> Y_set_child = n->query_data_structure->report(range_of_child.first.x, range_of_child.second.x, -INF);
+    node* child = find_child(n,p);
+    if (Y_set_child.size() >= buffer_size/2 && point_below_all(p, Y_set_child)) { // not clear if buffer_size/2 or buffer_size. ionote says buffer_size
+      add_event(event(EVENT_TYPE::bubble_down, copy_node(child), p));
+    } else {
+      n->query_data_structure->insert(p);
+      if (Y_set_child.size() + 1 > buffer_size) {
+        point min_point = *std::min_element(Y_set_child.begin(), Y_set_child.end(), comp_y);
+        n->query_data_structure->remove(min_point);
+        add_event(event(EVENT_TYPE::bubble_down, copy_node(child), min_point));
+      }
+    }
+    delete child;
+  }
+
+  void external_priority_search_tree::handle_bubble_up(node* parent, node *n) {
+    DEBUG_MSG("Bubble up from node " << n->id << " to " << parent->id);
+#ifdef DEBUG
+    assert(parent->is_query_data_structure_loaded);
+    assert(n->is_query_data_structure_loaded);
+#endif
+  }
+  
 
   /*
     HELPER METHODS
@@ -579,10 +631,36 @@ namespace ext {
     return retrieve_node(child_id);
   }
 
+  external_priority_search_tree::range_type external_priority_search_tree::find_range(node *n, const point &p) {
+    DEBUG_MSG("Find range of point " << p << " in node " << n->id);
+#ifdef DEBUG
+    assert(n->is_points_loaded);
+    assert(n->is_info_file_loaded);
+    assert(!n->is_leaf());
+#endif
+    //this gon' be ugly
+    auto it = n->points.upper_bound(point_type(p,-1));
+    if (it == n->points.end()) {
+      return range_type(n->points.rbegin()->pt, INF_POINT);
+    } else if (it == n->points.begin()) {
+      return range_type(MINUS_INF_POINT, n->points.begin()->pt);
+    } else {
+      auto right = it;
+      return range_type((--it)->pt, right->pt);
+    }
+  }
+
   
   external_priority_search_tree::node* external_priority_search_tree::copy_node(node* n) {
     if ( n->is_root() ) return n;
     return new node(n->id);
+  }
+
+  bool external_priority_search_tree::point_below_all(const point &p, const std::vector<point> &points) {
+    // returns true if p is below all points in points. false otherwise
+    for (point pt : points)
+      if (comp_y(pt,p)) return false;
+    return true;
   }
 
   void external_priority_search_tree::load_data(node* n, DATA_TYPE dt) {

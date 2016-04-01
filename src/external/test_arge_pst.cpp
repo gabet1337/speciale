@@ -87,6 +87,37 @@ void test_set_upper_bound() {
   print_success();
 }
 
+typedef pair<point,point> range_type;
+range_type find_range(const point &p, const std::set<point> &points) {
+  auto it = points.upper_bound(p);
+  if (it == points.end()) {
+    return range_type(*points.rbegin(), INF_POINT);
+  } else if (it == points.begin()) {
+    return range_type(MINUS_INF_POINT, *points.begin());
+  } else {
+    auto right = *it;
+    return range_type(*(--it), right);
+  }
+}
+
+void test_find_range() {
+  print_description("Starting to test find range functionality");
+  set<point> points;
+  points.insert(point(1,1));
+  points.insert(point(3,3));
+  points.insert(point(5,5));
+  points.insert(point(6,6));
+
+  assert( find_range(point(0,0), points) == range_type(point(-INF,-INF), point(1,1)) );
+  assert( find_range(point(1,1), points) == range_type(point(1,1), point(3,3)) );
+  assert( find_range(point(4,4), points) == range_type(point(3,3), point(5,5)) );
+  assert( find_range(point(5,5), points) == range_type(point(5,5), point(6,6)) );
+  assert( find_range(point(6,6), points) == range_type(point(6,6), point(INF,INF)) );
+  assert( find_range(point(10,10), points) == range_type(point(6,6), point(INF,INF)) );
+    
+  print_success();
+}
+
 void test_constructors() {
   print_description("Starting to test construction");
   apst t(9);
@@ -394,11 +425,14 @@ void test_insert100_delete50() {
   print_success();
 }
 
+
+
 int main() {
   cleanup();
   cout << "\033[0;33m\e[4mSTARTING TEST OF APST STRUCTURE\e[24m\033[0m" << endl;
 
   test_set_upper_bound();
+  test_find_range();
   test_constructors();
   test_destructor();
   test_insert1();
@@ -409,10 +443,11 @@ int main() {
   test_insert50();
   test_insert50_reverse();
   test_insert50_odd_then_even();
-  test_100_random_inserts();
+  // test_100_random_inserts();
   //  test_1000_random_inserts();
   test_insert5_delete_1();
   test_insert100_delete50();
+
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   cleanup();
