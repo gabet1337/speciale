@@ -150,7 +150,7 @@ void test_flush_insert_point() {
   I_file.open("c_5/I");
 
   assert ( (I_file.read() == point(2,2)) && "point no as expected");
-  assert ( (I_file.size() == sizeof(point)) && "file size not as expected");
+  assert ( (I_file.size() == 1) && "file size not as expected");
   
   I_file.close();
   
@@ -171,7 +171,7 @@ void test_flush_delete_point() {
   D_file.open("c_5/I");
 
   assert ( (D_file.read() == point(2,2)) && "point no as expected");
-  assert ( (D_file.size() == sizeof(point)) && "file size not as expected");
+  assert ( (D_file.size() == 1) && "file size not as expected");
   
   D_file.close();
   

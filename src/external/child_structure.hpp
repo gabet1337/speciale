@@ -524,8 +524,8 @@ namespace ext {
   bool child_structure::valid_disk() {
     io::buffered_stream<size_t> info_file(NUM_VARIABLES);
     info_file.open(get_info_file());
-    if (NUM_VARIABLES*sizeof(size_t) != info_file.size()) {
-      DEBUG_MSG("NUM_VARIABLES != info file size " << NUM_VARIABLES*sizeof(size_t) << " != " << info_file.size());
+    if ((size_t)NUM_VARIABLES != info_file.size()) {
+      DEBUG_MSG("NUM_VARIABLES != info file size " << NUM_VARIABLES << " != " << info_file.size());
       return false;
     }
     info_file.close();
