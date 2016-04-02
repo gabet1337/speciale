@@ -1229,7 +1229,7 @@ is_point_buffer_loaded);
       buffered_pst_node* res = bpn->second;
       cur_cache[res->id] = res;
       prev_cache.erase(bpn);
-      delete node;
+      if (res != node) delete node;
       return res;
     }
     DEBUG_MSG("No cache-hit. Adding node " << node->id << " to cache.");
@@ -1443,15 +1443,33 @@ is_point_buffer_loaded);
             load_data_in_node(node, DATA::point_buffer);
             load_data_in_node(node, DATA::insert_buffer);
             load_data_in_node(node, DATA::child_structure);
-            while (node->delete_buffer_overflow()) {
-              node = get_cached_node(node);
+            //while (node->delete_buffer_overflow()) {
+
+#ifdef VALIDATE
+              DEBUG_MSG_FAIL("Node is leaf? " << node->is_leaf());
+              DEBUG_MSG_FAIL("Node is virtual_leaf? " << node->is_virtual_leaf());
+#endif
+              
               buffered_pst_node* child = find_child(node, node->delete_buffer);
               child = get_cached_node(child);
               load_data_in_node(child, DATA::all);
+              
+              //node = get_cached_node(node);
+              //clear_cache();
 
+#ifdef VALIDATE
+              DEBUG_MSG_FAIL("delete_buffer before call in node " << node->id);
+              for (auto p : node->delete_buffer)
+                DEBUG_MSG_FAIL(" - " << p);
+#endif
               clear_cache();
               handle_delete_buffer_overflow(node, child);
-            }
+#ifdef VALIDATE
+              DEBUG_MSG_FAIL("delete_buffer after call in node " << node->id);
+              for (auto p : node->delete_buffer)
+                DEBUG_MSG_FAIL(" - " << p);
+#endif
+              //}
           }
         }
         break;
@@ -2025,6 +2043,11 @@ is_point_buffer_loaded);
     assert(child->is_delete_buffer_loaded);
     assert(child->is_insert_buffer_loaded);
 
+    if (node->delete_buffer.size() <= buffer_size/4) {
+      DEBUG_MSG_FAIL("Size of delete_buffer is: " << node->delete_buffer.size() <<
+                     " in node " << node->id);
+    }
+    
     assert(node->delete_buffer.size() > buffer_size/4);
 #endif
       
@@ -2121,6 +2144,14 @@ is_point_buffer_loaded);
         event_stack.push({copy_node(child), EVENT::point_buffer_underflow});
         event_stack.push({copy_node(child), EVENT::delete_buffer_overflow});
       }
+    }
+
+    if (node->is_leaf() || node->is_virtual_leaf()) {
+      event_stack.push({copy_node(node), EVENT::insert_buffer_overflow});
+    }
+    
+    if (node->delete_buffer_overflow()) {
+      event_stack.push({copy_node(node), EVENT::delete_buffer_overflow});
     }
   }
 
