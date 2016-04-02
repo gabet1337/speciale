@@ -29,6 +29,7 @@ namespace ext {
     std::vector<point> report(int x1, int x2, int y);
     void destroy();
 
+    point get_top_most_point();
     std::vector<point> get_points()
     {
       if (!L_in_memory) {
@@ -357,8 +358,9 @@ namespace ext {
   }
 
   inline bool child_structure::above_sweep_line(const point &p, const point &sweep) {
-    if (p.y == sweep.y) return p.x >= sweep.x;
-    return p.y > sweep.y;
+    return p.y > sweep.y || (p.y == sweep.y && p.x >= sweep.x);
+    // if (p.y == sweep.y) return p.x >= sweep.x;
+    // return p.y > sweep.y;
   }
   void child_structure::insert(const point &p) {
     DEBUG_MSG("Insert point " << p);
@@ -490,6 +492,33 @@ namespace ext {
     I.clear();
     D.clear();
     construct(L_new);
+  }
+
+  point child_structure::get_top_most_point() {
+    point result = point(-INF,-INF);
+    int idx = catalog.size()-1;
+    while (result == point(-INF,-INF) && idx >= 0) {
+      catalog_item last_catalog_item = catalog[idx];
+      if (L_in_memory) {
+        for (int j = last_catalog_item.start_idx; j < last_catalog_item.end_idx; j++)
+          if (D.find(L[j]) == D.end())
+            result = std::max(L[j], result, comp_y);
+      } else {
+        io::buffered_stream<point> L_file(buffer_size);
+        L_file.open(get_L_file());
+        L_file.seek((off_t)(last_catalog_item.start_idx*sizeof(point)),SEEK_SET);
+        for (int j = last_catalog_item.start_idx; j < last_catalog_item.end_idx; j++) {
+          point p = L_file.read();
+          if (D.find(p) == D.end())
+            result = std::max(p, result, comp_y);
+        }
+        L_file.close();
+      }
+      --idx;
+    }
+    if (!I.empty())
+      return std::max(result, *std::max_element(I.begin(), I.end(), comp_y), comp_y);
+    else return result;
   }
 
   void child_structure::destroy() {
