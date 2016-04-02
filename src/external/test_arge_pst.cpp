@@ -442,11 +442,11 @@ int main() {
   test_insert11();
   test_insert50();
   test_insert50_reverse();
-  test_insert50_odd_then_even();
+  // test_insert50_odd_then_even();
   // test_100_random_inserts();
   //  test_1000_random_inserts();
-  test_insert5_delete_1();
-  test_insert100_delete50();
+  // test_insert5_delete_1();
+  // test_insert100_delete50();
 
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;

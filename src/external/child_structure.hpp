@@ -27,8 +27,8 @@ namespace ext {
     void insert(const point &p);
     void remove(const point &p);
     std::vector<point> report(int x1, int x2, int y);
+    std::vector<point> report(const point &x1, const point &x2, int y);
     void destroy();
-
     point get_top_most_point();
     std::vector<point> get_points()
     {
@@ -466,6 +466,16 @@ namespace ext {
                         std::back_inserter(final_result));
     
     return final_result;
+  }
+
+  std::vector<point> child_structure::report(const point &x1, const point &x2, int y) {
+    DEBUG_MSG("Reporting points in [" << x1 << ", " << x2 << "] X [" <<
+              y << ", \u221E]");
+    std::vector<point> result;
+    for (auto p : report(x1.x, x2.x, y)) {
+      if (x1 < p && p <= x2) result.push_back(p);
+    }
+    return result;
   }
 
   void child_structure::rebuild() {
