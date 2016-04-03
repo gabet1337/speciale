@@ -1405,10 +1405,11 @@ is_point_buffer_loaded);
               ? root
               : new buffered_pst_node(node->parent_id,buffer_size,epsilon,root);
             parent = get_cached_node(parent);
-            load_data_in_node(parent, DATA::info_file); // TODO: Not sure?
+            load_data_in_node(parent, DATA::info_file);
             load_data_in_node(parent, DATA::child_structure);
             load_data_in_node(parent, DATA::ranges);
-
+            load_data_in_node(parent, DATA::point_buffer);
+            
             clear_cache();
             handle_insert_buffer_overflow_in_leaf_and_virtual_leaf(node, parent);
 
@@ -1820,6 +1821,11 @@ is_point_buffer_loaded);
     if (state == STATE::normal || state == STATE::fix_up
         || state == STATE::global_rebuild)
       event_stack.push({copy_node(leaf), EVENT::point_buffer_overflow});
+
+    if (parent->id != parent_to_stop_at) {
+      event_stack.push({copy_node(parent), EVENT::point_buffer_underflow});
+    }
+    
   }
 
   /*
