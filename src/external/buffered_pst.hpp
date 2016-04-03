@@ -1408,7 +1408,9 @@ is_point_buffer_loaded);
             load_data_in_node(parent, DATA::info_file);
             load_data_in_node(parent, DATA::child_structure);
             load_data_in_node(parent, DATA::ranges);
-            load_data_in_node(parent, DATA::point_buffer);
+
+            if (state == STATE::fix_up)
+              load_data_in_node(parent, DATA::point_buffer);
             
             clear_cache();
             handle_insert_buffer_overflow_in_leaf_and_virtual_leaf(node, parent);
@@ -1444,33 +1446,13 @@ is_point_buffer_loaded);
             load_data_in_node(node, DATA::point_buffer);
             load_data_in_node(node, DATA::insert_buffer);
             load_data_in_node(node, DATA::child_structure);
-            //while (node->delete_buffer_overflow()) {
 
-#ifdef VALIDATE
-              DEBUG_MSG_FAIL("Node is leaf? " << node->is_leaf());
-              DEBUG_MSG_FAIL("Node is virtual_leaf? " << node->is_virtual_leaf());
-#endif
+            buffered_pst_node* child = find_child(node, node->delete_buffer);
+            child = get_cached_node(child);
+            load_data_in_node(child, DATA::all);
               
-              buffered_pst_node* child = find_child(node, node->delete_buffer);
-              child = get_cached_node(child);
-              load_data_in_node(child, DATA::all);
-              
-              //node = get_cached_node(node);
-              //clear_cache();
-
-#ifdef VALIDATE
-              DEBUG_MSG_FAIL("delete_buffer before call in node " << node->id);
-              for (auto p : node->delete_buffer)
-                DEBUG_MSG_FAIL(" - " << p);
-#endif
-              clear_cache();
-              handle_delete_buffer_overflow(node, child);
-#ifdef VALIDATE
-              DEBUG_MSG_FAIL("delete_buffer after call in node " << node->id);
-              for (auto p : node->delete_buffer)
-                DEBUG_MSG_FAIL(" - " << p);
-#endif
-              //}
+            clear_cache();
+            handle_delete_buffer_overflow(node, child);
           }
         }
         break;
@@ -1796,6 +1778,8 @@ is_point_buffer_loaded);
     assert(leaf->is_point_buffer_loaded);
     assert(parent->is_ranges_loaded);
     assert(parent->is_child_structure_loaded);
+    if (state == STATE::fix_up)
+      assert(parent->is_point_buffer_loaded);
 #endif
     
     std::vector<point> ib_temp(leaf->insert_buffer.begin(), leaf->insert_buffer.end());
@@ -1822,7 +1806,7 @@ is_point_buffer_loaded);
         || state == STATE::global_rebuild)
       event_stack.push({copy_node(leaf), EVENT::point_buffer_overflow});
 
-    if (parent->id != parent_to_stop_at) {
+    if (state == STATE::fix_up && parent->id != parent_to_stop_at) {
       event_stack.push({copy_node(parent), EVENT::point_buffer_underflow});
     }
     

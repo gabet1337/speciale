@@ -3028,7 +3028,7 @@ int main() {
   // test_not_valid_on_manual_insert();
   // test_deterministic_random();
   // test_deterministic_random2();
-  // // test_random_deterministic3() ;
+  // test_random_deterministic3();
   // // test_random_insert();
   // // test_truly_random();
   // // test_delete();
@@ -3050,19 +3050,19 @@ int main() {
   // // test_report_200_delete_20_points();
   // // test_report_random();
   // // test_report_random_repeat();
-  // test_report_random_2() ;
-  test_report_random_2_repeat("testpoints_report_random_2");
+  test_report_random_2() ;
+  // test_report_random_2_repeat("testpoints_report_random_2");
   // // test_report_random_2_repeat("test/missing_point_error");
   // // test_report_random_2_repeat("test/invalid_meta_data_error");
-  //test_global_rebuild_insert_10();
-  //test_global_rebuild_insert_10_delete_5();
+  // test_global_rebuild_insert_10();
+  // test_global_rebuild_insert_10_delete_5();
   // test_global_rebuild_insert_100_delete_50();
-  //test_construction_50_points();
+  // test_construction_50_points();
   // // TODO: test_insert_delete_all_insert_half_report()
   // // TODO: test_insert_delete_half_insert_half_report();
   // // TODO: test_insert_delete_half_insert_all_report();
   // // test_report_random_buffer_size_512();
-  //test_contained_points_error();
+  // test_contained_points_error();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   
