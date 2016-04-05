@@ -493,6 +493,67 @@ If the catalog item considered is non-marked and if the minimum-y value is stric
 \textbf{The reporting} is done using the point indices stored in the \texttt{catalog structure}. If the point set $L$ has been read into main memory then we report the points directly from $L$, if not, we make sure to \texttt{seek} to the start-index in the file containing $L$ such that we only read in the $\leq B$ consecutive points that are candidates for being reported.
 We charge $\mathcal{O}(1)$ I/O's for accessing the \texttt{catalog structure} and $\mathcal{O}(K/B)$ I/O's for reporting points from the query range. This gives a total of  $\mathcal{O}(1+K/B)$ I/O's for querying.
 
+\section{Main data structure}
+This section will present the implementation specific design choices for the main data structure presented in section~\ref{sec:main_data_structure}. \\
+
+In section ?? we argued how the operations ??, ?? and ?? are supported using the following subroutines:
+\begin{inlinelist}
+	\item handle overflowing deletion buffers
+	\item handle overflowing insertion buffers
+	\item split leaves with overflowing point buffers
+	\item split nodes of degree $\Delta+1$
+	\item fill underflowing point buffers.
+\end{inlinelist} \\
+
+The implementation we present uses the same idea of using a delegated subroutine which is responsible for maintaining one event only.
+
+% introduce dependency mechanism (partly load/flush node).
+We decided to implement a \textbf{dependency mechanism} on each node that allows for the node to be partly flushed and loaded. This allows us to optimize the number of I/O's being made as we can restrict the load and flush to be done only on data the subroutine is actually depending on. The data for each node naturally groups into a separate stream for the insert buffer, delete buffer, point buffer, meta data on children and meta data for the node itself. We will argue in section ?? exactly why the grouping is done as described here.
+
+% introduce event loop
+As described in section ?? we have to enable a mechanism that allows for subroutines to call each other, as one event can cause other events to be risen. If we simply let each subroutine call using a naive call stack we would have to manage that a subroutine can be both a caller and callee and so it is responsible for loading and flushing data with respect to the recursion path we are currently on. This would require a logical complex mechanism that does nothing but manage the control flow of the recursion and handling data load and flushing. In order to overcome this we have introduced an \textbf{event loop mechanism} that uses a stack of events to control flush, load and calling  proper subroutines. Using this mechanism we are able to predict exactly what data is needed. Furthermore it becomes an easy task to flush all required data before taking further steps in the recursion.
+
+% cache abstraction
+As it is not uncommon to see consequent events for the same node we have added a \textbf{cache mechanism} that makes sure not to flush data on any nodes used in the previous event if the same nodes and data is required in the current event. This idea of using a simple caching scheme dramatically reduces the number of I/O's required compared against the naïve solution where we load and flush a node completely between each event. %TODO Consider introducing a "cache-hit matrix" with a count of loads/flushes we save on each event or maybe just introduce an example or two? 
+
+% introduce meta info_file
+In order to reduce the number of I/O's required we make sure to store a detailed view of the state of each node in a separate \textbf{info file} that is maintained on each subroutine. This makes us able to test whether a node is internal or leaf and if it has any over-/underflowing buffers by making only a single I/O. %TODO Concider introducing an example where we save I/O's.
+
+% introduce states
+As both event loop and buffer over-/underflow thresholds depends on whether we are currently global rebuilding, linear constructing, reporting or handling updates, we introduce a \textbf{state switch} that is used throughout our implementation to decide which path the recursion should take.
+
+% introduce event cascading matrix
+Dependency graph represented as a matrix.
+
+\begin{table}[]
+\centering
+\caption{My caption}
+\label{my-label}
+\begin{tabular}{lllll}
+\hline
+ & \multicolumn{1}{c}{root} & \multicolumn{1}{c}{leaf} & \multicolumn{1}{c}{virtual leaf} & \multicolumn{1}{c}{node} \\ \hline
+(i) delete\_buffer\_overflow & \multicolumn{1}{c}{{\color[HTML]{333333} (i), (ii), (vi)}} & \multicolumn{1}{c}{-} & \multicolumn{1}{c}{-} & \multicolumn{1}{c}{(i), (ii), (vi)} \\
+(ii) insert\_buffer\_overflow & \multicolumn{1}{c}{(ii), (v)} & \multicolumn{1}{c}{(v), (vi)} & \multicolumn{1}{c}{(v), (vi)} & \multicolumn{1}{c}{(ii), (v)} \\
+(iii) node\_degree\_overflow & (i), (ii), (iii), (v) & (i), (ii), (iii), (v) & (i), (ii), (iii), (v) & (i), (ii), (iii), (v) \\
+(iv) point\_buffer\_pull\_up & \multicolumn{1}{c}{(i), (ii)} & \multicolumn{1}{c}{(i), (ii)} & \multicolumn{1}{c}{(i), (ii)} & \multicolumn{1}{c}{(i), (ii)} \\
+(v) point\_buffer\_overflow & \multicolumn{1}{c}{(ii)} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{(v)} & \multicolumn{1}{c}{} \\
+(vi) point\_buffer\_underflow & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} \\
+(vii) split\_leaf & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} \\
+ &  &  &  &  \\
+ &  &  &  &  \\
+ &  &  &  &  \\
+ &  &  &  &  \\
+ &  &  &  &  \\
+ &  &  &  & 
+\end{tabular}
+\end{table}
+
+% introduce each event.
+
+
+% introduce misc.
+
+
 \addcontentsline{toc}{chapter}{Bibliography}
 \bibliography{references}
 
