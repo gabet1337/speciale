@@ -177,6 +177,10 @@ namespace ext {
     bool is_degree_overflow(node* n);
     bool point_below_all(const point &p, const std::vector<point> &points);
 
+#ifdef VALIDATE
+    bool validate_child(node* n, size_t c, const point &all_points_in_qs_should_be_below_this, std::stack<point> &qs, std::stack<size_t> &qs_size);
+#endif
+
     /*******************
       Private variables
     ********************/
@@ -302,14 +306,19 @@ namespace ext {
     typedef std::pair<point,point> pp;
     std::stack<node*> s;
     std::stack<pp> ranges;
+    std::stack<point> qs;
+    std::stack<size_t> qs_size;
     s.push(root);
     ranges.push({MINUS_INF_POINT, INF_POINT});
-
+    qs.push(INF_POINT);
+    qs_size.push(INF);
     std::set<point> collected_points;
 
     while (!s.empty()) {
       node* n = s.top(); s.pop();
       pp range = ranges.top(); ranges.pop();
+      point all_points_in_qs_should_be_below_this = qs.top(); qs.pop();
+      size_t parent_qs_size = qs_size.top(); qs_size.pop();
       load_data(n, DATA_TYPE::all);
 
       // ITERATES ALL POINTS, SO DO CHECKS OF THEM IN HERE:
@@ -319,11 +328,37 @@ namespace ext {
           collected_points.insert(p.pt);
 
         // test if points are in the correct range:
-        //VALIDATE_MSG(p.first << " testing range: " << "[" << range.first << ", " << range.second << "]");
         if (p.pt < range.first || p.pt > range.second) {
-          VALIDATE_MSG_FAIL(p.pt << " is not in the range [" << range.first << ", " << range.second << "]");
+          VALIDATE_MSG_FAIL(p.pt << " is not in the range [" << range.first << ", " << range.second << "] in node " << n->id);
           return false;
         }
+
+        if ( !n->is_leaf() ) {
+          if (!validate_child(n,p.c, all_points_in_qs_should_be_below_this, qs, qs_size)) return false;
+        }
+      }
+
+      //REMEMBER THE RIGHT MOST CHILD!
+      if ( !n->is_leaf() ) {
+        if (!validate_child(n, n->right_most_child, all_points_in_qs_should_be_below_this, qs, qs_size)) return false;
+      }
+
+      std::vector<point> qds = n->query_data_structure->report(-INF, INF, -INF);
+      // test that the query data structure of a leaf is not too large!
+      if ( n->is_leaf() ) {
+        if (qds.size() > 2*leaf_parameter) {
+          VALIDATE_MSG_FAIL("Size of query data structure in leaf " << n->id << " is too large: " << qds.size());
+          return false;
+        }
+      }
+
+      // test that if the query data structure is non empty then Y(n) in parent(n) >= buffer_size/2
+      if (!qds.empty() && parent_qs_size < buffer_size/2) {
+        node* parent = retrieve_node(n->parent_id);
+        load_data(parent, DATA_TYPE::all);
+        VALIDATE_MSG_FAIL(get_Y_set(parent, find_range(parent,n)).size());
+        VALIDATE_MSG_FAIL("node " << n->id << " has non empty query data structure but Y(" << n->id << ") is not >= buffer_size/2: " << parent_qs_size);
+        return false;
       }
 
       // Add children and ranges to stacks:
@@ -353,6 +388,31 @@ namespace ext {
       for (point p : CONTAINED_POINTS) VALIDATE_MSG_FAIL(" - " << p);
       return false;
     }
+    return true;
+  }
+
+  bool external_priority_search_tree::validate_child(node* n, size_t c, const point &all_points_in_qs_should_be_below_this, std::stack<point> &qs, std::stack<size_t> &qs_size) {
+    node* child = retrieve_node(c);
+    range_type range_of_child = find_range(n, child);
+    std::vector<point> Y_set = get_Y_set(n, range_of_child);
+    qs_size.push(Y_set.size());
+    if (Y_set.empty()) qs.push(MINUS_INF_POINT);
+    else qs.push(*std::min_element(Y_set.begin(), Y_set.end(), comp_y));
+    //test if Y_set is at most buffer_size points
+    if (Y_set.size() > buffer_size) {
+      VALIDATE_MSG_FAIL("Y(" << c << ") has too large size: " << Y_set.size() << " in node " << n->id);
+      return false;
+    }
+
+    // test that all points in the query data structure of w is in heap order according to the Y(w) in parent(w)
+    if (!std::all_of(Y_set.begin(), Y_set.end(),
+                     [&all_points_in_qs_should_be_below_this](const point &p) {
+                       return comp_y(p, all_points_in_qs_should_be_below_this);
+                     })) {
+      VALIDATE_MSG_FAIL("A point in the query data structure is above a point in the Y set of the parent in node " << n->id);
+      return false;
+    }
+    delete child;
     return true;
   }
 #endif
@@ -473,7 +533,6 @@ namespace ext {
         break;
       case EVENT_TYPE::bubble_up:
         {
-          // while |Yset(n2)| < b/2 {
           load_data(n2, DATA_TYPE::query_data_structure);
           load_data(n2, DATA_TYPE::points);
           load_data(n2, DATA_TYPE::info_file); 
@@ -486,6 +545,17 @@ namespace ext {
           flush_data(n, DATA_TYPE::all);
           flush_data(n2, DATA_TYPE::all);
 
+        }
+        break;
+      case EVENT_TYPE::report:
+        {
+          load_data(n, DATA_TYPE::query_data_structure);
+          load_data(n, DATA_TYPE::points);
+          load_data(n, DATA_TYPE::info_file);
+          
+          handle_report(n, cur_event.x1, cur_event.x2, cur_event.lm, cur_event.rm, cur_event.y, cur_event.stream);
+
+          flush_data(n, DATA_TYPE::all);
         }
         break;
       default:

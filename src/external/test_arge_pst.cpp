@@ -332,12 +332,14 @@ void test_insert50() {
 
 void test_insert50_reverse() {
   print_description("Starting to test insert of 50 elements with tons of splits in reverse");
-  apst t(4);
-  for (int i = 49; i >= 0; i--) t.insert(point(i,i));
-  t.print();
+  apst t(8);
+  for (int i = 49; i >= 0; i--) {
+    t.insert(point(i,i));
+    t.print();
 #ifdef VALIDATE
-  assert(t.is_valid());
+    assert(t.is_valid());
 #endif
+  }
   print_success();
 }
 
@@ -369,11 +371,14 @@ void test_1000_random_inserts() {
   print_description("Starting to test insert of 100 randomly selected points");
   test::random r;
   apst t(64);
-  for (int i = 0; i < 1000; i++) t.insert(point(r.next(999),r.next(999)));
-  t.print();
+  for (int i = 0; i < 1000; i++) {
+    t.insert(point(r.next(999),r.next(999)));
 #ifdef VALIDATE
-  assert(t.is_valid());
+    bool is_valid = t.is_valid();
+    if (!is_valid) t.print();
+    assert(is_valid);
 #endif
+  }
   print_success();
 }
 
@@ -431,20 +436,20 @@ int main() {
   cleanup();
   cout << "\033[0;33m\e[4mSTARTING TEST OF APST STRUCTURE\e[24m\033[0m" << endl;
 
-  test_set_upper_bound();
-  test_find_range();
-  test_constructors();
-  test_destructor();
-  test_insert1();
-  test_insert5();
-  test_insert6();
-  test_insert8();
-  test_insert11();
-  test_insert50();
-  test_insert50_reverse();
+  // test_set_upper_bound();
+  // test_find_range();
+  // test_constructors();
+  // test_destructor();
+  // test_insert1();
+  // test_insert5();
+  // test_insert6();
+  // test_insert8();
+  // test_insert11();
+  // test_insert50();
+  // test_insert50_reverse();
   // test_insert50_odd_then_even();
   // test_100_random_inserts();
-  //  test_1000_random_inserts();
+  test_1000_random_inserts();
   // test_insert5_delete_1();
   // test_insert100_delete50();
 
