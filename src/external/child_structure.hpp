@@ -413,13 +413,10 @@ namespace ext {
 
     if (x2 < x1) return std::vector<point>();
     
-    DEBUG_MSG(" - reporting from I");
     for (point p : I) {
       if (in_range(p, x1, x2, y)) result.insert(p);
-      DEBUG_MSG(" - added point " << p);
     }
 
-    DEBUG_MSG(" - reporting from L");
     std::vector<bool> marked(L_size/buffer_size+1,false);
 
     io::buffered_stream<point>* L_file = 0;
@@ -437,8 +434,7 @@ namespace ext {
           for (int j = ci.start_idx; j < ci.end_idx; j++) {
             if (in_range(L[j],x1,x2,y)) {
               result.insert(L[j]);
-              DEBUG_MSG(" - added point " << L[j]);
-            } else DEBUG_MSG(" - rejected this bitch: point " << L[j]);
+            }
           }
         } else {
           DEBUG_MSG("L not in memory: Reading from file");
@@ -447,8 +443,7 @@ namespace ext {
             point p = L_file->read();
             if (in_range(p,x1,x2,y)) {
               result.insert(p);
-              DEBUG_MSG(" - added point " << p);
-            } else DEBUG_MSG(" - rejected this bitch: point " << p);
+            }
           }
         }
       }
@@ -459,10 +454,9 @@ namespace ext {
       delete L_file;
     }
     
-    DEBUG_MSG(" - removing D-points");
     std::vector<point> final_result;
-    std::set_difference(result.begin(),result.end(),
-                        D.begin(),D.end(),
+    std::set_difference(result.begin(), result.end(),
+                        D.begin(), D.end(),
                         std::back_inserter(final_result));
     
     return final_result;
@@ -473,7 +467,8 @@ namespace ext {
               y << ", \u221E]");
     std::vector<point> result;
     for (auto p : report(x1.x, x2.x, y)) {
-      if (x1 < p && p <= x2) result.push_back(p);
+      if (x1 < p && p <= x2)
+        result.push_back(p);
     }
     return result;
   }

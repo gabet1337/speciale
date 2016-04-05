@@ -58,6 +58,7 @@ namespace ext {
     typedef size_t info_file_entry_type;
     typedef std::vector<info_file_entry_type> info_file_type;
     typedef std::pair<point,point> range_type;
+    typedef io::buffered_stream<point> point_stream_type;
 
     class node {
     public:
@@ -85,7 +86,8 @@ namespace ext {
       insert_point_in_node,
       set_parent_of_children,
       bubble_down,
-      bubble_up
+      bubble_up,
+      report
     };
     
     static std::string event_type_to_string(EVENT_TYPE e);
@@ -100,14 +102,22 @@ namespace ext {
       node* n;
       node* n2;
       point p;
+      int x1 = INF, x2 = INF, y = INF;
+      bool lm = false,rm = false;
+      point_stream_type* stream;
       event(EVENT_TYPE _type, node* _n, point _p) : type(_type), n(_n), n2(0), p(_p) {}
       event(EVENT_TYPE _type, node* _n, node* _n2, point _p) : type(_type), n(_n), n2(_n2), p(_p) {}
+      event(EVENT_TYPE _type, node* _n, int _x1, int _x2, int _y, bool _lm, bool _rm, point_stream_type* _stream)
+        : type(_type), n(_n), x1(_x1), x2(_x2), y(_y), lm(_lm), rm(_rm), stream(_stream) {}
       ~event() {}
       friend std::ostream& operator<<(std::ostream& o, const event &e) {
-        o << e.type << " in node "
-          << e.n->id << " with point "
-          << e.p;
+        o << e.type << " in node " << e.n->id;
+        if (e.p != INF_POINT) o << " with point " << e.p;
         if (e.n2) o << " and extra node " << e.n2->id;
+        if ( !(e.x1 == INF && e.x2 == INF && e.y == INF) ) {
+          o << " report: [" << e.x1 << ", " << e.x2 << "] X [" << e.y << ", \u221E] ";
+          o << (e.lm ? "LM" : "") << " " << (e.rm ? "RM" : "");
+        }
         return o;
       }
     };
@@ -137,17 +147,12 @@ namespace ext {
     void handle_set_parent_of_children(node* n, std::vector<node*> &children);
     void handle_bubble_down(node* n, const point &p);
     void handle_bubble_up(node* parent, node* n);
+    void handle_report(node* n, int x1, int x2, int y, bool lm, bool rm, point_stream_type* stream);
 
     /***************
       Helper methods
     ****************/
     void insert_point_in_node(node* n, const point &p);
-    node* copy_node(node* n);
-    node* find_child(node* n, const point &p);
-    range_type find_range(node* n, const point &p);
-    range_type find_range(node* n, node* child);
-    point find_top_most_point(node* n);
-    std::vector<point> get_Y_set(node *n, const range_type &range);
     void load_data(node* n, DATA_TYPE dt);
     void flush_data(node* n, DATA_TYPE dt);
     void load_points(node* n);
@@ -156,13 +161,26 @@ namespace ext {
     void flush_points(node* n);
     void flush_info_file(node* n);
     void flush_query_data_structure(node* n);
+    void remove_query_data_structure(node* n);
+    void distribute_query_data_structure(node* qs_node, node* left, node* right, const point &split_point);
+    node* copy_node(node* n);
+    node* allocate_node();
+    node* retrieve_node(size_t id);
+    node* find_child(node* n, const point &p);
+    range_type find_range(node* n, const point &p);
+    range_type find_range(node* n, node* child);
+    point find_top_most_point(node* n);
+    std::vector<point> get_Y_set(node *n, const range_type &range);
     std::string get_points_file_name(size_t id);
     std::string get_info_file_file_name(size_t id);
     std::string get_directory(size_t id);
-    node* allocate_node();
-    node* retrieve_node(size_t id);
     bool is_degree_overflow(node* n);
     bool point_below_all(const point &p, const std::vector<point> &points);
+
+#ifdef VALIDATE
+    bool validate_child(node* n, size_t c, const point &all_points_in_qs_should_be_below_this, std::stack<point> &qs, std::stack<size_t> &qs_size);
+#endif
+
     /*******************
       Private variables
     ********************/
@@ -230,7 +248,16 @@ namespace ext {
     handle_events();
   }
 
-  void external_priority_search_tree::report(int x1, int x2, int y, const std::string &output_file) {}
+  void external_priority_search_tree::report(int x1, int x2, int y, const std::string &output_file) {
+    DEBUG_MSG("Starting to report [" << x1 << ", " << x2 << "] X [" << y << ", \u221E]");
+    if (x1 > x2) return;
+    point_stream_type* stream = new point_stream_type(buffer_size);
+    stream->open(output_file);
+    add_event(event(EVENT_TYPE::report, root, x1, x2, y, true, true, stream));
+    handle_events();
+    stream->close();
+    delete stream;
+  }
 
   void external_priority_search_tree::print() {
     DEBUG_MSG("Starting to print");
@@ -279,14 +306,19 @@ namespace ext {
     typedef std::pair<point,point> pp;
     std::stack<node*> s;
     std::stack<pp> ranges;
+    std::stack<point> qs;
+    std::stack<size_t> qs_size;
     s.push(root);
     ranges.push({MINUS_INF_POINT, INF_POINT});
-
+    qs.push(INF_POINT);
+    qs_size.push(INF);
     std::set<point> collected_points;
 
     while (!s.empty()) {
       node* n = s.top(); s.pop();
       pp range = ranges.top(); ranges.pop();
+      point all_points_in_qs_should_be_below_this = qs.top(); qs.pop();
+      size_t parent_qs_size = qs_size.top(); qs_size.pop();
       load_data(n, DATA_TYPE::all);
 
       // ITERATES ALL POINTS, SO DO CHECKS OF THEM IN HERE:
@@ -296,11 +328,37 @@ namespace ext {
           collected_points.insert(p.pt);
 
         // test if points are in the correct range:
-        //VALIDATE_MSG(p.first << " testing range: " << "[" << range.first << ", " << range.second << "]");
         if (p.pt < range.first || p.pt > range.second) {
-          VALIDATE_MSG_FAIL(p.pt << " is not in the range [" << range.first << ", " << range.second << "]");
+          VALIDATE_MSG_FAIL(p.pt << " is not in the range [" << range.first << ", " << range.second << "] in node " << n->id);
           return false;
         }
+
+        if ( !n->is_leaf() ) {
+          if (!validate_child(n,p.c, all_points_in_qs_should_be_below_this, qs, qs_size)) return false;
+        }
+      }
+
+      //REMEMBER THE RIGHT MOST CHILD!
+      if ( !n->is_leaf() ) {
+        if (!validate_child(n, n->right_most_child, all_points_in_qs_should_be_below_this, qs, qs_size)) return false;
+      }
+
+      std::vector<point> qds = n->query_data_structure->report(-INF, INF, -INF);
+      // test that the query data structure of a leaf is not too large!
+      if ( n->is_leaf() ) {
+        if (qds.size() > 2*leaf_parameter) {
+          VALIDATE_MSG_FAIL("Size of query data structure in leaf " << n->id << " is too large: " << qds.size());
+          return false;
+        }
+      }
+
+      // test that if the query data structure is non empty then Y(n) in parent(n) >= buffer_size/2
+      if (!qds.empty() && parent_qs_size < buffer_size/2) {
+        node* parent = retrieve_node(n->parent_id);
+        load_data(parent, DATA_TYPE::all);
+        VALIDATE_MSG_FAIL(get_Y_set(parent, find_range(parent,n)).size());
+        VALIDATE_MSG_FAIL("node " << n->id << " has non empty query data structure but Y(" << n->id << ") is not >= buffer_size/2: " << parent_qs_size);
+        return false;
       }
 
       // Add children and ranges to stacks:
@@ -330,6 +388,31 @@ namespace ext {
       for (point p : CONTAINED_POINTS) VALIDATE_MSG_FAIL(" - " << p);
       return false;
     }
+    return true;
+  }
+
+  bool external_priority_search_tree::validate_child(node* n, size_t c, const point &all_points_in_qs_should_be_below_this, std::stack<point> &qs, std::stack<size_t> &qs_size) {
+    node* child = retrieve_node(c);
+    range_type range_of_child = find_range(n, child);
+    std::vector<point> Y_set = get_Y_set(n, range_of_child);
+    qs_size.push(Y_set.size());
+    if (Y_set.empty()) qs.push(MINUS_INF_POINT);
+    else qs.push(*std::min_element(Y_set.begin(), Y_set.end(), comp_y));
+    //test if Y_set is at most buffer_size points
+    if (Y_set.size() > buffer_size) {
+      VALIDATE_MSG_FAIL("Y(" << c << ") has too large size: " << Y_set.size() << " in node " << n->id);
+      return false;
+    }
+
+    // test that all points in the query data structure of w is in heap order according to the Y(w) in parent(w)
+    if (!std::all_of(Y_set.begin(), Y_set.end(),
+                     [&all_points_in_qs_should_be_below_this](const point &p) {
+                       return comp_y(p, all_points_in_qs_should_be_below_this);
+                     })) {
+      VALIDATE_MSG_FAIL("A point in the query data structure is above a point in the Y set of the parent in node " << n->id);
+      return false;
+    }
+    delete child;
     return true;
   }
 #endif
@@ -450,7 +533,6 @@ namespace ext {
         break;
       case EVENT_TYPE::bubble_up:
         {
-          // while |Yset(n2)| < b/2 {
           load_data(n2, DATA_TYPE::query_data_structure);
           load_data(n2, DATA_TYPE::points);
           load_data(n2, DATA_TYPE::info_file); 
@@ -463,6 +545,17 @@ namespace ext {
           flush_data(n, DATA_TYPE::all);
           flush_data(n2, DATA_TYPE::all);
 
+        }
+        break;
+      case EVENT_TYPE::report:
+        {
+          load_data(n, DATA_TYPE::query_data_structure);
+          load_data(n, DATA_TYPE::points);
+          load_data(n, DATA_TYPE::info_file);
+          
+          handle_report(n, cur_event.x1, cur_event.x2, cur_event.lm, cur_event.rm, cur_event.y, cur_event.stream);
+
+          flush_data(n, DATA_TYPE::all);
         }
         break;
       default:
@@ -584,29 +677,12 @@ namespace ext {
       idx++;
     }
 
-    if (!split_root) {
-      //distrubute the query_data_strucutre of n between n and new_node according to median
-      new_node->query_data_structure->destroy();
-      delete new_node->query_data_structure;
-      new_node->query_data_structure = new ext::child_structure(new_node->id, buffer_size, 1, n->query_data_structure->report(MINUS_INF_POINT, split_point, -INF));
-      std::vector<point> new_q = n->query_data_structure->report(split_point, INF_POINT, -INF);
-      n->query_data_structure->destroy();
-      delete n->query_data_structure;
-      n->query_data_structure = new ext::child_structure(n->id, buffer_size, 1, new_q);
-      n->query_data_structure->remove(split_point);
-    } else {
+    if (split_root) {
       //distribute the query_data_structure of parent between n and new_node according to median
-      new_node->query_data_structure->destroy();
-      delete new_node->query_data_structure;
-      new_node->query_data_structure = new ext::child_structure(new_node->id, buffer_size, 1, parent->query_data_structure->report(MINUS_INF_POINT, split_point, -INF));
-      n->query_data_structure->destroy();
-      delete n->query_data_structure;
-      n->query_data_structure = new ext::child_structure(n->id, buffer_size, 1, parent->query_data_structure->report(split_point, INF_POINT, -INF));
-      n->query_data_structure->remove(split_point);
-      //destroy and recreate child structure of parent
-      parent->query_data_structure->destroy();
-      delete parent->query_data_structure;
-      parent->query_data_structure = new ext::child_structure(parent->id, buffer_size, 1, std::vector<point>());
+      distribute_query_data_structure(parent, new_node, n, split_point);
+    } else {
+      //distrubute the query_data_strucutre of n between n and new_node according to median
+      distribute_query_data_structure(n, new_node, n, split_point);
     }
 
     if (split_root) {
@@ -619,6 +695,7 @@ namespace ext {
     add_event(event(EVENT_TYPE::set_parent_of_children, copy_node(n), INF_POINT));
     add_event(event(EVENT_TYPE::set_parent_of_children, copy_node(new_node), INF_POINT));
   }
+
 
   void external_priority_search_tree::handle_set_parent_of_children(node* n, std::vector<node*> &children) {
     DEBUG_MSG("Settings the parent of the children of node " << n->id);
@@ -690,8 +767,40 @@ namespace ext {
       add_event(event(EVENT_TYPE::bubble_up, copy_node(n), copy_node(child_of_point), INF_POINT));
       delete child_of_point;
     }
+  }
 
+  void external_priority_search_tree::handle_report(node* n, int x1, int x2, int y, bool lm, bool rm, point_stream_type* stream) {
+    DEBUG_MSG("Handle report of points in node " << n->id << " with Q = [" << x1 << ", " << x2 << "] X [ " << y << ", \u221E] and rm = " << rm << ", lm = " << lm);
+#ifdef DEBUG
+    assert(n->is_query_data_structure_loaded);
+    assert(n->is_points_loaded);
+    assert(n->is_info_file_loaded);
+#endif
+    std::vector<point> points_to_report_in_node = n->query_data_structure->report(x1, x2, y);
+    for (point p : points_to_report_in_node)
+      stream->write(p);
 
+    if ( !n->is_leaf() ) {
+      std::vector<event> upcoming_events;
+      node* left_most = find_child(n, point(x1,-INF));
+      node* right_most = find_child(n, point(x2,INF));
+      bool in_range = false;
+      for (auto p : n->points) {
+        if (p.c == left_most->id) in_range = true;
+        if (!in_range) continue;
+        bool reported_all_points = true;
+        if (!reported_all_points) continue;
+        
+        add_event(event(EVENT_TYPE::report,
+                        retrieve_node(p.c),
+                        x1, x2, y,
+                        lm && p.c == left_most->id,
+                        rm && p.c == right_most->id,
+                        stream));
+        
+        if (p.c == right_most->id) break;
+      }
+    }
   }
   
 
@@ -790,6 +899,27 @@ namespace ext {
       if (comp_y(pt,p)) return false;
     return true;
   }
+
+  void external_priority_search_tree::remove_query_data_structure(node* n) {
+    if (n->query_data_structure) {
+      n->query_data_structure->destroy();
+      delete n->query_data_structure;
+      n->query_data_structure = 0;
+    }
+  }
+
+  void external_priority_search_tree::distribute_query_data_structure(node* qs_node, node* left, node *right, const point &split_point) {
+    std::vector<point> qs_left = qs_node->query_data_structure->report(MINUS_INF_POINT, split_point, -INF);
+    std::vector<point> qs_right = qs_node->query_data_structure->report(split_point, INF_POINT, -INF);
+    remove_query_data_structure(qs_node);
+    remove_query_data_structure(left);
+    remove_query_data_structure(right);
+    left->query_data_structure = new ext::child_structure(left->id, buffer_size, 1, qs_left);
+    right->query_data_structure = new ext::child_structure(right->id, buffer_size, 1, qs_right);
+    right->query_data_structure->remove(split_point);
+    if (!qs_node->query_data_structure) qs_node->query_data_structure = new ext::child_structure(qs_node->id, buffer_size, 1, std::vector<point>());
+  }
+
 
   void external_priority_search_tree::load_data(node* n, DATA_TYPE dt) {
     //DEBUG_MSG("Loading data: " << dt << " in node " << n->id);
