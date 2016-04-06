@@ -724,10 +724,10 @@ namespace ext {
     add_event(event(EVENT_TYPE::split_node, copy_node(parent), INF_POINT));
     add_event(event(EVENT_TYPE::bubble_up, copy_node(parent), copy_node(new_node), INF_POINT)); //we want to know the node aswell
     add_event(event(EVENT_TYPE::bubble_up, copy_node(parent), copy_node(n), INF_POINT)); //we want to know the node aswell
-    if (split_point.c != (size_t)-1) {
-      add_event(event(EVENT_TYPE::bubble_up, copy_node(n), retrieve_node(split_point.c), INF_POINT));
-      add_event(event(EVENT_TYPE::bubble_up, copy_node(new_node), retrieve_node(split_point.c), INF_POINT));
-    }
+    // if (split_point.c != (size_t)-1) {
+    //   add_event(event(EVENT_TYPE::bubble_up, copy_node(n), retrieve_node(split_point.c), INF_POINT));
+    //   add_event(event(EVENT_TYPE::bubble_up, copy_node(new_node), retrieve_node(split_point.c), INF_POINT));
+    // }
     add_event(event(EVENT_TYPE::set_parent_of_children, copy_node(n), INF_POINT));
     add_event(event(EVENT_TYPE::set_parent_of_children, copy_node(new_node), INF_POINT));
   }

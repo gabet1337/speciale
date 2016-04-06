@@ -33,7 +33,6 @@ namespace ext {
     std::vector<point> get_points()
     {
       if (!L_in_memory) {
-        DEBUG_MSG("Loading L");
         util::load_file_to_container<std::vector<point>, point>(L, get_L_file(), buffer_size);
       }
       std::vector<point> L_tmp,L_new;
