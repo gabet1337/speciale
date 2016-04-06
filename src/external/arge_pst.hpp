@@ -929,10 +929,10 @@ namespace ext {
     if (it == n->points.end()) {
       return range_type(n->points.rbegin()->pt, INF_POINT);
     } else if (it == n->points.begin()) {
-      return range_type(MINUS_INF_POINT, n->points.begin()->pt);
+      return range_type(MINUS_INF_POINT, point(n->points.begin()->pt.x, n->points.begin()->pt.y-1));
     } else {
       auto right = it;
-      return range_type((--it)->pt, right->pt);
+      return range_type((--it)->pt, point(right->pt.x, right->pt.y-1));
     }
   }
 
@@ -946,10 +946,10 @@ namespace ext {
 
     for (auto it = n->points.begin(); it != n->points.end(); ++it) {
       if (it->c == child->id) {
-        if (it == n->points.begin()) return range_type(MINUS_INF_POINT, it->pt);
+        if (it == n->points.begin()) return range_type(MINUS_INF_POINT, point(it->pt.x, it->pt.y-1));
         else {
           auto right = it;
-          return range_type((--it)->pt, right->pt);
+          return range_type((--it)->pt, point(right->pt.x, right->pt.y-1));
         }
       }
     }
