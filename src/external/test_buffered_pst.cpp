@@ -2514,6 +2514,111 @@ void test_report_random_2() {
   
 }
 
+void generate_data_report_random_1gb() {
+
+  print_description("starting generating random_1gb test data ");
+
+  std::vector<point> rand_deletes;
+
+  test::random r;
+  io::buffered_stream<point> bs(4096);
+
+  bs.open("test_data_report_random_1gb");
+
+  for (size_t i = 0; i < 93*1024*1024; i++) {
+    point p = point(r.next(INF-1), r.next(INF-1));
+    bs.write(p);
+    rand_deletes.push_back(p);
+  }
+
+  std::vector<bool> marked(rand_deletes.size());
+
+  for (size_t j = 0; j < 16*1024*1024; j++) {
+    int rand = r.next(rand_deletes.size()-1);
+    if (marked[rand])
+      while (marked[++rand]) { cout << rand << endl; };
+    marked[rand] = true;  
+    bs.write(rand_deletes[rand]);
+  }
+
+  for (int j = 0; j < 16*1024*1024; j++) {
+    bs.write(point(r.next(INF-1),r.next(INF-1)));
+  }
+    
+  bs.close();
+    
+  print_success();
+  
+}
+
+void test_report_random_1gb(size_t buffer_size, double epsilon) {
+
+  print_description("starting test of report random 2");
+
+  ext::buffered_pst epst(buffer_size, epsilon);
+
+  test::random r;
+  
+  io::buffered_stream<point> bs(4096);
+  bs.open("test_data_report_random_1gb");
+  
+  cerr << "- inserting " << 93*1024*1024 << " points" << endl;
+  
+  for (size_t i = 0; i < 93*1024*1024; i++) { // insert 744 MB
+    epst.insert(bs.read());
+    if (i > 0 && i % (128*1024) == 0)
+      cout << " - inserted " << i / (128*1024) << " MB" << endl;
+  }
+
+  for (int i = 0; i < 10; i++) {
+   
+    cerr << "- round " << i+1 << " of 1: deleting " << 23*1024*1024 << " points" << endl;
+    
+    for (int j = 0; j < 16*1024*1024; j++) { // remove 128 MB
+      epst.remove(bs.read());
+    }
+    
+    cerr << "- round " << i+1 << " of 1: reporting 1 times" << endl;
+
+    for (int j = 0; j < 1; j++) {
+
+      int x1 = r.next();
+      int x2 = r.next();
+      int y = r.next();
+      
+      if (x2 < x1) std::swap(x1,x2);
+
+      epst.report(x1,x2,y,"test/report_rand_1gb");
+      util::remove_directory("test/report_rand_1gb");
+    }
+    
+    cerr << "- round " << i+1 << " of 1: inserting " << 23*1024*1024 << " points" << endl;
+  
+    for (int j = 0; j < 16*1024*1024; j++) { // insert 128 MB
+      epst.insert(bs.read());
+    }
+
+    for (int j = 0; j < 1; j++) {
+
+      int x1 = r.next();
+      int x2 = r.next();
+      int y = r.next();
+      
+      if (x2 < x1) std::swap(x1,x2);
+      
+      epst.report(x1,x2,y,"test/report_rand_1gb");
+      util::remove_directory("test/report_rand_1gb");
+      
+    }
+    
+  }
+  
+  bs.close();
+
+  print_success();
+
+}
+
 void test_report_random_2_repeat(std::string file_name) {
 
   print_description("starting test of report random 2");
@@ -3069,7 +3174,7 @@ int main() {
   // // test_report_200_delete_20_points();
   // // test_report_random();
   // // test_report_random_repeat();
-  // test_report_random_2() ;
+  test_report_random_2() ;
   // test_report_random_2_repeat("testpoints_report_random_2");
   // // test_report_random_2_repeat("test/missing_point_error");
   // // test_report_random_2_repeat("test/invalid_meta_data_error");
@@ -3083,8 +3188,10 @@ int main() {
   // // test_report_random_buffer_size_512();
   // test_contained_points_error();
   // generate_random_data(128*1024*1024, "test_data_1gb");
-  generate_random_data(5*128*1024*1024, "test_data_5gb");
-  generate_random_data(10*128*1024*1024, "test_data_10gb");
+  // generate_random_data(5*128*1024*1024, "test_data_5gb");
+  // generate_random_data(10*128*1024*1024, "test_data_10gb");
+  // generate_data_report_random_1gb();
+  // test_report_random_1gb(70000, 0.5);
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   
