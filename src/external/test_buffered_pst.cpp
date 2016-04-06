@@ -2947,6 +2947,25 @@ void cleanup() {
   
 }
 
+void generate_random_data(size_t num_points, string file_name) {
+
+  print_description("Started creating random data ");
+  
+  io::buffered_stream<point> bs(4096);
+  bs.open(file_name);
+  
+  test::random r;
+
+  for (size_t i = 0; i < num_points; i++) {
+    bs.write(point(r.next(INF-1), r.next(INF-1)));
+  }
+
+  bs.close();
+
+  print_success();
+
+}
+
 void test_contained_points_error() {
 
   print_description("starting test of report random 2");
@@ -3050,7 +3069,7 @@ int main() {
   // // test_report_200_delete_20_points();
   // // test_report_random();
   // // test_report_random_repeat();
-  test_report_random_2() ;
+  // test_report_random_2() ;
   // test_report_random_2_repeat("testpoints_report_random_2");
   // // test_report_random_2_repeat("test/missing_point_error");
   // // test_report_random_2_repeat("test/invalid_meta_data_error");
@@ -3063,6 +3082,9 @@ int main() {
   // // TODO: test_insert_delete_half_insert_all_report();
   // // test_report_random_buffer_size_512();
   // test_contained_points_error();
+  // generate_random_data(128*1024*1024, "test_data_1gb");
+  generate_random_data(5*128*1024*1024, "test_data_5gb");
+  generate_random_data(10*128*1024*1024, "test_data_10gb");
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   
