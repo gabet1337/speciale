@@ -370,9 +370,10 @@ void test_100_random_inserts() {
 void test_1000_random_inserts() {
   print_description("Starting to test insert of 100 randomly selected points");
   test::random r;
-  apst t(64);
+  apst t(16);
   for (int i = 0; i < 1000; i++) {
     t.insert(point(r.next(999),r.next(999)));
+    // t.print();
 #ifdef VALIDATE
     bool is_valid = t.is_valid();
     if (!is_valid) t.print();
@@ -430,7 +431,18 @@ void test_insert100_delete50() {
   print_success();
 }
 
-
+void test_insert5_report() {
+  print_description("Starting to test insert of 5 elements with report");
+  apst t(8);
+  for (int i = 0; i < 5; i++) t.insert(point(i,i));
+  std::vector<point> true_result {point(1,1), point(2,2), point(3,3)};
+  t.report(1,3,0,"test/test_insert5_report.res");
+  std::vector<point> actual_result;
+  util::load_file_to_container<std::vector<point>, point>
+    (actual_result, "test/test_insert5_report.res", buffer_size);
+  assert(actual_result == true_result);
+  print_success();
+}
 
 int main() {
   cleanup();
@@ -453,6 +465,7 @@ int main() {
   // test_insert5_delete_1();
   // test_insert100_delete50();
 
+  //test_insert5_report();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   cleanup();
