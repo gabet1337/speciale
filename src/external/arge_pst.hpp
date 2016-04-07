@@ -331,7 +331,14 @@ namespace ext {
       pp range = ranges.top(); ranges.pop();
       point all_points_in_qs_should_be_below_this = qs.top(); qs.pop();
       size_t parent_qs_size = qs_size.top(); qs_size.pop();
+      VALIDATE_MSG_FAIL("1: " << n->id);
       load_data(n, DATA_TYPE::all);
+
+      //test that nodes stores points:
+      if (n->points.empty()) {
+        VALIDATE_MSG_FAIL("node " << n->id << " does not store any points");
+        return false;
+      }
 
       // ITERATES ALL POINTS, SO DO CHECKS OF THEM IN HERE:
       for (auto p : n->points) {
@@ -345,13 +352,17 @@ namespace ext {
           return false;
         }
 
+        VALIDATE_MSG_FAIL("2: " << n->id);
+        VALIDATE_MSG_FAIL("3: " << p.c);
         if (!validate_child(*n, p.c, all_points_in_qs_should_be_below_this, qs, qs_size)) return false;
       }
 
       //REMEMBER THE RIGHT MOST CHILD!
+      VALIDATE_MSG_FAIL("4: " << n->id);
+      VALIDATE_MSG_FAIL("5: " << n->right_most_child);
       if (!validate_child(*n, n->right_most_child, all_points_in_qs_should_be_below_this, qs, qs_size)) return false;
 
-      std::vector<point> qds = n->query_data_structure->report(-INF, INF, -INF);
+      std::vector<point> qds = n->query_data_structure->get_points();
       // test that the query data structure of a leaf is not too large!
       if ( n->is_leaf() ) {
         if (qds.size() > 2*leaf_parameter) {
@@ -370,6 +381,8 @@ namespace ext {
       if ( !n->is_leaf() ) {
         bool first = true;
         for (auto p : n->points) {
+          VALIDATE_MSG_FAIL("6: " << n->id);
+          VALIDATE_MSG_FAIL("7: " << p.c);
           s.push(retrieve_node(p.c));
           if (first) {
             ranges.push({range.first, p.pt});
@@ -378,9 +391,12 @@ namespace ext {
             ranges.push({ranges.top().second, p.pt});
           }
         }
+        VALIDATE_MSG_FAIL("8: " << n->id);
+        VALIDATE_MSG_FAIL("9: " << n->right_most_child);
         s.push(retrieve_node(n->right_most_child));
         ranges.push({ranges.top().second, range.second});
       }
+      VALIDATE_MSG_FAIL("10: " << n->id);
       flush_data(n, DATA_TYPE::all);
       if ( !n->is_root() ) delete n;
     }
@@ -397,6 +413,7 @@ namespace ext {
   }
 
   bool external_priority_search_tree::validate_child(node& n, size_t c, const point &all_points_in_qs_should_be_below_this, std::stack<point> &qs, std::stack<size_t> &qs_size) {
+    VALIDATE_MSG_FAIL("Validating child " << c << " of node " << n.id);
     if ( n.is_leaf() ) {
       //test that leafs doesnt have any children
       if ( c != (size_t)-1 ) {
@@ -414,6 +431,7 @@ namespace ext {
     }
 
     node* child = retrieve_node(c);
+    VALIDATE_MSG_FAIL("11: " << child->id);
     load_data(child, DATA_TYPE::all);
     range_type range_of_child = find_range(&n, child);
     std::vector<point> Y_set = get_Y_set(&n, range_of_child);
@@ -434,6 +452,7 @@ namespace ext {
       VALIDATE_MSG_FAIL("A point in the query data structure is above a point in the Y set of the parent in node " << n.id);
       return false;
     }
+    VALIDATE_MSG_FAIL("12: " << child->id);
     flush_data(child, DATA_TYPE::all);
     if (!child->is_root()) delete child;
     return true;
@@ -482,6 +501,7 @@ namespace ext {
           break;
         }
         if ( n->is_root() ) {
+          load_data(n, DATA_TYPE::query_data_structure); 
           root = n;
           //make the root the child of a new empty node
           node* empty_node = allocate_node(); // this is going to be the new root!
@@ -503,7 +523,7 @@ namespace ext {
           // since root = n and n now no longer is root then we delete it later after switch. so dont worry.
           delete new_node;
         } else {
-          load_data(n, DATA_TYPE::query_data_structure);
+          load_data(n, DATA_TYPE::query_data_structure); 
           node* parent = retrieve_node(n->parent_id);
           node* new_node = allocate_node();
           
@@ -547,21 +567,15 @@ namespace ext {
         break;
       case EVENT_TYPE::bubble_down:
         {
-          load_data(n, DATA_TYPE::points);
-          load_data(n, DATA_TYPE::info_file);
-          load_data(n, DATA_TYPE::query_data_structure);
+          load_data(n, DATA_TYPE::all);
           handle_bubble_down(n,p);
           flush_data(n, DATA_TYPE::all);
         }
         break;
       case EVENT_TYPE::bubble_up:
         {
-          load_data(n2, DATA_TYPE::query_data_structure);
-          load_data(n2, DATA_TYPE::points);
-          load_data(n2, DATA_TYPE::info_file); 
-          load_data(n, DATA_TYPE::query_data_structure);
-          load_data(n, DATA_TYPE::points);
-          load_data(n, DATA_TYPE::info_file);
+          load_data(n2, DATA_TYPE::all);
+          load_data(n, DATA_TYPE::all);
           
           handle_bubble_up(n,n2);
 
@@ -571,9 +585,7 @@ namespace ext {
         break;
       case EVENT_TYPE::report:
         {
-          load_data(n, DATA_TYPE::query_data_structure);
-          load_data(n, DATA_TYPE::points);
-          load_data(n, DATA_TYPE::info_file);
+          load_data(n, DATA_TYPE::all);
           
           handle_report(n, cur_event.x1, cur_event.x2, cur_event.lm, cur_event.rm, cur_event.y, cur_event.stream);
 
@@ -684,11 +696,18 @@ namespace ext {
     assert( n->is_points_loaded );
     if (!split_root) assert( n->is_query_data_structure_loaded );
     assert( parent->is_points_loaded );
+    assert( parent->is_info_file_loaded );
 #endif
     //allocate new node and distribute points around median.
     //move median to parent and possibly recurse on parent
     new_node->parent_id = parent->id;
     new_node->b_is_leaf = n->is_leaf();
+
+#ifdef DEBUG
+    assert( new_node->is_points_loaded);
+    assert( new_node->is_info_file_loaded);
+    assert( new_node->is_query_data_structure_loaded);
+#endif
     
     size_t median = n->points.size() / 2;
     points_type points(n->points.begin(), n->points.end());
@@ -891,6 +910,7 @@ namespace ext {
 #ifdef DEBUG
     assert(n->is_points_loaded);
     assert(n->is_info_file_loaded);
+    assert(n->is_leaf());
 #endif
     if ( n->is_leaf() )
       n->points.insert(point_type(p, (size_t)-1));
@@ -964,6 +984,9 @@ namespace ext {
   }
 
   std::vector<point> external_priority_search_tree::get_Y_set(node *n, const range_type &range) {
+#ifdef DEBUG
+    assert(n->is_query_data_structure_loaded);
+#endif
     return n->query_data_structure->report(range.first, range.second, -INF);
   }
   
@@ -988,6 +1011,12 @@ namespace ext {
   }
 
   void external_priority_search_tree::distribute_query_data_structure(node* qs_node, node* left, node *right, const point &split_point) {
+#ifdef DEBUG
+    assert(qs_node->is_query_data_structure_loaded);
+    assert(left->is_query_data_structure_loaded);
+    assert(right_->is_query_data_structure_loaded);
+#endif
+    
     std::vector<point> qs_left = qs_node->query_data_structure->report(MINUS_INF_POINT, split_point, -INF);
     std::vector<point> qs_right = qs_node->query_data_structure->report(split_point, INF_POINT, -INF);
     remove_query_data_structure(qs_node);
@@ -1001,7 +1030,6 @@ namespace ext {
 
 
   void external_priority_search_tree::load_data(node* n, DATA_TYPE dt) {
-    //DEBUG_MSG("Loading data: " << dt << " in node " << n->id);
     if ( n->is_root() ) return;
     switch (dt) {
     case DATA_TYPE::points:
@@ -1034,7 +1062,6 @@ namespace ext {
   }
 
   void external_priority_search_tree::flush_data(node* n, DATA_TYPE dt) {
-    //DEBUG_MSG("Flushing data: " << dt << " in node " << n->id);
     if ( n->is_root() ) return;
     switch (dt) {
     case DATA_TYPE::points:
@@ -1062,7 +1089,6 @@ namespace ext {
     default:
       DEBUG_MSG_FAIL("Cannot load the given data type");
       break;
-
     };
   }
 
@@ -1102,6 +1128,7 @@ namespace ext {
 #endif
     util::flush_container_to_file<points_type::iterator, point_type>
       (n->points.begin(), n->points.end(), get_points_file_name(n->id), buffer_size);
+    n->points.clear();
     n->is_points_loaded = false;
   }
 
@@ -1115,6 +1142,7 @@ namespace ext {
     info_file.push_back((info_file_entry_type)n->right_most_child);
     util::flush_container_to_file<info_file_type::iterator, info_file_entry_type>
       (info_file.begin(), info_file.end(), get_info_file_file_name(n->id), buffer_size);
+    info_file.clear();
     n->is_info_file_loaded = false;
   }
 
@@ -1176,6 +1204,13 @@ namespace ext {
 
   external_priority_search_tree::node::node(size_t id) {
     this->id = id;
+    this->is_points_loaded = false;
+    this->is_info_file_loaded = false;
+    this->b_is_leaf = false;
+    this->parent_id = (size_t)1337;
+    this->right_most_child = (size_t)1337;
+    this->query_data_structure = 0;
+    this->is_query_data_structure_loaded = false;
   }
 
   bool external_priority_search_tree::node::is_leaf() {

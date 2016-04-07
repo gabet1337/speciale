@@ -367,10 +367,11 @@ void test_100_random_inserts() {
 }
 
 void test_1000_random_inserts() {
-  print_description("Starting to test insert of 100 randomly selected points");
+  print_description("Starting to test insert of 1000 randomly selected points");
   util::remove_file("test/test_1000_random_inserts_log");
   util::remove_file("test/test_1000_random_inserts_point_log");
-  io::buffered_stream<point> point_log(buffer_size);
+  io::buffered_stream<point> point_log(1);
+  point_log.open("test/test_1000_random_inserts_point_log");
   ofstream log;
   log.open("test/test_1000_random_inserts_log");
 
@@ -380,10 +381,7 @@ void test_1000_random_inserts() {
     point p = point(r.next(999), r.next(999));
     log << p;
     log.flush();
-    point_log.open("test/test_1000_random_inserts_point_log");
-    point_log.seek(SEEK_END, SEEK_CUR);
     point_log.write(p);
-    point_log.close();
     
     t.insert(p);
     // t.print();
@@ -394,6 +392,7 @@ void test_1000_random_inserts() {
 #endif
   }
   log.close();
+  point_log.close();
   print_success();
 }
 
@@ -402,16 +401,23 @@ void test_insert_from_file(const string &f) {
 
   io::buffered_stream<point> file(buffer_size);
   file.open(f);
+  size_t file_size = file.size();
+  DEBUG_MSG(file_size);
   apst t(16);
   point p;
+  size_t idx = 0;
   while (!file.eof()) {
+    DEBUG_MSG_FAIL(idx);
     p = file.read();
     t.insert(p);
 #ifdef VALIDATE
-    bool is_valid = t.is_valid();
-    if (!is_valid) t.print();
-    assert(is_valid);
+    if (idx > file_size-5) {
+      bool is_valid = t.is_valid();
+      if (!is_valid) t.print();
+      assert(is_valid);
+    }
 #endif
+    idx++;
   }
   file.close();
 }
