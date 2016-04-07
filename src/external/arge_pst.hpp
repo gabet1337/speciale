@@ -331,7 +331,7 @@ namespace ext {
       pp range = ranges.top(); ranges.pop();
       point all_points_in_qs_should_be_below_this = qs.top(); qs.pop();
       size_t parent_qs_size = qs_size.top(); qs_size.pop();
-      VALIDATE_MSG_FAIL("1: " << n->id);
+      // VALIDATE_MSG_FAIL("1: " << n->id);
       load_data(n, DATA_TYPE::all);
 
       //test that nodes stores points:
@@ -352,14 +352,14 @@ namespace ext {
           return false;
         }
 
-        VALIDATE_MSG_FAIL("2: " << n->id);
-        VALIDATE_MSG_FAIL("3: " << p.c);
+        // VALIDATE_MSG_FAIL("2: " << n->id);
+        // VALIDATE_MSG_FAIL("3: " << p.c);
         if (!validate_child(*n, p.c, all_points_in_qs_should_be_below_this, qs, qs_size)) return false;
       }
 
       //REMEMBER THE RIGHT MOST CHILD!
-      VALIDATE_MSG_FAIL("4: " << n->id);
-      VALIDATE_MSG_FAIL("5: " << n->right_most_child);
+      // VALIDATE_MSG_FAIL("4: " << n->id);
+      // VALIDATE_MSG_FAIL("5: " << n->right_most_child);
       if (!validate_child(*n, n->right_most_child, all_points_in_qs_should_be_below_this, qs, qs_size)) return false;
 
       std::vector<point> qds = n->query_data_structure->get_points();
@@ -381,8 +381,8 @@ namespace ext {
       if ( !n->is_leaf() ) {
         bool first = true;
         for (auto p : n->points) {
-          VALIDATE_MSG_FAIL("6: " << n->id);
-          VALIDATE_MSG_FAIL("7: " << p.c);
+          //VALIDATE_MSG_FAIL("6: " << n->id);
+          //VALIDATE_MSG_FAIL("7: " << p.c);
           s.push(retrieve_node(p.c));
           if (first) {
             ranges.push({range.first, p.pt});
@@ -391,12 +391,12 @@ namespace ext {
             ranges.push({ranges.top().second, p.pt});
           }
         }
-        VALIDATE_MSG_FAIL("8: " << n->id);
-        VALIDATE_MSG_FAIL("9: " << n->right_most_child);
+        //VALIDATE_MSG_FAIL("8: " << n->id);
+        //VALIDATE_MSG_FAIL("9: " << n->right_most_child);
         s.push(retrieve_node(n->right_most_child));
         ranges.push({ranges.top().second, range.second});
       }
-      VALIDATE_MSG_FAIL("10: " << n->id);
+      //VALIDATE_MSG_FAIL("10: " << n->id);
       flush_data(n, DATA_TYPE::all);
       if ( !n->is_root() ) delete n;
     }
@@ -413,7 +413,7 @@ namespace ext {
   }
 
   bool external_priority_search_tree::validate_child(node& n, size_t c, const point &all_points_in_qs_should_be_below_this, std::stack<point> &qs, std::stack<size_t> &qs_size) {
-    VALIDATE_MSG_FAIL("Validating child " << c << " of node " << n.id);
+    //VALIDATE_MSG_FAIL("Validating child " << c << " of node " << n.id);
     if ( n.is_leaf() ) {
       //test that leafs doesnt have any children
       if ( c != (size_t)-1 ) {
@@ -431,7 +431,7 @@ namespace ext {
     }
 
     node* child = retrieve_node(c);
-    VALIDATE_MSG_FAIL("11: " << child->id);
+    //VALIDATE_MSG_FAIL("11: " << child->id);
     load_data(child, DATA_TYPE::all);
     range_type range_of_child = find_range(&n, child);
     std::vector<point> Y_set = get_Y_set(&n, range_of_child);
@@ -440,7 +440,7 @@ namespace ext {
     else qs.push(*std::min_element(Y_set.begin(), Y_set.end(), comp_y));
     //test if Y_set is at most buffer_size points
     if (Y_set.size() > buffer_size) {
-      VALIDATE_MSG_FAIL("Y(" << c << ") has too large size: " << Y_set.size() << " in node " << n.id);
+      //VALIDATE_MSG_FAIL("Y(" << c << ") has too large size: " << Y_set.size() << " in node " << n.id);
       return false;
     }
 
@@ -449,10 +449,10 @@ namespace ext {
                      [&all_points_in_qs_should_be_below_this](const point &p) {
                        return comp_y(p, all_points_in_qs_should_be_below_this);
                      })) {
-      VALIDATE_MSG_FAIL("A point in the query data structure is above a point in the Y set of the parent in node " << n.id);
+      //VALIDATE_MSG_FAIL("A point in the query data structure is above a point in the Y set of the parent in node " << n.id);
       return false;
     }
-    VALIDATE_MSG_FAIL("12: " << child->id);
+    //VALIDATE_MSG_FAIL("12: " << child->id);
     flush_data(child, DATA_TYPE::all);
     if (!child->is_root()) delete child;
     return true;
@@ -1014,7 +1014,7 @@ namespace ext {
 #ifdef DEBUG
     assert(qs_node->is_query_data_structure_loaded);
     assert(left->is_query_data_structure_loaded);
-    assert(right_->is_query_data_structure_loaded);
+    assert(right->is_query_data_structure_loaded);
 #endif
     
     std::vector<point> qs_left = qs_node->query_data_structure->report(MINUS_INF_POINT, split_point, -INF);
