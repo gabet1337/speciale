@@ -447,6 +447,30 @@ All insertion and deletion buffers are initially empty and the child structures 
 
 
 \chapter{External Memory Priority Search Tree}
+In this section we will present an older result on dynamic three-sided range queries due to Arge et al. \todo{reference}
+The structure described by Arge et al. utilizes the same child structure as described in Section\todo{reference} and was invented in the original paper. The structure is however applied on sets of $\mathcal{O}(B^2)$ points instead of $\mathcal{O}(B^{1+\epsilon})$. As this suggests the fanout of the structure of Arge et al. is larger.
+
+\todo{insert theorem that incapsulates properties of the structure}
+
+\section{Structure}
+The main structure is a weight-balanced B-tree\todo{reference [2] in original paper!!} with the normal lexicographical ordering of points with regards to $x$. The differences between a weight balanced B-tree and a regular B-tree are with the regards to how and when splitting and fusing of nodes takes place. \todo{brief discussion of the properties} These properties are important to reach the worst case update bounds. We are however only interested in reaching amortized bounds as these are severely simpler to implement in code and we will thus use a regular B-tree for our implementation. In light of this we will describe the structure as if a regular B-tree is used and analyse with this in mind.
+
+Each internal node of the structures stores an instance of the child structure. Points in the structure are stored in these structures according to the following rules:
+\begin{itemize}
+	\item{An internal node stores at most $B^2$ points in the associated child structure.}
+	\item{For a child $w$ of internal node $v$ the Y-set of $w$ denoted $Y(w)$ is the points of the child structure of $v$ that is associated with the range that is associated with $w$.}
+	\item{An internal nodes stores at most $B$ points for each child of the node, i.e. for all children $w$ of an internal node $v$ we have that the size of $Y(w)$ is at most $B$.}
+	\item{A leaf stores at most $2k$ points in its child structure where $k$ is the leaf parameter of the B-tree}
+	\item{If a node or leaf $v$ stores points in its child structure then $Y(v)$ in $parent(v)$ must contain atleast $B/2$ points.}
+\end{itemize}
+
+\todo{insert brief analysis of space usage}
+
+\section{Updates}
+\todo{insert here}
+
+\section{Query}
+\todo{insert here}
 
 \chapter{Our results}
 
