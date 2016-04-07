@@ -345,29 +345,11 @@ namespace ext {
           return false;
         }
 
-        if ( n->is_leaf() ) {
-          //test that leafs doesnt have any children
-          if ( p.c != (size_t)-1 ) {
-            VALIDATE_MSG_FAIL("leaf " << n->id << " has a child " << p.c << " but should not have!");
-            return false;
-          }
-        }
-
-        if ( !n->is_leaf() ) {
-          //test that internal nodes does not have invalid children!
-          if ( p.c == (size_t)-1 ) {
-            VALIDATE_MSG_FAIL("internal node " << n->id << " has a child with invalid id: " << p.c);
-            return false;
-          }
-
-          if (!validate_child(*n, p.c, all_points_in_qs_should_be_below_this, qs, qs_size)) return false;
-        }
+        if (!validate_child(*n, p.c, all_points_in_qs_should_be_below_this, qs, qs_size)) return false;
       }
 
       //REMEMBER THE RIGHT MOST CHILD!
-      if ( !n->is_leaf() ) {
-        if (!validate_child(*n, n->right_most_child, all_points_in_qs_should_be_below_this, qs, qs_size)) return false;
-      }
+      if (!validate_child(*n, n->right_most_child, all_points_in_qs_should_be_below_this, qs, qs_size)) return false;
 
       std::vector<point> qds = n->query_data_structure->report(-INF, INF, -INF);
       // test that the query data structure of a leaf is not too large!
@@ -415,6 +397,22 @@ namespace ext {
   }
 
   bool external_priority_search_tree::validate_child(node& n, size_t c, const point &all_points_in_qs_should_be_below_this, std::stack<point> &qs, std::stack<size_t> &qs_size) {
+    if ( n.is_leaf() ) {
+      //test that leafs doesnt have any children
+      if ( c != (size_t)-1 ) {
+        VALIDATE_MSG_FAIL("leaf " << n.id << " has a child " << c << " but should not have!");
+        return false;
+      }
+      return true;
+    }
+    if ( !n.is_leaf() ) {
+      //test that internal nodes does not have invalid children!
+      if ( c == (size_t)-1 ) {
+        VALIDATE_MSG_FAIL("internal node " << n.id << " has a child with invalid id: " << c);
+        return false;
+      }
+    }
+
     node* child = retrieve_node(c);
     load_data(child, DATA_TYPE::all);
     range_type range_of_child = find_range(&n, child);
@@ -997,7 +995,7 @@ namespace ext {
     remove_query_data_structure(right);
     left->query_data_structure = new ext::child_structure(left->id, buffer_size, 1, qs_left);
     right->query_data_structure = new ext::child_structure(right->id, buffer_size, 1, qs_right);
-    right->query_data_structure->remove(split_point);
+    left->query_data_structure->remove(split_point);
     if (!qs_node->query_data_structure) qs_node->query_data_structure = new ext::child_structure(qs_node->id, buffer_size, 1, std::vector<point>());
   }
 

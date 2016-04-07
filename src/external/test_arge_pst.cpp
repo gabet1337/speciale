@@ -19,7 +19,6 @@ const size_t buffer_size = 1024;
 typedef ext::external_priority_search_tree apst;
 
 void cleanup() {
-  
 
   for (int i = 0; i < 10000 ; i++) {
     if (util::file_exists(to_string(i))) {
@@ -369,10 +368,24 @@ void test_100_random_inserts() {
 
 void test_1000_random_inserts() {
   print_description("Starting to test insert of 100 randomly selected points");
+  util::remove_file("test/test_1000_random_inserts_log");
+  util::remove_file("test/test_1000_random_inserts_point_log");
+  io::buffered_stream<point> point_log(buffer_size);
+  ofstream log;
+  log.open("test/test_1000_random_inserts_log");
+
   test::random r;
   apst t(16);
   for (int i = 0; i < 1000; i++) {
-    t.insert(point(r.next(999),r.next(999)));
+    point p = point(r.next(999), r.next(999));
+    log << p;
+    log.flush();
+    point_log.open("test/test_1000_random_inserts_point_log");
+    point_log.seek(SEEK_END, SEEK_CUR);
+    point_log.write(p);
+    point_log.close();
+    
+    t.insert(p);
     // t.print();
 #ifdef VALIDATE
     bool is_valid = t.is_valid();
@@ -380,7 +393,27 @@ void test_1000_random_inserts() {
     assert(is_valid);
 #endif
   }
+  log.close();
   print_success();
+}
+
+void test_insert_from_file(const string &f) {
+  print_description("Starting to test insert from file");
+
+  io::buffered_stream<point> file(buffer_size);
+  file.open(f);
+  apst t(16);
+  point p;
+  while (!file.eof()) {
+    p = file.read();
+    t.insert(p);
+#ifdef VALIDATE
+    bool is_valid = t.is_valid();
+    if (!is_valid) t.print();
+    assert(is_valid);
+#endif
+  }
+  file.close();
 }
 
 void test_insert5_delete_1() {
@@ -446,6 +479,9 @@ void test_insert5_report() {
 
 int main() {
   cleanup();
+  
+  mkdir("test", 0700);
+
   cout << "\033[0;33m\e[4mSTARTING TEST OF APST STRUCTURE\e[24m\033[0m" << endl;
 
   // test_set_upper_bound();
@@ -462,6 +498,7 @@ int main() {
   // test_insert50_odd_then_even();
   // test_100_random_inserts();
   test_1000_random_inserts();
+  //test_insert_from_file("test/test_1000_random_inserts_point_log");
   // test_insert5_delete_1();
   // test_insert100_delete50();
 
