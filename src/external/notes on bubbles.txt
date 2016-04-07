@@ -1,0 +1,17 @@
+Bubble-down:
+insert p = (x,y):
+
+initialize node v to be root
+let vi be child of v whose x-range includes p (find_child(root,p))..
+identify at most B points in the Y-set Y(vi) = query(vi_range, -inf) on Qv
+if size of the result >= B/2 and p is below all of them then recursively insert in vi
+otherwise p joins Y-set Y(vi) and inserted in query structure
+if Y(vi) now contains more than B points then the lowest of these points are removed from Qv and recursively inserted in vi
+if v is a leaf then p is inserted into the correct position in Lv
+
+Bubble-up:
+Reorganization of query data structure on splits (v splits into v' and v''): promotion from aux of v' into aux of parent(v)
+find the top most point p' in v' by degenerate query to Qv'.
+delete p' from Qv' and insert in Qparent(v).
+this may cause the Y-set where p' was taken from to be too small. ergo recurse on that
+

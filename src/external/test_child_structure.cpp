@@ -150,7 +150,7 @@ void test_flush_insert_point() {
   I_file.open("c_5/I");
 
   assert ( (I_file.read() == point(2,2)) && "point no as expected");
-  assert ( (I_file.size() == sizeof(point)) && "file size not as expected");
+  assert ( (I_file.size() == 1) && "file size not as expected");
   
   I_file.close();
   
@@ -171,7 +171,7 @@ void test_flush_delete_point() {
   D_file.open("c_5/I");
 
   assert ( (D_file.read() == point(2,2)) && "point no as expected");
-  assert ( (D_file.size() == sizeof(point)) && "file size not as expected");
+  assert ( (D_file.size() == 1) && "file size not as expected");
   
   D_file.close();
   
@@ -779,6 +779,72 @@ void test_figure_points() {
   print_success();
 }
 
+void test_top_most_point() {
+  print_description("Starting test of finding the top most point");
+  vector<point> points;
+  points.push_back(point(88, 704));
+  points.push_back(point(104, 748));
+  points.push_back(point(120,704));
+  points.push_back(point(140, 708));
+  points.push_back(point(120, 728));
+  points.push_back(point(128, 716));
+  points.push_back(point(168, 768));
+  points.push_back(point(156, 744));
+  points.push_back(point(172, 804));
+  points.push_back(point(184, 724));
+  points.push_back(point(200, 712));
+  points.push_back(point(184, 784));
+  points.push_back(point(216, 716));
+  points.push_back(point(232, 696));
+  points.push_back(point(236, 744));
+  points.push_back(point(212, 780));
+  points.push_back(point(248, 708));
+  points.push_back(point(264, 724));
+  points.push_back(point(248, 760));
+  points.push_back(point(280, 712));
+  points.push_back(point(300, 716));
+  points.push_back(point(276, 804));
+  points.push_back(point(312, 744));
+  points.push_back(point(328, 760));
+  points.push_back(point(328, 796));
+  points.push_back(point(100, 716));
+  points.push_back(point(292, 728));
+  points.push_back(point(212, 740));
+  points.push_back(point(88, 760));
+  points.push_back(point(148, 776));
+  points.push_back(point(316, 780));
+  points.push_back(point(268, 792));
+  sort(points.begin(),points.end());
+  ext::child_structure cs(33, 4, 0.5, points);
+  point top_most = *max_element(points.begin(), points.end(), comp_y);
+  assert (cs.get_top_most_point() == top_most);
+  cs.remove(top_most);
+  points.erase(max_element(points.begin(), points.end(), comp_y));
+  top_most = *max_element(points.begin(), points.end(), comp_y);
+  assert (cs.get_top_most_point() == top_most);
+  cs.remove(top_most);
+  points.erase(max_element(points.begin(), points.end(), comp_y));
+  top_most = *max_element(points.begin(), points.end(), comp_y);
+  assert (cs.get_top_most_point() == top_most);
+
+  //ext mem:
+  ext::child_structure* cs1 = new ext::child_structure(34, 4, 0.5, points);
+  delete cs1;
+  ext::child_structure cs2(34);
+  top_most = *max_element(points.begin(), points.end(), comp_y);
+  assert (cs2.get_top_most_point() == top_most);
+  cs2.remove(top_most);
+  points.erase(max_element(points.begin(), points.end(), comp_y));
+  top_most = *max_element(points.begin(), points.end(), comp_y);
+  assert (cs2.get_top_most_point() == top_most);
+  cs2.remove(top_most);
+  points.erase(max_element(points.begin(), points.end(), comp_y));
+  top_most = *max_element(points.begin(), points.end(), comp_y);
+  assert (cs2.get_top_most_point() == top_most);
+
+  print_success();
+}
+
 void clean_up() {
   int lol = system("rm -rf c_0");
   lol =system("rm -rf c_1");
@@ -813,6 +879,8 @@ void clean_up() {
   lol = system("rm -rf c_30");
   lol = system("rm -rf c_31");
   lol = system("rm -rf c_32");
+  lol = system("rm -rf c_33");
+  lol = system("rm -rf c_34");
   
   lol++;
 }
@@ -823,42 +891,43 @@ int main() {
   
   clean_up();
 #ifdef VALIDATE
-  test_valid_after_constructor();
-  test_valid_after_destructor();
+  // test_valid_after_constructor();
+  // test_valid_after_destructor();
 #endif
   // test_error_on_no_existing_child_structure();
-  test_flushing_L();
-  test_flush_insert_point();
-  test_flush_delete_point();
-  test_set_structure();
-  test_pq();
-  test_constructor();
-  test_constructor2();
-  test_collapse();
-  test_collapse2();
-  test_collapse_left();
-  test_collapse_right();
-  test_collapse_left_right();
-  test_flush_catalog();
-  test_overflow_I();
-  test_overflow_I2();
-  test_overflow_I3();
-  test_overflow_D();
-  test_overflow_D2();
-  test_overflow_D3();
-  test_overflow_I_and_D();
-  test_overflow_I_and_D_2();
-  test_report();
-  test_report_2();
-  test_report_3();
-  test_report_4();
-  test_report_insert_delete_buffer_not_empty();
-  test_insert_delete_40K_points();
-  test_random_points();
-  test_random_points_interleaved();
-  test_random_points_with_flush();
-  test_grid_points(); 
-  test_figure_points();
+  // test_flushing_L();
+  // test_flush_insert_point();
+  // test_flush_delete_point();
+  // test_set_structure();
+  // test_pq();
+  // test_constructor();
+  // test_constructor2();
+  // test_collapse();
+  // test_collapse2();
+  // test_collapse_left();
+  // test_collapse_right();
+  // test_collapse_left_right();
+  // test_flush_catalog();
+  // test_overflow_I();
+  // test_overflow_I2();
+  // test_overflow_I3();
+  // test_overflow_D();
+  // test_overflow_D2();
+  // test_overflow_D3();
+  // test_overflow_I_and_D();
+  // test_overflow_I_and_D_2();
+  // test_report();
+  // test_report_2();
+  // test_report_3();
+  // test_report_4();
+  // test_report_insert_delete_buffer_not_empty();
+  // test_insert_delete_40K_points();
+  // test_random_points();
+  // test_random_points_interleaved();
+  // test_random_points_with_flush();
+  // test_grid_points(); 
+  // test_figure_points();
+  test_top_most_point();
   clean_up();
 
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;

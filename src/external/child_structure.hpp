@@ -27,12 +27,12 @@ namespace ext {
     void insert(const point &p);
     void remove(const point &p);
     std::vector<point> report(int x1, int x2, int y);
+    std::vector<point> report(const point &x1, const point &x2, int y);
     void destroy();
-
+    point get_top_most_point();
     std::vector<point> get_points()
     {
       if (!L_in_memory) {
-        DEBUG_MSG("Loading L");
         util::load_file_to_container<std::vector<point>, point>(L, get_L_file(), buffer_size);
       }
       std::vector<point> L_tmp,L_new;
@@ -90,7 +90,7 @@ namespace ext {
   child_structure::child_structure(size_t id) {
     this->id = id;
     this->L_in_memory = false;
-    DEBUG_MSG("Load variables into structure");
+    // DEBUG_MSG("Load variables into structure");
     io::buffered_stream<size_t> info_file(NUM_VARIABLES);
     info_file.open(get_info_file());
     this->id = info_file.read();
@@ -101,22 +101,22 @@ namespace ext {
     // this->D_size = info_file.read();
     info_file.close();
 
-    DEBUG_MSG("Load data into structure");
+    // DEBUG_MSG("Load data into structure");
     //DEBUG_MSG("Loading L");
     //load_file_to_container<std::vector<point>, point>(L, get_L_file());
-    DEBUG_MSG("Loading I");
+    // DEBUG_MSG("Loading I");
     util::load_file_to_container<std::set<point>, point>(I, get_I_file(),buffer_size);
     I_size = I.size();
-    DEBUG_MSG("Loading D");
+    // DEBUG_MSG("Loading D");
     util::load_file_to_container<std::set<point>, point>(D, get_D_file(),buffer_size);
     D_size = D.size();
-    DEBUG_MSG("Loading Catalog");
+    // DEBUG_MSG("Loading Catalog");
     util::load_file_to_container<std::vector<child_structure::catalog_item>,child_structure::catalog_item>(catalog, get_catalog_file(), buffer_size);
-    DEBUG_MSG("Finished loading");
-    DEBUG_MSG(" - L.size(): " << L.size() << ", L_size: " << L_size);
-    DEBUG_MSG(" - I.size(): " << I.size());
-    DEBUG_MSG(" - D.size(): " << D.size());
-    DEBUG_MSG(" - Catalog.size(): " << catalog.size());
+    // DEBUG_MSG("Finished loading");
+    // DEBUG_MSG(" - L.size(): " << L.size() << ", L_size: " << L_size);
+    // DEBUG_MSG(" - I.size(): " << I.size());
+    // DEBUG_MSG(" - D.size(): " << D.size());
+    // DEBUG_MSG(" - Catalog.size(): " << catalog.size());
     should_delete_structure = false;
   }
 
@@ -143,8 +143,8 @@ namespace ext {
   }
 
   child_structure::~child_structure() {
-    DEBUG_MSG("destructing child structure " << id);
-    DEBUG_MSG("flushing variables to " << get_info_file());
+    // DEBUG_MSG("destructing child structure " << id);
+    // DEBUG_MSG("flushing variables to " << get_info_file());
 
     //check if directory exists and open:
     if (!util::file_exists(get_directory())) mkdir(get_directory().c_str(), 0700);
@@ -174,15 +174,15 @@ namespace ext {
       L.shrink_to_fit();
     }
 
-    DEBUG_MSG("Flushing I");
+    // DEBUG_MSG("Flushing I");
     util::flush_container_to_file<std::set<point>::iterator,point>(I.begin(), I.end(), get_I_file(), buffer_size);
     I.clear();
 
-    DEBUG_MSG("Flushing D");
+    // DEBUG_MSG("Flushing D");
     util::flush_container_to_file<std::set<point>::iterator,point>(D.begin(), D.end(), get_D_file(), buffer_size);
     D.clear();
 
-    DEBUG_MSG("Flushing Catalog");
+    // DEBUG_MSG("Flushing Catalog");
     util::flush_container_to_file<std::vector<child_structure::catalog_item>::iterator,
                                   child_structure::catalog_item>(catalog.begin(), catalog.end(), get_catalog_file(), buffer_size);
     catalog.clear();
@@ -357,8 +357,9 @@ namespace ext {
   }
 
   inline bool child_structure::above_sweep_line(const point &p, const point &sweep) {
-    if (p.y == sweep.y) return p.x >= sweep.x;
-    return p.y > sweep.y;
+    return p.y > sweep.y || (p.y == sweep.y && p.x >= sweep.x);
+    // if (p.y == sweep.y) return p.x >= sweep.x;
+    // return p.y > sweep.y;
   }
   void child_structure::insert(const point &p) {
     DEBUG_MSG("Insert point " << p);
@@ -411,13 +412,10 @@ namespace ext {
 
     if (x2 < x1) return std::vector<point>();
     
-    DEBUG_MSG(" - reporting from I");
     for (point p : I) {
       if (in_range(p, x1, x2, y)) result.insert(p);
-      DEBUG_MSG(" - added point " << p);
     }
 
-    DEBUG_MSG(" - reporting from L");
     std::vector<bool> marked(L_size/buffer_size+1,false);
 
     io::buffered_stream<point>* L_file = 0;
@@ -435,8 +433,7 @@ namespace ext {
           for (int j = ci.start_idx; j < ci.end_idx; j++) {
             if (in_range(L[j],x1,x2,y)) {
               result.insert(L[j]);
-              DEBUG_MSG(" - added point " << L[j]);
-            } else DEBUG_MSG(" - rejected this bitch: point " << L[j]);
+            }
           }
         } else {
           DEBUG_MSG("L not in memory: Reading from file");
@@ -445,8 +442,7 @@ namespace ext {
             point p = L_file->read();
             if (in_range(p,x1,x2,y)) {
               result.insert(p);
-              DEBUG_MSG(" - added point " << p);
-            } else DEBUG_MSG(" - rejected this bitch: point " << p);
+            }
           }
         }
       }
@@ -457,13 +453,23 @@ namespace ext {
       delete L_file;
     }
     
-    DEBUG_MSG(" - removing D-points");
     std::vector<point> final_result;
-    std::set_difference(result.begin(),result.end(),
-                        D.begin(),D.end(),
+    std::set_difference(result.begin(), result.end(),
+                        D.begin(), D.end(),
                         std::back_inserter(final_result));
     
     return final_result;
+  }
+
+  std::vector<point> child_structure::report(const point &x1, const point &x2, int y) {
+    DEBUG_MSG("Reporting points in [" << x1 << ", " << x2 << "] X [" <<
+              y << ", \u221E]");
+    std::vector<point> result;
+    for (auto p : report(x1.x, x2.x, y)) {
+      if (x1 < p && p <= x2)
+        result.push_back(p);
+    }
+    return result;
   }
 
   void child_structure::rebuild() {
@@ -490,6 +496,33 @@ namespace ext {
     I.clear();
     D.clear();
     construct(L_new);
+  }
+
+  point child_structure::get_top_most_point() {
+    point result = point(-INF,-INF);
+    int idx = catalog.size()-1;
+    while (result == point(-INF,-INF) && idx >= 0) {
+      catalog_item last_catalog_item = catalog[idx];
+      if (L_in_memory) {
+        for (int j = last_catalog_item.start_idx; j < last_catalog_item.end_idx; j++)
+          if (D.find(L[j]) == D.end())
+            result = std::max(L[j], result, comp_y);
+      } else {
+        io::buffered_stream<point> L_file(buffer_size);
+        L_file.open(get_L_file());
+        L_file.seek((off_t)(last_catalog_item.start_idx*sizeof(point)),SEEK_SET);
+        for (int j = last_catalog_item.start_idx; j < last_catalog_item.end_idx; j++) {
+          point p = L_file.read();
+          if (D.find(p) == D.end())
+            result = std::max(p, result, comp_y);
+        }
+        L_file.close();
+      }
+      --idx;
+    }
+    if (!I.empty())
+      return std::max(result, *std::max_element(I.begin(), I.end(), comp_y), comp_y);
+    else return result;
   }
 
   void child_structure::destroy() {
@@ -524,8 +557,8 @@ namespace ext {
   bool child_structure::valid_disk() {
     io::buffered_stream<size_t> info_file(NUM_VARIABLES);
     info_file.open(get_info_file());
-    if (NUM_VARIABLES*sizeof(size_t) != info_file.size()) {
-      DEBUG_MSG("NUM_VARIABLES != info file size " << NUM_VARIABLES*sizeof(size_t) << " != " << info_file.size());
+    if ((size_t)NUM_VARIABLES != info_file.size()) {
+      DEBUG_MSG("NUM_VARIABLES != info file size " << NUM_VARIABLES << " != " << info_file.size());
       return false;
     }
     info_file.close();

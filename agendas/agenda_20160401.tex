@@ -1,5 +1,5 @@
 \documentclass[a4paper,11pt,agenda,chair]{meetingmins}
-
+\usepackage{epigraph}
 \setcommittee{Thesis on External Range Reporting}
 
 \setmembers{
@@ -17,16 +17,23 @@
 \begin{items}
 \item Report
 	\begin{items}
-		\item Main data structure theory and analysis. Only few sections missing
-		\item Figure of B-tree
+		\item Main data structure: Theory and analysis (including figures). \\Only few sections missing.
 	\end{items}
-\item Coding of Gerth's
+\item Coding of Brodahls
 	\begin{items}
-		\item Nothing
+		\item Main data structure: \textsc{Liniear Construction} integration test passed.
+		\item Main data structure: \textsc{Query} integration test passed.
+		\item Main data structure: \textsc{Fixup} integration test passed.
+		\item Main data structure: \textsc{Global Rebuilding} integration test passed.
+		\item Main data structure: Added optimization \textsc{metadata} integration test passed.
+		\item Main data structure: Added optimization \textsc{"caching"} integration test passed.
+		\item Main data structure: Last minute fix: child structure is not kept in main memory.\\ (not integration tested).
+		\item Main data structure: Last minute fix: max\_y of child is considered on query.\\ (not integration tested).
 	\end{items}
-\item Coding of Arge's
+\item Coding of Arges
 	\begin{items}
-		\item Insert into base B-tree with splitting of leaves and nodes
+		\item Base B-tree: Insert with splitting of leaves and nodes.
+		\item Base B-tree: (Weak) Delete (marks the node as deleted for global rebuilding).
 	\end{items}
 \end{items}
 
@@ -34,17 +41,25 @@
 \begin{items}
 \item Report
 	\begin{items}
-		\item Document implementation considerations of Gerth's main data structure
+		\item Main data structure: Document implementation considerations of Brodahls.
+		\item Proof reading: Mark approximately 10 pages from report and bring to Kasper.
 	\end{items}
 \item Coding
 	\begin{items}
-		\item Continue working on Arge's external priority search tree
+		\item Main data structure: Integration test of last code changes.
+		\item Continue working on Arges external priority search tree.
 	\end{items}
 \end{items}
 
 \section{Questions and remarks}
 \begin{items}
-	\item What a lovely break
+	\item Installation and set-up of test farm: 2 identical machines (slow; 512 MB RAM, 5400 RPM disk) for running experiments and 1 (fast) machine for testing correctness. The farm uses same kernel and library build version.
+
+	\epigraph{Hot in... \\
+So hot in herre... \\
+So hot in...
+}{Nelly lyrics}
+	
 \end{items}
 
 \end{document}
