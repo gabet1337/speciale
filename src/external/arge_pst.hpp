@@ -88,7 +88,9 @@ namespace ext {
       bubble_down,
       bubble_up,
       report,
-      global_rebuild
+      report_in_node,
+      global_rebuild,
+      delete_in_query_data_structure
     };
     
     static std::string event_type_to_string(EVENT_TYPE e);
@@ -100,16 +102,16 @@ namespace ext {
     class event {
     public:
       EVENT_TYPE type;
-      node* n;
-      node* n2;
-      point p;
+      node* n = 0;
+      node* n2 = 0;
+      point p = INF_POINT;
       int x1 = INF, x2 = INF, y = INF;
       bool lm = false,rm = false;
-      point_stream_type* stream;
+      point_stream_type* stream = 0;
       event(EVENT_TYPE _type, node* _n, point _p) : type(_type), n(_n), n2(0), p(_p) {}
       event(EVENT_TYPE _type, node* _n, node* _n2, point _p) : type(_type), n(_n), n2(_n2), p(_p) {}
       event(EVENT_TYPE _type, node* _n, int _x1, int _x2, int _y, bool _lm, bool _rm, point_stream_type* _stream)
-        : type(_type), n(_n), x1(_x1), x2(_x2), y(_y), lm(_lm), rm(_rm), stream(_stream) {}
+        : type(_type), n(_n), n2(0), p(INF_POINT), x1(_x1), x2(_x2), y(_y), lm(_lm), rm(_rm), stream(_stream) {}
       ~event() {}
       friend std::ostream& operator<<(std::ostream& o, const event &e) {
         o << e.type << " in node " << e.n->id;
@@ -144,11 +146,13 @@ namespace ext {
     void add_event(event e);
     void handle_insert_in_base_tree(node* n, const point &p);
     void handle_delete_in_base_tree(node* n, const point &p);
+    void handle_delete_in_query_data_structure(node* n, const point &p);
     void handle_split_child(node* parent, node* n, node* new_node, bool split_root);
     void handle_set_parent_of_children(node* n, std::vector<node*> &children);
     void handle_bubble_down(node* n, const point &p);
     void handle_bubble_up(node* parent, node* n);
     void handle_report(node* n, int x1, int x2, int y, bool lm, bool rm, point_stream_type* stream);
+    void handle_report_in_node(node* n, int x1, int x2, int y, bool lm, bool rm, point_stream_type* stream);
     void handle_global_rebuild();
 
     /***************
@@ -208,6 +212,7 @@ namespace ext {
   *****************/
   
   external_priority_search_tree::external_priority_search_tree(size_t buffer_size) {
+    assert(buffer_size >= 12);
     this->next_id = 0;
     this->buffer_size = buffer_size;
     this->leaf_parameter = buffer_size;
@@ -248,10 +253,11 @@ namespace ext {
 
   void external_priority_search_tree::remove(const point &p) {
     DEBUG_MSG("Starting to remove point " << p);
-    add_event(event(EVENT_TYPE::delete_in_base_tree, root, p));
 #ifdef VALIDATE
     CONTAINED_POINTS.erase(p);
 #endif
+    add_event(event(EVENT_TYPE::delete_in_query_data_structure, root, p));
+    add_event(event(EVENT_TYPE::delete_in_base_tree, root, p));
     handle_events();
     delete_count++;
     if (delete_count == next_global_rebuild) {
@@ -265,7 +271,7 @@ namespace ext {
     if (x1 > x2) return;
     point_stream_type* stream = new point_stream_type(buffer_size);
     stream->open(output_file);
-    add_event(event(EVENT_TYPE::report, root, x1, x2, y, true, true, stream));
+    add_event(event(EVENT_TYPE::report_in_node, root, x1, x2, y, true, true, stream));
     handle_events();
     stream->close();
     delete stream;
@@ -290,7 +296,7 @@ namespace ext {
       //print query data structure:
       dot_file << "\nQ: ";
       idx = 1;
-      for (auto p : n->query_data_structure->get_points()) { dot_file << p << ", "; if (++idx % 8 == 0) dot_file << "\n"; }      
+      for (auto p : n->query_data_structure->get_points()) { dot_file << p << ", "; if (++idx % 8 == 0) dot_file << "\n"; }
       dot_file << "\"]\n";
       //print children:
       if ( !n->is_leaf() ) {
@@ -325,6 +331,7 @@ namespace ext {
     qs.push(INF_POINT);
     qs_size.push(INF);
     std::set<point> collected_points;
+    std::set<point> collected_points_in_qds;
 
     while (!s.empty()) {
       node* n = s.top(); s.pop();
@@ -363,6 +370,10 @@ namespace ext {
       if (!validate_child(*n, n->right_most_child, all_points_in_qs_should_be_below_this, qs, qs_size)) return false;
 
       std::vector<point> qds = n->query_data_structure->get_points();
+
+      //add query data structure points to collected_points_in_qds
+      collected_points_in_qds.insert(qds.begin(), qds.end());
+      
       // test that the query data structure of a leaf is not too large!
       if ( n->is_leaf() ) {
         if (qds.size() > 2*leaf_parameter) {
@@ -405,6 +416,14 @@ namespace ext {
       VALIDATE_MSG_FAIL("The collected points were not equal to the actual points");
       VALIDATE_MSG_FAIL("Collected points:");
       for (point p : collected_points) VALIDATE_MSG_FAIL(" - " << p);
+      VALIDATE_MSG_FAIL("Contained points:");
+      for (point p : CONTAINED_POINTS) VALIDATE_MSG_FAIL(" - " << p);
+      return false;
+    }
+    if (collected_points_in_qds != CONTAINED_POINTS) {
+      VALIDATE_MSG_FAIL("The collected points in the query data structure were not equal to the actual points");
+      VALIDATE_MSG_FAIL("Collected points:");
+      for (point p : collected_points_in_qds) VALIDATE_MSG_FAIL(" - " << p);
       VALIDATE_MSG_FAIL("Contained points:");
       for (point p : CONTAINED_POINTS) VALIDATE_MSG_FAIL(" - " << p);
       return false;
@@ -485,6 +504,11 @@ namespace ext {
         handle_delete_in_base_tree(n, p);
         flush_data(n, DATA_TYPE::points);
         flush_data(n, DATA_TYPE::info_file);
+        break;
+      case EVENT_TYPE::delete_in_query_data_structure:
+        load_data(n, DATA_TYPE::all);
+        handle_delete_in_query_data_structure(n,p);
+        flush_data(n, DATA_TYPE::all);
         break;
       case EVENT_TYPE::insert_point_in_node:
         load_data(n, DATA_TYPE::points);
@@ -586,10 +610,15 @@ namespace ext {
       case EVENT_TYPE::report:
         {
           load_data(n, DATA_TYPE::all);
-          
-          handle_report(n, cur_event.x1, cur_event.x2, cur_event.lm, cur_event.rm, cur_event.y, cur_event.stream);
-
+          handle_report(n, cur_event.x1, cur_event.x2, cur_event.y, cur_event.lm, cur_event.rm, cur_event.stream);
           flush_data(n, DATA_TYPE::all);
+        }
+        break;
+      case EVENT_TYPE::report_in_node:
+        {
+          load_data(n, DATA_TYPE::query_data_structure);
+          handle_report_in_node(n, cur_event.x1, cur_event.x2, cur_event.y, cur_event.lm, cur_event.rm, cur_event.stream);
+          flush_data(n, DATA_TYPE::query_data_structure);
         }
         break;
       case EVENT_TYPE::global_rebuild:
@@ -632,6 +661,12 @@ namespace ext {
       return "bubble up";
     case EVENT_TYPE::global_rebuild:
       return "global rebuild";
+    case EVENT_TYPE::delete_in_query_data_structure:
+      return "delete point in query data structure";
+    case EVENT_TYPE::report:
+      return "report";
+    case EVENT_TYPE::report_in_node:
+      return "report in node";
     default:
       return "invalid event type";
     }
@@ -689,6 +724,8 @@ namespace ext {
     } else if ( !n->is_leaf() )
       add_event(event(EVENT_TYPE::delete_in_base_tree, find_child(n, p), p));
   }
+
+
 
   void external_priority_search_tree::handle_split_child(node* parent, node* n, node* new_node, bool split_root) {
     DEBUG_MSG("Handling split of node " << n->id << " with parent " << parent->id);
@@ -758,6 +795,29 @@ namespace ext {
     for (auto c : children) c->parent_id = n->id;
   }
 
+  void external_priority_search_tree::handle_delete_in_query_data_structure(node* n, const point &p) {
+    DEBUG_MSG("Handling delete of " << p << " in query data structure at node " << n->id);
+#ifdef DEBUG
+    assert( n->is_query_data_structure_loaded);
+    assert( n->is_points_loaded);
+    assert( n->is_info_file_loaded);
+#endif
+    if ( n->is_leaf() ) {
+      n->query_data_structure->remove(p);
+      //add_event(event(EVENT_TYPE::bubble_up, retrieve_node(n->parent_id), copy_node(n), INF_POINT));
+    } else {
+      auto Y_set = get_Y_set(n, find_range(n,p));
+      node* child = find_child(n,p);
+      if (std::find(Y_set.begin(), Y_set.end(), p) != Y_set.end()) {
+        n->query_data_structure->remove(p);
+        add_event(event(EVENT_TYPE::bubble_up, copy_node(n), copy_node(child), INF_POINT));
+      } else {
+        add_event(event(EVENT_TYPE::delete_in_query_data_structure, copy_node(child), p));        
+      }
+      delete child;
+    }
+  }
+
   void external_priority_search_tree::handle_bubble_down(node *n, const point &p) {
     DEBUG_MSG("Bubble down " << p << " in node " << n->id);
 #ifdef DEBUG
@@ -822,13 +882,9 @@ namespace ext {
   void external_priority_search_tree::handle_report(node* n, int x1, int x2, int y, bool lm, bool rm, point_stream_type* stream) {
     DEBUG_MSG("Handle report of points in node " << n->id << " with Q = [" << x1 << ", " << x2 << "] X [ " << y << ", \u221E] and rm = " << rm << ", lm = " << lm);
 #ifdef DEBUG
-    assert(n->is_query_data_structure_loaded);
     assert(n->is_points_loaded);
     assert(n->is_info_file_loaded);
 #endif
-    std::vector<point> points_to_report_in_node = n->query_data_structure->report(x1, x2, y);
-    for (point p : points_to_report_in_node)
-      stream->write(p);
 
     if ( !n->is_leaf() ) {
       std::vector<event> upcoming_events;
@@ -838,10 +894,8 @@ namespace ext {
       for (auto p : n->points) {
         if (p.c == left_most->id) in_range = true;
         if (!in_range) continue;
-        bool reported_all_points = true;
-        if (!reported_all_points) continue;
         
-        add_event(event(EVENT_TYPE::report,
+        add_event(event(EVENT_TYPE::report_in_node,
                         retrieve_node(p.c),
                         x1, x2, y,
                         lm && p.c == left_most->id,
@@ -850,7 +904,27 @@ namespace ext {
         
         if (p.c == right_most->id) break;
       }
+      if (right_most->id == n->right_most_child) {
+        add_event(event(EVENT_TYPE::report_in_node,
+                        retrieve_node(n->right_most_child),
+                        x1, x2, y,
+                        lm && n->right_most_child == left_most->id,
+                        rm && n->right_most_child == right_most->id,
+                        stream));
+      }
     }
+  }
+
+  void external_priority_search_tree::handle_report_in_node(node* n, int x1, int x2, int y, bool lm, bool rm, point_stream_type* stream) {
+    DEBUG_MSG("Reporting of points in node " << n->id << " with Q = [" << x1 << ", " << x2 << "] X [ " << y << ", \u221E] and rm = " << rm << ", lm = " << lm);
+#ifdef DEBUG
+    assert(n->is_query_data_structure_loaded);
+#endif
+    std::vector<point> points_to_report_in_node = n->query_data_structure->report(x1, x2, y);
+    for (point p : points_to_report_in_node)
+      stream->write(p);
+    if (points_to_report_in_node.empty() && !(lm || rm)) return;
+    add_event(event(EVENT_TYPE::report, copy_node(n), x1, x2, y, lm, rm, stream));
   }
 
   void external_priority_search_tree::handle_global_rebuild() {
@@ -971,6 +1045,8 @@ namespace ext {
         }
       }
     }
+    DEBUG_MSG("lol: " << n->points.size());
+    if (n->points.size() == 0) print();
     return range_type(n->points.rbegin()->pt, INF_POINT);
   }
 

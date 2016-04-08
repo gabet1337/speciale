@@ -466,7 +466,7 @@ namespace ext {
               y << ", \u221E]");
     std::vector<point> result;
     for (auto p : report(x1.x, x2.x, y)) {
-      if (x1 < p && p <= x2)
+      if (x1 <= p && p <= x2)
         result.push_back(p);
     }
     return result;
