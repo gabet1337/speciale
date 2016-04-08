@@ -31,9 +31,10 @@ namespace util {
   template <class InputIterator, typename T>
   void flush_container_to_file
   (InputIterator first, InputIterator last, const std::string &file_name, size_t buffer_size) {
-    if (file_exists(file_name)) remove_file(file_name);
+    //if (file_exists(file_name)) remove_file(file_name);
     io::buffered_stream<T> file(buffer_size);
     file.open(file_name);
+    file.truncate();
     while (first != last) {
       file.write(*first);
       first++;
