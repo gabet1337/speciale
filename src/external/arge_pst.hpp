@@ -88,6 +88,7 @@ namespace ext {
       bubble_down,
       bubble_up,
       report,
+      report_in_node,
       global_rebuild,
       delete_in_query_data_structure
     };
@@ -151,6 +152,7 @@ namespace ext {
     void handle_bubble_down(node* n, const point &p);
     void handle_bubble_up(node* parent, node* n);
     void handle_report(node* n, int x1, int x2, int y, bool lm, bool rm, point_stream_type* stream);
+    void handle_report_in_node(node* n, int x1, int x2, int y, bool lm, bool rm, point_stream_type* stream);
     void handle_global_rebuild();
 
     /***************
@@ -269,7 +271,7 @@ namespace ext {
     if (x1 > x2) return;
     point_stream_type* stream = new point_stream_type(buffer_size);
     stream->open(output_file);
-    add_event(event(EVENT_TYPE::report, root, x1, x2, y, true, true, stream));
+    add_event(event(EVENT_TYPE::report_in_node, root, x1, x2, y, true, true, stream));
     handle_events();
     stream->close();
     delete stream;
@@ -608,10 +610,15 @@ namespace ext {
       case EVENT_TYPE::report:
         {
           load_data(n, DATA_TYPE::all);
-          
           handle_report(n, cur_event.x1, cur_event.x2, cur_event.lm, cur_event.rm, cur_event.y, cur_event.stream);
-
           flush_data(n, DATA_TYPE::all);
+        }
+        break;
+      case EVENT_TYPE::report_in_node:
+        {
+          load_data(n, DATA_TYPE::query_data_structure);
+          handle_report_in_node(n, cur_event.x1, cur_event.x2, cur_event.lm, cur_event.rm, cur_event.y, cur_event.stream);
+          flush_data(n, DATA_TYPE::query_data_structure);
         }
         break;
       case EVENT_TYPE::global_rebuild:
@@ -658,6 +665,8 @@ namespace ext {
       return "delete point in query data structure";
     case EVENT_TYPE::report:
       return "report";
+    case EVENT_TYPE::report_in_node:
+      return "report in node";
     default:
       return "invalid event type";
     }
@@ -873,13 +882,9 @@ namespace ext {
   void external_priority_search_tree::handle_report(node* n, int x1, int x2, int y, bool lm, bool rm, point_stream_type* stream) {
     DEBUG_MSG("Handle report of points in node " << n->id << " with Q = [" << x1 << ", " << x2 << "] X [ " << y << ", \u221E] and rm = " << rm << ", lm = " << lm);
 #ifdef DEBUG
-    assert(n->is_query_data_structure_loaded);
     assert(n->is_points_loaded);
     assert(n->is_info_file_loaded);
 #endif
-    std::vector<point> points_to_report_in_node = n->query_data_structure->report(x1, x2, y);
-    for (point p : points_to_report_in_node)
-      stream->write(p);
 
     if ( !n->is_leaf() ) {
       std::vector<event> upcoming_events;
@@ -889,10 +894,8 @@ namespace ext {
       for (auto p : n->points) {
         if (p.c == left_most->id) in_range = true;
         if (!in_range) continue;
-        bool reported_all_points = true;
-        if (!reported_all_points) continue;
         
-        add_event(event(EVENT_TYPE::report,
+        add_event(event(EVENT_TYPE::report_in_node,
                         retrieve_node(p.c),
                         x1, x2, y,
                         lm && p.c == left_most->id,
@@ -902,7 +905,7 @@ namespace ext {
         if (p.c == right_most->id) break;
       }
       if (right_most->id == n->right_most_child) {
-        add_event(event(EVENT_TYPE::report,
+        add_event(event(EVENT_TYPE::report_in_node,
                         retrieve_node(n->right_most_child),
                         x1, x2, y,
                         lm && n->right_most_child == left_most->id,
@@ -910,6 +913,18 @@ namespace ext {
                         stream));
       }
     }
+  }
+
+  void external_priority_search_tree::handle_report_in_node(node* n, int x1, int x2, int y, bool lm, bool rm, point_stream_type* stream) {
+    DEBUG_MSG("Reporting of points in node " << n->id << " with Q = [" << x1 << ", " << x2 << "] X [ " << y << ", \u221E] and rm = " << rm << ", lm = " << lm);
+#ifdef DEBUG
+    assert(n->is_query_data_structure_loaded);
+#endif
+    std::vector<point> points_to_report_in_node = n->query_data_structure->report(x1, x2, y);
+    for (point p : points_to_report_in_node)
+      stream->write(p);
+    if (points_to_report_in_node.empty() && !(lm || rm)) return;
+    add_event(event(EVENT_TYPE::report, copy_node(n), x1, x2, y, lm, rm, stream));
   }
 
   void external_priority_search_tree::handle_global_rebuild() {
