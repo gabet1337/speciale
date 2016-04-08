@@ -998,7 +998,7 @@ namespace ext {
   bool external_priority_search_tree::point_below_all(const point &p, const std::vector<point> &points) {
     // returns true if p is below all points in points. false otherwise
     for (point pt : points)
-      if (comp_y(pt,p)) return false;
+      if (pt.y < p.y || (pt.y == p.y && pt.x <= p.x)) return false;
     return true;
   }
 
