@@ -2553,10 +2553,11 @@ void generate_data_report_random_1gb() {
 
 void test_report_random_1gb(size_t buffer_size, double epsilon) {
 
-  print_description("starting test of report random 2");
+  print_description("starting test of report random 1gb");
 
   ext::buffered_pst epst(buffer_size, epsilon);
-
+  epst.set_global_rebuild_configuration(ext::buffered_pst::global_rebuild_configuration
+                                        (INF,0.5));
   test::random r;
   
   io::buffered_stream<point> bs(4096);
@@ -2566,8 +2567,10 @@ void test_report_random_1gb(size_t buffer_size, double epsilon) {
   
   for (size_t i = 0; i < 93*1024*1024; i++) { // insert 744 MB
     epst.insert(bs.read());
-    if (i > 0 && i % (128*1024) == 0)
+    //res.insert(p);
+    if (i > 0 && i % (128*1024) == 0) {
       cout << " - inserted " << i / (128*1024) << " MB" << endl;
+    }
   }
 
   for (int i = 0; i < 10; i++) {
@@ -3132,12 +3135,12 @@ int main() {
   if (!util::file_exists("test")) mkdir("test", 0700);
   
   cout << "\033[0;33m\e[4mSTARTING TEST OF EPST STRUCTURE\e[24m\033[0m" << endl;
-  // test_construction();
-  // test_insert();
-  // test_interval_range_belong_to();
-  // test_test();
-  // test_buffer_points_less_than_point_buffer_points();
-  // test_no_duplicates_in_pv_iv_dv();
+  //test_construction();
+  //test_insert();
+  //test_interval_range_belong_to();
+  //test_test();
+  //test_buffer_points_less_than_point_buffer_points();
+  //test_no_duplicates_in_pv_iv_dv();
   // test_insert_buffer_overflow();
   // test_root_split();
   // test_root_split_insert_overflow();
@@ -3174,7 +3177,7 @@ int main() {
   // // test_report_200_delete_20_points();
   // // test_report_random();
   // // test_report_random_repeat();
-  test_report_random_2() ;
+  // test_report_random_2() ;
   // test_report_random_2_repeat("testpoints_report_random_2");
   // // test_report_random_2_repeat("test/missing_point_error");
   // // test_report_random_2_repeat("test/invalid_meta_data_error");
@@ -3191,8 +3194,9 @@ int main() {
   // generate_random_data(5*128*1024*1024, "test_data_5gb");
   // generate_random_data(10*128*1024*1024, "test_data_10gb");
   // generate_data_report_random_1gb();
-  // test_report_random_1gb(70000, 0.5);
-  
+  // test_report_random_1gb(128*1024, 0.5);
+  // test_report_random_1gb(2097152, 0.048);
+  test_report_random_1gb(2097152, 0.070);
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   
   cleanup();
