@@ -440,7 +440,7 @@ namespace ext {
     else qs.push(*std::min_element(Y_set.begin(), Y_set.end(), comp_y));
     //test if Y_set is at most buffer_size points
     if (Y_set.size() > buffer_size) {
-      //VALIDATE_MSG_FAIL("Y(" << c << ") has too large size: " << Y_set.size() << " in node " << n.id);
+      VALIDATE_MSG_FAIL("Y(" << c << ") has too large size: " << Y_set.size() << " in node " << n.id);
       return false;
     }
 
@@ -449,7 +449,7 @@ namespace ext {
                      [&all_points_in_qs_should_be_below_this](const point &p) {
                        return comp_y(p, all_points_in_qs_should_be_below_this);
                      })) {
-      //VALIDATE_MSG_FAIL("A point in the query data structure is above a point in the Y set of the parent in node " << n.id);
+      VALIDATE_MSG_FAIL("A point in the query data structure is above a point in the Y set of the parent in node " << n.id);
       return false;
     }
     //VALIDATE_MSG_FAIL("12: " << child->id);
