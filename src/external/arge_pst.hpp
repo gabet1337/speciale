@@ -610,14 +610,14 @@ namespace ext {
       case EVENT_TYPE::report:
         {
           load_data(n, DATA_TYPE::all);
-          handle_report(n, cur_event.x1, cur_event.x2, cur_event.lm, cur_event.rm, cur_event.y, cur_event.stream);
+          handle_report(n, cur_event.x1, cur_event.x2, cur_event.y, cur_event.lm, cur_event.rm, cur_event.stream);
           flush_data(n, DATA_TYPE::all);
         }
         break;
       case EVENT_TYPE::report_in_node:
         {
           load_data(n, DATA_TYPE::query_data_structure);
-          handle_report_in_node(n, cur_event.x1, cur_event.x2, cur_event.lm, cur_event.rm, cur_event.y, cur_event.stream);
+          handle_report_in_node(n, cur_event.x1, cur_event.x2, cur_event.y, cur_event.lm, cur_event.rm, cur_event.stream);
           flush_data(n, DATA_TYPE::query_data_structure);
         }
         break;

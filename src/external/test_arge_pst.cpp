@@ -455,6 +455,8 @@ void test_insert5_report() {
 
 void test_insert50_report() {
   print_description("Starting to test insert of 50 elements with report");
+  util::remove_file("test/test_insert50_report.res");
+  util::remove_file("test/test_insert50_report2.res");  
   apst t(12);
   for (int i = 0; i < 50; i++) {
     t.insert(point(i,i));
@@ -468,8 +470,8 @@ void test_insert50_report() {
   assert(actual_result == true_result);
 
   std::vector<point> true_result2;
-  for (int i = 4; i <= 30; i++) true_result2.push_back(point(i,i));
-  t.report(4,30,0,"test/test_insert50_report2.res");
+  for (int i = 9; i <= 11; i++) true_result2.push_back(point(i,i));
+  t.report(9,11,0,"test/test_insert50_report2.res");
   std::vector<point> actual_result2;
   util::load_file_to_container<std::vector<point>, point>
     (actual_result2, "test/test_insert50_report2.res", buffer_size);
