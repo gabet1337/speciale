@@ -1045,8 +1045,6 @@ namespace ext {
         }
       }
     }
-    DEBUG_MSG("lol: " << n->points.size());
-    if (n->points.size() == 0) print();
     return range_type(n->points.rbegin()->pt, INF_POINT);
   }
 
