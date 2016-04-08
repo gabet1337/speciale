@@ -382,7 +382,7 @@ void test_1000_random_inserts() {
     log << p;
     log.flush();
     point_log.write(p);
-    
+    point_log.sync();
     t.insert(p);
     // t.print();
 #ifdef VALIDATE
@@ -419,6 +419,7 @@ void test_insert_from_file(const string &f) {
 #endif
     idx++;
   }
+  
   file.close();
 }
 
