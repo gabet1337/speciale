@@ -33,7 +33,6 @@ namespace ext {
     std::vector<point> get_points()
     {
       if (!L_in_memory) {
-        DEBUG_MSG("Loading L");
         util::load_file_to_container<std::vector<point>, point>(L, get_L_file(), buffer_size);
       }
       std::vector<point> L_tmp,L_new;
@@ -91,7 +90,7 @@ namespace ext {
   child_structure::child_structure(size_t id) {
     this->id = id;
     this->L_in_memory = false;
-    DEBUG_MSG("Load variables into structure");
+    // DEBUG_MSG("Load variables into structure");
     io::buffered_stream<size_t> info_file(NUM_VARIABLES);
     info_file.open(get_info_file());
     this->id = info_file.read();
@@ -102,22 +101,22 @@ namespace ext {
     // this->D_size = info_file.read();
     info_file.close();
 
-    DEBUG_MSG("Load data into structure");
+    // DEBUG_MSG("Load data into structure");
     //DEBUG_MSG("Loading L");
     //load_file_to_container<std::vector<point>, point>(L, get_L_file());
-    DEBUG_MSG("Loading I");
+    // DEBUG_MSG("Loading I");
     util::load_file_to_container<std::set<point>, point>(I, get_I_file(),buffer_size);
     I_size = I.size();
-    DEBUG_MSG("Loading D");
+    // DEBUG_MSG("Loading D");
     util::load_file_to_container<std::set<point>, point>(D, get_D_file(),buffer_size);
     D_size = D.size();
-    DEBUG_MSG("Loading Catalog");
+    // DEBUG_MSG("Loading Catalog");
     util::load_file_to_container<std::vector<child_structure::catalog_item>,child_structure::catalog_item>(catalog, get_catalog_file(), buffer_size);
-    DEBUG_MSG("Finished loading");
-    DEBUG_MSG(" - L.size(): " << L.size() << ", L_size: " << L_size);
-    DEBUG_MSG(" - I.size(): " << I.size());
-    DEBUG_MSG(" - D.size(): " << D.size());
-    DEBUG_MSG(" - Catalog.size(): " << catalog.size());
+    // DEBUG_MSG("Finished loading");
+    // DEBUG_MSG(" - L.size(): " << L.size() << ", L_size: " << L_size);
+    // DEBUG_MSG(" - I.size(): " << I.size());
+    // DEBUG_MSG(" - D.size(): " << D.size());
+    // DEBUG_MSG(" - Catalog.size(): " << catalog.size());
     should_delete_structure = false;
   }
 
@@ -144,8 +143,8 @@ namespace ext {
   }
 
   child_structure::~child_structure() {
-    DEBUG_MSG("destructing child structure " << id);
-    DEBUG_MSG("flushing variables to " << get_info_file());
+    // DEBUG_MSG("destructing child structure " << id);
+    // DEBUG_MSG("flushing variables to " << get_info_file());
 
     //check if directory exists and open:
     if (!util::file_exists(get_directory())) mkdir(get_directory().c_str(), 0700);
@@ -175,15 +174,15 @@ namespace ext {
       L.shrink_to_fit();
     }
 
-    DEBUG_MSG("Flushing I");
+    // DEBUG_MSG("Flushing I");
     util::flush_container_to_file<std::set<point>::iterator,point>(I.begin(), I.end(), get_I_file(), buffer_size);
     I.clear();
 
-    DEBUG_MSG("Flushing D");
+    // DEBUG_MSG("Flushing D");
     util::flush_container_to_file<std::set<point>::iterator,point>(D.begin(), D.end(), get_D_file(), buffer_size);
     D.clear();
 
-    DEBUG_MSG("Flushing Catalog");
+    // DEBUG_MSG("Flushing Catalog");
     util::flush_container_to_file<std::vector<child_structure::catalog_item>::iterator,
                                   child_structure::catalog_item>(catalog.begin(), catalog.end(), get_catalog_file(), buffer_size);
     catalog.clear();
@@ -467,7 +466,7 @@ namespace ext {
               y << ", \u221E]");
     std::vector<point> result;
     for (auto p : report(x1.x, x2.x, y)) {
-      if (x1 < p && p <= x2)
+      if (x1 <= p && p <= x2)
         result.push_back(p);
     }
     return result;
