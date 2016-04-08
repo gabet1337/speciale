@@ -57,6 +57,12 @@ bool comp_y(const point &p1, const point &p2) {
   return p1.y < p2.y || (p1.y == p2.y && p1.x < p2.x);
 }
 
+struct compare_y {
+  bool operator() (const point &p1, const point &p2) const{
+    return comp_y(p1,p2);
+  }
+};
+
 bool comp_x(const point &p1, const point &p2) {
   return p1 < p2;
 }
