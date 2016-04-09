@@ -2573,7 +2573,7 @@ void test_report_random_1gb(size_t buffer_size, double epsilon) {
     }
   }
 
-  for (int i = 0; i < 10; i++) {
+  for (int i = 0; i < 1; i++) {
    
     cerr << "- round " << i+1 << " of 1: deleting " << 23*1024*1024 << " points" << endl;
     
