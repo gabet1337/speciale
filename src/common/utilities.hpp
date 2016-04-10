@@ -34,6 +34,7 @@ namespace util {
     if (file_exists(file_name)) remove_file(file_name);
     io::buffered_stream<T> file(buffer_size);
     file.open(file_name);
+    //file.truncate();
     while (first != last) {
       file.write(*first);
       first++;

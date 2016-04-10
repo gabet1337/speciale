@@ -845,6 +845,30 @@ void test_top_most_point() {
   print_success();
 }
 
+void test_1gb() {
+
+  io::buffered_stream<point> bs(4096);
+  bs.open("test_data_report_random_1gb");
+  
+  ext::child_structure* cs = new ext::child_structure(35, 2097152, 0.070, std::vector<point>());
+
+  int count = 0;
+  while (!bs.eof()) {
+    if (count % (128*1024) == 0)
+      cout << count / (128*1024) << " MB" << endl;
+    cs->insert(bs.read());
+    if (count % (4*1024*1204) == 0) {
+      cout << " destroying cs" << endl;
+      delete cs;
+      cs = new ext::child_structure(35);
+    }
+    count++;
+  }
+  
+  print_success();
+
+}
+
 void clean_up() {
   int lol = system("rm -rf c_0");
   lol =system("rm -rf c_1");
@@ -881,6 +905,7 @@ void clean_up() {
   lol = system("rm -rf c_32");
   lol = system("rm -rf c_33");
   lol = system("rm -rf c_34");
+  lol = system("rm -rf c_35");
   
   lol++;
 }
@@ -927,7 +952,9 @@ int main() {
   // test_random_points_with_flush();
   // test_grid_points(); 
   // test_figure_points();
-  test_top_most_point();
+  // test_top_most_point();
+  test_1gb();
+  
   clean_up();
 
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
