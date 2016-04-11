@@ -9,7 +9,7 @@
 #include "child_structure_interface.hpp"
 #include "child_structure.hpp"
 //#include "child_structure_stub.hpp"
-#include "pst_interface.hpp"
+#include "../common/pst_interface.hpp"
 #include <vector>
 #include <string>
 #include <cmath>
@@ -28,7 +28,7 @@
 #define MINUS_INF_POINT point(-INF,-INF)
 namespace ext {
 
-  class external_priority_search_tree : public pst_interface {
+  class external_priority_search_tree : public common::pst_interface {
 
   public:
     external_priority_search_tree(size_t buffer_size);
