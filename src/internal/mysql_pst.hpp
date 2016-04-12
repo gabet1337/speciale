@@ -76,7 +76,6 @@ namespace internal {
     res = stmt->executeQuery(q);
     while (res->next()) {
       output.write(point(res->getInt(1), res->getInt(2)));
-      std::cout << res->getString(1) << " " << res->getString(2) << std::endl;
     }
     output.close();
   }
