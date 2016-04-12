@@ -36,7 +36,6 @@
 
 % theorems
 \newtheorem{theorem}{Theorem}
-\newtheorem{lemma}{Lemma}
 \newtheorem{definition}{Definition}
 \newtheorem{lemma}{Lemma}
 
@@ -203,9 +202,7 @@ This problem can sometimes be solved by augmenting the data structure with sever
 
 \section{B-tree}
 \label{sec:prelim_b_tree}
-\todo{Insert reference to McCreight. Author of B-tree}
-
-The B-tree is to external memory what the balanced binary search tree is to internal memory. It supports insertions, deletions, and searching in $\mathcal{O}(h)$ where $h$ is the height of the tree. The height of the tree depends on the branching parameter, i.e. the maximum number of children a node can have. This parameter typically depends on the characteristics of the disk used and the problem at hand. A B-tree on $N$ elements are stored in $\mathcal{O}(\nicefrac{N}{B})$ blocks and can be constructed in the sorting bound.
+The B-tree of Bayer and McCreight~\cite{bayer_mccreight_1972} is to external memory what the balanced binary search tree is to internal memory. It supports insertions, deletions, and searching in $\mathcal{O}(h)$ where $h$ is the height of the tree. The height of the tree depends on the branching parameter, i.e. the maximum number of children a node can have. This parameter typically depends on the characteristics of the disk used and the problem at hand. A B-tree on $N$ elements are stored in $\mathcal{O}(\nicefrac{N}{B})$ blocks and can be constructed in the sorting bound.
 This gives the following definition of a B-tree:
 
 \begin{definition}
@@ -451,15 +448,15 @@ All insertion and deletion buffers are initially empty and the child structures 
 
 
 \chapter{External Memory Priority Search Tree}
-In this section we will present an older result on dynamic three-sided range queries due to Arge et al. \todo{reference}
-The structure described by Arge et al. utilizes the same child structure as described in Section\todo{reference} and was invented in the original paper. The structure is however applied on sets of $\mathcal{O}(B^2)$ points instead of $\mathcal{O}(B^{1+\epsilon})$. As this suggests the fanout of the structure of Arge et al. is larger.
+In this section we will present an older result on dynamic three-sided range queries due to Arge et al.~\cite{arge_samoladas_vitter_1999}
+The structure described by Arge et al. utilizes the same child structure as described in Section~\ref{sec:child_structure} and was invented in the original paper. The structure is however applied on sets of $\mathcal{O}(B^2)$ points instead of $\mathcal{O}(B^{1+\epsilon})$. As this suggests the fanout of the structure of Arge et al. is larger.
 
 \begin{theorem}
 An external memory data structure exists supporting insertion and deletion in amortized $\mathcal{O}(\log_B N/B)$ I/O's and three sided range queries in $\mathcal{O}(\log_B N/B + K/B)$ I/O's, where $N$ is the input size, and $K$ is the size of the output. The structure uses $\mathcal{O}(N/B)$ space, i.e. linear space.
 \end{theorem}
 
 \section{Structure}
-The main structure is a weight-balanced B-tree\todo{reference [2] in original paper!!} with the normal lexicographical ordering of points with regards to $x$. The differences between a weight balanced B-tree and a regular B-tree are with the regards to how and when splitting and fusing of nodes takes place. \todo{brief discussion of the properties} These properties are important to reach the worst case update bounds. We are however only interested in reaching amortized bounds as these are severely simpler to implement in code and we will thus use a regular B-tree for our implementation. In light of this we will describe the structure as if a regular B-tree is used and analyse with this in mind.
+The main structure is a weight-balanced B-tree~\cite{arge_vitter_1996} with the normal lexicographical ordering of points with regards to $x$. The differences between a weight balanced B-tree and a regular B-tree are with the regards to how and when splitting and fusing of nodes takes place. Constraints are imposed on the \textit{weight} of a node rather than the number of children of it. The weight of a node $v$ is the number of elements stores in the subtree rooted at $v$. Let $a$ be the branching parameter and $k$ the leaf parameter of the tree. An internal node on level $l$ has weight between $\frac{1}{2}a^lk$ and $2a^lk$ and has at least one child. Inserting in a weight balanced B-tree is similar to a normal B-tree and when a leaf split it might cause the weights of the parent to become to large and recursively split on a path from leaf to root.
 
 Each internal node of the structures stores an instance of the child structure. Points in the structure are stored in these structures according to the following rules:
 \begin{itemize}
@@ -488,13 +485,25 @@ Deleting a point is simple as we adopt global rebuilding to rebalance the tree a
 \todo{figures?}
 
 \subsection{Analysis}
-Inserting in the base tree can be done in $\mathcal{O}(\log_B N)$ I/O's by Section~\ref{sec:prelim_b_tree} and can cause as many splits on the path from a leaf to the root. Each split might cause $B/2$ \textit{bubble-up} operations
+Inserting in the base tree can be done in $\mathcal{O}(\log_B N)$ I/O's by Section~\ref{sec:prelim_b_tree} and can cause as many splits on the path from a leaf to the root. Each split might cause $B/2$ \textit{bubble-up} operations. Each \textit{bubble-up} at $v$ costs $\mathcal{O}(1)$ I/O's and might recurse all the way to a leaf for a total of $\mathcal{O}(\log_B weight(v))$ where $weight(v)$ is the size of the subtree rooted at $v$. In the worst case $B/2$ of these operations are performed totalling at $\mathcal{O}(B\log_B weight(v)) = \mathcal{O}(weight(v))$ I/O's.
+
+To prove that this gives an amortized $\mathcal{O}(\log_B N)$ I/O's cost we need the following Lemma from the original paper describing the weight balanced B-tree~\todo{\cite{weight-balanced}}.
+\begin{lemma}
+\label{lma:weight_balanced}
+After a split of a node $v_l$ on level $l$ into two nodes $v_l'$ and $v_l''$, at least $a^lk/2$ inserts have to pass through $v_l'$ (or $v_l''$) to make it split again. After a new root $r$ in a tree containing $N$ items is created, at least $3N$ inserts have to be done before $r$ splits again.
+\end{lemma}
+
+It follows from Lemma~\ref{lma:weight_balanced} that the cost of splitting a node can be amortized over the insertions and thus each of the $\mathcal{O}(\log_B N)$ splits cost $\mathcal{O}(1)$ I/O's amortized.
+A proof of Lemma~\ref{lma:weight_balanced} can be found in~\cite{arge_vitter_1996}.
+
+Deleting can be done in $\mathcal{O}(\log_B N)$ I/O's as it is just a search for the point in base tree and query data structure.
+
+Rebalancing of the tree is done using global rebuilding. After $\Theta(N)$ delete operations the tree is rebuilt using $\mathcal{O}(N \log_B N)$ I/O's which gives an amortized $\mathcal{O}(\log_B N)$ I/O's cost of deleting a point.
 
 \section{Query}
 \label{sec:arge_query}
 Querying the data structure with $Q = \left[ x_1, x_2 \right] \times \left[ y, \infty \right]$ is very similar to as described in Section~\ref{subsec:brodal_3_sided}. We search on a path from root to leaf along paths corresponding to $x_1$ and $x_2$ and visit nodes in between the two paths. We proceed to visit a child if we report all points in the $Y$-set of that child with the exception of the leftmost and rightmost paths which are always visited all the way to a leaf. We do not miss any points since, by the rules, a point in $Q$ cannot be in an unvisited subtree as this would have been visited if all points were reported and no points in the subtree has lower $y$-values.
 
-\todo{analysis}
 \subsection{Analysis}
 In every internal node $v$ visited we spend $\mathcal{O}(1+K_v/B)$ I/O's. There are $\mathcal{O}(\log_B N)$ nodes on the search path from root to the leftmost leaf and rightmost leaf and thus the number of I/O's used on these paths is $\mathcal{O}(\log_B N + K/B)$. All other internal nodes visited are visited because all points were reported in the parent. If we do not report all points from a $Y$-set we can charge the $\mathcal{O}(1)$ I/O's of visiting the child to the parent which must have reported $\Theta(B)$ points. As the cost of reporting from the query data structures is $\mathcal{O}(1+K/B)$ the total cost amounts to $\mathcal{O}(\log_B N + K/B)$.
 
