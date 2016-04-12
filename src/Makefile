@@ -44,6 +44,9 @@ bpst : $(POINT) $(INTERNAL_PRIORITY_SEARCH_TREE) internal/test_balanced_pst.cpp
 apst : $(POINT) $(EXTERNAL_PST) $(STREAM) $(DEFINITIONS) $(EXTERNAL_CHILD_STRUCTURE) $(UTILITIES) external/test_arge_pst.cpp
 	$(CC) $(LFLAGS) external/test_arge_pst.cpp -o apst
 
+mpst:	internal/test_mysql_pst.cpp internal/mysql_pst.hpp common/pst_interface.hpp $(STREAM)
+	$(CC) $(LFLAGS) -I/usr/include/cppconn internal/test_mysql_pst.cpp -L/usr/lib -lmysqlcppconn
+
 testall : clean	stream_test ctest epst
 	./stream_test && ./ctest && ./epst
 
