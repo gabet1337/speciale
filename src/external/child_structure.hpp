@@ -215,8 +215,8 @@ namespace ext {
     
     internal::rb_tree<block> intervals;
 
-    intervals.insert(block(-1000000,-1000000,-100000));
-    intervals.insert(block(1000000,-1000000,-100000));
+    intervals.insert(block(-INF,INF,-100000));
+    intervals.insert(block(INF,INF,-100000));
 
     std::vector<std::vector<point> > points_in_blocks(points.size()/buffer_size+1, std::vector<point>());
     int min_x = INF, max_x = -INF, min_y = INF;
@@ -466,7 +466,7 @@ namespace ext {
               y << ", \u221E]");
     std::vector<point> result;
     for (auto p : report(x1.x, x2.x, y)) {
-      if (x1 < p && p <= x2)
+      if (x1 <= p && p <= x2)
         result.push_back(p);
     }
     return result;
@@ -493,6 +493,7 @@ namespace ext {
                         D.begin(), D.end(),
                         std::back_inserter(L_new));
     //L_new should now be equivalent to L' in article
+
     I.clear();
     D.clear();
     construct(L_new);

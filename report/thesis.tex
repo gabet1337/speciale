@@ -38,6 +38,7 @@
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}{Lemma}
 \newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
 
 % Relative references
 \usepackage{varioref}
@@ -203,19 +204,19 @@ This problem can sometimes be solved by augmenting the data structure with sever
 \section{B-tree}
 \todo{Insert reference to McCreight. Author of B-tree}
 
-The B-tree is to external memory what the balanced binary search tree is to internal memory. It supports insertions, deletions, and searching in $\mathcal{O}(h)$ where $h$ is the height of the tree. The height of the tree depends on the branching parameter, i.e. the maximum number of children a node can have. This parameter typically depends on the characterics of the disk used and the problem at hand. A B-tree on $N$ elements are stored in $\mathcal{O}(\nicefrac{N}{B})$ blocks and can be constructed in the sorting bound.
-This gives the following defintion of a B-tree:
+The B-tree is to external memory what the balanced binary search tree is to internal memory. It supports insertions, deletions, and searching in $\mathcal{O}(h)$ where $h$ is the height of the tree. The height of the tree depends on the branching parameter, i.e. the maximum number of children a node can have. This parameter typically depends on the characteristics of the disk used and the problem at hand. A B-tree on $N$ elements are stored in $\mathcal{O}(\nicefrac{N}{B})$ blocks and can be constructed in the sorting bound.
+This gives the following definition of a B-tree:
 
 \begin{definition}
 \label{def:btree}
 $\mathcal{T}$ is a B-tree with branching parameter $b$ if
 \begin{itemize}
 	\item All leaves have the same depth
-	\item All nodes store atmost $b-1$ elements.
+	\item All nodes store at most $b-1$ elements.
 	\item All nodes except for the root have degree between $\frac{1}{2}b$ and $b$.
 	\item The root has degree between $2$ and $b$.
 	\item Elements are stored in non-decreasing order in the nodes.
-	\item The keys of node $x$, $x.key_i$, seperate the children's elements into ranges such that if $k_i$ is a key stored in child $c_i$ then $k_1 \leq x.key_1 \leq k_2 \leq x.key_2 \leq \cdots$
+	\item The keys of node $x$, $x.key_i$, separate the children's elements into ranges such that if $k_i$ is a key stored in child $c_i$ then $k_1 \leq x.key_1 \leq k_2 \leq x.key_2 \leq \cdots$
 \end{itemize}
 \end{definition}
 
@@ -312,7 +313,7 @@ We have now showed that we are able to construct a dynamic data structure with t
 This section presents the main data structure achieving the results of Theorem~\ref{thm:main_structure}.
 \begin{theorem}
 \label{thm:main_structure}
-An external memory data structure exists supporting insertion and deletion of points in amortized $\mathcal{O}(\nicefrac{1}{\epsilon B^{1-\epsilon}} \log_B N)$ I/O's and three sided range queries in amortized $\mathcal{O}(\nicefrac{1}{\epsilon} \log_B N + \nicefrac{K}{B})$, where $\epsilon$ is a constant, $0 < \epsilon \leq \nicefrac{1}{2}$, $N$ is the number of points in the structure, and $K$ is the size of the output. The structure can be constructued in amortized $\mathcal{O}(\nicefrac{N}{B})$ I/O's on an x-sorted set of points and stored in $\mathcal{O}(\nicefrac{N}{B})$ blocks.
+An external memory data structure exists supporting insertion and deletion of points in amortized $\mathcal{O}(\nicefrac{1}{\epsilon B^{1-\epsilon}} \log_B N)$ I/O's and three sided range queries in amortized $\mathcal{O}(\nicefrac{1}{\epsilon} \log_B N + \nicefrac{K}{B})$, where $\epsilon$ is a constant, $0 < \epsilon \leq \nicefrac{1}{2}$, $N$ is the number of points in the structure, and $K$ is the size of the output. The structure can be constructed in amortized $\mathcal{O}(\nicefrac{N}{B})$ I/O's on an x-sorted set of points and stored in $\mathcal{O}(\nicefrac{N}{B})$ blocks.
 \end{theorem}
 
 The structure is a slightly modified version of the B-tree. Each internal node, except for the root, has a degree between $\frac{\Delta}{2}$ and $\Delta$, with $\Delta = \lceil B^\epsilon \rceil$. The root has degree between $2$ and $\Delta$.
@@ -351,7 +352,7 @@ To be able to maintain the above invariants we must be very careful whenever we 
 We will in the following look at each step individually and argue their complexity.
 
 \begin{enumerate}[label=(\roman*)]
-	\item\label{update:del} A deletion buffer at node $v$ overflows when $\vert D_v \vert > B/4$. The pigeonhole principle dictates that there must exist a child $c$ such that we can push $U \subseteq D_v$ of $\lceil \vert D_v \vert / \Delta \rceil$ deletions to $c$. Points in $U$ are removed from $D_v$, $I_c$, $D_c$, $P_c$, and $C_v$. Any point $p$ in $U$ lexicographically larger than the minimum point in $P_c$ (w.r.t. $y$) is removed from $U$ as the deletion cannot cancel any updates further down in the tree.
+	\item\label{update:del} A deletion buffer at node $v$ overflows when $\vert D_v \vert > B/4$. The pigeon-hole principle dictates that there must exist a child $c$ such that we can push $U \subseteq D_v$ of $\lceil \vert D_v \vert / \Delta \rceil$ deletions to $c$. Points in $U$ are removed from $D_v$, $I_c$, $D_c$, $P_c$, and $C_v$. Any point $p$ in $U$ lexicographically larger than the minimum point in $P_c$ (w.r.t. $y$) is removed from $U$ as the deletion cannot cancel any updates further down in the tree.
 	
 	If $v$ is a leaf we do not need to do more. If not, the remaining points in $U$ are inserted in $D_c$ which might recursively overflow. In the worst case we might recursively overflow along a path from the root to a leaf each time causing $\mathcal{O}(\lceil \vert B \vert / \Delta \rceil)$ deletes to be pushed one level down. Updating $C_v$ with $\mathcal{O}(\lceil \vert B \vert / \Delta \rceil)$ updates takes amortized $\mathcal{O}(1+ (B/\Delta) / B^{1-\epsilon}) = \mathcal{O}(1)$ I/O's.
 	
@@ -448,6 +449,34 @@ All insertion and deletion buffers are initially empty and the child structures 
 
 
 \chapter{External Memory Priority Search Tree}
+In this section we will present an older result on dynamic three-sided range queries due to Arge et al. \todo{reference}
+The structure described by Arge et al. utilizes the same child structure as described in Section\todo{reference} and was invented in the original paper. The structure is however applied on sets of $\mathcal{O}(B^2)$ points instead of $\mathcal{O}(B^{1+\epsilon})$. As this suggests the fanout of the structure of Arge et al. is larger.
+
+\begin{theorem}
+An external memory data structure exists supporting insertion and deletion in amortized $\mathcal{O}(\log_B N/B)$ I/O's and three sided range queries in $\mathcal{O}(\log_B N/B + K/B)$ I/O's, where $N$ is the input size, and $K$ is the size of the output. The structure uses $\mathcal{O}(N/B)$ space, i.e. linear space.
+\end{theorem}
+
+\section{Structure}
+The main structure is a weight-balanced B-tree\todo{reference [2] in original paper!!} with the normal lexicographical ordering of points with regards to $x$. The differences between a weight balanced B-tree and a regular B-tree are with the regards to how and when splitting and fusing of nodes takes place. \todo{brief discussion of the properties} These properties are important to reach the worst case update bounds. We are however only interested in reaching amortized bounds as these are severely simpler to implement in code and we will thus use a regular B-tree for our implementation. In light of this we will describe the structure as if a regular B-tree is used and analyse with this in mind.
+
+Each internal node of the structures stores an instance of the child structure. Points in the structure are stored in these structures according to the following rules:
+\begin{itemize}
+	\item{An internal node stores at most $B^2$ points in the associated child structure.}
+	\item{For a child $w$ of internal node $v$ the Y-set of $w$ denoted $Y(w)$ is the points of the child structure of $v$ that is associated with the range that is associated with $w$.}
+	\item{An internal nodes stores at most $B$ points for each child of the node, i.e. for all children $w$ of an internal node $v$ we have that the size of $Y(w)$ is at most $B$.}
+	\item{A leaf stores at most $2k$ points in its child structure where $k$ is the leaf parameter of the B-tree}
+	\item{If a node or leaf $v$ stores points in its child structure then $Y(v)$ in $parent(v)$ must contain atleast $B/2$ points.}
+\end{itemize}
+
+The base B-tree uses linear space and since each point is stored only once in a query data structure and the query data structure uses linear space, we can conclude that the structure stores $N$ points in $\mathcal{O}(N/B)$ blocks.
+
+\section{Updates}
+\label{sec:arge_updates}
+Inserting a 
+
+\section{Query}
+\label{sec:arge_query}
+\todo{insert here}
 
 \chapter{Our results}
 
@@ -503,6 +532,7 @@ If the catalog item considered is non-marked and if the minimum-y value is stric
 We charge $\mathcal{O}(1)$ I/O's for accessing the \texttt{catalog structure} and $\mathcal{O}(K/B)$ I/O's for reporting points from the query range. This gives a total of  $\mathcal{O}(1+K/B)$ I/O's for querying.
 
 \section{Main data structure}
+\label{sec:impl_main_data_structure}
 This section will present the implementation specific design choices for the main data structure presented in section~\ref{sec:main_data_structure}. \\
 
 In section~\ref{sec:main_data_structure} we argued how the operations \texttt{Insert}, \texttt{Delete} and \texttt{Report} are supported using subroutines for handling overflowing deletion buffers, overflowing insertion buffers, split leaves with overflowing point buffers, split nodes of degree $\Delta+1$ and fill underflowing point buffers.
@@ -567,6 +597,14 @@ As an overall strategy we make sure to pass arguments by reference in order to a
 
 \todo{Explain the overall idea in each event - postponed until we are done with the final implementation}.
 
+\section{External priority search tree of Arge et al.}
+Drawing from the experiences gained while implementing the main data structure of Section~\ref{sec:impl_main_data_structure} we decided to once again make use of the event loop to handle our recursion allowing for full control of load and flush. This choice also allowed for simple adaptation of the caching mechanism previously described.
+
+The elements of the base B-tree is a simple type containing a point, a reference to a child, and a bool telling us whether the point has been deleted. The elements are stored in nodes which is just a collection of the simple point types, a reference to a query data structure, and some booleans used in loading and flushing mechanisms. The collection used for the simple point types is a Red-Black tree (\texttt{std::set}). This collection allows us to find the child responsible for a point in logarithmic time using binary search and naturally keeps the points in sorted order w.r.t the $x$-values.
+
+The article uses a different query data structure for leaves in the B-tree. The query data structure used the article is a simple linked list sorted on $y$-values. The linked list however matches the cost of the query data structure used in internal nodes, namely $\mathcal{O}(1 + K/B)$, and we decided the code would be simpler if we used the query data structure in the leaves as well.
+
+Updates and reporting are done as described in Section~\ref{sec:arge_updates} and~\ref{sec:arge_query} with no remarkably deviations.
 
 \addcontentsline{toc}{chapter}{Bibliography}
 \bibliography{references}

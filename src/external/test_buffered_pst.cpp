@@ -33,11 +33,13 @@ void test_test() {
 #ifdef DEBUG
 void test_construction() {
   print_description("starting test_construction");
-  ext::buffered_pst epst(9,0.5);
+  ext::buffered_pst* epst = new ext::buffered_pst(9,0.5);
 #ifdef VALIDATE
-  assert ( (epst.is_valid() == true) && "invariants broken");
-  ext::buffered_pst epst2(15,0.5);
-  assert ( (epst2.is_valid() == true) && "invariants broken");
+  assert ( (epst->is_valid() == true) && "invariants broken");
+  delete epst;
+  ext::buffered_pst* epst2 = new ext::buffered_pst(15,0.5);
+  assert ( (epst2->is_valid() == true) && "invariants broken");
+  delete epst2;
 #endif
   print_success();
 }
@@ -132,6 +134,8 @@ void test_root_split() {
   print_description("starting test of root split");
 
   ext::buffered_pst epst(9,0.5);
+  epst.set_global_rebuild_configuration(ext::buffered_pst::global_rebuild_configuration(9999,0.5));
+
   for (int i = 0; i < 9; i++) epst.insert(point(i,i));
 
   assert ((!util::file_exists("1/point_buffer") && !util::file_exists("2/point_buffer"))
@@ -930,7 +934,8 @@ void test_not_valid_on_manual_insert() {
   print_description("starting test of manual insert to break is_valid");
 
   ext::buffered_pst epst(9,0.5);
-    
+  epst.set_global_rebuild_configuration(ext::buffered_pst::global_rebuild_configuration(9999,0.5));
+     
   for (int i = 15; i < 17; i++) epst.insert(point(i,i));
   for (int i = 100; i <= 106; i++) epst.insert(point(i,i));
 
@@ -2380,7 +2385,7 @@ void test_report_random_2() {
  
   test::random r;
   io::buffered_stream<point> bs(1);
-  bs.open("testpoints_report_random_2");
+  bs.open("test/testpoints_report_random_2");
   
   cerr << "- inserting 200 points" << endl;
   
@@ -2509,6 +2514,114 @@ void test_report_random_2() {
   
 }
 
+void generate_data_report_random_1gb() {
+
+  print_description("starting generating random_1gb test data ");
+
+  std::vector<point> rand_deletes;
+
+  test::random r;
+  io::buffered_stream<point> bs(4096);
+
+  bs.open("test_data_report_random_1gb");
+
+  for (size_t i = 0; i < 93*1024*1024; i++) {
+    point p = point(r.next(INF-1), r.next(INF-1));
+    bs.write(p);
+    rand_deletes.push_back(p);
+  }
+
+  std::vector<bool> marked(rand_deletes.size());
+
+  for (size_t j = 0; j < 16*1024*1024; j++) {
+    int rand = r.next(rand_deletes.size()-1);
+    if (marked[rand])
+      while (marked[++rand]) { cout << rand << endl; };
+    marked[rand] = true;  
+    bs.write(rand_deletes[rand]);
+  }
+
+  for (int j = 0; j < 16*1024*1024; j++) {
+    bs.write(point(r.next(INF-1),r.next(INF-1)));
+  }
+    
+  bs.close();
+    
+  print_success();
+  
+}
+
+void test_report_random_1gb(size_t buffer_size, double epsilon) {
+
+  print_description("starting test of report random 1gb");
+
+  ext::buffered_pst epst(buffer_size, epsilon);
+  epst.set_global_rebuild_configuration(ext::buffered_pst::global_rebuild_configuration
+                                        (INF,0.5));
+  test::random r;
+  
+  io::buffered_stream<point> bs(4096);
+  bs.open("test_data_report_random_1gb");
+  
+  cerr << "- inserting " << 93*1024*1024 << " points" << endl;
+  
+  for (size_t i = 0; i < 93*1024*1024; i++) { // insert 744 MB
+    epst.insert(bs.read());
+    //res.insert(p);
+    if (i > 0 && i % (128*1024) == 0) {
+      cout << " - inserted " << i / (128*1024) << " MB" << endl;
+    }
+  }
+
+  for (int i = 0; i < 1; i++) {
+   
+    cerr << "- round " << i+1 << " of 1: deleting " << 23*1024*1024 << " points" << endl;
+    
+    for (int j = 0; j < 16*1024*1024; j++) { // remove 128 MB
+      epst.remove(bs.read());
+    }
+    
+    cerr << "- round " << i+1 << " of 1: reporting 1 times" << endl;
+
+    for (int j = 0; j < 1; j++) {
+
+      int x1 = r.next();
+      int x2 = r.next();
+      int y = r.next();
+      
+      if (x2 < x1) std::swap(x1,x2);
+
+      epst.report(x1,x2,y,"test/report_rand_1gb");
+      util::remove_directory("test/report_rand_1gb");
+    }
+    
+    cerr << "- round " << i+1 << " of 1: inserting " << 23*1024*1024 << " points" << endl;
+  
+    for (int j = 0; j < 16*1024*1024; j++) { // insert 128 MB
+      epst.insert(bs.read());
+    }
+
+    for (int j = 0; j < 1; j++) {
+
+      int x1 = r.next();
+      int x2 = r.next();
+      int y = r.next();
+      
+      if (x2 < x1) std::swap(x1,x2);
+      
+      epst.report(x1,x2,y,"test/report_rand_1gb");
+      util::remove_directory("test/report_rand_1gb");
+      
+    }
+    
+  }
+  
+  bs.close();
+
+  print_success();
+
+}
+
 void test_report_random_2_repeat(std::string file_name) {
 
   print_description("starting test of report random 2");
@@ -2533,7 +2646,7 @@ void test_report_random_2_repeat(std::string file_name) {
       streambuf* cout_strbuf(cout.rdbuf());
       ostringstream output;
       cout.rdbuf(output.rdbuf());
-      bool is_valid = epst.is_valid();
+      bool is_valid = true; // epst.is_valid();
       if (!is_valid) {
         epst.print();
         cout.rdbuf(cout_strbuf);
@@ -2556,13 +2669,20 @@ void test_report_random_2_repeat(std::string file_name) {
     cerr << "- round " << i+1 << " of 10: deleting 50 points" << endl;
     
     for (int j=0; j<50; j++) {
+      //if (!bs.eof()) {
       point p = bs.read();
       epst.remove(p);
       true_points.erase(p);
+        //} else {
+        //epst.remove(point(187,28));
+        //true_points.erase(point(187,28));
+        //epst.remove(point(180,3));
+        //true_points.erase(point(180,3));
+    }
 #ifdef VALIDATE
-      if (bs.eof()) {
-        streambuf* cout_strbuf(cout.rdbuf());
-        ostringstream output;
+    if (bs.eof()) {
+      streambuf* cout_strbuf(cout.rdbuf());
+      ostringstream output;
         cout.rdbuf(output.rdbuf());
         bool is_valid = epst.is_valid();
         if (!is_valid) {
@@ -2572,12 +2692,12 @@ void test_report_random_2_repeat(std::string file_name) {
         }
         cout.rdbuf(cout_strbuf);
         assert ( is_valid );
-        DEBUG_MSG("Got here removing " << p);
+        //DEBUG_MSG("Got here removing " << p);
         //int k;
         //cin >> k;
-        }
+    }
 #endif
-  }
+  
 
     cerr << "- round " << i+1 << " of 10: reporting 10 times" << endl;
 
@@ -2607,8 +2727,14 @@ void test_report_random_2_repeat(std::string file_name) {
         assert (true_reported_points == actual_points);
       }
 
+      if (x1 == 28 && x2 == 114) {
+        //epst.report(81, 152, 182
+        //epst.report(28, 114, 116, "test_report_rand_2_1");
+        epst.report(20, 139, 5, "test/report_rand_2_1");
+      }
+      
 #ifdef VALIDATE
-      //if (bs.eof()) {
+      if (x1 == 28 && x2 == 114) {
         streambuf* cout_strbuf(cout.rdbuf());
         ostringstream output;
         cout.rdbuf(output.rdbuf());
@@ -2624,6 +2750,7 @@ void test_report_random_2_repeat(std::string file_name) {
         //int k;
         //cin >> k;
         //}
+      }
 #endif
    
       util::remove_directory("test/report_rand_2");
@@ -2640,7 +2767,7 @@ void test_report_random_2_repeat(std::string file_name) {
         streambuf* cout_strbuf(cout.rdbuf());
         ostringstream output;
         cout.rdbuf(output.rdbuf());
-        bool is_valid = epst.is_valid();
+        bool is_valid = true; // epst.is_valid();
         if (!is_valid) {
           epst.print();
           cout.rdbuf(cout_strbuf);
@@ -2928,6 +3055,25 @@ void cleanup() {
   
 }
 
+void generate_random_data(size_t num_points, string file_name) {
+
+  print_description("Started creating random data ");
+  
+  io::buffered_stream<point> bs(4096);
+  bs.open(file_name);
+  
+  test::random r;
+
+  for (size_t i = 0; i < num_points; i++) {
+    bs.write(point(r.next(INF-1), r.next(INF-1)));
+  }
+
+  bs.close();
+
+  print_success();
+
+}
+
 void test_contained_points_error() {
 
   print_description("starting test of report random 2");
@@ -2989,12 +3135,12 @@ int main() {
   if (!util::file_exists("test")) mkdir("test", 0700);
   
   cout << "\033[0;33m\e[4mSTARTING TEST OF EPST STRUCTURE\e[24m\033[0m" << endl;
-  // test_construction();
-  // test_insert();
-  // test_interval_range_belong_to();
-  // test_test();
-  // test_buffer_points_less_than_point_buffer_points();
-  // test_no_duplicates_in_pv_iv_dv();
+  //test_construction();
+  //test_insert();
+  //test_interval_range_belong_to();
+  //test_test();
+  //test_buffer_points_less_than_point_buffer_points();
+  //test_no_duplicates_in_pv_iv_dv();
   // test_insert_buffer_overflow();
   // test_root_split();
   // test_root_split_insert_overflow();
@@ -3009,41 +3155,48 @@ int main() {
   // test_not_valid_on_manual_insert();
   // test_deterministic_random();
   // test_deterministic_random2();
-  // test_random_deterministic3() ;
-  // test_random_insert();
-  // test_truly_random();
-  // test_delete();
+  // test_random_deterministic3();
+  // // test_random_insert();
+  // // test_truly_random();
+  // // test_delete();
   // test_delete_overflow();
   // test_delete_overflow_underflow_node();
   // test_delete_overflow_many_points();
   // test_delete_all_points();
-  // test_insert_200_delete_20_points();
-  // test_delete_truly_random();
-  // test_delete_truly_random_points_from_file("test_points_fail_1");
-  // test_delete_truly_random_n_points(10000);
-  // test_delete_truly_random_n_points_from_file("test_points");
+  // // test_insert_200_delete_20_points();
+  // // test_delete_truly_random();
+  // // test_delete_truly_random_points_from_file("test_points_fail_1");
+  // // test_delete_truly_random_n_points(10000);
+  // // test_delete_truly_random_n_points_from_file("test_points");
   // test_report_points_deterministic();
   // test_report_points_deterministic2();
   // test_report_points_deterministic3();
   // test_report_points_deterministic_delete();
   // test_report_points_deterministic_repeat_report();
   // test_report_points_underflowing_point_buffer();
-  // test_report_200_delete_20_points();
-  // test_report_random();
-  // test_report_random_repeat();
-  test_report_random_2() ;
-  // test_report_random_2_repeat("missing_point_error");
-  // test_report_random_2_repeat("invalid_meta_data_error");
+  // // test_report_200_delete_20_points();
+  // // test_report_random();
+  // // test_report_random_repeat();
+  // test_report_random_2() ;
+  // test_report_random_2_repeat("testpoints_report_random_2");
+  // // test_report_random_2_repeat("test/missing_point_error");
+  // // test_report_random_2_repeat("test/invalid_meta_data_error");
   // test_global_rebuild_insert_10();
   // test_global_rebuild_insert_10_delete_5();
   // test_global_rebuild_insert_100_delete_50();
   // test_construction_50_points();
-  // TODO: test_insert_delete_all_insert_half_report()
-  // TODO: test_insert_delete_half_insert_half_report();
-  // TODO: test_insert_delete_half_insert_all_report();
-  // test_report_random_buffer_size_512();
+  // // TODO: test_insert_delete_all_insert_half_report()
+  // // TODO: test_insert_delete_half_insert_half_report();
+  // // TODO: test_insert_delete_half_insert_all_report();
+  // // test_report_random_buffer_size_512();
   // test_contained_points_error();
-  
+  // generate_random_data(128*1024*1024, "test_data_1gb");
+  // generate_random_data(5*128*1024*1024, "test_data_5gb");
+  // generate_random_data(10*128*1024*1024, "test_data_10gb");
+  // generate_data_report_random_1gb();
+  // test_report_random_1gb(128*1024, 0.5);
+  // test_report_random_1gb(2097152, 0.048);
+  test_report_random_1gb(2097152, 0.070);
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   
   cleanup();
