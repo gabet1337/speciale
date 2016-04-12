@@ -5,7 +5,7 @@ DEBUG = -g -Wall -fsanitize=address $(DOFF) $(VALID) common/debug.hpp common/val
 LFLAGS = $(DEBUG)
 CFLAGS = $(DEBUG) -c
 
-PROGRAMS = ipst stream_test ctest1 ctest2 ctest epst apst
+PROGRAMS = ipst stream_test ctest1 ctest2 ctest epst apst rtree
 
 DEFINITIONS = common/definitions.hpp
 UTILITIES = common/utilities.hpp
@@ -17,8 +17,9 @@ TEST_LIB = common/test_lib.hpp
 INTERNAL_PRIORITY_SEARCH_TREE = internal/balanced_pst.hpp
 EXTERNAL_CHILD_STRUCTURE = external/child_structure.hpp external/child_structure_interface.hpp
 EXTERNAL_CHILD_STRUCTURE_STUB = external/child_structure_stub.hpp external/child_structure_interface.hpp
-BUFFERED_PST = external/buffered_pst.hpp external/pst_interface.hpp
-EXTERNAL_PST = external/arge_pst.hpp external/pst_interface.hpp
+BUFFERED_PST = external/buffered_pst.hpp common/pst_interface.hpp
+EXTERNAL_PST = external/arge_pst.hpp common/pst_interface.hpp
+RTREE = internal/boost_r_tree.hpp common/pst_interface.hpp
 
 ipst : $(POINT) $(INTERNAL_PRIORITY_SEARCH_TREE) internal/test_priority_search_tree.cpp
 	$(CC) $(LFLAGS) $(POINT) $(INTERNAL_PRIORITY_SEARCH_TREE) internal/test_priority_search_tree.cpp -o ipst
@@ -43,6 +44,9 @@ bpst : $(POINT) $(INTERNAL_PRIORITY_SEARCH_TREE) internal/test_balanced_pst.cpp
 
 apst : $(POINT) $(EXTERNAL_PST) $(STREAM) $(DEFINITIONS) $(EXTERNAL_CHILD_STRUCTURE) $(UTILITIES) external/test_arge_pst.cpp
 	$(CC) $(LFLAGS) external/test_arge_pst.cpp -o apst
+
+rtree : $(RTREE) internal/test_boost_r_tree.cpp
+	$(CC) $(LFLAGS) internal/test_boost_r_tree.cpp -o rtree
 
 testall : clean	stream_test ctest epst
 	./stream_test && ./ctest && ./epst

@@ -2,7 +2,8 @@
 #define PST_INTERFACE_HPP
 #include <string>
 #include "../common/point.hpp"
-namespace ext {
+#include <cstddef>
+namespace common {
 
   class pst_interface {
   public:
