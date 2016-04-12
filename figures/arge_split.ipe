@@ -1,0 +1,459 @@
+<?xml version="1.0"?>
+<!DOCTYPE ipe SYSTEM "ipe.dtd">
+<ipe version="70005" creator="Ipe 7.1.4">
+<info created="D:20160412154010" modified="D:20160412160045"/>
+<ipestyle name="basic">
+<symbol name="arrow/arc(spx)">
+<path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/farc(spx)">
+<path stroke="sym-stroke" fill="white" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="mark/circle(sx)" transformations="translations">
+<path fill="sym-stroke">
+0.6 0 0 0.6 0 0 e
+0.4 0 0 0.4 0 0 e
+</path>
+</symbol>
+<symbol name="mark/disk(sx)" transformations="translations">
+<path fill="sym-stroke">
+0.6 0 0 0.6 0 0 e
+</path>
+</symbol>
+<symbol name="mark/fdisk(sfx)" transformations="translations">
+<group>
+<path fill="sym-fill">
+0.5 0 0 0.5 0 0 e
+</path>
+<path fill="sym-stroke" fillrule="eofill">
+0.6 0 0 0.6 0 0 e
+0.4 0 0 0.4 0 0 e
+</path>
+</group>
+</symbol>
+<symbol name="mark/box(sx)" transformations="translations">
+<path fill="sym-stroke" fillrule="eofill">
+-0.6 -0.6 m
+0.6 -0.6 l
+0.6 0.6 l
+-0.6 0.6 l
+h
+-0.4 -0.4 m
+0.4 -0.4 l
+0.4 0.4 l
+-0.4 0.4 l
+h
+</path>
+</symbol>
+<symbol name="mark/square(sx)" transformations="translations">
+<path fill="sym-stroke">
+-0.6 -0.6 m
+0.6 -0.6 l
+0.6 0.6 l
+-0.6 0.6 l
+h
+</path>
+</symbol>
+<symbol name="mark/fsquare(sfx)" transformations="translations">
+<group>
+<path fill="sym-fill">
+-0.5 -0.5 m
+0.5 -0.5 l
+0.5 0.5 l
+-0.5 0.5 l
+h
+</path>
+<path fill="sym-stroke" fillrule="eofill">
+-0.6 -0.6 m
+0.6 -0.6 l
+0.6 0.6 l
+-0.6 0.6 l
+h
+-0.4 -0.4 m
+0.4 -0.4 l
+0.4 0.4 l
+-0.4 0.4 l
+h
+</path>
+</group>
+</symbol>
+<symbol name="mark/cross(sx)" transformations="translations">
+<group>
+<path fill="sym-stroke">
+-0.43 -0.57 m
+0.57 0.43 l
+0.43 0.57 l
+-0.57 -0.43 l
+h
+</path>
+<path fill="sym-stroke">
+-0.43 0.57 m
+0.57 -0.43 l
+0.43 -0.57 l
+-0.57 0.43 l
+h
+</path>
+</group>
+</symbol>
+<symbol name="arrow/fnormal(spx)">
+<path stroke="sym-stroke" fill="white" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/pointed(spx)">
+<path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-0.8 0 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/fpointed(spx)">
+<path stroke="sym-stroke" fill="white" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-0.8 0 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/linear(spx)">
+<path stroke="sym-stroke" pen="sym-pen">
+-1 0.333 m
+0 0 l
+-1 -0.333 l
+</path>
+</symbol>
+<symbol name="arrow/fdouble(spx)">
+<path stroke="sym-stroke" fill="white" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-1 -0.333 l
+h
+-1 0 m
+-2 0.333 l
+-2 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/double(spx)">
+<path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-1 -0.333 l
+h
+-1 0 m
+-2 0.333 l
+-2 -0.333 l
+h
+</path>
+</symbol>
+<pen name="heavier" value="0.8"/>
+<pen name="fat" value="1.2"/>
+<pen name="ultrafat" value="2"/>
+<symbolsize name="large" value="5"/>
+<symbolsize name="small" value="2"/>
+<symbolsize name="tiny" value="1.1"/>
+<arrowsize name="large" value="10"/>
+<arrowsize name="small" value="5"/>
+<arrowsize name="tiny" value="3"/>
+<color name="red" value="1 0 0"/>
+<color name="green" value="0 1 0"/>
+<color name="blue" value="0 0 1"/>
+<color name="yellow" value="1 1 0"/>
+<color name="orange" value="1 0.647 0"/>
+<color name="gold" value="1 0.843 0"/>
+<color name="purple" value="0.627 0.125 0.941"/>
+<color name="gray" value="0.745"/>
+<color name="brown" value="0.647 0.165 0.165"/>
+<color name="navy" value="0 0 0.502"/>
+<color name="pink" value="1 0.753 0.796"/>
+<color name="seagreen" value="0.18 0.545 0.341"/>
+<color name="turquoise" value="0.251 0.878 0.816"/>
+<color name="violet" value="0.933 0.51 0.933"/>
+<color name="darkblue" value="0 0 0.545"/>
+<color name="darkcyan" value="0 0.545 0.545"/>
+<color name="darkgray" value="0.663"/>
+<color name="darkgreen" value="0 0.392 0"/>
+<color name="darkmagenta" value="0.545 0 0.545"/>
+<color name="darkorange" value="1 0.549 0"/>
+<color name="darkred" value="0.545 0 0"/>
+<color name="lightblue" value="0.678 0.847 0.902"/>
+<color name="lightcyan" value="0.878 1 1"/>
+<color name="lightgray" value="0.827"/>
+<color name="lightgreen" value="0.565 0.933 0.565"/>
+<color name="lightyellow" value="1 1 0.878"/>
+<dashstyle name="dashed" value="[4] 0"/>
+<dashstyle name="dotted" value="[1 3] 0"/>
+<dashstyle name="dash dotted" value="[4 2 1 2] 0"/>
+<dashstyle name="dash dot dotted" value="[4 2 1 2 1 2] 0"/>
+<textsize name="large" value="\large"/>
+<textsize name="Large" value="\Large"/>
+<textsize name="LARGE" value="\LARGE"/>
+<textsize name="huge" value="\huge"/>
+<textsize name="Huge" value="\Huge"/>
+<textsize name="small" value="\small"/>
+<textsize name="footnote" value="\footnotesize"/>
+<textsize name="tiny" value="\tiny"/>
+<textstyle name="center" begin="\begin{center}" end="\end{center}"/>
+<textstyle name="itemize" begin="\begin{itemize}" end="\end{itemize}"/>
+<textstyle name="item" begin="\begin{itemize}\item{}" end="\end{itemize}"/>
+<gridsize name="4 pts" value="4"/>
+<gridsize name="8 pts (~3 mm)" value="8"/>
+<gridsize name="16 pts (~6 mm)" value="16"/>
+<gridsize name="32 pts (~12 mm)" value="32"/>
+<gridsize name="10 pts (~3.5 mm)" value="10"/>
+<gridsize name="20 pts (~7 mm)" value="20"/>
+<gridsize name="14 pts (~5 mm)" value="14"/>
+<gridsize name="28 pts (~10 mm)" value="28"/>
+<gridsize name="56 pts (~20 mm)" value="56"/>
+<anglesize name="90 deg" value="90"/>
+<anglesize name="60 deg" value="60"/>
+<anglesize name="45 deg" value="45"/>
+<anglesize name="30 deg" value="30"/>
+<anglesize name="22.5 deg" value="22.5"/>
+<tiling name="falling" angle="-60" step="4" width="1"/>
+<tiling name="rising" angle="30" step="4" width="1"/>
+</ipestyle>
+<page>
+<layer name="alpha"/>
+<layer name="beta"/>
+<view layers="alpha beta" active="alpha"/>
+<path layer="alpha" matrix="1 0 0 3.27273 -224 -1563.64" stroke="black" dash="dotted" join="1">
+240 732 m
+240 688 l
+240 688 l
+</path>
+<path matrix="1 0 0 3.27276 -160 -1563.65" stroke="black" dash="dotted" join="1">
+240 732 m
+240 688 l
+240 688 l
+</path>
+<path matrix="1 0 0 3.27276 -64 -1563.65" stroke="black" dash="dotted" join="1">
+240 732 m
+240 688 l
+240 688 l
+</path>
+<path matrix="1 0 0 3.27276 0 -1563.65" stroke="black" dash="dotted" join="1">
+240 732 m
+240 688 l
+240 688 l
+</path>
+<use layer="beta" matrix="1 0 0 1 -44 12" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 -44 -36" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 -76 -80" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 -60 -80" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 -44 -80" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 -28 -80" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 -12 -80" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<path layer="alpha" matrix="1 0 0 1 -80 64" stroke="black" fill="black">
+208 752 m
+208 704 l
+208 704 l
+</path>
+<path matrix="1 0 0 1 -80 64" stroke="black" fill="black">
+208 704 m
+176 660 l
+176 660 l
+</path>
+<path matrix="1 0 0 1 -80 64" stroke="black" fill="black">
+208 704 m
+192 660 l
+192 660 l
+</path>
+<path matrix="1 0 0 1 -80 64" stroke="black" fill="black">
+208 704 m
+208 660 l
+208 660 l
+</path>
+<path matrix="1 0 0 1 -80 64" stroke="black" fill="black">
+208 704 m
+224 660 l
+224 660 l
+</path>
+<path matrix="1 0 0 1 -80 64" stroke="black" fill="black">
+208 704 m
+240 660 l
+240 660 l
+</path>
+<use matrix="1 0 0 1 -44 12" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 -44 -36" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 -76 -80" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 -60 -80" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 -44 -80" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 -28 -80" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 -12 -80" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<path matrix="1 0 0 1.81819 -136 -562.911" stroke="black" dash="dotted" join="1">
+240 732 m
+240 688 l
+240 688 l
+</path>
+<path matrix="1 0 0 1.81819 -120 -562.911" stroke="black" dash="dotted" join="1">
+240 732 m
+240 688 l
+240 688 l
+</path>
+<path matrix="1 0 0 1.81819 -104 -562.911" stroke="black" dash="dotted" join="1">
+240 732 m
+240 688 l
+240 688 l
+</path>
+<path matrix="1 0 0 1.81819 -88 -562.911" stroke="black" dash="dotted" join="1">
+240 732 m
+240 688 l
+240 688 l
+</path>
+<text matrix="1 0 0 1 -84 60" transformations="translations" pos="216 712" stroke="black" type="label" width="5.187" height="4.289" depth="0" valign="baseline">$v$</text>
+<text matrix="1 0 0 1 -44 72" transformations="translations" pos="132 640" stroke="black" type="label" width="9.298" height="4.294" depth="1.49" valign="baseline">$v_1$</text>
+<text matrix="1 0 0 1 8 64" transformations="translations" pos="100 648" stroke="black" type="label" width="9.298" height="4.294" depth="1.49" valign="baseline">$v_2$</text>
+<text matrix="1 0 0 1 24 88" transformations="translations" pos="100 624" stroke="black" type="label" width="9.298" height="4.294" depth="1.49" valign="baseline">$v_3$</text>
+<text matrix="1 0 0 1 40 56" transformations="translations" pos="100 656" stroke="black" type="label" width="9.298" height="4.294" depth="1.49" valign="baseline">$v_4$</text>
+<text matrix="1 0 0 1 64 68" transformations="translations" pos="96 644" stroke="black" type="label" width="9.298" height="4.294" depth="1.49" valign="baseline">$v_5$</text>
+<path matrix="1 0 0 1 -32 0" stroke="black" fill="black">
+160 816 m
+80 768 l
+80 768 l
+</path>
+<path matrix="1 0 0 1 -32 0" stroke="black" fill="black">
+160 816 m
+240 768 l
+240 768 l
+</path>
+<use matrix="1 0 0 1 -124 -36" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 -44 12" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 36 -36" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<path matrix="1 0 0 3.27273 64 -1563.64" stroke="black" dash="dotted" join="1">
+240 732 m
+240 688 l
+240 688 l
+</path>
+<path matrix="1 0 0 3.27276 128 -1563.65" stroke="black" dash="dotted" join="1">
+240 732 m
+240 688 l
+240 688 l
+</path>
+<path matrix="1 0 0 3.27276 224 -1563.65" stroke="black" dash="dotted" join="1">
+240 732 m
+240 688 l
+240 688 l
+</path>
+<path matrix="1 0 0 3.27276 288 -1563.65" stroke="black" dash="dotted" join="1">
+240 732 m
+240 688 l
+240 688 l
+</path>
+<use matrix="1 0 0 1 244 12" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 212 -80" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 228 -80" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 244 -80" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 260 -80" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 276 -80" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 244 12" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 212 -80" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 228 -80" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 244 -80" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 260 -80" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 276 -80" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<path matrix="1 0 0 1.81819 152 -562.911" stroke="black" dash="dotted" join="1">
+240 732 m
+240 688 l
+240 688 l
+</path>
+<path matrix="1 0 0 1.81819 168 -562.911" stroke="black" dash="dotted" join="1">
+240 732 m
+240 688 l
+240 688 l
+</path>
+<path matrix="1 0 0 3.27281 184 -1563.69" stroke="black" dash="dotted" join="1">
+240 732 m
+240 688 l
+240 688 l
+</path>
+<path matrix="1 0 0 1.81819 200 -562.911" stroke="black" dash="dotted" join="1">
+240 732 m
+240 688 l
+240 688 l
+</path>
+<text matrix="1 0 0 1 176 60" transformations="translations" pos="216 712" stroke="black" type="label" width="7.982" height="7.49" depth="0" valign="baseline">$v&apos;$</text>
+<text matrix="1 0 0 1 244 72" transformations="translations" pos="132 640" stroke="black" type="label" width="9.298" height="4.294" depth="1.49" valign="baseline">$v_1$</text>
+<text matrix="1 0 0 1 296 64" transformations="translations" pos="100 648" stroke="black" type="label" width="9.298" height="4.294" depth="1.49" valign="baseline">$v_2$</text>
+<text matrix="1 0 0 1 312 88" transformations="translations" pos="100 624" stroke="black" type="label" width="9.298" height="4.294" depth="1.49" valign="baseline">$v_3$</text>
+<text matrix="1 0 0 1 328 56" transformations="translations" pos="100 656" stroke="black" type="label" width="9.298" height="4.294" depth="1.49" valign="baseline">$v_4$</text>
+<text matrix="1 0 0 1 352 68" transformations="translations" pos="96 644" stroke="black" type="label" width="9.298" height="4.294" depth="1.49" valign="baseline">$v_5$</text>
+<path matrix="1 0 0 1 256 0" stroke="black" fill="black">
+160 816 m
+80 768 l
+80 768 l
+</path>
+<path matrix="1 0 0 1 256 0" stroke="black" fill="black">
+160 816 m
+240 768 l
+240 768 l
+</path>
+<use matrix="1 0 0 1 164 -36" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 244 12" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 324 -36" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<path stroke="black" fill="black">
+416 816 m
+400 768 l
+400 768 l
+</path>
+<path stroke="black" fill="black">
+416 816 m
+440 768 l
+440 768 l
+</path>
+<path stroke="black" fill="black">
+400 768 m
+384 724 l
+384 724 l
+</path>
+<path stroke="black" fill="black">
+400 768 m
+400 724 l
+400 724 l
+</path>
+<path stroke="black" fill="black">
+400 768 m
+416 724 l
+416 724 l
+</path>
+<path stroke="black" fill="black">
+440 768 m
+432 724 l
+432 724 l
+</path>
+<path stroke="black" fill="black">
+440 768 m
+448 724 l
+448 724 l
+</path>
+<use matrix="1 0 0 1 228 -36" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 268 -36" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 212 -80" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 228 -80" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 244 -80" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 260 -80" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<use matrix="1 0 0 1 276 -80" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+<text matrix="1 0 0 1 16 140" transformations="translations" pos="428 632" stroke="black" type="label" width="10.279" height="7.49" depth="0" valign="baseline">$v&apos;&apos;$</text>
+<path matrix="1 0 0 1 0 32" stroke="black" fill="black" arrow="normal/normal">
+256 736 m
+288 736 l
+</path>
+<use matrix="1 0 0 1 244 12" name="mark/fdisk(sfx)" pos="172 804" size="large" stroke="black" fill="white"/>
+</page>
+</ipe>

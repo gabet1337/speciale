@@ -2,6 +2,7 @@
 #include <assert.h>
 #include "boost_r_tree.hpp"
 #include "../common/utilities.hpp"
+#include "../common/test_lib.hpp"
 #include "../stream/stream.hpp"
 using namespace std;
 
@@ -65,12 +66,84 @@ void test_remove_report() {
   print_success();
 }
 
+void test_report_random_1gb(size_t buffer_size, double epsilon) {
+
+  print_description("starting test of report random 1gb");
+
+  brt epst(buffer_size, epsilon);
+  // epst.set_global_rebuild_configuration(ext::buffered_pst::global_rebuild_configuration
+  //                                       (INF,0.5));
+  test::random r;
+  
+  io::buffered_stream<point> bs(4096);
+  bs.open("test_data_report_random_1gb");
+  
+  cerr << "- inserting " << 93*1024*1024 << " points" << endl;
+  
+  for (size_t i = 0; i < 93*1024*1024; i++) { // insert 744 MB
+    epst.insert(bs.read());
+    //res.insert(p);
+    if (i > 0 && i % (128*1024) == 0) {
+      cout << " - inserted " << i / (128*1024) << " MB" << endl;
+    }
+  }
+
+  for (int i = 0; i < 1; i++) {
+   
+    cerr << "- round " << i+1 << " of 1: deleting " << 23*1024*1024 << " points" << endl;
+    
+    for (int j = 0; j < 16*1024*1024; j++) { // remove 128 MB
+      epst.remove(bs.read());
+    }
+    
+    cerr << "- round " << i+1 << " of 1: reporting 1 times" << endl;
+
+    for (int j = 0; j < 1; j++) {
+
+      int x1 = r.next();
+      int x2 = r.next();
+      int y = r.next();
+      
+      if (x2 < x1) std::swap(x1,x2);
+
+      epst.report(x1,x2,y,"test/report_rand_1gb");
+      util::remove_directory("test/report_rand_1gb");
+    }
+    
+    cerr << "- round " << i+1 << " of 1: inserting " << 23*1024*1024 << " points" << endl;
+  
+    for (int j = 0; j < 16*1024*1024; j++) { // insert 128 MB
+      epst.insert(bs.read());
+    }
+
+    for (int j = 0; j < 1; j++) {
+
+      int x1 = r.next();
+      int x2 = r.next();
+      int y = r.next();
+      
+      if (x2 < x1) std::swap(x1,x2);
+      
+      epst.report(x1,x2,y,"test/report_rand_1gb");
+      util::remove_directory("test/report_rand_1gb");
+      
+    }
+    
+  }
+  
+  bs.close();
+
+  print_success();
+
+}
 
 int main() {
   cout << "\033[0;33m\e[4mSTARTING TEST OF BOOST R-TREE\e[24m\033[0m" << endl;
-  test_insert();
-  test_report();
-  test_remove_report();
+  // test_insert();
+  // test_report();
+  // test_remove_report();
+
+  test_report_random_1gb(4096, 0);
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
 
   return 0;
