@@ -29,8 +29,6 @@ namespace test {
     return duration_cast<milliseconds>(e-s).count();
   }
 
-
-
   class random {
 
   public:
@@ -75,6 +73,22 @@ namespace test {
     if (!below) return 0;
     return next()%below;
   }
+
+  class counter {
+  public:
+    counter();
+    ~counter();
+    void inc();
+    void dec();
+    long long count();
+  private:
+    long long c;
+  };
+  counter::counter() { c = 0; }
+  counter::~counter() {}
+  void counter::inc() { c++; }
+  void counter::dec() { c--; }
+  long long counter::count() { return c; }
 };
 
 #endif
