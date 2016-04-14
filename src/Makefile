@@ -5,7 +5,7 @@ DEBUG = -g -Wall -fsanitize=address $(DOFF) $(VALID) common/debug.hpp common/val
 LFLAGS = $(DEBUG)
 CFLAGS = $(DEBUG) -c
 
-PROGRAMS = ipst stream_test ctest1 ctest2 ctest epst apst rtree mpst
+PROGRAMS = ipst stream_test ctest1 ctest2 ctest epst apst rtree mpst dpst
 
 DEFINITIONS = common/definitions.hpp
 UTILITIES = common/utilities.hpp
@@ -48,6 +48,9 @@ apst : $(POINT) $(EXTERNAL_PST) $(STREAM) $(DEFINITIONS) $(EXTERNAL_CHILD_STRUCT
 
 mpst:	internal/test_mysql_pst.cpp internal/mysql_pst.hpp common/pst_interface.hpp $(STREAM)
 	$(CC) $(LFLAGS) -I/usr/include/cppconn internal/test_mysql_pst.cpp -L/usr/lib -lmysqlcppconn -o mpst
+
+dpst:	internal/test_dynamic_pst.cpp internal/dynamic_pst.hpp common/pst_interface.hpp $(STREAM)
+	$(CC) $(LFLAGS) internal/test_dynamic_pst.cpp -o dpst
 
 rtree : $(RTREE) internal/test_boost_r_tree.cpp
 	$(CC) $(LFLAGS) internal/test_boost_r_tree.cpp -o rtree
