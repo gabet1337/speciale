@@ -5,7 +5,7 @@ DEBUG = -g -Wall -fsanitize=address $(DOFF) $(VALID) common/debug.hpp common/val
 LFLAGS = $(DEBUG)
 CFLAGS = $(DEBUG) -c
 
-PROGRAMS = ipst stream_test ctest1 ctest2 ctest epst apst rtree mpst dpst
+PROGRAMS = ipst stream_test ctest1 ctest2 ctest epst apst rtree mpst dpst testlib
 
 DEFINITIONS = common/definitions.hpp
 UTILITIES = common/utilities.hpp
@@ -52,8 +52,14 @@ mpst:	internal/test_mysql_pst.cpp internal/mysql_pst.hpp common/pst_interface.hp
 dpst:	internal/test_dynamic_pst.cpp internal/dynamic_pst.hpp common/pst_interface.hpp $(STREAM)
 	$(CC) $(LFLAGS) internal/test_dynamic_pst.cpp -o dpst
 
-rtree : $(RTREE) internal/test_boost_r_tree.cpp
+rtree : $(RTREE) $(STREAM) internal/test_boost_r_tree.cpp
 	$(CC) $(LFLAGS) internal/test_boost_r_tree.cpp -o rtree
+
+testlib: $(TEST_LIB) common/test_test_lib.cpp
+	$(CC) $(LFLAGS) common/test_test_lib.cpp -o testlib
+
+testexp : $(TEST_LIB) experiments/base_experiment.hpp experiments/test_base.cpp
+	$(CC) $(LFLAGS) -I/usr/include/cppconn experiments/test_base.cpp -L/usr/lib -lmysqlcppconn -o testexp
 
 testall : clean	stream_test ctest epst
 	./stream_test && ./ctest && ./epst
