@@ -2622,6 +2622,31 @@ void test_report_random_1gb(size_t buffer_size, double epsilon) {
 
 }
 
+void test_insert_all(string file_name, size_t buffer_size, double epsilon) {
+
+  print_description("starting test of insert all");
+
+  io::buffered_stream<point> bs(4096);
+  
+  ext::buffered_pst epst(buffer_size, epsilon);
+  epst.set_global_rebuild_configuration(ext::buffered_pst::global_rebuild_configuration
+                                        (INF,0.5));
+
+  bs.open(file_name);
+
+  size_t count = 0;
+  while (!bs.eof()) {
+    epst.insert(bs.read());
+    if (count++ % (128*1024) == 0)
+      cerr << "inserted " << count / (128*1024) << " MB" << endl;
+  }
+
+  bs.close();
+  print_success();
+
+}
+
+
 void test_report_random_2_repeat(std::string file_name) {
 
   print_description("starting test of report random 2");
@@ -3191,13 +3216,14 @@ int main() {
   // // test_report_random_buffer_size_512();
   // test_contained_points_error();
   // generate_random_data(128*1024*1024, "test_data_1gb");
-  // generate_random_data(5*128*1024*1024, "test_data_5gb");
+  // generate_random_data(3*128*1024*1024, "test_data_3gb");
   // generate_random_data(10*128*1024*1024, "test_data_10gb");
-  // generate_data_report_random_1gb();
+  //  generate_data_report_random_1gb();
   // test_report_random_1gb(128*1024, 0.5);
   // test_report_random_1gb(2097152, 0.048);
   test_report_random_1gb(2097152, 0.070);
-  cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
+  // cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
+  // test_insert_all("test_data_3gb", 2097152, 0.07);
   
   cleanup();
   
