@@ -3,13 +3,16 @@
 #include "../common/pst_interface.hpp"
 #include "../common/point.hpp"
 #include "../common/definitions.hpp"
+#include "../common/utilities.hpp"
 #include <iostream>
 #include <queue>
 #include <fstream>
+#include <queue>
+#include <error.h>
 
 namespace internal {
 
-  class DynamicPrioritySearchTree : public common::pst_interface {
+  class dynamic_pst : public common::pst_interface {
 
     struct node {
       node *left, *right, *parent;
@@ -20,34 +23,46 @@ namespace internal {
       }
       node() : left(0), right(0), key(point(-INF,-INF)), key_y(point(-INF,-INF)),
                placeholder(false) {};
-      node(point p) : left(0), right(0), key(p), key_y(point(-INF,-INF)),
+      node(point p) : left(0), right(0), key(p), key_y(p),
                       placeholder(false) {};
     };
     
   public:
-    DynamicPrioritySearchTree();
-    DynamicPrioritySearchTree(size_t buffer_size, double epsilon);
-    ~DynamicPrioritySearchTree();
+    dynamic_pst();
+    dynamic_pst(size_t buffer_size, double epsilon);
+    ~dynamic_pst();
     void insert(const point &p);
     void remove(const point &p);
     void report(int x1, int x2, int y, const std::string &output_file);
     void print();
   private:
-    size_t size;
+    void construct(std::vector<point> points);
+    size_t size, buffer_size;
     node *root;
   };
 
-  DynamicPrioritySearchTree::DynamicPrioritySearchTree() {
+  dynamic_pst::dynamic_pst() : dynamic_pst(4096, 0.0) {}
+
+  dynamic_pst::dynamic_pst(size_t _buffer_size, double epsilon) {
     root = new node(point(-INF,-INF));
     size = 0;
+    buffer_size = _buffer_size;
   }
 
-  DynamicPrioritySearchTree::~DynamicPrioritySearchTree() {
-    //TODO add destructor.
-    std::cerr << "destructued" << std::endl;
+  dynamic_pst::~dynamic_pst() {
+    std::queue<node*> q;
+    q.push(root);
+    while (!q.empty()) {
+      node* n = q.front(); q.pop();
+      if (n->left != 0)
+        q.push(n->left);
+      if (n->right != 0)
+        q.push(n->right);
+      delete n;
+    }
   }
 
-  void DynamicPrioritySearchTree::insert(const point &p) {
+  void dynamic_pst::insert(const point &p) {
 
     if (size++ == 0) {
       root->key = p;
@@ -64,10 +79,14 @@ namespace internal {
       
       if (p < root->key) {
         left_child->key = p;
+        left_child->key_y = p;
         right_child->key = root->key;
+        right_child->key_y = root->key;
       } else {
         left_child->key = root->key;
+        left_child->key_y = root->key;
         right_child->key = p;
+        right_child->key_y = p;
         root->key = p;
       }
 
@@ -84,7 +103,8 @@ namespace internal {
 
       return;
     } 
-    
+
+    point cp = p;
     node *existing_leaf = root;
     node *new_leaf = new node(p);
     new_leaf->placeholder = true;
@@ -94,6 +114,12 @@ namespace internal {
         existing_leaf = existing_leaf->left;
       else
         existing_leaf = existing_leaf->right;
+    }
+
+    if (new_leaf->key_y < existing_leaf->key_y && !existing_leaf->placeholder) {
+      new_leaf->placeholder = false;
+      existing_leaf->placeholder = true;
+      cp = existing_leaf->key_y;
     }
 
     node *new_internal_node = new node();
@@ -106,7 +132,7 @@ namespace internal {
     else
       new_internal_node->parent->right = new_internal_node;
     
-    new_internal_node->key = p;
+    new_internal_node->key = std::max(p,existing_leaf->key);
     new_internal_node->key_y = point(-INF,-INF);
     
     if (existing_leaf->key < p) {
@@ -118,10 +144,9 @@ namespace internal {
     }
 
     node *n = root;
-    point cp = p;
     
     while (!n->leaf()) {
-      if (comp_y(cp,n->key_y)) {
+      if (cp.y <= n->key_y.y || (cp.y == n->key_y.y && cp.x <= n->key_y.x))  {
         if (cp < n->key)
           n = n->left;
         else
@@ -129,21 +154,19 @@ namespace internal {
       } else {
         std::swap(n->key_y,cp);
       }
-      if (n->leaf() && n->key == cp)
+    }
+    if (n->leaf()) {
+      if (n->key == cp)
         n->placeholder = false;
     }
-
   }
 
-  void DynamicPrioritySearchTree::remove(const point &p) {
+  void dynamic_pst::remove(const point &p) {
 
-    std::cout << "removing point " << p << std::endl;
-    
     node *in_node = 0;
     node *node = root;
     
     while (!node->leaf()) {
-      std::cout << "testing if node->key_y " << node->key_y << " == " << p << std::endl;
       if (node->key_y == p) {
         node->key_y = point(INF,INF);
         in_node = node;
@@ -155,52 +178,29 @@ namespace internal {
     }
 
     if (node->leaf() && node->key == p) {
-      std::cout << "node with key " << node->key << " is leaf" << std::endl;
       if (node->parent->left == node) {
-        std::cout << "deleting left child from parent with key "
-                  << node->parent->key << std::endl;
         node->parent->left = 0;
       } else {
-        std::cout << "deleting right child from parent with key "
-                  << node->parent->key << std::endl;
         node->parent->right = 0;
       }
       delete node;
     }
 
-
-     if (p == point(20,20)) {
-       std::cout << "we have returned!!!" << std::endl;
-       return;
-     }
-    
     if (in_node != 0) {
 
       while (!in_node->leaf()) {
         point left_cand = point(-INF,-INF);
         point right_cand = point(-INF,-INF);
-        if (in_node->left != 0 && !in_node->left->placeholder) {
-          if (!in_node->left->leaf())
-            left_cand = in_node->left->key_y;
-          else
-            left_cand = in_node->left->key;
-        }
-        if (in_node->right != 0 && !in_node->right->placeholder) {
-          if (!in_node->right->leaf())
-            right_cand = in_node->right->key_y;
-          else
-            right_cand = in_node->right->key;
-        }
+        if (in_node->left != 0 && !in_node->left->placeholder)
+          left_cand = in_node->left->key_y;
+        if (in_node->right != 0 && !in_node->right->placeholder)
+          right_cand = in_node->right->key_y;
         in_node->key_y = std::max(left_cand,right_cand,comp_y);
         if (in_node->key == point(-INF,-INF)) break;
-        std::cout << "checking if in_node->key_y == left_cand "
-                  << in_node->key_y << " " << left_cand << std::endl;
         if (in_node->key_y == left_cand)
           in_node = in_node->left;
         else
           in_node = in_node->right;
-        std::cout << "checking if node " << in_node->key << " is leaf? " << in_node->leaf() <<
-          std::endl;
         if (in_node->leaf())
           in_node->placeholder = true;
       }
@@ -209,38 +209,130 @@ namespace internal {
     
   }
 
-  void DynamicPrioritySearchTree::report(int x1, int x2, int y, const std::string &output_file) {
+  void dynamic_pst::report(int x1, int x2, int y,
+                                         const std::string &output_file) {
+
+    if (util::file_exists(output_file))
+      error(1, ECANCELED, "Output file exists. Aborting.");
+
+    io::buffered_stream<point> result(buffer_size);
+    result.open(output_file);
+
+    if (x2 < x1) {
+      DEBUG_MSG("x2 < x1 for x1: " << x1 << " x2: " <<x2);
+      result.close();
+      return;
+    }
+
+    
+    std::queue<node*> q;
+    q.push(root);
+    
+    while (!q.empty()) {
+      
+      node* n = q.front(); q.pop();
+
+      if (n->key_y > point(-INF,-INF) && !n->placeholder && util::in_range(n->key_y, x1, x2, y))
+        result.write(n->key_y);
+
+      if (point(x1,y) <= n->key && n->left != 0)
+        q.push(n->left);
+
+      if (n->key <= point(x2,y) && n->right != 0)
+        q.push(n->right);
+      
+    }
+
+    result.close();
     
   }
 
-  void DynamicPrioritySearchTree::print() {
+  void dynamic_pst::construct(std::vector<point> points) {
+
+    std::vector<dynamic_pst::node*> layer_i_plus_1, layer_i;
+
+    for (size_t i = 0; i < points.size() / 2; i++) {
+
+      node* node = new dynamic_pst::node();
+
+      if (i*2+1 < points.size()) {
+        
+        dynamic_pst::node* leaf_left = new dynamic_pst::node();
+        dynamic_pst::node* leaf_right = new dynamic_pst::node();
+        
+        leaf_left->parent = node;
+        leaf_left->key = points[i*2];
+        leaf_left->key_y = leaf_left->key; 
+        
+        leaf_right->parent = node;
+        leaf_right->key = points[i*2+1];
+        leaf_right->key_y = leaf_right->key;
+        
+        node->left = leaf_left;
+        node->right = leaf_right;
+        
+        node->key = leaf_right->key; // std::max(leaf_left->key, leaf_right->key);
+        node->key_y = std::max(leaf_left->key_y, leaf_right->key_y, comp_y);
+        
+      } else {
+        
+        dynamic_pst::node* leaf = new dynamic_pst::node();
+        leaf->key = points[i*2];
+        leaf->key_y = leaf->key;
+        leaf->parent = node;
+        node->key = leaf->key;
+        node->key_y = leaf->key_y;
+        node->left = 0;
+        node->right = leaf;
+        
+      }
+      
+      layer_i.push_back(node);
+    }
+
+    while (layer_i.size() > 2) {
+      std::swap(layer_i, layer_i_plus_1);
+      layer_i.clear();
+      for (size_t i = 0; i < layer_i_plus_1.size() / 2; i++) {
+        dynamic_pst::node* node = new dynamic_pst::node();
+        dynamic_pst::node* leaf_left = layer_i_plus_1[i*2];
+        dynamic_pst::node* leaf_right = layer_i_plus_1[i*2+1];
+        
+        node->key = leaf_right->key;
+        node->key_y = std::max(leaf_left->key_y, leaf_right->key_y, comp_y);
+        node->left = leaf_left;
+        node->right = leaf_right;
+        
+      }
+    }
+    
+  }
+
+  void dynamic_pst::print() {
 
     std::ofstream dot_file;
     dot_file.open("temp.dot");
     dot_file << "digraph G {" << std::endl;
 
-    std::queue<DynamicPrioritySearchTree::node*> q;
+    std::queue<dynamic_pst::node*> q;
     q.push(root);
     while (!q.empty()) {
       node* x = q.front(); q.pop();
       dot_file << (uintptr_t)x << " [label=\"";
 
-      if (!(x->key_y == point(-INF,-INF)) && !x->leaf())
+      if (!(x->key_y == point(-INF,-INF)))
         dot_file << "key_y: " << x->key_y << "\n";
-      else if (!x->leaf())
+      else
         dot_file << "key_y: " << "\n";
 
-      if (!x->leaf())
-        dot_file << "key_x: ";
-      else
-        dot_file << "key: ";
-      
+      dot_file << "key_x: ";
+            
       if (!(x->key == point(-INF,-INF)))
         dot_file << x->key;
 
-      if (x->placeholder && x->leaf())
+      if (x->placeholder)
         dot_file << "\nph: true";
-      else if (x->leaf())
+      else
         dot_file << "\nph: false";
 
       if (x->parent != 0)
