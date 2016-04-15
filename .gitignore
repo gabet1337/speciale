@@ -6,6 +6,8 @@ src/epst
 src/dump_file
 src/apst
 src/bpst
+src/mpst
+src/rtree
 
 # data folders
 src/c_*
