@@ -108,7 +108,8 @@ void test_construct() {
   
   dpst dpst;
   dpst.construct_sorted(points);
-
+  dpst.global_rebuild();
+  
   //dpst.remove(point(10,10));
   //dpst.remove(point(15,15));
   //dpst.remove(point(20,20));

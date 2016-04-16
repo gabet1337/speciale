@@ -8,6 +8,7 @@
 #include <queue>
 #include <fstream>
 #include <queue>
+#include <stack>
 #include <error.h>
 
 namespace internal {
@@ -35,11 +36,24 @@ namespace internal {
     void remove(const point &p);
     void report(int x1, int x2, int y, const std::string &output_file);
     void construct_sorted(std::vector<point> points);
+    void global_rebuild();
     void print();
+    struct global_rebuild_configuration {
+      global_rebuild_configuration()
+        : start_rebuild_at(0), rebuild_factor(0.5) {}
+      global_rebuild_configuration(size_t _start_rebuild_at, double _rebuild_factor)
+        : start_rebuild_at(_start_rebuild_at), rebuild_factor(_rebuild_factor) {}
+      ~global_rebuild_configuration() {};
+      size_t start_rebuild_at;
+      double rebuild_factor;
+    };
+    void set_global_rebuild_configuration(const global_rebuild_configuration &config);
   private:
-    size_t size, buffer_size;
+    size_t size, buffer_size, operation_count, epoch_begin_point_count;
     node *root;
     void promote(node* node);
+    void handle_global_rebuild();
+    global_rebuild_configuration global_rebuild_config;
   };
 
   dynamic_pst::dynamic_pst() : dynamic_pst(4096, 0.0) {}
@@ -48,6 +62,8 @@ namespace internal {
     root = new node(point(-INF,-INF));
     size = 0;
     buffer_size = _buffer_size;
+    operation_count = 0;
+    epoch_begin_point_count = 0;
   }
 
   dynamic_pst::~dynamic_pst() {
@@ -61,6 +77,11 @@ namespace internal {
         q.push(n->right);
       delete n;
     }
+  }
+
+  void dynamic_pst::set_global_rebuild_configuration
+  (const global_rebuild_configuration &config) {
+    global_rebuild_config = config;
   }
 
   void dynamic_pst::insert(const point &p) {
@@ -160,6 +181,9 @@ namespace internal {
       if (n->key == cp)
         n->placeholder = false;
     }
+
+    handle_global_rebuild();
+    
   }
 
   void dynamic_pst::remove(const point &p) {
@@ -185,6 +209,7 @@ namespace internal {
         node->parent->right = 0;
       }
       delete node;
+      size--;
     }
 
     if (in_node != 0) {
@@ -207,6 +232,8 @@ namespace internal {
       }
       
     }
+
+    handle_global_rebuild();
     
   }
 
@@ -289,6 +316,51 @@ namespace internal {
              empty_node->right->key_y == empty_node->key_y)
       promote(empty_node);
     
+  }
+
+  void dynamic_pst::handle_global_rebuild() {
+
+    operation_count++;
+    
+    if (global_rebuild_config.start_rebuild_at >=
+        epoch_begin_point_count + operation_count) return;
+    if (operation_count >=
+        (size_t)((double)epoch_begin_point_count * global_rebuild_config.rebuild_factor))
+      global_rebuild();
+    
+  }
+  
+  void dynamic_pst::global_rebuild() {
+
+    std::stack<node*> q;
+    std::vector<point> points;
+      
+    q.push(root);
+
+    while (!q.empty()) {
+      
+      node* node = q.top(); q.pop();
+
+      if (node->right != 0)
+        q.push(node->right);
+
+      if (node->left != 0)
+        q.push(node->left);
+
+      if (node->leaf())
+        points.push_back(node->key);
+
+      delete node;
+
+    }
+
+    root = new node();
+
+    construct_sorted(points);
+
+    epoch_begin_point_count = size;
+    operation_count = 0;
+
   }
   
   void dynamic_pst::construct_sorted(std::vector<point> points) {
