@@ -34,11 +34,12 @@ namespace internal {
     void insert(const point &p);
     void remove(const point &p);
     void report(int x1, int x2, int y, const std::string &output_file);
+    void construct_sorted(std::vector<point> points);
     void print();
   private:
-    void construct(std::vector<point> points);
     size_t size, buffer_size;
     node *root;
+    void promote(node* node);
   };
 
   dynamic_pst::dynamic_pst() : dynamic_pst(4096, 0.0) {}
@@ -247,65 +248,148 @@ namespace internal {
     
   }
 
-  void dynamic_pst::construct(std::vector<point> points) {
+  void dynamic_pst::promote(dynamic_pst::node* node) {
 
-    std::vector<dynamic_pst::node*> layer_i_plus_1, layer_i;
+    dynamic_pst::node* empty_node;
+        
+    if (node->right != 0 && node->right->key_y == node->key_y)
+      empty_node = node->right;
+    else if (node->left != 0 && node->left->key_y == node->key_y)
+      empty_node = node->left;
+    else
+      return;
+
+    if (empty_node->leaf()) {
+      empty_node->placeholder = true;
+      return;
+    }
+    
+    point cand_left = point(-INF,-INF);
+    point cand_right = point(-INF,-INF);
+    
+    if (empty_node->left != 0 && !empty_node->left->placeholder)
+      cand_left = empty_node->left->key_y;
+    
+    if (empty_node->right != 0 && !empty_node->right->placeholder)
+      cand_right = empty_node->right->key_y;
+    
+    empty_node->key_y = std::max(cand_left, cand_right, comp_y);
+    
+    if (empty_node->left != 0 && empty_node->left->leaf() &&
+        !empty_node->left->placeholder && empty_node->left->key_y == empty_node->key_y)
+      empty_node->left->placeholder = true;
+    else if (empty_node->left != 0 && !empty_node->leaf() &&
+             empty_node->left->key_y == empty_node->key_y)
+      promote(empty_node);
+    
+    if (empty_node->right != 0 && empty_node->right->leaf() &&
+        !empty_node->right->placeholder && empty_node->right->key_y == empty_node->key_y)
+      empty_node->right->placeholder = true;
+    else if (empty_node->right != 0 && !empty_node->leaf() &&
+             empty_node->right->key_y == empty_node->key_y)
+      promote(empty_node);
+    
+  }
+  
+  void dynamic_pst::construct_sorted(std::vector<point> points) {
+
+    std::vector<std::pair<dynamic_pst::node*,point> > layer_i_plus_1, layer_i;
 
     for (size_t i = 0; i < points.size() / 2; i++) {
 
       node* node = new dynamic_pst::node();
 
-      if (i*2+1 < points.size()) {
+      dynamic_pst::node* leaf_left = new dynamic_pst::node();
+      dynamic_pst::node* leaf_right = new dynamic_pst::node();
         
-        dynamic_pst::node* leaf_left = new dynamic_pst::node();
-        dynamic_pst::node* leaf_right = new dynamic_pst::node();
-        
-        leaf_left->parent = node;
-        leaf_left->key = points[i*2];
-        leaf_left->key_y = leaf_left->key; 
-        
-        leaf_right->parent = node;
-        leaf_right->key = points[i*2+1];
-        leaf_right->key_y = leaf_right->key;
-        
-        node->left = leaf_left;
-        node->right = leaf_right;
-        
-        node->key = leaf_right->key; // std::max(leaf_left->key, leaf_right->key);
-        node->key_y = std::max(leaf_left->key_y, leaf_right->key_y, comp_y);
-        
-      } else {
-        
-        dynamic_pst::node* leaf = new dynamic_pst::node();
-        leaf->key = points[i*2];
-        leaf->key_y = leaf->key;
-        leaf->parent = node;
-        node->key = leaf->key;
-        node->key_y = leaf->key_y;
-        node->left = 0;
-        node->right = leaf;
-        
-      }
+      leaf_left->parent = node;
+      leaf_left->key = points[i*2];
+      leaf_left->key_y = leaf_left->key; 
       
-      layer_i.push_back(node);
+      leaf_right->parent = node;
+      leaf_right->key = points[i*2+1];
+      leaf_right->key_y = leaf_right->key;
+      
+      node->left = leaf_left;
+      node->right = leaf_right;
+      
+      node->key = leaf_right->key; // std::max(leaf_left->key, leaf_right->key);
+      node->key_y = std::max(leaf_left->key_y, leaf_right->key_y, comp_y);
+
+      if (leaf_right->key_y == node->key)
+        leaf_right->placeholder = true;
+      else
+        leaf_left->placeholder = true;
+      
+      layer_i.push_back(std::make_pair(node,leaf_left->key));
+
+    }
+
+    if (points.size() % 2 == 1) {
+
+      //dynamic_pst::node* node = new dynamic_pst::node();
+      dynamic_pst::node* leaf = new dynamic_pst::node();
+      leaf->key = points[points.size()-1];
+      leaf->key_y = leaf->key;
+      //leaf->parent = node;
+      //node->key = leaf->key;
+      //node->key_y = leaf->key_y;
+      //node->left = 0;
+      //node->right = leaf;
+      leaf->placeholder = false;
+      
+      layer_i.push_back(std::make_pair(leaf,leaf->key));
     }
 
     while (layer_i.size() > 2) {
       std::swap(layer_i, layer_i_plus_1);
       layer_i.clear();
       for (size_t i = 0; i < layer_i_plus_1.size() / 2; i++) {
-        dynamic_pst::node* node = new dynamic_pst::node();
-        dynamic_pst::node* leaf_left = layer_i_plus_1[i*2];
-        dynamic_pst::node* leaf_right = layer_i_plus_1[i*2+1];
         
-        node->key = leaf_right->key;
+        dynamic_pst::node* node = new dynamic_pst::node();
+        dynamic_pst::node* leaf_left = layer_i_plus_1[i*2].first;
+        dynamic_pst::node* leaf_right = layer_i_plus_1[i*2+1].first;
+        
+        node->key = layer_i_plus_1[i*2+1].second; // leaf_right->key;
         node->key_y = std::max(leaf_left->key_y, leaf_right->key_y, comp_y);
         node->left = leaf_left;
         node->right = leaf_right;
-        
+
+        promote(node);
+          
+        layer_i.push_back(std::make_pair(node, layer_i_plus_1[i*2].second));
+
       }
+
+      if (layer_i_plus_1.size() % 2 == 1) {
+
+        //dynamic_pst::node* node = new dynamic_pst::node();
+        dynamic_pst::node* node = layer_i_plus_1[layer_i_plus_1.size()-1].first;
+        //node->key = leaf->key;
+        //leaf->key_y = leaf->key_y;
+        //leaf->parent = node;
+        //node->left = 0;
+        //node->right = leaf;
+        //if (leaf->leaf())
+        //  leaf->placeholder = true;
+
+        //promote(node);
+        
+        layer_i.push_back(std::make_pair(node, layer_i_plus_1[layer_i_plus_1.size()-1].second));
+      }
+      
     }
-    
+
+    dynamic_pst::node* leaf_left = layer_i[0].first;
+    dynamic_pst::node* leaf_right = layer_i[1].first;
+        
+    // Add last layer to root
+    root->key = layer_i[1].second; // leaf_right->key;
+    root->key_y = std::max(leaf_left->key_y, leaf_right->key_y, comp_y);
+    root->left = leaf_left;
+    root->right = leaf_right;
+
+    promote(root);
   }
 
   void dynamic_pst::print() {

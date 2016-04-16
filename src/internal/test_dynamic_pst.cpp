@@ -91,6 +91,33 @@ void test_remove_report() {
   print_success();
 }
 
+void test_construct() {
+  print_description("Starting to test linear construct");
+
+  std::vector<point> points;
+  points.push_back(point(1,1));
+  points.push_back(point(2,2));
+  points.push_back(point(3,3));
+  points.push_back(point(4,4));
+  points.push_back(point(5,5));
+  points.push_back(point(6,6));
+  points.push_back(point(7,7));
+  points.push_back(point(8,8));
+  points.push_back(point(9,9));
+  points.push_back(point(10,10));
+  
+  dpst dpst;
+  dpst.construct_sorted(points);
+
+  //dpst.remove(point(10,10));
+  //dpst.remove(point(15,15));
+  //dpst.remove(point(20,20));
+  
+  dpst.print();
+  
+  print_success();
+}
+
 void test_report_random_1gb(size_t buffer_size, double epsilon) {
 
   print_description("starting test of report random 1gb");
@@ -173,8 +200,9 @@ int main() {
   //test_insert();
   //test_remove_report();
   //test_report();
+  //test_report_random_1gb(4096, 0.5);
 
-  test_report_random_1gb(4096, 0.5);
+  test_construct();
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
 
   return 0;
