@@ -183,7 +183,7 @@ namespace test {
       file << generate_script();
       file.close();
       int r = system("chmod +x hjafbs781g5.sh");
-      r = system("./temp.sh");
+      r = system("./hjafbs781g5.sh");
       r = system("rm -rf hjafbs781g5.sh");
       r++;
     }
