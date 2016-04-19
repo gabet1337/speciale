@@ -1,6 +1,6 @@
 CC = c++ -std=c++0x -O2 -Wall -I/usr/include/cppconn -L/usr/lib
 
-PROGRAMS = insert_experiment
+PROGRAMS = insert_experiment gerth_fanout_experiment
 
 MYSQL = -lmysqlcppconn
 
@@ -8,6 +8,9 @@ FILES = ../common/definitions.hpp ../common/point.hpp ../common/pst_interface.hp
 
 insert_experiment: $(FILES) insert_experiment.cpp
 	$(CC) insert_experiment.cpp -o insert_experiment $(MYSQL)
+
+gerth_fanout_experiment: $(FILES) gerth_fanout_experiment.cpp
+	$(CC) gerth_fanout_experiment.cpp -o gerth_fanout_experiment $(MYSQL)
 
 clean:
 	$(RM) *.o *~ $(PROGRAMS)

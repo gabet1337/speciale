@@ -1118,6 +1118,7 @@ namespace ext {
       (int)pow((double)buffer_size,epsilon);
     root = new buffered_pst_node(0,0,buffer_size, B_epsilon, epsilon, 0);
     root->flush_child_structure();
+    std::cerr << "Constructed GERTH PST with buffer_size: " << buffer_size << " and fanout " << B_epsilon << std::endl;
     DEBUG_MSG("Constructing buffered_pst with buffer_size: "
               << buffer_size << " epsilon: " << epsilon << " B_epsilon: " << B_epsilon);
 #ifdef VALIDATE
