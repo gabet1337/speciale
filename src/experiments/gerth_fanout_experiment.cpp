@@ -34,6 +34,7 @@ class gerth_fanout_experiment : public base_experiment {
         if (data_read >= stop_at) break;
       }
     }
+    delete pst;
   }
 
 };
