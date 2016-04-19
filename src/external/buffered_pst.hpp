@@ -46,7 +46,7 @@ namespace ext {
     void print();
     struct global_rebuild_configuration {
       global_rebuild_configuration()
-        : start_rebuild_at(0), rebuild_factor(0.5) {}
+        : start_rebuild_at(INF), rebuild_factor(0.5) {}
       global_rebuild_configuration(size_t _start_rebuild_at, double _rebuild_factor)
         : start_rebuild_at(_start_rebuild_at), rebuild_factor(_rebuild_factor) {}
       ~global_rebuild_configuration() {};
