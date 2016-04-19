@@ -5,7 +5,7 @@ DEBUG = -g -Wall -fsanitize=address $(DOFF) $(VALID) common/debug.hpp common/val
 LFLAGS = $(DEBUG)
 CFLAGS = $(DEBUG) -c
 
-PROGRAMS = ipst stream_test ctest1 ctest2 ctest epst apst rtree mpst dpst testlib
+PROGRAMS = ipst stream_test ctest1 ctest2 ctest epst apst rtree mpst dpst testlib testexp
 
 DEFINITIONS = common/definitions.hpp
 UTILITIES = common/utilities.hpp
@@ -58,7 +58,7 @@ rtree : $(RTREE) $(STREAM) internal/test_boost_r_tree.cpp
 testlib: $(TEST_LIB) common/test_test_lib.cpp
 	$(CC) $(LFLAGS) common/test_test_lib.cpp -o testlib
 
-testexp : $(TEST_LIB) experiments/base_experiment.hpp experiments/test_base.cpp
+testexp : $(TEST_LIB) experiments/base_experiment.hpp experiments/test_base.cpp experiments/result.hpp
 	$(CC) $(LFLAGS) -I/usr/include/cppconn experiments/test_base.cpp -L/usr/lib -lmysqlcppconn -o testexp
 
 testall : clean	stream_test ctest epst

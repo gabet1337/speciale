@@ -1141,7 +1141,7 @@ namespace ext {
 #ifdef VALIDATE
     if (state == STATE::normal)
       CONTAINED_POINTS.insert(p);
-    std::cerr << "we should not get here" << std::endl;
+    // std::cerr << "we should not get here" << std::endl;
 #endif
     if (root->is_leaf()) {
       root->insert_into_point_buffer(p);
@@ -1253,7 +1253,7 @@ namespace ext {
     if (node->is_root()) {
       DEBUG_MSG("Root is cached per default");
       if (node != root) {
-        std::cerr << "deleted " << node << std::endl;
+        // std::cerr << "deleted " << node << std::endl;
         delete node;
       }
       return root;
@@ -1264,7 +1264,7 @@ namespace ext {
       DEBUG_MSG("We have already cached node " << node->id);
       if (cur_hit->second != node) {
         //node.flush_all(); // added this
-        std::cerr << "deleted " << node << std::endl;
+        // std::cerr << "deleted " << node << std::endl;
         delete node;
       }
       return cur_hit->second;
@@ -1278,13 +1278,13 @@ namespace ext {
       cur_cache[res->id] = res;
       prev_cache.erase(bpn);
       if (res != node) {
-        std::cerr << "deleted " << node << std::endl;
+        // std::cerr << "deleted " << node << std::endl;
         delete node;
       }
       return res;
     }
     DEBUG_MSG("No cache-hit. Adding node " << node->id << " to cache.");
-    std::cerr << "added " << node << " to cache" << std::endl;
+    // std::cerr << "added " << node << " to cache" << std::endl;
     cur_cache[node->id] = node;
     return node;
   }
@@ -1294,7 +1294,7 @@ namespace ext {
     DEBUG_MSG("Starting to clear cache");
     for (auto bpn : prev_cache) {
       bpn.second->flush_all();
-      std::cerr << "deleted " << bpn.second << std::endl;
+      // std::cerr << "deleted " << bpn.second << std::endl;
       delete bpn.second;
     }
     prev_cache.clear();
@@ -1610,7 +1610,7 @@ namespace ext {
     }
 
     if ( !cur_cache.empty() )
-        std::cerr << "ENDED ------------------------------------" << std::endl;
+        // std::cerr << "ENDED ------------------------------------" << std::endl;
 
     clear_cache();
     
@@ -1655,7 +1655,7 @@ namespace ext {
   buffered_pst::buffered_pst_node* buffered_pst::copy_node(buffered_pst_node* node) {
     if (node->is_root()) return node;
     buffered_pst_node* res =  new buffered_pst_node(node->id, buffer_size, epsilon, root);
-    std::cerr << "created new node: " << res << std::endl;
+    // std::cerr << "created new node: " << res << std::endl;
     return res;
   }
 
@@ -3022,10 +3022,10 @@ namespace ext {
 
     for (int i=epoch_begin; i < epoch_end; i++) {
       DEBUG_MSG("Destructing file " << i);
-      std::cerr << "START DELETING line 2997 " << std::endl;
+      // std::cerr << "START DELETING line 2997 " << std::endl;
       util::remove_directory(std::to_string(i));
       util::remove_directory("c_"+std::to_string(i));
-      std::cerr << "END DELETING line 2997 " << std::endl;
+      // std::cerr << "END DELETING line 2997 " << std::endl;
     }
 
     epoch_begin = epoch_end;
@@ -3244,10 +3244,10 @@ namespace ext {
     delete root;
     for (int i=0; i < std::max(next_id,1); i++) {
       DEBUG_MSG("Destructing file " << i);
-      std::cerr << "START DELETING DESTRUCTION" << std::endl;
+      // std::cerr << "START DELETING DESTRUCTION" << std::endl;
       util::remove_directory(std::to_string(i));
       util::remove_directory("c_"+std::to_string(i));
-      std::cerr << "END DELETING DESTRUCTION" << std::endl;
+      // std::cerr << "END DELETING DESTRUCTION" << std::endl;
     }
   }
 
