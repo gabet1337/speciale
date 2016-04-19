@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70005" creator="Ipe 7.1.4">
-<info created="D:20160220042818" modified="D:20160419142037"/>
+<info created="D:20160220042818" modified="D:20160419142524"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -303,7 +303,7 @@ h
 512 656 l
 512 656 l
 </path>
-<path matrix="1 0 0 1 -32 -16" stroke="black" fill="white">
+<path matrix="1 0 0 1 -32 -16" stroke="black" fill="white" dash="dotted">
 96 688 m
 96 656 l
 128 656 l
@@ -319,7 +319,7 @@ h
 h
 </path>
 <text matrix="1 0 0 1 -96 120" transformations="translations" pos="236 532" stroke="black" type="label" width="8.29" height="8.169" depth="0" valign="baseline" size="large">B</text>
-<path matrix="1 0 0 1 96 -16" stroke="black" fill="white">
+<path matrix="1 0 0 1 96 -16" stroke="black" fill="white" dash="dotted">
 96 688 m
 96 656 l
 128 656 l
@@ -327,7 +327,7 @@ h
 h
 </path>
 <text matrix="1 0 0 1 -32 120" transformations="translations" pos="236 532" stroke="black" type="label" width="8.454" height="8.169" depth="0" valign="baseline" size="large">C</text>
-<path matrix="1 0 0 1 160 -16" stroke="black" fill="white">
+<path matrix="1 0 0 1 160 -16" stroke="black" fill="white" dash="dotted">
 96 688 m
 96 656 l
 128 656 l
@@ -335,7 +335,7 @@ h
 h
 </path>
 <text matrix="1 0 0 1 32 120" transformations="translations" pos="236 532" stroke="black" type="label" width="8.94" height="8.169" depth="0" valign="baseline" size="large">D</text>
-<path matrix="1 0 0 1 224 -16" stroke="black" fill="white">
+<path matrix="1 0 0 1 224 -16" stroke="black" fill="white" dash="dotted">
 96 688 m
 96 656 l
 128 656 l
@@ -343,7 +343,7 @@ h
 h
 </path>
 <text matrix="1 0 0 1 96 120" transformations="translations" pos="236 532" stroke="black" type="label" width="7.965" height="8.169" depth="0" valign="baseline" size="large">E</text>
-<path matrix="1 0 0 1 288 -16" stroke="black" fill="white">
+<path matrix="1 0 0 1 288 -16" stroke="black" fill="white" dash="dotted">
 96 688 m
 96 656 l
 128 656 l
@@ -351,7 +351,7 @@ h
 h
 </path>
 <text matrix="1 0 0 1 160 120" transformations="translations" pos="236 532" stroke="black" type="label" width="7.639" height="8.169" depth="0" valign="baseline" size="large">F</text>
-<path matrix="1 0 0 1 352 -16" stroke="black" fill="white">
+<path matrix="1 0 0 1 352 -16" stroke="black" fill="white" dash="dotted">
 96 688 m
 96 656 l
 128 656 l
@@ -359,7 +359,7 @@ h
 h
 </path>
 <text matrix="1 0 0 1 224 120" transformations="translations" pos="236 532" stroke="black" type="label" width="9.185" height="8.169" depth="0" valign="baseline" size="large">G</text>
-<path matrix="1 0 0 1 416 -16" stroke="black" fill="white">
+<path matrix="1 0 0 1 416 -16" stroke="black" fill="white" dash="dotted">
 96 688 m
 96 656 l
 128 656 l
