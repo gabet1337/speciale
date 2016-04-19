@@ -30,10 +30,7 @@ namespace internal {
     void flush_insert_buffer();
     void flush_delete_buffer();
     size_t buffer_size;
-    Driver *driver;
-    Connection *con;
     Statement *stmt;
-    ResultSet *res;
     std::vector<point> insert_buffer;
     std::vector<point> delete_buffer;
   };
@@ -41,11 +38,10 @@ namespace internal {
 
   mysql_pst::mysql_pst() {
     buffer_size = 4096;
-    driver = get_driver_instance();
-    con = driver->connect("tcp://127.0.0.1:3306", "root", "thesis2016");
+    Connection *con = get_driver_instance()->connect("tcp://127.0.0.1:3306", "root", "thesis2016");
     con->setSchema("TESTDB");
     stmt = con->createStatement();
-
+    delete con;
     //create a table for use:
     stmt->execute("DROP TABLE IF EXISTS test");
     stmt->execute("CREATE TABLE test(x int, y int) ENGINE=InnoDB");
@@ -56,9 +52,7 @@ namespace internal {
   }
 
   mysql_pst::~mysql_pst() {
-    // delete res;
-    // delete stmt;
-    // delete con;
+    delete stmt;
   }
 
   void mysql_pst::insert(const point &p) {
@@ -109,10 +103,11 @@ namespace internal {
     std::string x2s = std::to_string(x2);
     std::string ys = std::to_string(y);
     std::string q = "select * from test where x >= " + x1s + " AND " + x2s + " >= x AND y >= " + ys;
-    res = stmt->executeQuery(q);
+    ResultSet *res = stmt->executeQuery(q);
     while (res->next()) {
       output.write(point(res->getInt(1), res->getInt(2)));
     }
+    delete res;
     output.close();
   }
 

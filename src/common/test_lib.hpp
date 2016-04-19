@@ -8,6 +8,11 @@
 #include <vector>
 #include <sstream>
 #include <fstream>
+#include "point.hpp"
+#include "../stream/stream.hpp"
+#include "definitions.hpp"
+#include "utilities.hpp"
+
 namespace test {
   class clock {
     typedef std::chrono::high_resolution_clock hsc;
@@ -15,10 +20,18 @@ namespace test {
   public:
     void start();
     void stop();
+    long long elapsed();
     long long count();
   private:
     tp s,e;
   };
+
+  long long clock::elapsed() {
+    auto n = hsc::now();
+    using namespace std;
+    using namespace std::chrono;
+    return duration_cast<seconds>(n-s).count();
+  }
 
   void clock::start() {
     s = hsc::now();
@@ -31,7 +44,7 @@ namespace test {
   long long clock::count() {
     using namespace std;
     using namespace std::chrono;
-    return duration_cast<milliseconds>(e-s).count();
+    return duration_cast<seconds>(e-s).count();
   }
 
   class random {
@@ -184,6 +197,26 @@ namespace test {
     long long xlower = 0,xupper = 0,ylower = 0,yupper = 0;
     KEY_POS key_position = KEY_POS::BOTTOM_RIGHT;
     std::vector<std::string> plot_lines;
+  };
+
+  class point_data_generator {
+
+  public:
+    point_data_generator() {}
+    ~point_data_generator() {}
+    void generate(size_t bytes, const std::string &output_file) {
+      util::remove_file(output_file);
+      io::buffered_stream<point> of(4096);
+      of.open(output_file);
+      random r;
+      size_t data_size = sizeof(point);
+      size_t data_written = 0;
+      while (data_written < bytes) {
+        of.write(point(r.next(INF-1), r.next(INF-1)));
+        data_written+=data_size;
+      }
+      of.close();
+    }
   };
 
   
