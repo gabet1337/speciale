@@ -86,6 +86,7 @@ void test_report_random_1gb(size_t buffer_size, double epsilon) {
     //res.insert(p);
     if (i > 0 && i % (128*1024) == 0) {
       cout << " - inserted " << i / (128*1024) << " MB" << endl;
+      cout << " - this is " << i << " entries." << endl;
     }
   }
 

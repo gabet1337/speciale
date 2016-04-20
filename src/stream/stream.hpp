@@ -70,7 +70,7 @@ namespace io {
     struct stat sb;
     fstat(file_descriptor, &sb);
     file_size = sb.st_size;
-    b_eof = file_size == file_pos;
+    b_eof = (size_t)file_size == file_pos;
     fill();
   }
 
@@ -89,7 +89,7 @@ namespace io {
 
   template <typename T>
   bool buffered_stream<T>::eof() {
-    return b_eof && file_pos >= file_size;
+    return b_eof && file_pos >= (size_t)file_size;
   }
 
   template <typename T>
@@ -98,7 +98,7 @@ namespace io {
     if (is_dirty) sync();
     if (!e) {
       buffer_start = seek(0,SEEK_CUR);
-      if (buffer_start == -1) {
+      if (buffer_start == (off_t)-1) {
         perror(std::string("Error seeking file: ").append(file_name).append("'").c_str());
         exit(errno);
       }
@@ -107,7 +107,7 @@ namespace io {
         perror(std::string("Error reading from file '").append(file_name).append("'").c_str());
         exit(errno);
       }
-      if (bytes_read < buffer_size) b_eof = true; else b_eof = false;
+      if ((size_t)bytes_read < buffer_size) b_eof = true; else b_eof = false;
       if (buffer_start+bytes_read >= file_size) b_eof = true; else b_eof = false;
     } else {
       file_pos = seek(0,SEEK_END);
@@ -122,7 +122,7 @@ namespace io {
     off_t cur_pos = seek(0, SEEK_CUR);
     seek(buffer_start, SEEK_SET);
     size_t bytes_written = ::write(file_descriptor, buffer, elems*sizeof(T));
-    if (bytes_written == -1) {
+    if (bytes_written == (size_t)-1) {
       perror(std::string("Error on syncing buffer for file: '").append(file_name).append("'").c_str());
       exit(errno);
     }
@@ -134,7 +134,7 @@ namespace io {
   off_t buffered_stream<T>::seek(size_t offset, int whence) {
     if (is_dirty) sync();
     file_pos = lseek(file_descriptor, offset, whence);
-    if (file_pos == -1) {
+    if (file_pos == (size_t)-1) {
       perror(std::string("Error seeking file: ").append(file_name).append("'").c_str());
       exit(errno);
     }
@@ -167,7 +167,7 @@ namespace io {
 
   template <typename T>
   bool buffered_stream<T>::should_refill() {
-    if ( !(buffer_start <= file_pos &&
+    if ( !(buffer_start <= (off_t)file_pos &&
            file_pos < buffer_start+buffer_size) ) return true;
     if (buffer_pos() >= buffer_size/sizeof(T)) return true;
     return false;
