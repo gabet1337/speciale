@@ -45,7 +45,34 @@ namespace common {
     case MEASURE::page_faults: return "pfs";
     default: return "invalid measure";
     }
+  }
 
+  enum XLABEL {
+    input_size,
+    input_size_in_thousands,
+    input_size_in_millions
+  };
+
+  std::string XLABEL_to_string(XLABEL x) {
+    switch (x) {
+    case XLABEL::input_size: return "N (input size)";
+    case XLABEL::input_size_in_thousands: return "N/1000 (input size)";
+    case XLABEL::input_size_in_millions: return "N/10^6 (input size)";
+    default: return "invalid label";
+    }
+  }
+
+  std::string MEASURE_to_label(MEASURE m) {
+    switch (m) {
+    case MEASURE::time: return "Time (s)";
+    case MEASURE::num_ios: return "I/Os";
+    case MEASURE::L1: return "L1 cache accesses";
+    case MEASURE::L2: return "L2 cache accesses";
+    case MEASURE::L3: return "L3 cache accesses";
+    case MEASURE::instr_count: return "instruction count";
+    case MEASURE::page_faults: return "page faults";
+    default: return "invalid measure";
+    }
   }
   
 };
