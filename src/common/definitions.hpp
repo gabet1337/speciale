@@ -28,9 +28,9 @@ namespace common {
 
   enum MEASURE {
     first = 1,
-    time = 2, num_ios = 3, L1 = 4,
-    L2 = 5, L3 = 6, instr_count = 7,
-    page_faults = 8,
+    time = 2, num_ios = 3,
+    page_faults = 4,
+    //L1 = 5, L2 = 6, L3 = 7, instr_count = 8,
     last = 9
   };
 
@@ -38,11 +38,11 @@ namespace common {
     switch (m) {
     case MEASURE::time: return "time";
     case MEASURE::num_ios: return "ios";
-    case MEASURE::L1: return "L1";
-    case MEASURE::L2: return "L2";
-    case MEASURE::L3: return "L3";
-    case MEASURE::instr_count: return "ins_ct";
     case MEASURE::page_faults: return "pfs";
+    // case MEASURE::L1: return "L1";
+    // case MEASURE::L2: return "L2";
+    // case MEASURE::L3: return "L3";
+    // case MEASURE::instr_count: return "ins_ct";
     default: return "invalid measure";
     }
   }
@@ -66,11 +66,11 @@ namespace common {
     switch (m) {
     case MEASURE::time: return "Time (s)";
     case MEASURE::num_ios: return "I/Os";
-    case MEASURE::L1: return "L1 cache accesses";
-    case MEASURE::L2: return "L2 cache accesses";
-    case MEASURE::L3: return "L3 cache accesses";
-    case MEASURE::instr_count: return "instruction count";
     case MEASURE::page_faults: return "page faults";
+    // case MEASURE::L1: return "L1 cache accesses";
+    // case MEASURE::L2: return "L2 cache accesses";
+    // case MEASURE::L3: return "L3 cache accesses";
+    // case MEASURE::instr_count: return "instruction count";
     default: return "invalid measure";
     }
   }

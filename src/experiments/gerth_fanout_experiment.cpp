@@ -16,8 +16,9 @@ class gerth_fanout_experiment : public base_experiment {
     size_t interval = 10 * 1024 * 1024; //10 mb intervals
     size_t print_interval = 1024 * 1024;
     size_t stop_at = 1024 * 1024 * 500;
-    test::clock timer;
-    timer.start();
+
+    restart_timers();
+
     while (!data.eof()) {
       point p = data.read();
       pst->insert(p);
@@ -28,7 +29,7 @@ class gerth_fanout_experiment : public base_experiment {
       }
 
       if (data_read % interval == 0) {
-        add_result(instance.id, result::MEASURE::time, data_read/(1024*1024), timer.elapsed());
+        measure_everything(instance.id, data_read/(1024*1024));
 
         save_results(instance);
         if (data_read >= stop_at) break;

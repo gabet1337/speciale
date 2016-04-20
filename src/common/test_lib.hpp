@@ -9,6 +9,12 @@
 #include <sstream>
 #include <fstream>
 #include <unistd.h>
+#include <string.h>
+#include <sys/resource.h>
+#include <sys/ioctl.h>
+#include <linux/perf_event.h>
+#include <linux/hw_breakpoint.h>
+#include <asm/unistd.h>
 #include "point.hpp"
 #include "../stream/stream.hpp"
 #include "definitions.hpp"
@@ -215,6 +221,87 @@ namespace test {
     }
   };
 
+  class pagefaults {
+  public:
+    pagefaults();
+    void start();
+    void stop();
+    uint64_t count();
+    uint64_t elapsed();
+  private:
+    long perf_event_open(perf_event_attr*, pid_t, int, int, long unsigned int);
+    struct perf_event_attr pe_attr_page_faults;
+    int page_faults_fd;
+    uint64_t page_faults_count;
+  };
+
+  pagefaults::pagefaults() {
+    memset(&pe_attr_page_faults, 0, sizeof(pe_attr_page_faults));
+    pe_attr_page_faults.size = sizeof(pe_attr_page_faults);
+    pe_attr_page_faults.type = PERF_TYPE_SOFTWARE;
+    pe_attr_page_faults.config = PERF_COUNT_SW_PAGE_FAULTS;
+    pe_attr_page_faults.disabled = 1;
+    pe_attr_page_faults.exclude_kernel = 1;
+    page_faults_fd = perf_event_open(&pe_attr_page_faults, 0, -1, -1, 0);
+    if (page_faults_fd ==  -1) {
+      printf("perf_event_open failed for page faults %s\n", strerror(errno));
+      return;
+    }
+  }
+
+  long pagefaults::perf_event_open(struct perf_event_attr *hw_event,
+				   pid_t pid,
+				   int cpu,
+				   int group_fd,
+				   unsigned long flags) {
+    int ret = syscall(__NR_perf_event_open, hw_event, pid, cpu,
+		      group_fd, flags);
+    return ret;
+  }
+
+  void pagefaults::start() {
+    ioctl(page_faults_fd, PERF_EVENT_IOC_RESET, 0);
+    ioctl(page_faults_fd, PERF_EVENT_IOC_ENABLE, 0);
+  }
+
+  void pagefaults::stop() {
+    ioctl(page_faults_fd, PERF_EVENT_IOC_DISABLE, 0);
+    int r = read(page_faults_fd, &page_faults_count, sizeof(page_faults_count));
+    r++;
+  }
+
+  uint64_t pagefaults::count() {
+    return page_faults_count;
+  }
+
+  uint64_t pagefaults::elapsed() {
+    int r =read(page_faults_fd, &page_faults_count, sizeof(page_faults_count));
+    r++;
+    return page_faults_count;
+  }
+
+  class proc_io {
+
+  public:
+    proc_io() { start = 0; }
+    ~proc_io() {}
+    size_t total_ios() {
+      pid_t pid = getpid();
+      size_t rchar, wchar, syscr, syscw, read_bytes, write_bytes, cancelled_write_bytes;
+      FILE* f;
+      std::string name = "/proc/"+std::to_string(pid)+"/io";
+      f = fopen(name.c_str(), "r");
+      int r = fscanf(f, "rchar: %zu\nwchar: %zu\nsyscr: %zu\nsyscw: %zu\nread_bytes: %zu\nwrite_bytes: %zu\ncancelled_write_bytes: %zu", &rchar, &wchar, &syscr, &syscw, &read_bytes, &write_bytes, &cancelled_write_bytes);
+      fclose(f);
+      r++;
+      return syscr + syscw - start;
+    }
+    void restart() {
+      start = total_ios();
+    }
+  private:
+    size_t start;
+  };
   
 };
 
