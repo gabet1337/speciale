@@ -37,19 +37,25 @@ class gerth_fanout_experiment : public base_experiment {
     delete pst;
   }
 
+  void plot() {
+    base_experiment::plot();
+
+  }
+
 };
 
 int main() {
 
   gerth_fanout_experiment gfe("gerth_fanout_experiment");
-  gfe.add(1, "fanout2", gfe.PST_TYPE::GERTH, 1024*1024, log(2.5)/log(1024.0*1024.0)); //fanout 2
-  gfe.add(2, "fanout3", gfe.PST_TYPE::GERTH, 1024*1024, log(3.0)/log(1024.0*1024.0)); // 3
-  gfe.add(3, "fanout4",gfe.PST_TYPE::GERTH, 1024*1024, log(4.5)/log(1024.0*1024.0)); // 4
-  gfe.add(4, "fanout8",gfe.PST_TYPE::GERTH, 1024*1024, log(8.5)/log(1024.0*1024.0)); // 8
-  gfe.add(5, "fanout16",gfe.PST_TYPE::GERTH, 1024*1024, log(16.5)/log(1024.0*1024.0)); // 16
-  gfe.add(6, "fanout32",gfe.PST_TYPE::GERTH, 1024*1024, log(32.5)/log(1024.0*1024.0)); // 32
-  gfe.add(7, "fanout128",gfe.PST_TYPE::GERTH, 1024*1024, log(128.5)/log(1024.0*1024.0)); // 128
+  gfe.add(1, "fanout2", common::PST_VARIANT::GERTH, 1024*1024, log(2.5)/log(1024.0*1024.0)); //fanout 2
+  // gfe.add(2, "fanout3", common::PST_VARIANT::GERTH, 1024*1024, log(3.0)/log(1024.0*1024.0)); // 3
+  // gfe.add(3, "fanout4",common::PST_VARIANT::GERTH, 1024*1024, log(4.5)/log(1024.0*1024.0)); // 4
+  // gfe.add(4, "fanout8",common::PST_VARIANT::GERTH, 1024*1024, log(8.5)/log(1024.0*1024.0)); // 8
+  // gfe.add(5, "fanout16",common::PST_VARIANT::GERTH, 1024*1024, log(16.5)/log(1024.0*1024.0)); // 16
+  // gfe.add(6, "fanout32",common::PST_VARIANT::GERTH, 1024*1024, log(32.5)/log(1024.0*1024.0)); // 32
+  // gfe.add(7, "fanout128",common::PST_VARIANT::GERTH, 1024*1024, log(128.5)/log(1024.0*1024.0)); // 128
   gfe.run();
+  gfe.plot();
 
   return 0;
 }

@@ -4,18 +4,14 @@
 #include <set>
 #include <vector>
 #include <algorithm>
+#include "../common/definitions.hpp"
 namespace experiment {
   
   class result {
     public:
-    enum MEASURE {
-      first,
-      time, num_ios, L1, L2, L3, instr_count,
-      page_faults,
-      last
-    };
+    typedef common::MEASURE MEASURE;
     result() {
-      for (int i = first+1; i < last; i++)
+      for (int i = MEASURE::first+1; i < MEASURE::last; i++)
         result_map[i] = std::map<size_t, size_t>();
     }
     
@@ -28,32 +24,18 @@ namespace experiment {
 
     std::string get_results() {
       std::string result = "#input\t";
-      for (int i = first+1; i < last; i++) {
-        result += MEASURE_to_string(static_cast<MEASURE>(i));
+      for (int i = MEASURE::first+1; i < MEASURE::last; i++) {
+        result += common::MEASURE_to_string(static_cast<MEASURE>(i));
         result += "\t";
       }
       for (auto s : input_sizes) {
         result += "\n";
         result += std::to_string(s) + "\t";
-        for (int i = first+1; i < last; i++) {
+        for (int i = MEASURE::first+1; i < MEASURE::last; i++) {
           result += std::to_string(result_map[i][s]) + "\t";
         }
       }
       return result;
-    }
-
-    std::string MEASURE_to_string(MEASURE m) {
-      switch (m) {
-      case MEASURE::time: return "time";
-      case MEASURE::num_ios: return "ios";
-      case MEASURE::L1: return "L1";
-      case MEASURE::L2: return "L2";
-      case MEASURE::L3: return "L3";
-      case MEASURE::instr_count: return "ins ct";
-      case MEASURE::page_faults: return "pfs";
-      default: return "invalid measure";
-      }
-
     }
 
     private:
