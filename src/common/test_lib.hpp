@@ -206,13 +206,13 @@ namespace test {
   public:
     point_data_generator() {}
     ~point_data_generator() {}
-    void generate(size_t bytes, const std::string &output_file) {
+    void generate(unsigned long long bytes, const std::string &output_file) {
       util::remove_file(output_file);
       io::buffered_stream<point> of(4096);
       of.open(output_file);
       random r;
-      size_t data_size = sizeof(point);
-      size_t data_written = 0;
+      unsigned long long data_size = sizeof(point);
+      unsigned long long data_written = 0;
       while (data_written < bytes) {
         of.write(point(r.next(INF-1), r.next(INF-1)));
         data_written+=data_size;
