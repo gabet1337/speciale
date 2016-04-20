@@ -25,8 +25,6 @@
 namespace experiment {
 
   class base_experiment {
-  public:
-    enum PST_TYPE { ARGE = 1, GERTH = 2, MYSQL = 3, RTREE = 4, INTERNAL = 5 };
   protected:
     typedef ext::external_priority_search_tree arge_pst;
     typedef ext::buffered_pst gerth_pst;
@@ -34,8 +32,7 @@ namespace experiment {
     typedef internal::mysql_pst mysql_pst;
     typedef internal::dynamic_pst dyn_pst;
     typedef io::buffered_stream<point> stream;
-
-
+    typedef common::PST_VARIANT PST_TYPE;
 
     struct run_instance {
       size_t id;
@@ -50,6 +47,7 @@ namespace experiment {
     std::string name;
     std::string start_time;
 
+    
     std::string get_file_name(run_instance instance);
     std::string get_directory();
     const std::string current_date_time();
@@ -57,9 +55,10 @@ namespace experiment {
     result results[256];
     void add_result(size_t id, result::MEASURE m, size_t input_size, size_t res);
     void save_results(run_instance instance);
-    std::string PST_TYPE_to_string(PST_TYPE type);
     std::vector<run_instance> run_instances;
     common::pst_interface * PST_factory(PST_TYPE type, size_t buffer_size, double epsilon);
+    void plot_with_size(test::gnuplot &gp, run_instance instance, result::MEASURE m);
+    std::string get_working_directory();
   public:
     base_experiment(const std::string &experiment_name);
     virtual ~base_experiment();
@@ -70,7 +69,6 @@ namespace experiment {
   };
 
   base_experiment::base_experiment(const std::string &experiment_name) {
-
     start_time = current_date_time();
     name = experiment_name;
     int r = system(("mkdir -p "+get_directory()).c_str());
@@ -93,10 +91,9 @@ namespace experiment {
 
     for (auto ri : run_instances) {
       std::cout << "Running " << ri.name << std::endl
-                << "type: " << PST_TYPE_to_string(ri.type) << std::endl
+                << "type: " << common::PST_VARIANT_to_string(ri.type) << std::endl
                 << "buffer size: " << ri.buffer_size << std::endl
                 << "epsilon: " <<  ri.epsilon << std::endl;
-        
       run_experiment(ri);
     }
   }
@@ -119,8 +116,19 @@ namespace experiment {
     of.close();
   }
 
+  void base_experiment::plot_with_size(test::gnuplot &gp, run_instance instance, result::MEASURE m) {
+    gp.add_line(instance.name, instance.type, get_working_directory()+"/"+get_file_name(instance), 1, m);
+  }
+
   void base_experiment::plot() {
-    
+    for (int i = common::MEASURE::first+1; i < common::MEASURE::last; i++) {
+      test::gnuplot gp;
+      std::string output = common::MEASURE_to_string(static_cast<common::MEASURE>(i));
+      gp.set_output(get_directory()+"/"+output);
+      for (auto ri : run_instances) plot_with_size(gp, ri, static_cast<common::MEASURE>(i));
+      gp.output_script(get_directory()+"/plot_"+output+".sh");
+      gp.output_plot(get_directory()+"/plot_"+output+".sh");
+    }
   }
 
   void base_experiment::add_result
@@ -158,15 +166,11 @@ namespace experiment {
     }
   }
 
-  std::string base_experiment::PST_TYPE_to_string(PST_TYPE type) {
-    switch (type) {
-    case PST_TYPE::ARGE: return "Arge";
-    case PST_TYPE::GERTH: return "Gerth";
-    case PST_TYPE::MYSQL: return "MySQL";
-    case PST_TYPE::RTREE: return "RTree";
-    case PST_TYPE::INTERNAL: return "Internal";
-    default: return "invalid";
-    }
+  std::string base_experiment::get_working_directory() {
+    char* dir = get_current_dir_name();
+    std::string res = std::string(dir);
+    delete dir;
+    return res;
   }
 
 };

@@ -8,6 +8,7 @@
 #include <vector>
 #include <sstream>
 #include <fstream>
+#include <unistd.h>
 #include "point.hpp"
 #include "../stream/stream.hpp"
 #include "definitions.hpp"
@@ -112,7 +113,6 @@ namespace test {
   public:
     gnuplot() {}
     ~gnuplot() {}
-    enum STYLE { ARGE = 1, GERTH = 2, RTREE = 3, MYSQL = 4, INTERNAL = 5 };
     enum KEY_POS { BOTTOM_LEFT, BOTTOM_RIGHT, TOP_LEFT, TOP_RIGHT };
     std::string get_key_pos() {
       switch (key_position) {
@@ -123,7 +123,7 @@ namespace test {
       default: return "bottom right";
       }
     }
-
+    typedef common::PST_VARIANT STYLE;
     void set_font(std::string type, size_t size) { font = type; font_size = size; }
     void set_output(std::string file) { output = file; }
     void add_line(std::string name, STYLE style_line, std::string data_file, int line1, int line2) {
@@ -177,14 +177,10 @@ namespace test {
       file.close();
     }
 
-    void output_plot() {
-      std::ofstream file;
-      file.open("hjafbs781g5.sh");
-      file << generate_script();
-      file.close();
-      int r = system("chmod +x hjafbs781g5.sh");
-      r = system("./hjafbs781g5.sh");
-      r = system("rm -rf hjafbs781g5.sh");
+    void output_plot(std::string script) {
+      int r = system((std::string("chmod +x ")+script).c_str());
+      r = system((std::string("./")+script).c_str());
+      //r = system((std::string("rm -rf ")+script).c_str());
       r++;
     }
 
