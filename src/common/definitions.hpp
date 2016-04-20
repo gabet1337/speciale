@@ -31,7 +31,7 @@ namespace common {
     time = 2, num_ios = 3,
     page_faults = 4,
     //L1 = 5, L2 = 6, L3 = 7, instr_count = 8,
-    last = 9
+    last = 5
   };
 
   std::string MEASURE_to_string(MEASURE m) {
