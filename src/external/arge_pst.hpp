@@ -233,11 +233,13 @@ namespace ext {
   {}
 
   external_priority_search_tree::~external_priority_search_tree() {
+    root->query_data_structure->destroy();
+    delete root->query_data_structure;
+    delete root;
     for (size_t i = 0; i <= next_id; i++) {
       util::remove_directory(std::to_string(i));
       util::remove_directory("c_"+std::to_string(i));
     }
-    delete root;
   }
 
   void external_priority_search_tree::insert(const point &p) {
@@ -632,6 +634,7 @@ namespace ext {
         break;
 
       };
+      flush_data(n, DATA_TYPE::all);
       if ( !n->is_root() ) delete n;
       if ( n2 && !n2->is_root() ) delete n2;
     }
