@@ -46,6 +46,7 @@ void test_report() {
   print_description("Starting to test report of internal dynamic pst");
 
   dpst dpst;
+
   dpst.insert(point(10,10));
   dpst.insert(point(12,12));
   dpst.insert(point(9,9));
@@ -124,7 +125,8 @@ void test_report_random_1gb(size_t buffer_size, double epsilon) {
   print_description("starting test of report random 1gb");
 
   dpst epst;
-
+  epst.set_global_rebuild_configuration(dpst::global_rebuild_configuration(INF,0.5));
+  
   test::random r;
   
   io::buffered_stream<point> bs(4096);
@@ -201,9 +203,9 @@ int main() {
   //test_insert();
   //test_remove_report();
   //test_report();
-  //test_report_random_1gb(4096, 0.5);
+  test_report_random_1gb(4096, 0.5);
 
-  test_construct();
+  //test_construct();
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
 
   return 0;

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70005" creator="Ipe 7.1.4">
-<info created="D:20160220042818" modified="D:20160419142524"/>
+<info created="D:20160220042818" modified="D:20160420113733"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -310,7 +310,7 @@ h
 128 688 l
 h
 </path>
-<text matrix="1 0 0 1 -160 120" transformations="translations" pos="236 532" stroke="black" type="label" width="8.775" height="8.169" depth="0" valign="baseline" size="large">A</text>
+<text matrix="1 0 0 1 -160 120" transformations="translations" pos="236 532" stroke="black" type="label" valign="baseline" size="large">A</text>
 <path matrix="1 0 0 1 32 -16" stroke="black" fill="white">
 96 688 m
 96 656 l
@@ -318,7 +318,7 @@ h
 128 688 l
 h
 </path>
-<text matrix="1 0 0 1 -96 120" transformations="translations" pos="236 532" stroke="black" type="label" width="8.29" height="8.169" depth="0" valign="baseline" size="large">B</text>
+<text matrix="1 0 0 1 -96 120" transformations="translations" pos="236 532" stroke="black" type="label" valign="baseline" size="large">B</text>
 <path matrix="1 0 0 1 96 -16" stroke="black" fill="white" dash="dotted">
 96 688 m
 96 656 l
@@ -326,7 +326,7 @@ h
 128 688 l
 h
 </path>
-<text matrix="1 0 0 1 -32 120" transformations="translations" pos="236 532" stroke="black" type="label" width="8.454" height="8.169" depth="0" valign="baseline" size="large">C</text>
+<text matrix="1 0 0 1 -32 120" transformations="translations" pos="236 532" stroke="black" type="label" valign="baseline" size="large">C</text>
 <path matrix="1 0 0 1 160 -16" stroke="black" fill="white" dash="dotted">
 96 688 m
 96 656 l
@@ -334,7 +334,7 @@ h
 128 688 l
 h
 </path>
-<text matrix="1 0 0 1 32 120" transformations="translations" pos="236 532" stroke="black" type="label" width="8.94" height="8.169" depth="0" valign="baseline" size="large">D</text>
+<text matrix="1 0 0 1 32 120" transformations="translations" pos="236 532" stroke="black" type="label" valign="baseline" size="large">D</text>
 <path matrix="1 0 0 1 224 -16" stroke="black" fill="white" dash="dotted">
 96 688 m
 96 656 l
@@ -342,7 +342,7 @@ h
 128 688 l
 h
 </path>
-<text matrix="1 0 0 1 96 120" transformations="translations" pos="236 532" stroke="black" type="label" width="7.965" height="8.169" depth="0" valign="baseline" size="large">E</text>
+<text matrix="1 0 0 1 96 120" transformations="translations" pos="236 532" stroke="black" type="label" valign="baseline" size="large">E</text>
 <path matrix="1 0 0 1 288 -16" stroke="black" fill="white" dash="dotted">
 96 688 m
 96 656 l
@@ -350,7 +350,7 @@ h
 128 688 l
 h
 </path>
-<text matrix="1 0 0 1 160 120" transformations="translations" pos="236 532" stroke="black" type="label" width="7.639" height="8.169" depth="0" valign="baseline" size="large">F</text>
+<text matrix="1 0 0 1 160 120" transformations="translations" pos="236 532" stroke="black" type="label" valign="baseline" size="large">F</text>
 <path matrix="1 0 0 1 352 -16" stroke="black" fill="white" dash="dotted">
 96 688 m
 96 656 l
@@ -358,7 +358,7 @@ h
 128 688 l
 h
 </path>
-<text matrix="1 0 0 1 224 120" transformations="translations" pos="236 532" stroke="black" type="label" width="9.185" height="8.169" depth="0" valign="baseline" size="large">G</text>
+<text matrix="1 0 0 1 224 120" transformations="translations" pos="236 532" stroke="black" type="label" valign="baseline" size="large">G</text>
 <path matrix="1 0 0 1 416 -16" stroke="black" fill="white" dash="dotted">
 96 688 m
 96 656 l
@@ -366,7 +366,7 @@ h
 128 688 l
 h
 </path>
-<text matrix="1 0 0 1 288 120" transformations="translations" pos="236 532" stroke="black" type="label" width="8.775" height="8.169" depth="0" valign="baseline" size="large">H</text>
+<text matrix="1 0 0 1 288 120" transformations="translations" pos="236 532" stroke="black" type="label" valign="baseline" size="large">H</text>
 <path stroke="black" fill="white" dash="dashed">
 112 700 m
 112 560 l
@@ -378,10 +378,7 @@ h
 <path matrix="1 0 0 1 -128 176" stroke="black" fill="1">
 16 0 0 16 240 528 e
 </path>
-<text matrix="1 0 0 1 -128 168" transformations="translations" pos="236 532" stroke="black" type="label" width="8.775" height="8.169" depth="0" valign="baseline" size="large">A</text>
-<path matrix="1 0 0 1 48 -32" stroke="black" fill="white">
-4 0 0 4 128 560 e
-</path>
+<text matrix="1 0 0 1 -128 168" transformations="translations" pos="236 532" stroke="black" type="label" valign="baseline" size="large">A</text>
 <path stroke="black" fill="white" dash="dashed">
 176 752 m
 176 528 l
@@ -390,38 +387,29 @@ h
 <path matrix="1 0 0 1 -64 224" stroke="black" fill="1">
 16 0 0 16 240 528 e
 </path>
-<text matrix="1 0 0 1 -64 216" transformations="translations" pos="236 532" stroke="black" type="label" width="8.454" height="8.169" depth="0" valign="baseline" size="large">C</text>
-<text matrix="1 0 0 1 12 20" transformations="translations" pos="108 544" stroke="black" type="label" width="7.472" height="6.808" depth="0" valign="baseline">A</text>
-<text matrix="1 0 0 1 12 16" transformations="translations" pos="172 516" stroke="black" type="label" width="7.057" height="6.808" depth="0" valign="baseline">B</text>
-<path matrix="1 0 0 1 112 16" stroke="black" fill="white">
-4 0 0 4 128 560 e
-</path>
+<text matrix="1 0 0 1 -64 216" transformations="translations" pos="236 532" stroke="black" type="label" valign="baseline" size="large">C</text>
+<text matrix="1 0 0 1 12 20" transformations="translations" pos="108 544" stroke="black" type="label" valign="baseline">A</text>
+<text matrix="1 0 0 1 12 16" transformations="translations" pos="172 516" stroke="black" type="label" valign="baseline">B</text>
 <path stroke="black" fill="white" dash="dashed">
 240 704 m
 240 576 l
 240 576 l
 </path>
-<text transformations="translations" pos="244 584" stroke="black" type="label" width="7.195" height="6.808" depth="0" valign="baseline">C</text>
+<text transformations="translations" pos="244 584" stroke="black" type="label" valign="baseline">C</text>
 <path matrix="1 0 0 1 0 176" stroke="black" fill="1">
 16 0 0 16 240 528 e
 </path>
-<text matrix="1 0 0 1 0 168" transformations="translations" pos="236 532" stroke="black" type="label" width="8.94" height="8.169" depth="0" valign="baseline" size="large">D</text>
-<path matrix="1 0 0 1 176 -8" stroke="black" fill="white">
-4 0 0 4 128 560 e
-</path>
+<text matrix="1 0 0 1 0 168" transformations="translations" pos="236 532" stroke="black" type="label" valign="baseline" size="large">D</text>
 <path stroke="black" fill="white" dash="dashed">
 304 800 m
 304 552 l
 304 552 l
 </path>
-<text matrix="1 0 0 1 -4 -4" transformations="translations" pos="316 564" stroke="black" type="label" width="7.61" height="6.808" depth="0" valign="baseline">D</text>
+<text matrix="1 0 0 1 -4 -4" transformations="translations" pos="316 564" stroke="black" type="label" valign="baseline">D</text>
 <path matrix="1 0 0 1 64 272" stroke="black" fill="white">
 16 0 0 16 240 528 e
 </path>
-<text matrix="1 0 0 1 64 264" transformations="translations" pos="236 532" stroke="black" type="label" width="7.639" height="8.169" depth="0" valign="baseline" size="large">F</text>
-<path matrix="1 0 0 1 240 -24" stroke="black" fill="white">
-4 0 0 4 128 560 e
-</path>
+<text matrix="1 0 0 1 64 264" transformations="translations" pos="236 532" stroke="black" type="label" valign="baseline" size="large">F</text>
 <path stroke="black" fill="white" dash="dashed">
 368 704 m
 368 536 l
@@ -430,8 +418,8 @@ h
 <path matrix="1 0 0 1 128 176" stroke="black" fill="1">
 16 0 0 16 240 528 e
 </path>
-<text matrix="1 0 0 1 128 168" transformations="translations" pos="236 532" stroke="black" type="label" width="7.965" height="8.169" depth="0" valign="baseline" size="large">E</text>
-<text transformations="translations" pos="376 544" stroke="black" type="label" width="6.78" height="6.808" depth="0" valign="baseline">E</text>
+<text matrix="1 0 0 1 128 168" transformations="translations" pos="236 532" stroke="black" type="label" valign="baseline" size="large">E</text>
+<text transformations="translations" pos="376 544" stroke="black" type="label" valign="baseline">E</text>
 <path matrix="1 0 0 1.14706 0 -110.588" stroke="black" fill="white" dash="dashed">
 432 752 m
 432 616 l
@@ -440,26 +428,38 @@ h
 <path matrix="1 0 0 1 192 224" stroke="black" fill="1">
 16 0 0 16 240 528 e
 </path>
-<text matrix="1 0 0 1 192 216" transformations="translations" pos="236 532" stroke="black" type="label" width="9.185" height="8.169" depth="0" valign="baseline" size="large">G</text>
-<text matrix="1 0 0 1 -4 0" transformations="translations" pos="444 620" stroke="black" type="label" width="7.818" height="6.808" depth="0" valign="baseline">G</text>
+<text matrix="1 0 0 1 192 216" transformations="translations" pos="236 532" stroke="black" type="label" valign="baseline" size="large">G</text>
+<text matrix="1 0 0 1 -4 0" transformations="translations" pos="444 620" stroke="black" type="label" valign="baseline">G</text>
 <path matrix="1 0 0 1 272 60" stroke="black" fill="white">
 4 0 0 4 128 560 e
 </path>
-<text matrix="1 0 0 1 -4 -4" transformations="translations" pos="412 628" stroke="black" type="label" width="6.503" height="6.808" depth="0" valign="baseline">F</text>
+<text matrix="1 0 0 1 -4 -4" transformations="translations" pos="412 628" stroke="black" type="label" valign="baseline">F</text>
 <path stroke="black" fill="white" dash="dashed">
 496 704 m
 496 532 l
 496 532 l
 </path>
-<text transformations="translations" pos="504 540" stroke="black" type="label" width="7.472" height="6.808" depth="0" valign="baseline">H</text>
+<text transformations="translations" pos="504 540" stroke="black" type="label" valign="baseline">H</text>
 <path matrix="1 0 0 1 256 176" stroke="black" fill="1">
 16 0 0 16 240 528 e
 </path>
-<text matrix="1 0 0 1 256 168" transformations="translations" pos="236 532" stroke="black" type="label" width="8.775" height="8.169" depth="0" valign="baseline" size="large">H</text>
+<text matrix="1 0 0 1 256 168" transformations="translations" pos="236 532" stroke="black" type="label" valign="baseline" size="large">H</text>
 <path matrix="1 0 0 1 304 36" stroke="black" fill="white">
 4 0 0 4 128 560 e
 </path>
 <path matrix="1 0 0 1 368 -28" stroke="black" fill="white">
+4 0 0 4 128 560 e
+</path>
+<path matrix="1 0 0 1 48 -32" stroke="black" fill="white">
+4 0 0 4 128 560 e
+</path>
+<path matrix="1 0 0 1 112 16" stroke="black" fill="white">
+4 0 0 4 128 560 e
+</path>
+<path matrix="1 0 0 1 176 -8" stroke="black" fill="white">
+4 0 0 4 128 560 e
+</path>
+<path matrix="1 0 0 1 240 -24" stroke="black" fill="white">
 4 0 0 4 128 560 e
 </path>
 </page>
