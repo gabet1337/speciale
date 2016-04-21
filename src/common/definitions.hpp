@@ -6,13 +6,31 @@
 
 #define INF INT_MAX
 
+#define GERTH_BUFFER_SIZE 1024*1024
+#define GERTH_FANOUT 2.0
+#define GERTH_EPSILON log(GERTH_FANOUT+0.5)/log((double)GERTH_BUFFER_SIZE)
+#define ARGE_BUFFER_SIZE 1024*1024
+#define ARGE_EPSILON 1
+#define INTERNAL_BUFFER_SIZE 4096
+#define INTERNAL_EPSILON 1
+#define MYSQL_BUFFER_SIZE 4096
+#define MYSQL_EPSILON 1
+#define RTREE_BUFFER_SIZE 4096
+#define RTREE_EPSILON 1
+
+
 namespace common {
   enum PST_VARIANT {
+    start = 0,
     ARGE = 1,
     GERTH = 2,
     RTREE = 3,
     MYSQL = 4,
-    INTERNAL = 5
+    INTERNAL = 5,
+    CUSTOM1 = 6,
+    CUSTOM2 = 7,
+    CUSTOM3 = 8,
+    end = 9
   };
 
   std::string PST_VARIANT_to_string(PST_VARIANT type) {
@@ -56,8 +74,8 @@ namespace common {
   std::string XLABEL_to_string(XLABEL x) {
     switch (x) {
     case XLABEL::input_size: return "N (input size)";
-    case XLABEL::input_size_in_thousands: return "N/1000 (input size)";
-    case XLABEL::input_size_in_millions: return "N/10^6 (input size)";
+    case XLABEL::input_size_in_thousands: return "N (input size in KB)";
+    case XLABEL::input_size_in_millions: return "N (input size in MB)";
     default: return "invalid label";
     }
   }

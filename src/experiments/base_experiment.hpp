@@ -129,7 +129,7 @@ namespace experiment {
       test::gnuplot gp;
       std::string output = common::MEASURE_to_string(static_cast<common::MEASURE>(i));
       gp.set_output(get_directory()+"/"+output);
-      gp.set_xlabel(common::XLABEL_to_string(common::XLABEL::input_size));
+      gp.set_xlabel(common::XLABEL_to_string(common::XLABEL::input_size_in_millions));
       gp.set_ylabel(common::MEASURE_to_label(static_cast<common::MEASURE>(i)));
       for (auto ri : run_instances) plot_with_size(gp, ri, static_cast<common::MEASURE>(i));
       gp.output_script(get_directory()+"/plot_"+output+".sh");

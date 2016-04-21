@@ -35,14 +35,28 @@ void test_proc_io() {
   for (int i = 0; i < 1337; i++) lol.write(i);
   lol.close();
   cout << pi.total_ios() << endl;
+}
 
+void test_available_line() {
+  test::gnuplot gp;
+  cout << gp.get_available_style(common::PST_VARIANT::ARGE) << endl;
+  cout << gp.get_available_style(common::PST_VARIANT::ARGE) << endl;
+  cout << gp.get_available_style(common::PST_VARIANT::ARGE) << endl;
+  cout << gp.get_available_style(common::PST_VARIANT::ARGE) << endl;
+  cout << gp.get_available_style(common::PST_VARIANT::ARGE) << endl;
+  cout << gp.get_available_style(common::PST_VARIANT::ARGE) << endl;
+  cout << gp.get_available_style(common::PST_VARIANT::ARGE) << endl;
+  cout << gp.get_available_style(common::PST_VARIANT::ARGE) << endl;
+  cout << gp.get_available_style(common::PST_VARIANT::ARGE) << endl;
+  cout << gp.get_available_style(common::PST_VARIANT::ARGE) << endl;
 }
 
 int main() {
   cout << "\033[0;33m\e[4mSTARTING TEST OF TEST LIB\e[24m\033[0m" << endl;
 
   //test_1_line();
-  test_proc_io();
+  //test_proc_io();
+  test_available_line();
 
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
 

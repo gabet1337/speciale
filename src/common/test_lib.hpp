@@ -117,7 +117,7 @@ namespace test {
 
   class gnuplot {
   public:
-    gnuplot() {}
+    gnuplot() { for (int i = 0; i < 256; i++) available[i] = true;}
     ~gnuplot() {}
     enum KEY_POS { BOTTOM_LEFT, BOTTOM_RIGHT, TOP_LEFT, TOP_RIGHT };
     std::string get_key_pos() {
@@ -126,19 +126,33 @@ namespace test {
       case KEY_POS::BOTTOM_RIGHT: return "bottom right";
       case KEY_POS::TOP_LEFT: return "top left";
       case KEY_POS::TOP_RIGHT: return "top right";
-      default: return "bottom right";
+      default: return "top left";
       }
     }
     typedef common::PST_VARIANT STYLE;
     void set_font(std::string type, size_t size) { font = type; font_size = size; }
     void set_output(std::string file) { output = file; }
     void add_line(std::string name, STYLE style_line, std::string data_file, int line1, int line2) {
+      // std::string line = "'"+data_file+"' u "+std::to_string(line1)+":"+std::to_string(line2)
+      //   + " t '"+name+"' w lp ls "+std::to_string(style_line);
       std::string line = "'"+data_file+"' u "+std::to_string(line1)+":"+std::to_string(line2)
-        + " t '"+name+"' w lp ls "+std::to_string(style_line);
+        + " t '"+name+"' w lp ls "+std::to_string(get_available_style(style_line));
+            
       plot_lines.push_back(line);
     }
     void add_function(std::string name, STYLE style_line, std::string function) {
       plot_lines.push_back(function+" t '"+name+"' w lp ls "+std::to_string(style_line));
+    }
+    int get_available_style(STYLE style) {
+      int res = style;
+      if (available[res]) {
+        available[res] = false;
+        return res;
+      } else {
+        for (res = res+1; res != style && !available[res]; ) if (res+1 == STYLE::end) res = 1; else res++;
+        available[res] = false;
+        return res;
+      }
     }
     void set_xlabel(std::string label) { xlabel = label; }
     void set_ylabel(std::string label) { ylabel = label; }
@@ -160,12 +174,18 @@ namespace test {
       ss << "set style line 3 lc rgb '#88419d' pt 2 ps 1 lt 1 lw 2 # --- purple" << std::endl;
       ss << "set style line 4 lc rgb '#225ea8' pt 3 ps 1 lt 1 lw 2 # --- blue" << std::endl;
       ss << "set style line 5 lc rgb '#000000' pt 4 ps 1 lt 1 lw 2 # --- black" << std::endl;
+      ss << "set style line 6 lc rgb '#00ced1' pt 5 ps 1 lt 1 lw 2 # --- darkturquoise" << std::endl;
+      ss << "set style line 7 lc rgb '#ff00ff' pt 7 ps 1 lt 1 lw 2 # --- magenta" << std::endl;
+      ss << "set style line 8 lc rgb '#87ceeb' pt 8 ps 1 lt 1 lw 2 # --- skyblue" << std::endl;
       ss << "set key " << get_key_pos() << std::endl;
       ss << "set xlabel '" << xlabel << "'" << std::endl;
       ss << "set ylabel '" << ylabel << "'" << std::endl;
       if (xlower != xupper && ylower != yupper) {
         ss << "set xrange [" << xlower << ":" << xupper << "]" << std::endl;
         ss << "set yrange [" << ylower << ":" << yupper << "]" << std::endl;
+      } else {
+        ss << "#set xrange [" << xlower << ":" << xupper << "]" << std::endl;
+        ss << "#set yrange [" << ylower << ":" << yupper << "]" << std::endl;
       }
 
       ss << "plot ";
@@ -191,13 +211,14 @@ namespace test {
     }
 
   private:
+    bool available[256];
     std::string output = "output.eps";
     std::string font = "Verdana";
-    std::string xlabel = "N (input size)";
+    std::string xlabel = "N (input size in MB)";
     std::string ylabel = "s (running time in seconds)";
     size_t font_size = 9;
     long long xlower = 0,xupper = 0,ylower = 0,yupper = 0;
-    KEY_POS key_position = KEY_POS::BOTTOM_RIGHT;
+    KEY_POS key_position = KEY_POS::TOP_LEFT;
     std::vector<std::string> plot_lines;
   };
 
