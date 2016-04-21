@@ -1,6 +1,6 @@
 #!/usr/bin/gnuplot
 set terminal postscript eps enhanced color font 'Verdana,9'
-set output 'scaling_discrepancy_hdd_cpu'
+set output 'scaling_discrepancy_hdd_cpu.eps'
 set style line 11 lc rgb '#808080' lt 1
 set border 3 back ls 11
 set tics nomirror
@@ -15,13 +15,12 @@ set style line 6 lc rgb '#00ced1' pt 5 ps 1 lt 1 lw 2 # --- darkturquoise
 set style line 7 lc rgb '#ff00ff' pt 7 ps 1 lt 1 lw 2 # --- magenta
 set style line 8 lc rgb '#87ceeb' pt 8 ps 1 lt 1 lw 2 # --- skyblue
 set key top left
-set xlabel 'Time'
+set xlabel 'Year'
 set ylabel 'CPU MIPS / HDD read 10^6 Integers'
 #set xrange [0:0]
-#set yrange [0:0]
-#f(x) = a* exp(-x*b) + c
-#f(x) = a*x + b
-f(x) = x**a
-fit f(x) 'discrepancy_data' using 1:2 via a
-plot 'discrepancy_data' u 1:2 t '' w lp ls 2, f(x)
+set yrange [0:60000]
+g(x) = a*exp((x-1995)*b)+c
+fit g(x) "discrepancy_data" using 1:2 via a,b,c
+plot "discrepancy_data" using 1:2 t 'CPU / HDD speed ratio' w lp ls 2,\
+g(x) with lines title sprintf("%.3f e^{(%.3f x)} + %.3f",a,b,c);
 
