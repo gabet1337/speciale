@@ -54,7 +54,7 @@ void test_available_line() {
 void test_beeper() {
   test::beeper bp;
   while (true)
-    bp.star_wars();
+    bp.mario();
 }
 
 int main() {
