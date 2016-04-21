@@ -324,6 +324,45 @@ namespace test {
     size_t start;
   };
   
+  class beeper {
+
+  public:
+    beeper() {}
+    ~beeper() {}
+    void star_wars() {
+      beep(300,500);
+      mssleep(50);
+      beep(300,500);
+      mssleep(50);
+      beep(300,500);
+      mssleep(50);
+ 
+      beep(250,500);
+      mssleep(50);
+ 
+      beep(350,250);
+      beep(300,500);
+      mssleep(50);
+ 
+      beep(250,500);
+      mssleep(50);
+ 
+      beep(350,250);
+      beep(300,500);
+      mssleep(50);
+    }
+  private:
+    void beep(int freq, int duration) {
+      std::string s = "beep -f " + std::to_string(freq) + " -l " + std::to_string(duration);
+      int r = system(s.c_str());
+      r++;
+    }
+    void mssleep(int ms) {
+      usleep(ms*1000);
+    }
+
+  };
+  
 };
 
 #endif
