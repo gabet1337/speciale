@@ -63,6 +63,7 @@ namespace experiment {
     std::string get_working_directory();
     void restart_timers();
     void measure_everything(size_t id, size_t input_size);
+    void finished();
   public:
     base_experiment(const std::string &experiment_name);
     virtual ~base_experiment();
@@ -100,6 +101,21 @@ namespace experiment {
                 << "epsilon: " <<  ri.epsilon << std::endl;
       run_experiment(ri);
     }
+
+    finished();
+  }
+
+  void base_experiment::finished() {
+    char buf[80];
+    gethostname(buf,sizeof(buf));
+    std::string hostname(buf);
+    test::beeper b;
+    if (hostname == "asterix")
+      while (true) b.star_wars();
+    else if (hostname == "obelix")
+      while (true) b.mario();
+    else if (hostname == "idefix")
+      while (true) b.star_wars();
   }
 
   common::pst_interface * base_experiment::PST_factory(PST_TYPE type, size_t buffer_size, double epsilon) {
