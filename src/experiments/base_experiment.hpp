@@ -20,6 +20,10 @@
 #include "../internal/mysql_pst.hpp"
 #include "../internal/boost_r_tree.hpp"
 #include "../internal/dynamic_pst.hpp"
+#include "stream_stubs/mmap_stream_stub.hpp"
+#include "stream_stubs/sys_stream_stub.hpp"
+#include "stream_stubs/buffered_stream_stub.hpp"
+#include "stream_stubs/f_stream_stub.hpp"
 #include "result.hpp"
 
 namespace experiment {
@@ -31,8 +35,13 @@ namespace experiment {
     typedef internal::boost_r_tree rtree;
     typedef internal::mysql_pst mysql_pst;
     typedef internal::dynamic_pst dyn_pst;
+    typedef experiment::mmap_stream_stub mmap_stream;
+    typedef experiment::buffered_stream_stub buffered_stream;
+    typedef experiment::f_stream_stub file_stream;
+    typedef experiment::sys_stream_stub read_write_stream;
     typedef io::buffered_stream<point> stream;
     typedef common::PST_VARIANT PST_TYPE;
+
 
     struct run_instance {
       size_t id;
@@ -63,6 +72,7 @@ namespace experiment {
     std::string get_working_directory();
     void restart_timers();
     void measure_everything(size_t id, size_t input_size);
+    void finished();
   public:
     base_experiment(const std::string &experiment_name);
     virtual ~base_experiment();
@@ -100,6 +110,21 @@ namespace experiment {
                 << "epsilon: " <<  ri.epsilon << std::endl;
       run_experiment(ri);
     }
+
+    finished();
+  }
+
+  void base_experiment::finished() {
+    char buf[80];
+    gethostname(buf,sizeof(buf));
+    std::string hostname(buf);
+    test::beeper b;
+    if (hostname == "asterix")
+      while (true) b.star_wars();
+    else if (hostname == "obelix")
+      while (true) b.mario();
+    else if (hostname == "idefix")
+      while (true) b.star_wars();
   }
 
   common::pst_interface * base_experiment::PST_factory(PST_TYPE type, size_t buffer_size, double epsilon) {
@@ -109,6 +134,10 @@ namespace experiment {
     case PST_TYPE::MYSQL: return new mysql_pst(buffer_size, epsilon);
     case PST_TYPE::RTREE: return new rtree(buffer_size, epsilon);
     case PST_TYPE::INTERNAL: return new dyn_pst(buffer_size, epsilon);
+    case PST_TYPE::MMAP_STREAM: return new mmap_stream(buffer_size, epsilon);
+    case PST_TYPE::READ_WRITE_STREAM: return new read_write_stream(buffer_size, epsilon);
+    case PST_TYPE::FILE_STREAM: return new file_stream(buffer_size, epsilon);
+    case PST_TYPE::BUFFERED_STREAM: return new buffered_stream(buffer_size, epsilon);
     default: return 0;
     };
   }
@@ -146,6 +175,7 @@ namespace experiment {
 
   void base_experiment::measure_everything(size_t id, size_t input_size) {
     add_result(id, common::MEASURE::time, input_size, timer.elapsed());
+    add_result(id, common::MEASURE::time_ms, input_size, timer.elapsed_ms());
     add_result(id, common::MEASURE::num_ios, input_size, procio.total_ios());
     add_result(id, common::MEASURE::page_faults, input_size, pagefaults.elapsed());
   }
@@ -183,6 +213,10 @@ namespace experiment {
     case PST_TYPE::MYSQL: return get_directory()+"/mysql_"+instance.name;
     case PST_TYPE::RTREE: return get_directory()+"/rtree_"+instance.name;
     case PST_TYPE::INTERNAL: return get_directory()+"/internal_"+instance.name;
+    case PST_TYPE::MMAP_STREAM: return get_directory()+"/mmap_"+instance.name;
+    case PST_TYPE::READ_WRITE_STREAM: return get_directory()+"/read_write_"+instance.name;
+    case PST_TYPE::FILE_STREAM: return get_directory()+"/file_stream_"+instance.name;
+    case PST_TYPE::BUFFERED_STREAM: return get_directory()+"/buffered_stream_"+instance.name;
     default: return "invalid";
     }
   }

@@ -28,6 +28,8 @@ namespace test {
     void start();
     void stop();
     long long elapsed();
+    long long elapsed_ms();
+    long long count_ms();
     long long count();
   private:
     tp s,e;
@@ -52,6 +54,19 @@ namespace test {
     using namespace std;
     using namespace std::chrono;
     return duration_cast<seconds>(e-s).count();
+  }
+
+  long long clock::elapsed_ms() {
+    auto n = hsc::now();
+    using namespace std;
+    using namespace std::chrono;
+    return duration_cast<milliseconds>(n-s).count();
+  }
+
+  long long clock::count_ms() {
+    using namespace std;
+    using namespace std::chrono;
+    return duration_cast<milliseconds>(e-s).count();
   }
 
   class random {
@@ -322,6 +337,212 @@ namespace test {
     }
   private:
     size_t start;
+  };
+  
+  class beeper {
+
+  public:
+    beeper() {}
+    ~beeper() {}
+    void star_wars() {
+      beep(300,500);
+      mssleep(50);
+      beep(300,500);
+      mssleep(50);
+      beep(300,500);
+      mssleep(50);
+ 
+      beep(250,500);
+      mssleep(50);
+ 
+      beep(350,250);
+      beep(300,500);
+      mssleep(50);
+ 
+      beep(250,500);
+      mssleep(50);
+ 
+      beep(350,250);
+      beep(300,500);
+      mssleep(50);
+
+      mssleep(5000);
+    }
+
+    void mario() {
+      Beep(480,200);
+      Beep(1568,200);
+      Beep(1568,200);
+      Beep(1568,200);
+      Beep(739.99,200);
+      Beep(783.99,200);
+      Beep(783.99,200);
+      Beep(783.99,200);
+      Beep(369.99,200);
+      Beep(392,200);
+      Beep(369.99,200);
+      Beep(392,200);
+      Beep(392,400);
+      Beep(196,400);
+      Beep(739.99,200);
+      Beep(783.99,200);
+      Beep(783.99,200);
+      Beep(739.99,200);
+      Beep(783.99,200);
+      Beep(783.99,200);
+      Beep(739.99,200);
+      Beep(83.99,200);
+      Beep(880,200);
+      Beep(830.61,200);
+      Beep(880,200);
+      Beep(987.77,400);
+      Beep(880,200);
+      Beep(783.99,200);
+      Beep(698.46,200);
+      Beep(739.99,200);
+      Beep(783.99,200);
+      Beep(783.99,200);
+      Beep(739.99,200);
+      Beep(783.99,200);
+      Beep(783.99,200);
+      Beep(739.99,200);
+      Beep(783.99,200);
+      Beep(880,200);
+      Beep(830.61,200);
+      Beep(880,200);
+      Beep(987.77,400);
+      mssleep(200);
+      Beep(1108,10);
+      Beep(1174.7,200);
+      Beep(1480,10);
+      Beep(1568,200);
+      mssleep(200);
+      Beep(739.99,200);
+      Beep(783.99,200);
+      Beep(783.99,200);
+      Beep(739.99,200);
+      Beep(783.99,200);
+      Beep(783.99,200);
+      Beep(739.99,200);
+      Beep(783.99,200);
+      Beep(880,200);
+      Beep(830.61,200);
+      Beep(880,200);
+      Beep(987.77,400);
+      Beep(880,200);
+      Beep(783.99,200);
+      Beep(698.46,200);
+      Beep(659.25,200);
+      Beep(698.46,200);
+      Beep(784,200);
+      Beep(880,400);
+      Beep(784,200);
+      Beep(698.46,200);
+      Beep(659.25,200);
+      Beep(587.33,200);
+      Beep(659.25,200);
+      Beep(698.46,200);
+      Beep(784,400);
+      Beep(698.46,200);
+      Beep(659.25,200);
+      Beep(587.33,200);
+      Beep(523.25,200);
+      Beep(587.33,200);
+      Beep(659.25,200);
+      Beep(698.46,400);
+      Beep(659.25,200);
+      Beep(587.33,200);
+      Beep(493.88,200);
+      Beep(523.25,200);
+      mssleep(400);
+      Beep(349.23,400);
+      Beep(392,200);
+      Beep(329.63,200);
+      Beep(523.25,200);
+      Beep(493.88,200);
+      Beep(466.16,200);
+      Beep(440,200);
+      Beep(493.88,200);
+      Beep(523.25,200);
+      Beep(880,200);
+      Beep(493.88,200);
+      Beep(880,200);
+      Beep(1760,200);
+      Beep(440,200);
+      Beep(392,200);
+      Beep(440,200);
+      Beep(493.88,200);
+      Beep(783.99,200);
+      Beep(440, 200);
+      Beep(783.99,200);
+      Beep(1568,200);
+      Beep(392,200);
+      Beep(349.23,200);
+      Beep(392,200);
+      Beep(440,200);
+      Beep(698.46,200);
+      Beep(415.2,200);
+      Beep(698.46,200);
+      Beep(1396.92,200);
+      Beep(349.23,200);
+      Beep(329.63,200);
+      Beep(311.13,200);
+      Beep(329.63,200);
+      Beep(659.25,200);
+      Beep(698.46,400);
+      Beep(783.99,400);
+      Beep(440,200);
+      Beep(493.88,200);
+      Beep(523.25,200);
+      Beep(880,200);
+      Beep(493.88,200);
+      Beep(880,200);
+      Beep(1760,200);
+      Beep(440,200);
+      Beep(392,200);
+      Beep(440,200);
+      Beep(493.88,200);
+      Beep(783.99,200);
+      Beep(440,200);
+      Beep(783.99,200);
+      Beep(1568,200);
+      Beep(392,200);
+      Beep(349.23,200);
+      Beep(392,200);
+      Beep(440,00);
+      Beep(698.46,200);
+      Beep(659.25,200);
+      Beep(698.46,200);
+      Beep(739.99,200);
+      Beep(783.99,200);
+      Beep(392,200);
+      Beep(392,200);
+      Beep(392,200);
+      Beep(392,200);
+      Beep(196,200);
+      Beep(196,200);
+      Beep(196,200);
+      Beep(185,200);
+      Beep(196,200);
+      Beep(185,200);
+      Beep(196,200);
+      Beep(207.65,200);
+      Beep(220,200);
+      Beep(233.08,200);
+      Beep(246.94,200);
+      mssleep(5000);
+    }
+  private:
+    void Beep(int freq, int duration) { beep(freq, duration); }
+    void beep(int freq, int duration) {
+      std::string s = "beep -f " + std::to_string(freq) + " -l " + std::to_string(duration);
+      int r = system(s.c_str());
+      r++;
+    }
+    void mssleep(int ms) {
+      usleep(ms*1000);
+    }
+
   };
   
 };

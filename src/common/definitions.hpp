@@ -27,10 +27,11 @@ namespace common {
     RTREE = 3,
     MYSQL = 4,
     INTERNAL = 5,
-    CUSTOM1 = 6,
-    CUSTOM2 = 7,
-    CUSTOM3 = 8,
-    end = 9
+    READ_WRITE_STREAM = 6,
+    MMAP_STREAM = 7,
+    BUFFERED_STREAM = 8,
+    FILE_STREAM = 9,
+    end = 10
   };
 
   std::string PST_VARIANT_to_string(PST_VARIANT type) {
@@ -40,6 +41,10 @@ namespace common {
     case PST_VARIANT::MYSQL: return "MySQL";
     case PST_VARIANT::RTREE: return "RTree";
     case PST_VARIANT::INTERNAL: return "Internal";
+    case PST_VARIANT::MMAP_STREAM: return "mmap stream";
+    case PST_VARIANT::READ_WRITE_STREAM: return "read write stream";
+    case PST_VARIANT::FILE_STREAM: return "file stream";
+    case PST_VARIANT::BUFFERED_STREAM: return "buffered stream";
     default: return "invalid";
     }
   }
@@ -48,13 +53,15 @@ namespace common {
     first = 1,
     time = 2, num_ios = 3,
     page_faults = 4,
+    time_ms = 5,
     //L1 = 5, L2 = 6, L3 = 7, instr_count = 8,
-    last = 5
+    last = 6
   };
 
   std::string MEASURE_to_string(MEASURE m) {
     switch (m) {
     case MEASURE::time: return "time";
+    case MEASURE::time_ms: return "timems";
     case MEASURE::num_ios: return "ios";
     case MEASURE::page_faults: return "pfs";
     // case MEASURE::L1: return "L1";
@@ -83,6 +90,7 @@ namespace common {
   std::string MEASURE_to_label(MEASURE m) {
     switch (m) {
     case MEASURE::time: return "Time (s)";
+    case MEASURE::time_ms: return "Time (ms)";
     case MEASURE::num_ios: return "I/Os";
     case MEASURE::page_faults: return "page faults";
     // case MEASURE::L1: return "L1 cache accesses";
