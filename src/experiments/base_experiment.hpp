@@ -167,6 +167,8 @@ namespace experiment {
     char       buf[80];
     tstruct = *localtime(&now);
     strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
+    for (size_t i = 0; i < sizeof(buf); i++)
+      if (buf[i] == ':') buf[i] = '_';
     return buf;
   }
 
