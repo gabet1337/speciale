@@ -234,6 +234,28 @@ It follows from the definition that if $b=\Theta(B)$ then a B-tree will have hei
 
 \textbf{Deleting} in a B-tree introduces an opposite to splitting, fusing. To delete a key from the tree we search the tree for the key, which now can reside in an internal node. We then delete the key from the node $x$, which might cause $x$ to have too few elements. To remedy this situation we will have to potentially fuse $x$ with a neighbouring node. If $x$ together with either its predecessor or successor contains less than $b$ elements we can fuse the two nodes. If this is not the case then we know that we are able to steal an element from a neighbouring node in order to satisfy the properties of the B-tree. As in the case of insertion, fusing nodes might recursively cause the parent to fuse with one of its neighbours.
 
+\section{General Sets of Points}
+Throughout this thesis we will impose the restriction that no two points have equal $x$- or $y$-coordinate. The restriction is made in order to simplify the description and analysis of the algorithms we introduce. As it is a highly unrealistic restriction we will show that it is easy to remedy. The key observation is that we never assume coordinates to be real numbers. The only thing we assume is that points come from a totally ordered universe such we can compare points. This means we can replace the real-valued coordinates with elements from the \textit{composite-number space} where all elements are defined to be pairs of reals. The \textit{composite number} of two reals $a$ and $b$ is denoted by $(a \mid b)$. We define a total order on the composite-number space by using a lexicographic order. So, for two composite numbers $(a \mid b)$ and $(a' \mid b')$, we have:
+
+$$ (a \mid b) < (a' \mid b') \Leftrightarrow a < a' \text{ or } (a = a' \text{ and } b < b') $$
+
+For a given set $P$ of distinct points in the plane we replace point $p \coloneqq (p_x, p_y)$ by a new point $\hat{p} \coloneqq ((p_x \mid p_y),(p_y \mid p_x))$ that has composite numbers as coordinate values. We denote this new point set as $\hat{P}$. It follows trivially that the mapping lets points $\hat{p} \in \hat{P}$ take distinct values for the first and second coordinate. What is left is to transform a query $Q \coloneqq [x_1,x_2] \times [y,\infty]$ to the new composite space. The transformed range $\hat{Q}$ is defined as follows:
+
+$$ \hat{Q} \coloneqq [(x_1 \mid -\infty), (x_2 \mid +\infty)] \times [(y \mid -\infty),(+\infty \mid +\infty)] $$
+
+What remains is to prove that the points of $\hat{P}$ that is reported using query $\hat{Q}$ corresponds exactly to the points that is reported from $P$ using query $Q$.
+
+\begin{lemma}
+\label{lma:composite_universe_query}
+Let $p$ be a point and $Q$ a query range. Then
+
+$$ p \in Q \Leftrightarrow \hat{p} \in \hat{Q} $$
+\end{lemma}
+
+\textit{Proof.} Let $Q \coloneqq [x_1, x_2] \times [y, \infty]$ and let $p \coloneqq (p_x,p_y)$. By definition $p$ lies in $Q$ if and only if $x_1 \leq p_x \leq x_2$ and $y \leq p_y \leq \infty$. This is easily seen to hold if and only if $(x_1 \mid -\infty) \leq (p_x \mid p_y) \leq (x_2 \mid +\infty)$ and $(y \mid -\infty) \leq (p_y \mid p_x) \leq (+\infty, +\infty)$, this is, if and only if $\hat{p}$ lies in $\hat{Q}$. $\square$ \\
+
+From Lemma~\ref{lma:composite_universe_query} is follows that our approach is correct.
+
 \chapter{Related work}
 
 
@@ -322,7 +344,7 @@ This implies we can construct the dynamic priority search in linear time assumin
 
 \section{Insertion}
 
-In order to dynamically insert points into the data structure, we add a new leaf (placeholder) for the new point and perform a pushdown operation with the new point starting at the root. We can determine where to add the new placeholder as the dynamic priority search tree is a binary search tree on the $x$-coordinates of the points. When we reach an existing leaf, we add a new internal node in place of this leaf, and make the existing leaf one of the children of this new internal node. Then we add a new leaf to the tree as the other child, and store the new point in this leaf. In order to maintain the heap order of the priority search tree we now perform a pushdown operation, where we at each step compare the $y$-coordinate of the point to be inserted with $y$-coordinate of the point represented by the given internal node. If the $y$-coordinate of the point to be inserted is less than that of the point stored in the internal node, then we push the point to be inserted further down the tree. However, if the $y$-coordinate of the point to be inserted is greater than the $y$-coordinate of the point in the internal node, then we store the point to be inserted in this internal node, and take the points which was formerly represented by this internal node and continue the pushdown operation with this point instead.
+In order to dynamically insert points into the data structure, we add a new leaf (placeholder) for the new point and perform a pushdown operation with the new point starting at the root. We can determine where to add the new placeholder as the dynamic priority search tree is a binary search tree on the $x$-coordinates of the points. When we reach an existing leaf, we add a new internal node in place of this leaf, and make the existing leaf one of the children of this new internal node. Then we add a new leaf to the tree as the other child, and store the new point in this leaf. In order to maintain the heap order of the priority search tree we now perform a pushdown operation, where we at each step compare the $y$-coordinate of the point to be inserted with $y$-coordinate of the point represented by the given internal node. If the $y$-coordinate of the point to be inserted is less than that of the point stored in the internal node, then we push the point to be inserted further down the tree. However, if the $y$-coordinate of the point to be inserted is greater than the $y$-coordinate of the point in the internal node, then we store the point to be inserted in this internal node, and take the point which was formerly represented by this internal node and continue the pushdown operation with this point instead.
 
 \subsection{Analysis}
 
@@ -340,7 +362,7 @@ Locating the interior node representing the point to delete can be done in $\mat
 \todo{Analyse in the I/O model as well.}
 
 \section{Rebalancing}
-If we use the operations for dynamic updates as stated above we could end up with a highly unbalanced tree. We fix this using global rebuilding when a linear number of updates have been performed. We can collect all points in sorted order in linear time by visiting leafs from left to right using a DFS traversal of the tree. On the collected points we now use the linear construction algorithm to rebalance the tree. Using this strategy yields a data structure that handles updates in $\mathcal{O}(\log n)$ amortized. By using a Red-Black tree as the heart of the tree we can achieve a data structure that is $\mathcal{O}(\log n)$ worst case.
+If we use the operations for dynamic updates as stated above without any measures for tree rebalancing, we could end up with a highly unbalanced tree. We fix this using global rebuilding when a linear number of updates have been performed. We can collect all points in sorted order in linear time by visiting leafs from left to right using a DFS traversal of the tree. On the collected points we now use the linear construction algorithm to rebalance the tree. Using this strategy yields a data structure that handles updates in $\mathcal{O}(\log n)$ amortized. By using a Red-Black tree as the heart of the tree we can achieve a data structure that is $\mathcal{O}(\log n)$ worst case.
 
 \todo{Analyse in the I/O model as well.}
 

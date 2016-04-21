@@ -46,7 +46,9 @@ namespace experiment {
 
     std::string name;
     std::string start_time;
-
+    test::clock timer;
+    test::proc_io procio;
+    test::pagefaults pagefaults;
     
     std::string get_file_name(run_instance instance);
     std::string get_directory();
@@ -59,6 +61,8 @@ namespace experiment {
     common::pst_interface * PST_factory(PST_TYPE type, size_t buffer_size, double epsilon);
     void plot_with_size(test::gnuplot &gp, run_instance instance, result::MEASURE m);
     std::string get_working_directory();
+    void restart_timers();
+    void measure_everything(size_t id, size_t input_size);
   public:
     base_experiment(const std::string &experiment_name);
     virtual ~base_experiment();
@@ -125,10 +129,25 @@ namespace experiment {
       test::gnuplot gp;
       std::string output = common::MEASURE_to_string(static_cast<common::MEASURE>(i));
       gp.set_output(get_directory()+"/"+output);
+      gp.set_xlabel(common::XLABEL_to_string(common::XLABEL::input_size_in_millions));
+      gp.set_ylabel(common::MEASURE_to_label(static_cast<common::MEASURE>(i)));
       for (auto ri : run_instances) plot_with_size(gp, ri, static_cast<common::MEASURE>(i));
       gp.output_script(get_directory()+"/plot_"+output+".sh");
       gp.output_plot(get_directory()+"/plot_"+output+".sh");
     }
+  }
+
+  void base_experiment::restart_timers() {
+    timer.start();
+    pagefaults.stop();
+    pagefaults.start();
+    procio.restart();
+  }
+
+  void base_experiment::measure_everything(size_t id, size_t input_size) {
+    add_result(id, common::MEASURE::time, input_size, timer.elapsed());
+    add_result(id, common::MEASURE::num_ios, input_size, procio.total_ios());
+    add_result(id, common::MEASURE::page_faults, input_size, pagefaults.elapsed());
   }
 
   void base_experiment::add_result

@@ -12,5 +12,8 @@ insert_experiment: $(FILES) insert_experiment.cpp
 gerth_fanout_experiment: $(FILES) gerth_fanout_experiment.cpp
 	$(CC) gerth_fanout_experiment.cpp -o gerth_fanout_experiment $(MYSQL)
 
+gerth_buffer_size_experiment: $(FILES) gerth_buffer_size_experiment.cpp
+	$(CC) gerth_buffer_size_experiment.cpp -o gerth_buffer_size_experiment $(MYSQL)
+
 clean:
 	$(RM) *.o *~ $(PROGRAMS)

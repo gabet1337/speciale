@@ -1,12 +1,12 @@
 #include "base_experiment.hpp"
 using namespace experiment;
 
-class gerth_fanout_experiment : public base_experiment {
+class gerth_buffer_size_experiment : public base_experiment {
 
   public:
-  gerth_fanout_experiment(const std::string &exp_name) : base_experiment(exp_name) {
+  gerth_buffer_size_experiment(const std::string &exp_name) : base_experiment(exp_name) {
   }
-  ~gerth_fanout_experiment() {}
+  ~gerth_buffer_size_experiment() {}
 
   void run_experiment(run_instance instance) {
     stream data = get_data_stream("../data/insert_experiment");
@@ -40,21 +40,18 @@ class gerth_fanout_experiment : public base_experiment {
 
   void plot() {
     base_experiment::plot();
-
   }
 
 };
 
 int main() {
 
-  gerth_fanout_experiment gfe("gerth_fanout_experiment");
-  gfe.add(1, "fanout2", common::PST_VARIANT::GERTH, 1024*1024, log(2.5)/log(1024.0*1024.0)); //fanout 2
-  gfe.add(2, "fanout3", common::PST_VARIANT::GERTH, 1024*1024, log(3.0)/log(1024.0*1024.0)); // 3
-  gfe.add(3, "fanout4",common::PST_VARIANT::GERTH, 1024*1024, log(4.5)/log(1024.0*1024.0)); // 4
-  gfe.add(4, "fanout8",common::PST_VARIANT::GERTH, 1024*1024, log(8.5)/log(1024.0*1024.0)); // 8
-  gfe.add(5, "fanout16",common::PST_VARIANT::GERTH, 1024*1024, log(16.5)/log(1024.0*1024.0)); // 16
-  gfe.add(6, "fanout32",common::PST_VARIANT::GERTH, 1024*1024, log(32.5)/log(1024.0*1024.0)); // 32
-  gfe.add(7, "fanout128",common::PST_VARIANT::GERTH, 1024*1024, log(128.5)/log(1024.0*1024.0)); // 128
+  gerth_buffer_size_experiment gfe("gerth_buffer_size_experiment");
+  gfe.add(1, "buffer1MB", common::PST_VARIANT::GERTH, 1024*1024/8, log(2.5)/log(1024.0*1024.0/8.0)); //fanout 2
+  gfe.add(2, "buffer2MB", common::PST_VARIANT::GERTH, 1024*1024/4, log(2.5)/log(1024.0*1024.0/4.0)); //fanout 2
+  gfe.add(3, "buffer4MB", common::PST_VARIANT::GERTH, 1024*1024/2, log(2.5)/log(1024.0*1024.0/2.0)); //fanout 2
+  gfe.add(4, "buffer8MB", common::PST_VARIANT::GERTH, 1024*1024, log(2.5)/log(1024.0*1024.0)); //fanout 2
+  gfe.add(5, "buffer16MB", common::PST_VARIANT::GERTH, 1024*1024*2, log(2.5)/log(1024.0*1024.0*2.0)); //fanout 2
   gfe.run();
   gfe.plot();
 
