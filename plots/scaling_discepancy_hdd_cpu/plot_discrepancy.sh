@@ -21,6 +21,6 @@ set ylabel 'CPU MIPS / HDD read 10^6 Integers'
 set yrange [0:60000]
 g(x) = a*exp((x-1995)*b)+c
 fit g(x) "discrepancy_data" using 1:2 via a,b,c
-plot "discrepancy_data" using 1:2 t 'CPU / HDD speed ratio' w lp ls 2,\
-g(x) with lines title sprintf("%.3f e^{(%.3f x)} + %.3f",a,b,c);
+plot "discrepancy_data" using 1:2 t 'CPU / HDD speed ratio' w lp ls 5,\
+g(x) with lines title sprintf("%.3f e^{(%.3f x)} + %.3f",a,b,c) ls 4
 
