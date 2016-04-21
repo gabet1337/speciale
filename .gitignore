@@ -8,9 +8,15 @@ src/apst
 src/bpst
 src/mpst
 src/rtree
+src/testexp
+src/testlib
 
 # data folders
 src/c_*
+src/test
+src/experiments/c_*
+src/data/insert_experiment
+src/test_data_report_random_1gb
 
 #stuff
 *~
