@@ -1,6 +1,6 @@
 CC = c++ -std=c++0x -O2 -Wall -I/usr/include/cppconn -L/usr/lib
 
-PROGRAMS = insert_experiment gerth_fanout_experiment stream_input_speed_experiment
+PROGRAMS = insert_experiment gerth_fanout_experiment stream_input_speed_experiment gerth_buffer_size_experiment stream_output_speed_experiment
 
 MYSQL = -lmysqlcppconn
 
@@ -19,6 +19,9 @@ gerth_buffer_size_experiment: $(FILES) gerth_buffer_size_experiment.cpp
 
 stream_input_speed_experiment: $(FILES) $(STREAM_STUBS) stream_input_speed_experiment.cpp
 	$(CC) -g ../stream/old_stream.cpp stream_input_speed_experiment.cpp -o stream_input_speed_experiment $(MYSQL)
+
+stream_output_speed_experiment: $(FILES) $(STREAM_STUBS) stream_output_speed_experiment.cpp
+	$(CC) -g ../stream/old_stream.cpp stream_output_speed_experiment.cpp -o stream_output_speed_experiment $(MYSQL)
 
 clean:
 	$(RM) *.o *~ $(PROGRAMS)
