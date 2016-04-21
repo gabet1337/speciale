@@ -28,6 +28,8 @@ namespace test {
     void start();
     void stop();
     long long elapsed();
+    long long elapsed_ms();
+    long long count_ms();
     long long count();
   private:
     tp s,e;
@@ -52,6 +54,19 @@ namespace test {
     using namespace std;
     using namespace std::chrono;
     return duration_cast<seconds>(e-s).count();
+  }
+
+  long long clock::elapsed_ms() {
+    auto n = hsc::now();
+    using namespace std;
+    using namespace std::chrono;
+    return duration_cast<milliseconds>(n-s).count();
+  }
+
+  long long clock::count_ms() {
+    using namespace std;
+    using namespace std::chrono;
+    return duration_cast<milliseconds>(e-s).count();
   }
 
   class random {
