@@ -61,6 +61,7 @@ src/test_data_report_random_1gb
 *.bbl
 *.blg
 /report/thesis.pdf
+/report/thesis.ps
 
 # dot files in src
 *.dot
