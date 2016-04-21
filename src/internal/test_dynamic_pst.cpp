@@ -46,6 +46,7 @@ void test_report() {
   print_description("Starting to test report of internal dynamic pst");
 
   dpst dpst;
+
   dpst.insert(point(10,10));
   dpst.insert(point(12,12));
   dpst.insert(point(9,9));
@@ -119,12 +120,41 @@ void test_construct() {
   print_success();
 }
 
+void test_error() {
+
+  
+  
+  dpst dpst;
+  dpst.insert(point(1170895028,190800557));
+  dpst.insert(point(466104490,1809069673));
+  dpst.insert(point(1609218032,911953545));
+  dpst.insert(point(1125552764,496658970));
+  dpst.insert(point(1317478417,1582474009));
+  dpst.insert(point(457648164,983101507));
+  dpst.insert(point(991456900,1917030726));
+  dpst.insert(point(1514985424,1902758400));
+  dpst.insert(point(436385672,1646940215));
+  dpst.insert(point(35929822,305574818));
+  dpst.insert(point(1487353440,2062280852));
+  dpst.insert(point(668404035,725173378));
+  dpst.insert(point(89521985,1022374524));
+  dpst.insert(point(1286917285,994617311));
+  dpst.insert(point(47695573,200837459));
+  dpst.insert(point(1267177858,1237970326));
+ 
+  dpst.print();
+  dpst.insert(point(1672025853,138304450));
+  dpst.print();
+  
+}
+
 void test_report_random_1gb(size_t buffer_size, double epsilon) {
 
   print_description("starting test of report random 1gb");
 
   dpst epst;
-
+  //epst.set_global_rebuild_configuration(dpst::global_rebuild_configuration(INF,0.5));
+  
   test::random r;
   
   io::buffered_stream<point> bs(4096);
@@ -132,8 +162,9 @@ void test_report_random_1gb(size_t buffer_size, double epsilon) {
   
   cerr << "- inserting " << 93*1024*1024 << " points" << endl;
   
-  for (size_t i = 0; i < 8*1024*1024; i++) { // insert 744 MB (93)
-    epst.insert(bs.read());
+  for (size_t i = 0; i < 93*1024*1024; i++) { // insert 744 MB (93)
+    point p = bs.read();
+    epst.insert(p);
     //res.insert(p);
     if (i > 0 && i % (128*1024) == 0) {
       cout << " - inserted " << i / (128*1024) << " MB" << endl;
@@ -144,7 +175,7 @@ void test_report_random_1gb(size_t buffer_size, double epsilon) {
    
     cerr << "- round " << i+1 << " of 1: deleting " << 23*1024*1024 << " points" << endl;
     
-    for (int j = 0; j < 4*1024*1024; j++) { // remove 128 MB
+    for (int j = 0; j < 16*1024*1024; j++) { // remove 128 MB
       epst.remove(bs.read());
     }
     
@@ -165,7 +196,7 @@ void test_report_random_1gb(size_t buffer_size, double epsilon) {
     
     cerr << "- round " << i+1 << " of 1: inserting " << 23*1024*1024 << " points" << endl;
   
-    for (int j = 0; j < 4*1024*1024; j++) { // insert 128 MB (16)
+    for (int j = 0; j < 16*1024*1024; j++) { // insert 128 MB (16)
       epst.insert(bs.read());
     }
 
@@ -201,9 +232,10 @@ int main() {
   //test_insert();
   //test_remove_report();
   //test_report();
-  //test_report_random_1gb(4096, 0.5);
+  test_report_random_1gb(4096, 0.5);
+  //test_error();
 
-  test_construct();
+  //test_construct();
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
 
   return 0;

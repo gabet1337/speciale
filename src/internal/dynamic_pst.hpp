@@ -426,6 +426,8 @@ namespace internal {
         node->key_y = std::max(leaf_left->key_y, leaf_right->key_y, comp_y);
         node->left = leaf_left;
         node->right = leaf_right;
+        leaf_left->parent = node;
+        leaf_right->parent = node;
 
         promote(node);
           
@@ -460,7 +462,9 @@ namespace internal {
     root->key_y = std::max(leaf_left->key_y, leaf_right->key_y, comp_y);
     root->left = leaf_left;
     root->right = leaf_right;
-
+    leaf_left->parent = root;
+    leaf_right->parent = root;
+    
     promote(root);
   }
 
