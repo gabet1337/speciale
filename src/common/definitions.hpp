@@ -6,13 +6,32 @@
 
 #define INF INT_MAX
 
+#define GERTH_BUFFER_SIZE 1024*1024
+#define GERTH_FANOUT 2.0
+#define GERTH_EPSILON log(GERTH_FANOUT+0.5)/log((double)GERTH_BUFFER_SIZE)
+#define ARGE_BUFFER_SIZE 1024*1024
+#define ARGE_EPSILON 1
+#define INTERNAL_BUFFER_SIZE 4096
+#define INTERNAL_EPSILON 1
+#define MYSQL_BUFFER_SIZE 4096
+#define MYSQL_EPSILON 1
+#define RTREE_BUFFER_SIZE 4096
+#define RTREE_EPSILON 1
+
+
 namespace common {
   enum PST_VARIANT {
+    start = 0,
     ARGE = 1,
     GERTH = 2,
     RTREE = 3,
     MYSQL = 4,
-    INTERNAL = 5
+    INTERNAL = 5,
+    READ_WRITE_STREAM = 6,
+    MMAP_STREAM = 7,
+    BUFFERED_STREAM = 8,
+    FILE_STREAM = 9,
+    end = 10
   };
 
   std::string PST_VARIANT_to_string(PST_VARIANT type) {
@@ -22,6 +41,10 @@ namespace common {
     case PST_VARIANT::MYSQL: return "MySQL";
     case PST_VARIANT::RTREE: return "RTree";
     case PST_VARIANT::INTERNAL: return "Internal";
+    case PST_VARIANT::MMAP_STREAM: return "mmap stream";
+    case PST_VARIANT::READ_WRITE_STREAM: return "read write stream";
+    case PST_VARIANT::FILE_STREAM: return "file stream";
+    case PST_VARIANT::BUFFERED_STREAM: return "buffered stream";
     default: return "invalid";
     }
   }
@@ -30,13 +53,15 @@ namespace common {
     first = 1,
     time = 2, num_ios = 3,
     page_faults = 4,
+    time_ms = 5,
     //L1 = 5, L2 = 6, L3 = 7, instr_count = 8,
-    last = 5
+    last = 6
   };
 
   std::string MEASURE_to_string(MEASURE m) {
     switch (m) {
     case MEASURE::time: return "time";
+    case MEASURE::time_ms: return "timems";
     case MEASURE::num_ios: return "ios";
     case MEASURE::page_faults: return "pfs";
     // case MEASURE::L1: return "L1";
@@ -56,8 +81,8 @@ namespace common {
   std::string XLABEL_to_string(XLABEL x) {
     switch (x) {
     case XLABEL::input_size: return "N (input size)";
-    case XLABEL::input_size_in_thousands: return "N/1000 (input size)";
-    case XLABEL::input_size_in_millions: return "N/10^6 (input size)";
+    case XLABEL::input_size_in_thousands: return "N (input size in KB)";
+    case XLABEL::input_size_in_millions: return "N (input size in MB)";
     default: return "invalid label";
     }
   }
@@ -65,6 +90,7 @@ namespace common {
   std::string MEASURE_to_label(MEASURE m) {
     switch (m) {
     case MEASURE::time: return "Time (s)";
+    case MEASURE::time_ms: return "Time (ms)";
     case MEASURE::num_ios: return "I/Os";
     case MEASURE::page_faults: return "page faults";
     // case MEASURE::L1: return "L1 cache accesses";

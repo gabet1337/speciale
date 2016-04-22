@@ -114,10 +114,10 @@
 
 In the early days of electronic computers disks were faster than processors. Since then processor technology has advanced at an incredible rate achieving annual speedups of 40 to 60 percent~\cite{ruemmler_wilkes_1994}. Although this is also true for disk capacity an entirely different story can be told for the speedup of disk performance. The disparity between processor, internal memory, and external memory speeds have grown larger for each year and the gap is widening. This disparity presents serious problems when designing algorithms on large data sets, and with more and more applications of Big Data in social media, banking, etc., these problems become increasingly relevant.
 
-\todo{get a better figure. This one is really ugly.}
+\todo{A workload that was ?? disk bound in 96 would be ?? disk bound in 05.}
 \begin{figure}[h]
 	\centering
-		\includegraphics[scale=0.5]{../figures/scaling-of-cpu-vs-disk}
+		\includegraphics[width=\textwidth]{../plots/scaling_discrepancy_hdd_cpu/scaling_discrepancy_hdd_cpu}
 	\caption{Growth of CPU compared to HD speeds over time.}
 	\tiny{Source:~\protect\url{http://read.cs.ucla.edu/111/2006fall/notes/lec15\#incommensurate-scaling}}
 	\label{fig:cpu_vs_disk}
@@ -158,9 +158,8 @@ The external memory model (or I/O model) measures the efficiency of an algorithm
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.8\textwidth]{../figures/io_model2.png}
+	\includegraphics[width=1\textwidth]{../figures/block_io}
 	\caption{The I/O Model. Only reads/writes between internal and external memory are charged.}
-	\tiny{Original (unmodified) figure:~\protect\url{http://www.slideshare.net/shripadthite/jobtalk}}
 	\label{fig:io_model}
 \end{figure}
 
@@ -234,7 +233,30 @@ It follows from the definition that if $b=\Theta(B)$ then a B-tree will have hei
 
 \textbf{Deleting} in a B-tree introduces an opposite to splitting, fusing. To delete a key from the tree we search the tree for the key, which now can reside in an internal node. We then delete the key from the node $x$, which might cause $x$ to have too few elements. To remedy this situation we will have to potentially fuse $x$ with a neighbouring node. If $x$ together with either its predecessor or successor contains less than $b$ elements we can fuse the two nodes. If this is not the case then we know that we are able to steal an element from a neighbouring node in order to satisfy the properties of the B-tree. As in the case of insertion, fusing nodes might recursively cause the parent to fuse with one of its neighbours.
 
+\section{General Sets of Points}
+Throughout this thesis we will impose the restriction that no two points have equal $x$- or $y$-coordinate. The restriction is made in order to simplify the description and analysis of the algorithms we introduce. As it is a highly unrealistic restriction we will show that it is easy to remedy. The key observation is that we never assume coordinates to be real numbers. The only thing we assume is that points come from a totally ordered universe such we can compare points. This means we can replace the real-valued coordinates with elements from the \textit{composite-number space} where all elements are defined to be pairs of reals. The \textit{composite number} of two reals $a$ and $b$ is denoted by $(a \mid b)$. We define a total order on the composite-number space by using a lexicographic order. So, for two composite numbers $(a \mid b)$ and $(a' \mid b')$, we have:
+
+$$ (a \mid b) < (a' \mid b') \Leftrightarrow a < a' \text{ or } (a = a' \text{ and } b < b') $$
+
+For a given set $P$ of distinct points in the plane we replace point $p \coloneqq (p_x, p_y)$ by a new point $\hat{p} \coloneqq ((p_x \mid p_y),(p_y \mid p_x))$ that has composite numbers as coordinate values. We denote this new point set as $\hat{P}$. It follows trivially that the mapping lets points $\hat{p} \in \hat{P}$ take distinct values for the first and second coordinate. What is left is to transform a query $Q \coloneqq [x_1,x_2] \times [y,\infty]$ to the new composite space. The transformed range $\hat{Q}$ is defined as follows:
+
+$$ \hat{Q} \coloneqq [(x_1 \mid -\infty), (x_2 \mid +\infty)] \times [(y \mid -\infty),(+\infty \mid +\infty)] $$
+
+What remains is to prove that the points of $\hat{P}$ that is reported using query $\hat{Q}$ corresponds exactly to the points that is reported from $P$ using query $Q$.
+
+\begin{lemma}
+\label{lma:composite_universe_query}
+Let $p$ be a point and $Q$ a query range. Then
+
+$$ p \in Q \Leftrightarrow \hat{p} \in \hat{Q} $$
+\end{lemma}
+
+\textit{Proof.} Let $Q \coloneqq [x_1, x_2] \times [y, \infty]$ and let $p \coloneqq (p_x,p_y)$. By definition $p$ lies in $Q$ if and only if $x_1 \leq p_x \leq x_2$ and $y \leq p_y \leq \infty$. This is easily seen to hold if and only if $(x_1 \mid -\infty) \leq (p_x \mid p_y) \leq (x_2 \mid +\infty)$ and $(y \mid -\infty) \leq (p_y \mid p_x) \leq (+\infty, +\infty)$, this is, if and only if $\hat{p}$ lies in $\hat{Q}$. $\square$ \\
+
+From Lemma~\ref{lma:composite_universe_query} is follows that our approach is correct.
+
 \chapter{Related work}
+
 
 
 \chapter{Internal Priority Search Tree}
@@ -322,7 +344,7 @@ This implies we can construct the dynamic priority search in linear time assumin
 
 \section{Insertion}
 
-In order to dynamically insert points into the data structure, we add a new leaf (placeholder) for the new point and perform a pushdown operation with the new point starting at the root. We can determine where to add the new placeholder as the dynamic priority search tree is a binary search tree on the $x$-coordinates of the points. When we reach an existing leaf, we add a new internal node in place of this leaf, and make the existing leaf one of the children of this new internal node. Then we add a new leaf to the tree as the other child, and store the new point in this leaf. In order to maintain the heap order of the priority search tree we now perform a pushdown operation, where we at each step compare the $y$-coordinate of the point to be inserted with $y$-coordinate of the point represented by the given internal node. If the $y$-coordinate of the point to be inserted is less than that of the point stored in the internal node, then we push the point to be inserted further down the tree. However, if the $y$-coordinate of the point to be inserted is greater than the $y$-coordinate of the point in the internal node, then we store the point to be inserted in this internal node, and take the points which was formerly represented by this internal node and continue the pushdown operation with this point instead.
+In order to dynamically insert points into the data structure, we add a new leaf (placeholder) for the new point and perform a pushdown operation with the new point starting at the root. We can determine where to add the new placeholder as the dynamic priority search tree is a binary search tree on the $x$-coordinates of the points. When we reach an existing leaf, we add a new internal node in place of this leaf, and make the existing leaf one of the children of this new internal node. Then we add a new leaf to the tree as the other child, and store the new point in this leaf. In order to maintain the heap order of the priority search tree we now perform a pushdown operation, where we at each step compare the $y$-coordinate of the point to be inserted with $y$-coordinate of the point represented by the given internal node. If the $y$-coordinate of the point to be inserted is less than that of the point stored in the internal node, then we push the point to be inserted further down the tree. However, if the $y$-coordinate of the point to be inserted is greater than the $y$-coordinate of the point in the internal node, then we store the point to be inserted in this internal node, and take the point which was formerly represented by this internal node and continue the pushdown operation with this point instead.
 
 \subsection{Analysis}
 
@@ -340,7 +362,7 @@ Locating the interior node representing the point to delete can be done in $\mat
 \todo{Analyse in the I/O model as well.}
 
 \section{Rebalancing}
-If we use the operations for dynamic updates as stated above we could end up with a highly unbalanced tree. We fix this using global rebuilding when a linear number of updates have been performed. We can collect all points in sorted order in linear time by visiting leafs from left to right using a DFS traversal of the tree. On the collected points we now use the linear construction algorithm to rebalance the tree. Using this strategy yields a data structure that handles updates in $\mathcal{O}(\log n)$ amortized. By using a Red-Black tree as the heart of the tree we can achieve a data structure that is $\mathcal{O}(\log n)$ worst case.
+If we use the operations for dynamic updates as stated above without any measures for tree rebalancing, we could end up with a highly unbalanced tree. We fix this using global rebuilding when a linear number of updates have been performed. We can collect all points in sorted order in linear time by visiting leafs from left to right using a DFS traversal of the tree. On the collected points we now use the linear construction algorithm to rebalance the tree. Using this strategy yields a data structure that handles updates in $\mathcal{O}(\log n)$ amortized. By using a Red-Black tree as the heart of the tree we can achieve a data structure that is $\mathcal{O}(\log n)$ worst case.
 
 \todo{Analyse in the I/O model as well.}
 
@@ -612,6 +634,29 @@ Querying the data structure with $Q = \left[ x_1, x_2 \right] \times \left[ y, \
 
 \subsection{Analysis}
 In every internal node $v$ visited we spend $\mathcal{O}(1+K_v/B)$ I/O's. There are $\mathcal{O}(\log_B N)$ nodes on the search path from root to the leftmost leaf and rightmost leaf and thus the number of I/O's used on these paths is $\mathcal{O}(\log_B N + K/B)$. All other internal nodes visited are visited because all points were reported in the parent. If we do not report all points from a $Y$-set we can charge the $\mathcal{O}(1)$ I/O's of visiting the child to the parent which must have reported $\Theta(B)$ points. As the cost of reporting from the query data structures is $\mathcal{O}(1+K/B)$ the total cost amounts to $\mathcal{O}(\log_B N + K/B)$.
+
+\chapter{Experimental setup}
+\label{chp:experimental_setup}
+Running experiments on I/O algorithms is extremely time consuming. In order to compare I/O efficient algorithms against internal memory algorithms we need input sizes that force the internal memory algorithms to store and load data to and from the disk (swapping). The input size to the algorithms can be severely minimized if run on machines with a small amount of internal memory.
+\todo{more considerations w.r.t to mechanical disks}
+
+With these considerations in mind we acquired two very old Dell machines with the following specifications:
+
+\begin{figure}[h]
+\centering
+\begin{tabular}{ll}
+CPU & blabla \\
+RAM & blabla \\
+Disk & blabla \\
+Operativ system & blabla \\
+Compiler & blabla
+\end{tabular}
+\caption{Specifications of the two Dell machines used for running experiments}
+\end{figure}
+
+We measured the running time using the \texttt{high\_resolution\_clock} in the \texttt{chrono} library. It was measured in seconds as more precision was not needed in order to distinguish the algorithms as will become apparent in the presented results.
+
+In order to obtain a deeper understanding of the results we chose to measure the number of page faults generated by running the algorithms. This was done using \texttt{perf} - a performance analysis tool for Linux. We also measured the number of I/O's required by our program using the \texttt{/proc/} file system. The number of I/O's was obtained through \texttt{/proc/\{pid\}/io} which gives an approximate number of calls to the system calls \texttt{read} and \texttt{write} by the process.
 
 \chapter{Our results}
 
