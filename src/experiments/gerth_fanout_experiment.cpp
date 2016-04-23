@@ -40,7 +40,6 @@ class gerth_fanout_experiment : public base_experiment {
 
   void plot() {
     base_experiment::plot();
-
   }
 
 };
