@@ -12,7 +12,9 @@
 \usepackage{lmodern}
 \usepackage{color}
 \usepackage{datetime}
-\usepackage{epstopdf} 
+\usepackage{epstopdf}
+
+\usepackage{subfig}
 
 % This font looks so good.
 \usepackage[sc]{mathpazo}
@@ -679,8 +681,7 @@ The implementation we present makes use of the concept of \textit{streams}. Alth
 
 The stream we introduce makes use of the \texttt{read} and \texttt{write} system calls and is equipped with a buffer of size $B$ in internal memory that is maintained on all operations.
 
-In earlier work we have showed that a stream conceptually equal to \texttt{buffered\_stream} outperforms the basic streams provided in the standard library and operating system. %TODO reference to IO project.
-More precisely we conducted experiments on the I/O-optimal $\nicefrac{M}{B}$-way \textsc{Merge-Sorter} presented in~\cite{Aggarwal:1988/ICS/48529.48535} where we compared our stream against the following streams:
+There are many different ways to construct a stream. In order to substantiate our choice of using buffering on top of the \texttt{read} and \texttt{write} system calls we conducted some experiments with some different types of streams:
 
 \begin{itemize}
 	\item Direct invocation of the operating system call \texttt{read} and \texttt{write} that reads/writes one item using no buffering mechanism.
@@ -688,7 +689,24 @@ More precisely we conducted experiments on the I/O-optimal $\nicefrac{M}{B}$-way
 	\item Direct invocation of the operating system call \texttt{mmap} and \texttt{munmap} that makes use of the operating systems virtual memory mechanism through demand paging.
 \end{itemize}
 
-We believe our implementation follows the same I/O pattern as that of the $\nicefrac{M}{B}$-way \textsc{Merge-Sorter}, with both data structures using linear scans of entire streams, and so we conclude that \texttt{buffered\_stream} will have the best overall performance.
+It is clear that direct invocation of the \texttt{read} and \texttt{write} system calls cannot be better than adding buffering on top, which early experiments clearly showed. The results were so slow that we had to exclude them.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{../src/experiments/stream_input_speed_experiment_results/2016-04-23.11_05_51/timems}
+  \caption{Reading 1GB of data using \texttt{mmap} and \texttt{munmap}, \texttt{fread} and \texttt{fwrite}, and buffered \texttt{read} and \texttt{write}}
+  \label{fig:stream_input_speed}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{../src/experiments/stream_output_speed_experiment_results/2016-04-23.11_09_02/timems}
+  \caption{Writing 1GB of data using \texttt{mmap} and \texttt{munmap}, \texttt{fread} and \texttt{fwrite}, and buffered \texttt{read} and \texttt{write}}
+  \label{fig:stream_output_speed}
+\end{figure}
+
+The results of Figure~\ref{fig:stream_input_speed} and~\ref{fig:stream_output_speed} shows that the \texttt{buffered\_stream} is clearly faster when it comes to reading 1GB of data.
+
 %TODO this is not the case when we have queries in the child structure which relies on seek.
 
 %TODO Redo experiments and comment on those.

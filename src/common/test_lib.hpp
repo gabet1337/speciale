@@ -231,7 +231,7 @@ namespace test {
     std::string font = "Verdana";
     std::string xlabel = "N (input size in MB)";
     std::string ylabel = "s (running time in seconds)";
-    size_t font_size = 9;
+    size_t font_size = 11;
     long long xlower = 0,xupper = 0,ylower = 0,yupper = 0;
     KEY_POS key_position = KEY_POS::TOP_LEFT;
     std::vector<std::string> plot_lines;
