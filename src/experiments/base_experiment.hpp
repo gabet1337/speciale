@@ -152,7 +152,7 @@ namespace experiment {
   }
 
   void base_experiment::plot_with_size(test::gnuplot &gp, run_instance instance, result::MEASURE m) {
-    gp.add_line(instance.name, instance.type, get_working_directory()+"/"+get_file_name(instance), 1, m);
+    gp.add_line(instance.name, instance.type, get_file_name(instance), 1, m);
   }
 
   void base_experiment::plot() {
@@ -222,7 +222,7 @@ namespace experiment {
     default: return "invalid";
     }
   }
-
+  
   std::string base_experiment::get_working_directory() {
     char* dir = get_current_dir_name();
     std::string res = std::string(dir);
