@@ -711,6 +711,23 @@ In order to obtain a deeper understanding of the results we chose to measure the
 
 \chapter{Our results}
 
+\section{Parameter tuning}
+
+\begin{figure}[h]
+\includegraphics[width=\textwidth]{../src/experiments/gerth_fanout_experiment_results/2016-04-19.18_20_50/time}
+\caption{Running the data structure of Brodal with a fixed buffer size at 8Mb and varying fanouts.}
+\label{fig:gerth_fanout_experiment}
+\end{figure}
+
+
+\begin{figure}[h]
+\includegraphics[width=\textwidth]{../src/experiments/gerth_buffer_size_experiment_results/2016-04-20.17_26_22/time}
+\caption{Running the data structure of Brodal with a maximum fanout of 2 and varying buffer sizes.}
+\label{fig:gerth_buffer_size_experiment}
+\end{figure}
+
+\todo{Larger buffer sizes were also tried but were teribly slow!}
+
 \chapter{Implementation considerations}
 %TODO We use a POSIX file-system on a Linux distribution.
 
@@ -731,23 +748,27 @@ It is clear that direct invocation of the \texttt{read} and \texttt{write} syste
 
 \begin{figure}
   \centering
-  \includegraphics[width=\linewidth]{../src/experiments/stream_input_speed_experiment_results/2016-04-23.14_45_41/timems}
+  \includegraphics[width=\linewidth]{../src/experiments/stream_input_speed_experiment_results/2016-04-23.16_00_16/timems}
   \caption{Reading 5GB of data using \texttt{mmap} and \texttt{munmap}, \texttt{fread} and \texttt{fwrite}, and buffered \texttt{read} and \texttt{write}}
   \label{fig:stream_input_speed}
 \end{figure}
 
 \begin{figure}
   \centering
-  \includegraphics[width=\linewidth]{../src/experiments/stream_output_speed_experiment_results/2016-04-23.14_54_02/timems}
+  \includegraphics[width=\linewidth]{../src/experiments/stream_output_speed_experiment_results/2016-04-23.16_07_40/timems}
   \caption{Writing 5GB of data using \texttt{mmap} and \texttt{munmap}, \texttt{fread} and \texttt{fwrite}, and buffered \texttt{read} and \texttt{write}}
   \label{fig:stream_output_speed}
 \end{figure}
 
 The results of Figure~\ref{fig:stream_input_speed} and~\ref{fig:stream_output_speed} shows that the \texttt{buffered\_stream} performs similarly to using \texttt{mmap} when reading 5GB of data.
 
-%TODO this is not the case when we have queries in the child structure which relies on seek.
+\todo{talk about results on SSD disks and newer computers}
 
-%TODO Redo experiments and comment on those.
+\todo{comments on the results}
+
+\todo{this is not the case when we have queries in the child structure which relies on seek.}
+
+\todo{Redo experiments and comment on those.}
 
 \section{Child structure}
 This section will present the implementation specific design choices made for the child structure presented in section~\ref{sec:child_structure}. \\

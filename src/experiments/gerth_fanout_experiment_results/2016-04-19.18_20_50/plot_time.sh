@@ -1,6 +1,6 @@
 #!/usr/bin/gnuplot
-set terminal postscript eps enhanced color font 'Verdana,9'
-set output 'gerth_fanout_experiment_results/2016-04-19.18:20:50/time'
+set terminal postscript eps enhanced color font 'Verdana,11'
+set output 'gerth_fanout_experiment_results/2016-04-19.18_20_50/time.eps'
 set style line 11 lc rgb '#808080' lt 1
 set border 3 back ls 11
 set tics nomirror
@@ -15,14 +15,14 @@ set style line 6 lc rgb '#00ced1' pt 5 ps 1 lt 1 lw 2 # --- darkturquoise
 set style line 7 lc rgb '#ff00ff' pt 7 ps 1 lt 1 lw 2 # --- magenta
 set style line 8 lc rgb '#87ceeb' pt 8 ps 1 lt 1 lw 2 # --- skyblue
 set key top left
-set xlabel 'N (input size in MB)'
+set xlabel 'N (input size in Mb)'
 set ylabel 'Time (s)'
 #set xrange [0:0]
 #set yrange [0:0]
-plot '/home/peter/code/speciale/src/experiments/gerth_fanout_experiment_results/2016-04-19.18:20:50/gerth_fanout2' u 1:2 t 'fanout2' w lp ls 2, \
-'/home/peter/code/speciale/src/experiments/gerth_fanout_experiment_results/2016-04-19.18:20:50/gerth_fanout3' u 1:2 t 'fanout3' w lp ls 3, \
-'/home/peter/code/speciale/src/experiments/gerth_fanout_experiment_results/2016-04-19.18:20:50/gerth_fanout4' u 1:2 t 'fanout4' w lp ls 4, \
-'/home/peter/code/speciale/src/experiments/gerth_fanout_experiment_results/2016-04-19.18:20:50/gerth_fanout8' u 1:2 t 'fanout8' w lp ls 5, \
-'/home/peter/code/speciale/src/experiments/gerth_fanout_experiment_results/2016-04-19.18:20:50/gerth_fanout16' u 1:2 t 'fanout16' w lp ls 6, \
-'/home/peter/code/speciale/src/experiments/gerth_fanout_experiment_results/2016-04-19.18:20:50/gerth_fanout32' u 1:2 t 'fanout32' w lp ls 7, \
-'/home/peter/code/speciale/src/experiments/gerth_fanout_experiment_results/2016-04-19.18:20:50/gerth_fanout128' u 1:2 t 'fanout128' w lp ls 8
+plot 'gerth_fanout_experiment_results/2016-04-19.18_20_50/gerth_fanout2' u 1:2 t 'fanout2' w lp ls 2, \
+'gerth_fanout_experiment_results/2016-04-19.18_20_50/gerth_fanout3' u 1:2 t 'fanout3' w lp ls 3, \
+'gerth_fanout_experiment_results/2016-04-19.18_20_50/gerth_fanout4' u 1:2 t 'fanout4' w lp ls 4, \
+'gerth_fanout_experiment_results/2016-04-19.18_20_50/gerth_fanout8' u 1:2 t 'fanout8' w lp ls 5, \
+'gerth_fanout_experiment_results/2016-04-19.18_20_50/gerth_fanout16' u 1:2 t 'fanout16' w lp ls 6, \
+'gerth_fanout_experiment_results/2016-04-19.18_20_50/gerth_fanout32' u 1:2 t 'fanout32' w lp ls 7, \
+'gerth_fanout_experiment_results/2016-04-19.18_20_50/gerth_fanout128' u 1:2 t 'fanout128' w lp ls 8
