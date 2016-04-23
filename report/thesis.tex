@@ -269,7 +269,34 @@ The study of adapting the priority search to external memory was initiated by Ic
 	\label{fig:icking_external_pst}
 \end{figure}
 
-Kanellakis et al. presents a ???? partially dynamic solution in ????. The solution is highly theoretically and is by no means recommendable for as a pratically ???? for the problem. As a first step all points are shifted such that they lie above the line $y = x$. The basic building block of the data structure is the \textit{metablock tree}; a B-ary tree of \textit{metablocks}, each of which represents $B^2$ data points. The root represents the $B^2$ data points with the largest $y$-values. The remaining $n - B^2$ data points are divided into $B$ groups of $(n - B^2)/B$ data points each based on the $x$-coordinates. The first group contains the $(n - B^2)/B$ data points with the smallest $x$-values and so on. A recursive tree of the exact same type is constructed for each such gropu of data points. This process contiunues until a group has at most $B^2$ data points and can fit into a single metablock. Points from each $metablock$ are copied into new blocks that both vertically and horizontally oriented as depicted in figure ???. Finally, each metablok M contains pointers to B blocks that represents the set TS(M) that is obtained by examining the left siblings of $M$ and taking the $B^2$ largest points according to the $y$-value. Depending on how the query spans the metablock tree we can query the auxiliary data structures in a different manner. The five different query cases are depicted in figure ???.
+Kanellakis et al. presents a linear space partially dynamic solution in~\cite{Kanellakis1996589} that answers three-sided queries in $\mathcal{O}(\log_B N + K/B + log_2 B)$ I/O's. The data structure supports inserts in $\mathcal{O}(\log_B N + (\log^2_B N / B)$ I/O's. The result is of a highly theoretically nature and is unlikely to perform well in any practical manner. As a first step all points are shifted such that they lie above the line $y = x$. The basic building block of the data structure is the \textit{metablock tree}; a B-ary tree of \textit{metablocks}, each of which represents $B^2$ data points. The root represents the $B^2$ data points with the largest $y$-values. The remaining $n - B^2$ data points are divided into $B$ groups of $(n - B^2)/B$ data points each based on the $x$-coordinates. The first group contains the $(n - B^2)/B$ data points with the smallest $x$-values and so on. A recursive tree of the exact same type is constructed for each such gropu of data points. This process contiunues until a group has at most $B^2$ data points and can fit into a single metablock. Please refer to figure~\ref{fig:kanellakis_metablock_tree} for an illustration of a metablock tree.
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=0.5\textwidth]{../figures/kanellakis_metablock_tree}
+	\caption{A metablock tree for $B=3$ and $n=70$. All data points lie above the line $y=x$. Each region represents a metablock. The root is at the top. Note that each nonleafr metablock contains $B^2 = 9$ data points.}
+	\label{fig:kanellakis_metablock_tree}
+\end{figure}
+
+Points from each $metablock$ are copied into new blocks that both vertically and horizontally oriented as depicted in figure~\ref{fig:kanellakis_vertical_horizontally_oriented_blocks}. 
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=0.5\textwidth]{../figures/kanellakis_vertical_horizontally_oriented_blocks}
+	\caption{Vertically and horizontally oriented blockings of data points. Each rectangle represents a block: (a) vertically oriented; (b) horizontally oriented.}
+	\label{fig:kanellakis_vertical_horizontally_oriented_blocks}
+\end{figure}
+
+Finally, each metablok $M$ contains pointers to B blocks that represents the set TS(M) that is obtained by examining the left siblings of $M$ and taking the $B^2$ largest points according to the $y$-value. Depending on how the query spans the metablock tree we can query the auxiliary data structures in such a way that we can achieve the promised $\mathcal{O}(\log_B N + K/B + log_2 B)$ I/O's. The five different query cases are depicted in figure~\ref{fig:kanellakis_queries}.
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=1\textwidth]{../figures/kanellakis_queries}
+	\caption{The three-sided queries can span the metablock tree in five different ways.}
+	\label{fig:kanellakis_queries}
+\end{figure}
+
+Ramaswamy and Subramanian presents a suboptimal space data structure that answers queries with an optimal query bound in \cite{Ramaswamy:1994:PCT:182591.182595}.
 
 
 \chapter{Internal Priority Search Tree}
@@ -309,7 +336,7 @@ When answering a query on the form $[x_1,x_2] \times [y,\infty]$ we begin at the
 	\label{fig:static_pst_query}
 \end{figure}
 
-\subsection{Analysis}
+\subsection*{Analysis}
 The search operation follows two root to leaf paths each of size $\mathcal{O}(\log n)$. Using the search path and heap property of the tree we are guaranteed to only visit nodes that is actually reported when querying. This gives a total running time of $\mathcal{O}(\log n + K)$.
 
 \todo{Analyse in the I/O model as well.}
@@ -338,7 +365,7 @@ At the next level of the tree, we perform the same comparisons as before to dete
 
 Every tournament round will potential leave an empty interior node behind as the wining point is moved one level up. If this occurs we have to check if any previous tournament losers are now eligible to be represented higher in the tree. We must also remember that some interior nodes in the tree may not represent any points and will this remain empty when the construction is complete.
 
-\subsection{Analysis}
+\subsection*{Analysis}
 First, all points is inserted as leafs in the bottom layer of the data structure. The leafs counts for $\nicefrac{n}{2}$ of the total nodes in the tree. The next $\nicefrac{n}{2^2}$ nodes are created at height $h = 1$ and the tournaments are played one level down. For the $i$'th step we create $\nicefrac{n}{2^i}$ nodes and we will play tournaments $i$ levels down. The total steps $N$ to build the dynamic priority search tree of size $n$ is thus:
 
 $$ N = \sum\limits_{i=0}^{\log(n)} \frac{n}{2^{i+1}}i = \frac{n}{2} \left( \sum\limits_{i=0}^{\log(n)} i(\nicefrac{1}{2})^i \right) \leq \frac{n}{2} \left( \sum\limits_{i=0}^{\infty} i(\nicefrac{1}{2})^i \right)$$
@@ -359,7 +386,7 @@ This implies we can construct the dynamic priority search in linear time assumin
 
 In order to dynamically insert points into the data structure, we add a new leaf (placeholder) for the new point and perform a pushdown operation with the new point starting at the root. We can determine where to add the new placeholder as the dynamic priority search tree is a binary search tree on the $x$-coordinates of the points. When we reach an existing leaf, we add a new internal node in place of this leaf, and make the existing leaf one of the children of this new internal node. Then we add a new leaf to the tree as the other child, and store the new point in this leaf. In order to maintain the heap order of the priority search tree we now perform a pushdown operation, where we at each step compare the $y$-coordinate of the point to be inserted with $y$-coordinate of the point represented by the given internal node. If the $y$-coordinate of the point to be inserted is less than that of the point stored in the internal node, then we push the point to be inserted further down the tree. However, if the $y$-coordinate of the point to be inserted is greater than the $y$-coordinate of the point in the internal node, then we store the point to be inserted in this internal node, and take the point which was formerly represented by this internal node and continue the pushdown operation with this point instead.
 
-\subsection{Analysis}
+\subsection*{Analysis}
 
 The first step of the insertion algorithm is a binary search traversal on the $x$-coordinate of the new point. The path is of length $\mathcal{O}(\log n)$. Adding a new internal node in place of the old leaf takes a constant amount of operations. The pushdown operation follows a single root to leaf path of length $\mathcal{O}(\log n)$ and uses a constant amount of work in each node. So we conclude insertions can be done in $\mathcal{O}(\log n)$.
 
@@ -369,7 +396,7 @@ The first step of the insertion algorithm is a binary search traversal on the $x
 
 When dynamically deleting a point we must locate the interior node (if any) representing the point we wish to delete. After we have removed the point from the interior of the dynamic search tree, we must replay a portion of the tournament among the points below this interior node in order to replace it. Finally we must delete the leaf which is the placeholder for the point.
 
-\subsection{Analysis}
+\subsection*{Analysis}
 Locating the interior node representing the point to delete can be done in $\mathcal{O}(\log n)$ using the binary search property maintained by the priority search tree. Once we have located the interior node we can remove this point in $\mathcal{O}(1)$. The deletion of the point of an interior node leaves a hole in the tree that we fill by playing tournaments following a node to leaf path of length $\mathcal{O}(\log n)$. We conclude the deletion algorithm requires $\mathcal{O}(\log n)$ per deletion.
 
 \todo{Analyse in the I/O model as well.}
