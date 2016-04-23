@@ -71,6 +71,8 @@ namespace io {
     fstat(file_descriptor, &sb);
     file_size = sb.st_size;
     b_eof = (size_t)file_size == file_pos;
+    posix_fadvise(file_descriptor, 0, 0, POSIX_FADV_SEQUENTIAL);
+    posix_fadvise(file_descriptor, 0, 0, POSIX_FADV_WILLNEED);
     fill();
   }
 
