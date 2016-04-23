@@ -12,9 +12,9 @@ class stream_input_speed_experiment : public base_experiment {
     auto pst = PST_factory(instance.type, instance.buffer_size, instance.epsilon);
     size_t data_read = 0;
     size_t data_size = sizeof(int);
-    size_t interval = 16 * 1024 * 1024; //32 mb intervals
+    size_t interval = 64 * 1024 * 1024; //64 mb intervals
     size_t print_interval = 1024 * 1024 * 50;
-    size_t stop_at = 1024 * 1024 * 1024; //1GB!
+    size_t stop_at = 1024 * 1024 * 1024 * 5; //1GB!
     restart_timers();
     point p(0,0);
     while (true) {
