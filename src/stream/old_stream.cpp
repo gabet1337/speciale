@@ -377,7 +377,7 @@ void mistream::fill() {
     length = fileSize - offset;
   }    
 
-  buf = (int*)mmap(0, length, PROT_READ, MAP_SHARED, fd, offset);
+  buf = (int*)mmap(0, length, PROT_READ, MAP_PRIVATE | MAP_POPULATE, fd, offset);
   offset += length;
   buf_size = length/sizeof(int);
   buf_pos = 0;

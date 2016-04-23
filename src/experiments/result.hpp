@@ -8,16 +8,17 @@
 namespace experiment {
   
   class result {
+    typedef unsigned long long ull;
     public:
     typedef common::MEASURE MEASURE;
     result() {
       for (int i = MEASURE::first+1; i < MEASURE::last; i++)
-        result_map[i] = std::map<size_t, size_t>();
+        result_map[i] = std::map<ull, ull>();
     }
     
     ~result() {}
 
-    void add_measure(MEASURE m, size_t input_size, size_t result) {
+    void add_measure(MEASURE m, ull input_size, ull result) {
       result_map[m][input_size] = result;
       input_sizes.insert(input_size);
     }
@@ -39,8 +40,8 @@ namespace experiment {
     }
 
     private:
-    std::map<int, std::map<size_t, size_t> > result_map;
-    std::set<size_t> input_sizes;
+    std::map<int, std::map<ull, ull> > result_map;
+    std::set<ull> input_sizes;
   };
 
 
