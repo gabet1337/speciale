@@ -545,7 +545,8 @@ namespace test {
 
   };
   static void drop_cache() {
-    system("echo 3 | tee /proc/sys/vm/drop_caches");
+    int r = system("echo 3 | tee /proc/sys/vm/drop_caches");
+    r++;
   }
 };
 

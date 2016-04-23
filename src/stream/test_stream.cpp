@@ -501,7 +501,7 @@ void test_file_size() {
   bs.close();
 
   bs.open("stream/testfiles/test_size.txt");
-  assert ( (bs.size() == 16) && "Not the right size");
+  assert ( (bs.size() == 2) && "Not the right size");
   bs.close();
   cout << "\x1b[32mSUCCESS!\x1b[0m" << endl;
 }
@@ -514,12 +514,12 @@ void test_large_buffer() {
   
   for (int i = 0; i < 10000; i++) {
     bs.write(point(i,i));
-    assert( (bs.size() == (i+1)*sizeof(point)) && "Incorrect size");
+    assert( (bs.size() == (size_t)(i+1)) && "Incorrect size");
   }
-  assert( (bs.size() == 10000*sizeof(point)) && "Incorrect size of buffer");
+  assert( (bs.size() == 10000) && "Incorrect size of buffer");
 
   bs.write(point(10,12));
-  assert( (bs.size() != 10000*sizeof(point)) && "Incorrect size of buffer");
+  assert( (bs.size() != 10000) && "Incorrect size of buffer");
   bs.close();
   bs.open("stream/testfiles/test_large_buffer.txt");
   for (int i = 0; i < 10000; i++) {

@@ -44,8 +44,8 @@ class stream_input_speed_experiment : public base_experiment {
 int main() {
 
   stream_input_speed_experiment sise("stream_input_speed_experiment");
-  sise.add(1, "mmap", common::PST_VARIANT::MMAP_STREAM, 4096, 1);
   sise.add(2, "buffered", common::PST_VARIANT::BUFFERED_STREAM, 4096, 1);
+  sise.add(1, "mmap", common::PST_VARIANT::MMAP_STREAM, 4096, 1);
   sise.add(3, "file", common::PST_VARIANT::FILE_STREAM, 4096, 1);
   //sise.add(4, "rw", common::PST_VARIANT::READ_WRITE_STREAM, 4096, 1);
   sise.run();

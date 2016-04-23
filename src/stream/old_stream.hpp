@@ -17,7 +17,7 @@ namespace io {
     virtual int read_next() = 0;
     virtual bool end_of_stream() = 0;
     virtual void close_stream() = 0;
-    virtual size_t size() = 0;
+    virtual off64_t size() = 0;
     virtual void use() = 0;
   };
 
@@ -39,27 +39,9 @@ namespace io {
     virtual int read_next();
     virtual bool end_of_stream();
     virtual void close_stream();
-    virtual size_t size();
+    virtual off64_t size();
     virtual void use();
   private:
-    int fd,buf;
-    bool eof;
-    void fill();
-  };
-
-  class ristream_back : public Iistream {
-  public:
-    ristream_back();
-    ristream_back(size_t size);
-    ~ristream_back();
-    virtual void open_stream(const char *file);
-    virtual int read_next();
-    virtual bool end_of_stream();
-    virtual void close_stream();
-    virtual size_t size();
-    virtual void use();
-  private:
-    bool has_been_used;
     int fd,buf;
     bool eof;
     void fill();
@@ -87,7 +69,7 @@ namespace io {
     virtual int read_next();
     virtual bool end_of_stream();
     virtual void close_stream();
-    virtual size_t size();
+    virtual off64_t size();
     virtual void use();
   private:
     FILE *f;
@@ -104,7 +86,7 @@ namespace io {
     virtual int read_next();
     virtual bool end_of_stream();
     virtual void close_stream();
-    virtual size_t size();
+    virtual off64_t size();
     virtual void use();
   private:
     void fill();
@@ -135,31 +117,13 @@ namespace io {
     virtual int read_next();
     virtual bool end_of_stream();
     virtual void close_stream();
-    virtual size_t size();
+    virtual off64_t size();
     virtual void use();
   private:
     void fill();
     int _size,fd,B,*buf, index;
     bool eof;
-    long fileSize;
-  };
-
-  class bistream_back : public Iistream {
-  public:
-    bistream_back(size_t size);
-    ~bistream_back();
-    virtual void open_stream(const char *file);
-    virtual int read_next();
-    virtual bool end_of_stream();
-    virtual void close_stream();
-    virtual size_t size();
-    virtual void use();
-  private:
-    void fill();
-    int _size,fd,B,*buf, index;
-    bool eof;
-    long fileSize;
-    bool has_been_used;
+    off64_t fileSize;
   };
 
   class bostream : public Iostream {
@@ -184,41 +148,18 @@ namespace io {
     virtual int read_next();
     virtual bool end_of_stream();
     virtual void close_stream();
-    virtual size_t size();
+    virtual off64_t size();
     virtual void use();
   private:
     void fill();
     size_t bSize,buf_size;
     int *buf;
     size_t buf_pos;
-    ssize_t length;
+    off64_t length;
     int fd;
     bool eof;
-    off_t offset; // must be multiple of page_size returned by sysconf(_SC_PAGE_SIZE)
-    off_t fileSize;
-  };
-
-  class mistream_back : public Iistream {
-  public:
-    mistream_back(size_t size);
-    ~mistream_back();
-    virtual void open_stream(const char *file);
-    virtual int read_next();
-    virtual bool end_of_stream();
-    virtual void close_stream();
-    virtual size_t size();
-    virtual void use();
-  private:
-    bool has_been_used;
-    void fill();
-    size_t bSize,buf_size;
-    int *buf;
-    int buf_pos;
-    ssize_t length;
-    int fd;
-    bool eof;
-    off_t offset; // must be multiple of page_size returned by sysconf(_SC_PAGE_SIZE)
-    off_t fileSize;
+    off64_t offset; // must be multiple of page_size returned by sysconf(_SC_PAGE_SIZE)
+    off64_t fileSize;
   };
 
   class mostream : public Iostream {
@@ -236,7 +177,7 @@ namespace io {
     int *buf, *wbuf;
     int fd;
     size_t buf_pos;
-    size_t fileSize;
+    off64_t fileSize;
   };
 
 }
