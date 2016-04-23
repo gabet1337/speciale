@@ -689,23 +689,23 @@ There are many different ways to construct a stream. In order to substantiate ou
 	\item Direct invocation of the operating system call \texttt{mmap} and \texttt{munmap} that makes use of the operating systems virtual memory mechanism through demand paging.
 \end{itemize}
 
-It is clear that direct invocation of the \texttt{read} and \texttt{write} system calls cannot be better than adding buffering on top, which early experiments clearly showed. The results were so slow that we had to exclude them.
+It is clear that direct invocation of the \texttt{read} and \texttt{write} system calls cannot be better than adding buffering on top, which early experiments without doubt showed. The results were so slow that we had to exclude them.
 
 \begin{figure}
   \centering
-  \includegraphics[width=\linewidth]{../src/experiments/stream_input_speed_experiment_results/2016-04-23.11_05_51/timems}
-  \caption{Reading 1GB of data using \texttt{mmap} and \texttt{munmap}, \texttt{fread} and \texttt{fwrite}, and buffered \texttt{read} and \texttt{write}}
+  \includegraphics[width=\linewidth]{../src/experiments/stream_input_speed_experiment_results/2016-04-23.14_45_41/timems}
+  \caption{Reading 5GB of data using \texttt{mmap} and \texttt{munmap}, \texttt{fread} and \texttt{fwrite}, and buffered \texttt{read} and \texttt{write}}
   \label{fig:stream_input_speed}
 \end{figure}
 
 \begin{figure}
   \centering
-  \includegraphics[width=\linewidth]{../src/experiments/stream_output_speed_experiment_results/2016-04-23.11_09_02/timems}
-  \caption{Writing 1GB of data using \texttt{mmap} and \texttt{munmap}, \texttt{fread} and \texttt{fwrite}, and buffered \texttt{read} and \texttt{write}}
+  \includegraphics[width=\linewidth]{../src/experiments/stream_output_speed_experiment_results/2016-04-23.14_54_02/timems}
+  \caption{Writing 5GB of data using \texttt{mmap} and \texttt{munmap}, \texttt{fread} and \texttt{fwrite}, and buffered \texttt{read} and \texttt{write}}
   \label{fig:stream_output_speed}
 \end{figure}
 
-The results of Figure~\ref{fig:stream_input_speed} and~\ref{fig:stream_output_speed} shows that the \texttt{buffered\_stream} is clearly faster when it comes to reading 1GB of data.
+The results of Figure~\ref{fig:stream_input_speed} and~\ref{fig:stream_output_speed} shows that the \texttt{buffered\_stream} performs similarly to using \texttt{mmap} when reading 5GB of data.
 
 %TODO this is not the case when we have queries in the child structure which relies on seek.
 
