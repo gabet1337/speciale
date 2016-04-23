@@ -22,9 +22,8 @@ namespace io {
     void close();
     void write(T item);
     void sync();
-    off_t seek(size_t offset, int whence);
+    off64_t seek(off64_t offset, int whence);
     T read();
-    size_t tell();
     size_t size();
     bool eof();
     void truncate();
@@ -32,10 +31,11 @@ namespace io {
     int file_descriptor;
     void fill();
     bool should_refill();
-    inline size_t buffer_pos();
-    size_t buffer_size, file_pos;//, buffer_pos;
+    inline off64_t buffer_pos();
+    size_t buffer_size;
     off64_t file_size;
-    off_t buffer_start;
+    off64_t file_pos;
+    off64_t buffer_start;
     T* buffer;
     std::string file_name;
     bool is_open, b_eof, is_dirty;
@@ -118,23 +118,23 @@ namespace io {
   template <typename T>
   void buffered_stream<T>::sync() {
     is_dirty = false;
-    size_t elems = buffer_pos();
-    off_t cur_pos = seek(0, SEEK_CUR);
+    off64_t elems = buffer_pos();
+    off64_t cur_pos = seek(0, SEEK_CUR);
     seek(buffer_start, SEEK_SET);
-    size_t bytes_written = ::write(file_descriptor, buffer, elems*sizeof(T));
-    if (bytes_written == (size_t)-1) {
+    ssize_t bytes_written = ::write(file_descriptor, buffer, elems*sizeof(T));
+    if (bytes_written == (ssize_t)-1) {
       perror(std::string("Error on syncing buffer for file: '").append(file_name).append("'").c_str());
       exit(errno);
     }
     seek(cur_pos,SEEK_SET);
-    file_size = std::max((size_t) file_size, file_pos);
+    file_size = std::max(file_size, file_pos);
   }
 
   template <typename T>
-  off_t buffered_stream<T>::seek(size_t offset, int whence) {
+  off64_t buffered_stream<T>::seek(off64_t offset, int whence) {
     if (is_dirty) sync();
-    file_pos = lseek(file_descriptor, offset, whence);
-    if (file_pos == (size_t)-1) {
+    file_pos = lseek64(file_descriptor, offset, whence);
+    if (file_pos == (off64_t)-1) {
       perror(std::string("Error seeking file: ").append(file_name).append("'").c_str());
       exit(errno);
     }
@@ -161,13 +161,13 @@ namespace io {
   }
 
   template <typename T>
-  inline size_t buffered_stream<T>::buffer_pos() {
+  inline off64_t buffered_stream<T>::buffer_pos() {
     return (file_pos-buffer_start)/sizeof(T);
   }
 
   template <typename T>
   bool buffered_stream<T>::should_refill() {
-    if ( !(buffer_start <= (off_t)file_pos &&
+    if ( !(buffer_start <= file_pos &&
            file_pos < buffer_start+buffer_size) ) return true;
     if (buffer_pos() >= buffer_size/sizeof(T)) return true;
     return false;
@@ -176,7 +176,7 @@ namespace io {
 
   template <typename T>
   size_t buffered_stream<T>::size() {
-    return std::max((size_t)file_size, file_pos)/sizeof(T);
+    return std::max(file_size, file_pos)/sizeof(T);
   }
 
   template <typename T>
