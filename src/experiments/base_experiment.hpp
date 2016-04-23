@@ -111,6 +111,7 @@ namespace experiment {
                 << "type: " << common::PST_VARIANT_to_string(ri.type) << std::endl
                 << "buffer size: " << ri.buffer_size << std::endl
                 << "epsilon: " <<  ri.epsilon << std::endl;
+      test::drop_cache();
       run_experiment(ri);
       save_results(ri);
     }
