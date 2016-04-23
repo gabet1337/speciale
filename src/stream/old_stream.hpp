@@ -77,25 +77,6 @@ namespace io {
     bool eof;
   };
 
-  class fistream_back : public Iistream {
-  public:
-    fistream_back();
-    fistream_back(size_t size);
-    ~fistream_back();
-    virtual void open_stream(const char *file);
-    virtual int read_next();
-    virtual bool end_of_stream();
-    virtual void close_stream();
-    virtual off64_t size();
-    virtual void use();
-  private:
-    void fill();
-    bool has_been_used;
-    FILE *f;
-    int buf;
-    bool eof;  
-  };
-
   class fostream : public Iostream {
   public:
     fostream();

@@ -1,4 +1,4 @@
-CC = c++ -std=c++0x -O2
+CC = c++ -std=c++0x -O2 -D_FILE_OFFSET_BITS=64
 DOFF = -DDEBUG
 VALID = -DVALIDATE
 DEBUG = -g -Wall -fsanitize=address $(DOFF) $(VALID) common/debug.hpp common/validate.hpp
