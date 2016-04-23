@@ -256,7 +256,9 @@ $$ p \in Q \Leftrightarrow \hat{p} \in \hat{Q} $$
 From Lemma~\ref{lma:composite_universe_query} is follows that our approach is correct.
 
 \chapter{Related work}
+McCreight introduced the priority search tree for internal memory in 1985~\cite{DBLP:journals/siamcomp/McCreight85}. The priority search tree is basically a combination of a binary search tree on the $x$-coordinate and a heap on the $y$-coordinate where the root stores the maximum $y$-value and points are distributed according to the median $x$-value. This allows updates to be done in $\mathcal{O}(\log N)$ and three-sided range queries to be done in $\mathcal{O}(\log N + K)$, where $K$ is the number of points being reported.
 
+The study of adapting the priority search to external memory was initiated by Icking et al ??????. They achieve a static external priority search tree that uses $\mathcal{O}(\nicefrac{N}{B})$ space and answers three-sided range queries in $\mathcal{O}(\log_B N + \nicefrac{K}{B})$ I/O's. The data structure uses a blocked B-tree with pointers to data buckets full of points. The idea is depicted in figure ????. In order to make the data structure dynamic the underlying B-tree is replaced with a Red-Black tree. This change of underlying search tree degenerates the solution to answer queries in $\mathcal{O}(\log_2 N + \nicefrac{K}{B})$ and handle updates in $\mathcal{O}(B \log_2 N)$.
 
 
 \chapter{Internal Priority Search Tree}
