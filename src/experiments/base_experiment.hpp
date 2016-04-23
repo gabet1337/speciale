@@ -96,6 +96,7 @@ namespace experiment {
   }
 
   base_experiment::~base_experiment() {
+    std::cout << "DONE DONE DONE!" << std::endl;
     finished();
   }
 
