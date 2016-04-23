@@ -59,71 +59,9 @@ void ristream::use() {
   exit(-1);
 }
 
-size_t ristream::size() {
+off64_t ristream::size() {
   std::cout  << "Missing Implementation" << std::endl;
   exit(-1);
-}
-
-//backstream
-
-ristream_back::ristream_back(size_t size) {
-  buf = 0;
-  fd = 0;
-  eof = 0;
-}
-
-ristream_back::ristream_back() {
-  buf = 0;
-  fd = 0;
-  eof = false;
-}
-
-ristream_back::~ristream_back() {
-  close_stream();
-}
-
-void ristream_back::open_stream(const char* file) {
-  fd = open(file, O_RDONLY | O_LARGEFILE); //added largefile since we need large files.
-  // std::cout << "OPENING " << file << " with fd: " << fd << std::endl;
-  if (fd < 0) {perror("Error opening file");exit(errno);}
-  lseek(fd,0,SEEK_END);
-  read_next();
-}
-
-int ristream_back::read_next() {
-  has_been_used = false;
-  int res = buf;
-  fill();
-  return res;
-}
-
-void ristream_back::use() {
-  has_been_used = true;
-}
-
-void ristream_back::fill() {
-  if (lseek(fd, 0, SEEK_CUR) == 0) eof = true;
-  lseek(fd,-1*sizeof(int), SEEK_CUR);
-  read(fd, &buf, sizeof(buf));
-  lseek(fd,-1*sizeof(int), SEEK_CUR);
-}
-
-size_t ristream_back::size() {
-  if (!has_been_used && eof) return 1;
-  if (eof) return 0;
-  return lseek(fd,0,SEEK_CUR)/sizeof(int) + 1 + !has_been_used;
-}
-
-bool ristream_back::end_of_stream() {
-  return eof;
-}
-
-void ristream_back::close_stream() {
-  // std::cout << "CLOSING fd: " << fd << std::endl;
-  close(fd);
-  fd = 0;
-  buf = 0;
-  eof = false;
 }
 
 // write
@@ -153,12 +91,15 @@ void rostream::create_stream(const char *file, bool from_end) {
   else {
     fd = open(file, O_CREAT | O_LARGEFILE | O_WRONLY, S_IRWXU);
     if (fd < 0) {perror("Error creating stream");exit(errno);}
-    lseek(fd,0,SEEK_END);
+    lseek64(fd,0,SEEK_END);
   }
 }
 
 void rostream::write_stream(int d) {
-  write(fd, &d, sizeof(d));
+  if (write(fd, &d, sizeof(d)) == -1) {
+    perror("Error writing to stream");
+    exit(errno);
+  }
 }
 
 void rostream::close_stream() {
@@ -212,7 +153,7 @@ void fistream::close_stream() {
   f = 0;
 }
 
-size_t fistream::size() {
+off64_t fistream::size() {
   std::cout << "fistream Missing implementation size"<< std::endl;
   exit(-1);
 }
@@ -220,66 +161,6 @@ size_t fistream::size() {
 void fistream::use() {
   std::cout << "fistream Missing implementation use" <<std::endl;
   exit(-1);
-}
-
-/////// fistream back
-
-fistream_back::fistream_back() {
-  f = 0;
-}
-
-fistream_back::fistream_back(size_t size) {
-  f = 0;
-}
-
-fistream_back::~fistream_back() {
-  close_stream();
-}
-
-void fistream_back::open_stream(const char *file) {
-  has_been_used = true;
-  f = fopen64(file, "rb");
-  if (f == 0) {
-    perror("Error opening file"); exit(errno);
-  }
-  buf = 0;
-  eof = false;
-  fseek(f, 0, SEEK_END);
-  fill();
-}
-
-int fistream_back::read_next() {
-  has_been_used = false;
-  int res = buf;
-  fill();
-  return res;
-}
-
-void fistream_back::fill() {
-  if (ftell(f) == 0) eof = true;
-  fseek(f,-1*sizeof(int),SEEK_CUR);
-  if (fread(&buf, sizeof(int), 1, f) == 0)
-    eof = true;
-  fseek(f,-1*sizeof(int),SEEK_CUR);
-}
-
-bool fistream_back::end_of_stream() {
-  return eof;
-}
-
-void fistream_back::close_stream() {
-  if (f == 0) return;
-  fclose(f);
-  f = 0;
-}
-
-size_t fistream_back::size() {
-  long pos = ftell(f);
-  return pos/sizeof(int) + !has_been_used + 1;
-}
-
-void fistream_back::use() {
-  has_been_used = true;
 }
 
 // fwrite
@@ -338,7 +219,7 @@ void bistream::open_stream(const char *file) {
   struct stat sb;
   fstat(fd,&sb);
   off64_t t = sb.st_size;
-  fileSize = (long) t;
+  fileSize = t;
   fileSize /= sizeof(int);
   buf = new int[B];
   fill();
@@ -373,7 +254,7 @@ void bistream::close_stream() {
   fd = -1;
 }
 
-size_t bistream::size() {
+off64_t bistream::size() {
   std::cout << "Missing implemetnation" << std::endl;
   exit(-1);
 }
@@ -382,78 +263,6 @@ void bistream::use() {
   std::cout << "Missing implemetnation" << std::endl;
   exit(-1);
 }
-
-/////////////bi stream back
-
-bistream_back::bistream_back(size_t B) {
-  this->B = B;
-  eof = false;
-  index = B;
-  _size = 0;
-  fd = -1;
-}
-
-bistream_back::~bistream_back() {
-  close_stream();
-}
-
-void bistream_back::open_stream(const char *file) {
-  has_been_used = true;
-  fd = open(file, O_RDONLY | O_LARGEFILE);
-  struct stat sb;
-  fstat(fd,&sb);
-  off64_t t = sb.st_size;
-  fileSize = (long) t;
-  buf = new int[B];
-  lseek(fd,0,SEEK_END);
-  fill();
-}
-
-void bistream_back::fill() {
-  //read in from file
-  if (eof) return;
-  if (B*sizeof(int) <= fileSize)
-    lseek(fd, -1*(B*sizeof(int)), SEEK_CUR);
-  else {
-    lseek(fd, -1*fileSize, SEEK_CUR);
-    eof = true;
-  }
-  _size = read(fd, buf, std::min((long long)fileSize,(long long)(B*sizeof(int))));
-  lseek(fd, -1*std::min((long long)fileSize,(long long)(B*sizeof(int))), SEEK_CUR);
-
-  fileSize -= _size;
-  if (fileSize < 1) eof = true;
-  index = _size/sizeof(int)-1;
-}
-
-int bistream_back::read_next() {
-  has_been_used = false;
-  if (index < 0) {
-    fill();
-  }
-  int b = buf[index--];
-  return b;
-}
-
-bool bistream_back::end_of_stream() {
-  return eof && index < 0;
-}
-
-void bistream_back::close_stream() {
-  if (fd == -1) return;
-  close(fd);
-  delete[] buf;
-  fd = -1;
-}
-
-size_t bistream_back::size() {
-  return fileSize/sizeof(int) + index + !has_been_used + 1;
-}
-
-void bistream_back::use() {
-  has_been_used = true;
-}
-
 
 // write with buffer
 // OUTPUT STREAM
@@ -485,7 +294,7 @@ void bostream::create_stream(const char *file, bool from_end) {
   else {
     fd = open(file, O_CREAT | O_LARGEFILE | O_WRONLY, S_IRWXU);
     if (fd < 0) {perror("Error creating stream");exit(errno);}
-    lseek(fd,0,SEEK_END);
+    lseek64(fd,0,SEEK_END);
   }
   buf = new int[B];
 }
@@ -498,7 +307,10 @@ void bostream::write_stream(int d) {
 }
 
 void bostream::flush() {
-  write(fd, buf, index*sizeof(int));
+  if (write(fd, buf, index*sizeof(int)) == -1) {
+    perror("error writing to stream");
+    exit(errno);
+  }
   index = 0;
 }
 
@@ -584,7 +396,7 @@ void mistream::close_stream() {
 
 }
 
-size_t mistream::size() {
+off64_t mistream::size() {
   std::cout << "Missing implementaiton" << std::endl;
   exit(-1);
 }
@@ -593,84 +405,6 @@ void mistream::use() {
   std::cout << "Missing implemetnatipon" << std::endl;
   exit(-1);
 }
-
-///////mistream back
-
-mistream_back::mistream_back(size_t b) {
-  fd = -1;
-  b *= sizeof(int);
-  long page_size = sysconf(_SC_PAGESIZE);
-  if (b%page_size != 0)
-    bSize = b + page_size - (b%page_size);
-  else bSize = b;
-}
-
-mistream_back::~mistream_back() {
-  close_stream();
-}
-
-void mistream_back::open_stream(const char *file) {
-  has_been_used = true;
-  fd = open(file, O_RDONLY | O_LARGEFILE);
-  //b should be a multiple of the page size
-  struct stat sb;
-  fstat(fd, &sb);
-  fileSize = sb.st_size;
-  eof = false;
-  buf_pos = (fileSize%bSize)/sizeof(int);
-  offset = fileSize - (fileSize%bSize);
-  buf = 0;
-  fill();
-}
-
-int mistream_back::read_next() {
-  has_been_used = false;
-  if (buf_pos < 0) fill();
-  return buf[buf_pos--];
-}
-
-void mistream_back::fill() {
-  if (eof) return;
-  //first unmap the previous buffer
-  if (buf != 0) {
-    munmap(buf, length);
-    buf = 0;
-  }
-  //fill the buffer using mmap
-  length = bSize;
-  if (fileSize <= offset + length) {
-    length = fileSize - offset;
-  }
-  
-  buf = (int*)mmap(0, length, PROT_READ, MAP_SHARED, fd, offset);
-  offset -= bSize;
-  fileSize -= length;
-  if (fileSize == 0) eof = true;
-  buf_size = length/sizeof(int);
-  buf_pos = buf_size-1;
-}
-
-bool mistream_back::end_of_stream() {
-  return eof && buf_pos < 0;
-}
-
-void mistream_back::close_stream() {
-  if (fd == -1) return;
-  munmap(buf, length);
-  close(fd);
-  fd = -1;
-}
-
-size_t mistream_back::size() {
-  return fileSize/sizeof(int) + buf_pos + !has_been_used + 1;
-}
-
-void mistream_back::use() {
-  has_been_used = true;
-}
-
-
-//////////////////////
 
 mostream::mostream(int b) {
   long page_size = sysconf(_SC_PAGESIZE);
@@ -711,12 +445,15 @@ void mostream::create_stream(const char *file, bool from_end) {
     int bytes_to_map = fileSize % p;
     fileSize -= bytes_to_map;
     int *temp_buf = (int*)mmap(0, bytes_to_map, PROT_READ | PROT_WRITE, MAP_SHARED, fd, fileSize);
-    for (int i = 0; i < bytes_to_map/sizeof(int); i++) {
+    for (size_t i = 0; i < bytes_to_map/sizeof(int); i++) {
       buf[i] = temp_buf[i];
       buf_pos++;
     }
     munmap(temp_buf, bytes_to_map);
-    ftruncate(fd,fileSize);
+    if (ftruncate(fd,fileSize) == -1) {
+      perror("Error truncating stream");
+      exit(errno);
+    }
   }
 
 
@@ -727,16 +464,23 @@ void mostream::flush() {
   int numBytes = 0;
   if (buf_pos == bSize) numBytes = buf_pos*sizeof(int);
   else numBytes = (buf_pos)*sizeof(int);
-  lseek(fd, numBytes, SEEK_END);
-  write(fd, "", 1);
+  lseek64(fd, numBytes, SEEK_END);
+  if (write(fd, "", 1) == -1) {
+    perror("Error writing to stream");
+    exit(errno);
+  }
   wbuf = (int*)mmap(0, numBytes, PROT_WRITE, MAP_SHARED, fd, fileSize);
   for (size_t i = 0; i < buf_pos; i++) {
     int k = buf[i];
     wbuf[i] = k;
   }
   munmap(wbuf, numBytes);
-  if (buf_pos != bSize)
-    ftruncate(fd, lseek(fd,0,SEEK_END)-1);
+  if (buf_pos != bSize) {
+    if (ftruncate(fd, lseek64(fd,0,SEEK_END)-1) == -1) {
+      perror("Error truncating stream");
+      exit(errno);
+    }
+  }
   int p = sysconf(_SC_PAGESIZE);
   if (numBytes % p != 0)
     numBytes += p - (numBytes % p);
