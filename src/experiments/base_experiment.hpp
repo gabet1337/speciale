@@ -95,7 +95,10 @@ namespace experiment {
     }
   }
 
-  base_experiment::~base_experiment() { }
+  base_experiment::~base_experiment() {
+    std::cout << "DONE DONE DONE!" << std::endl;
+    finished();
+  }
 
   void base_experiment::add(size_t id, std::string name, PST_TYPE type, size_t buffer_size, double epsilon) {
     run_instances.push_back(run_instance(id, name, type, buffer_size, epsilon));
@@ -109,9 +112,10 @@ namespace experiment {
                 << "buffer size: " << ri.buffer_size << std::endl
                 << "epsilon: " <<  ri.epsilon << std::endl;
       run_experiment(ri);
+      save_results(ri);
     }
+    
 
-    finished();
   }
 
   void base_experiment::finished() {
@@ -150,14 +154,15 @@ namespace experiment {
   }
 
   void base_experiment::plot_with_size(test::gnuplot &gp, run_instance instance, result::MEASURE m) {
-    gp.add_line(instance.name, instance.type, get_working_directory()+"/"+get_file_name(instance), 1, m);
+    gp.add_line(instance.name, instance.type, get_file_name(instance), 1, m);
   }
 
   void base_experiment::plot() {
+    std::cout << "Now plotting the results against time!" << std::endl;
     for (int i = common::MEASURE::first+1; i < common::MEASURE::last; i++) {
       test::gnuplot gp;
       std::string output = common::MEASURE_to_string(static_cast<common::MEASURE>(i));
-      gp.set_output(get_directory()+"/"+output);
+      gp.set_output(get_directory()+"/"+output+".eps");
       gp.set_xlabel(common::XLABEL_to_string(common::XLABEL::input_size_in_millions));
       gp.set_ylabel(common::MEASURE_to_label(static_cast<common::MEASURE>(i)));
       for (auto ri : run_instances) plot_with_size(gp, ri, static_cast<common::MEASURE>(i));
@@ -220,7 +225,7 @@ namespace experiment {
     default: return "invalid";
     }
   }
-
+  
   std::string base_experiment::get_working_directory() {
     char* dir = get_current_dir_name();
     std::string res = std::string(dir);

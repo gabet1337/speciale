@@ -81,8 +81,8 @@ namespace common {
   std::string XLABEL_to_string(XLABEL x) {
     switch (x) {
     case XLABEL::input_size: return "N (input size)";
-    case XLABEL::input_size_in_thousands: return "N (input size in KB)";
-    case XLABEL::input_size_in_millions: return "N (input size in MB)";
+    case XLABEL::input_size_in_thousands: return "N (input size in Kb)";
+    case XLABEL::input_size_in_millions: return "N (input size in Mb)";
     default: return "invalid label";
     }
   }

@@ -188,7 +188,7 @@ fistream::~fistream() {
 }
 
 void fistream::open_stream(const char *file) {
-  f = fopen(file, "rb");
+  f = fopen64(file, "rb");
   if (f == 0) {
     perror("Error opening file"); exit(errno);
   }
@@ -238,7 +238,7 @@ fistream_back::~fistream_back() {
 
 void fistream_back::open_stream(const char *file) {
   has_been_used = true;
-  f = fopen(file, "rb");
+  f = fopen64(file, "rb");
   if (f == 0) {
     perror("Error opening file"); exit(errno);
   }
@@ -299,11 +299,11 @@ fostream::~fostream() {
 }
 
 void fostream::create_stream(const char *file) {
-  f = fopen(file, "wb");
+  f = fopen64(file, "wb");
 }
 
 void fostream::create_stream(const char *file, bool from_end) {
-  f = fopen(file, "a");
+  f = fopen64(file, "a");
 }
 
 void fostream::write_stream(int d) {

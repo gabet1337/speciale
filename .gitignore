@@ -10,6 +10,10 @@ src/mpst
 src/rtree
 src/testexp
 src/testlib
+src/experiments/stream_input_speed_experiment
+src/experiments/stream_output_speed_experiment
+src/experiments/gerth_fanout_experiment
+src/experiments/gerth_buffer_size_experiment
 
 # data folders
 src/c_*
