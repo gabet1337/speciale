@@ -95,7 +95,9 @@ namespace experiment {
     }
   }
 
-  base_experiment::~base_experiment() { }
+  base_experiment::~base_experiment() {
+    finished();
+  }
 
   void base_experiment::add(size_t id, std::string name, PST_TYPE type, size_t buffer_size, double epsilon) {
     run_instances.push_back(run_instance(id, name, type, buffer_size, epsilon));
@@ -111,7 +113,7 @@ namespace experiment {
       run_experiment(ri);
     }
 
-    finished();
+
   }
 
   void base_experiment::finished() {
