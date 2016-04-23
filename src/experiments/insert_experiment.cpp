@@ -13,7 +13,7 @@ class insert_experiment : public base_experiment {
     size_t data_read = 0;
     size_t data_size = sizeof(point);
     size_t interval = 50 * 1024 * 1024; //50 mb intervals
-    size_t print_interval = 1024 * 1024;
+    size_t print_interval = 1024 * 8;
     test::clock timer;
     timer.start();
     while (!data.eof()) {
@@ -27,7 +27,7 @@ class insert_experiment : public base_experiment {
       }
 
       if (data_read % print_interval == 0) {
-        std::cout << data_read/print_interval << "MB" << std::endl;
+        std::cout << data_read/1024 << "Kb" << std::endl;
       }
     }
     delete pst;

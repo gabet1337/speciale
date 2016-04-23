@@ -128,7 +128,7 @@ void test_destructor() {
   print_description("Starting to test construction");
   apst* t = new apst(12);
   for (int i = 0; i < 20; i++) t->insert(point(i,i));
-  assert(util::file_exists("1/points"));
+  //assert(util::file_exists("1/points"));
   delete t;
   assert(!util::file_exists("1/points"));
   print_success();
@@ -560,27 +560,27 @@ int main() {
 
   cout << "\033[0;33m\e[4mSTARTING TEST OF APST STRUCTURE\e[24m\033[0m" << endl;
 
-  // test_set_upper_bound();
-  // test_find_range();
-  // test_constructors();
-  // test_destructor();
-  // test_insert1();
-  // test_insert5();
-  // test_insert6();
-  // test_insert8();
-  // test_insert11();
-  // test_insert50();
-  // test_insert50_reverse();
-  // test_insert50_odd_then_even();
-  // test_100_random_inserts();
-  //test_1000_random_inserts();
+  test_set_upper_bound();
+  test_find_range();
+  test_constructors();
+  test_destructor();
+  test_insert1();
+  test_insert5();
+  test_insert6();
+  test_insert8();
+  test_insert11();
+  test_insert50();
+  test_insert50_reverse();
+  test_insert50_odd_then_even();
+  test_100_random_inserts();
+  test_1000_random_inserts();
   //test_insert_from_file("test/test_1000_random_inserts_point_log");
-  //test_insert5_delete_1();
-  //test_insert100_delete50();
-  //test_100_random_inserts_50_deletes();
-  test_report_random_1gb(50*1024*1024, 0);
-  // test_insert5_report();
-  // test_insert50_report();
+  test_insert5_delete_1();
+  test_insert100_delete50();
+  test_100_random_inserts_50_deletes();
+  //test_report_random_1gb(50*1024*1024, 0);
+  test_insert5_report();
+  test_insert50_report();
   
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
   cleanup();
