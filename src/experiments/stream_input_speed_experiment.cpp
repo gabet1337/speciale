@@ -2,7 +2,7 @@
 using namespace experiment;
 
 class stream_input_speed_experiment : public base_experiment {
-
+  typedef unsigned long long ull;
   public:
   stream_input_speed_experiment(const std::string &exp_name) : base_experiment(exp_name) {
   }
@@ -10,11 +10,11 @@ class stream_input_speed_experiment : public base_experiment {
 
   void run_experiment(run_instance instance) {
     auto pst = PST_factory(instance.type, instance.buffer_size, instance.epsilon);
-    size_t data_read = 0;
-    size_t data_size = sizeof(int);
-    size_t interval = 16 * 1024 * 1024; //32 mb intervals
-    size_t print_interval = 1024 * 1024 * 50;
-    size_t stop_at = 1024 * 1024 * 1024; //1GB!
+    ull data_read = 0;
+    ull data_size = sizeof(int);
+    ull interval = 64 * 1024 * 1024; //64 mb intervals
+    ull print_interval = 1024 * 1024 * 50;
+    ull stop_at = 1024ULL * 1024ULL * 1024ULL * 5ULL; //1GB!
     restart_timers();
     point p(0,0);
     while (true) {
