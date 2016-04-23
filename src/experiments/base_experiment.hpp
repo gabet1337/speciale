@@ -42,6 +42,7 @@ namespace experiment {
     typedef io::buffered_stream<point> stream;
     typedef common::PST_VARIANT PST_TYPE;
 
+    typedef unsigned long long ull;
 
     struct run_instance {
       size_t id;
@@ -64,14 +65,14 @@ namespace experiment {
     const std::string current_date_time();
     stream get_data_stream(const std::string &file);
     result results[256];
-    void add_result(size_t id, result::MEASURE m, size_t input_size, size_t res);
+    void add_result(size_t id, result::MEASURE m, ull input_size, ull res);
     void save_results(run_instance instance);
     std::vector<run_instance> run_instances;
     common::pst_interface * PST_factory(PST_TYPE type, size_t buffer_size, double epsilon);
     void plot_with_size(test::gnuplot &gp, run_instance instance, result::MEASURE m);
     std::string get_working_directory();
     void restart_timers();
-    void measure_everything(size_t id, size_t input_size);
+    void measure_everything(size_t id, ull input_size);
     void finished();
   public:
     base_experiment(const std::string &experiment_name);
@@ -179,7 +180,7 @@ namespace experiment {
     procio.restart();
   }
 
-  void base_experiment::measure_everything(size_t id, size_t input_size) {
+  void base_experiment::measure_everything(size_t id, ull input_size) {
     add_result(id, common::MEASURE::time, input_size, timer.elapsed());
     add_result(id, common::MEASURE::time_ms, input_size, timer.elapsed_ms());
     add_result(id, common::MEASURE::num_ios, input_size, procio.total_ios());
@@ -187,7 +188,7 @@ namespace experiment {
   }
 
   void base_experiment::add_result
-  (size_t id, result::MEASURE m, size_t input_size, size_t res) {
+  (size_t id, result::MEASURE m, ull input_size, ull res) {
     results[id].add_measure(m, input_size, res);
   }
 
