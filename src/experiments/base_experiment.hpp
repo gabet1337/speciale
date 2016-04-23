@@ -111,8 +111,9 @@ namespace experiment {
                 << "buffer size: " << ri.buffer_size << std::endl
                 << "epsilon: " <<  ri.epsilon << std::endl;
       run_experiment(ri);
+      save_results(ri);
     }
-
+    
 
   }
 
@@ -156,10 +157,11 @@ namespace experiment {
   }
 
   void base_experiment::plot() {
+    std::cout << "Now plotting the results against time!" << std::endl;
     for (int i = common::MEASURE::first+1; i < common::MEASURE::last; i++) {
       test::gnuplot gp;
       std::string output = common::MEASURE_to_string(static_cast<common::MEASURE>(i));
-      gp.set_output(get_directory()+"/"+output);
+      gp.set_output(get_directory()+"/"+output+".eps");
       gp.set_xlabel(common::XLABEL_to_string(common::XLABEL::input_size_in_millions));
       gp.set_ylabel(common::MEASURE_to_label(static_cast<common::MEASURE>(i)));
       for (auto ri : run_instances) plot_with_size(gp, ri, static_cast<common::MEASURE>(i));
