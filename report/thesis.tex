@@ -14,8 +14,6 @@
 \usepackage{datetime}
 \usepackage{epstopdf}
 
-\usepackage{subfig}
-
 % This font looks so good.
 \usepackage[sc]{mathpazo}
 
@@ -640,17 +638,27 @@ The base B-tree uses linear space and since each point is stored only once in a 
 \section{Updates}
 \label{sec:arge_updates}
 \subsection{Insertion}
-Inserting a point in the structure involves two steps. The first is to insert the point in the base B-tree. This is done as described in section~\ref{sec:prelim_b_tree} and may result in nodes splitting which might result in splitting query data structures. Let $v$ be a node in the tree that has just been split into $v'$ and $v''$. As a result $Y(v')$ and $Y(v'')$ may contain fewer that $B/2$ points. This is remedied by promoting points of $v'$ (resp. $v''$) into $Y(v')$ (resp. $Y(v'')$. Promoting a point from $v'$ to $parent(v')$ is done by finding the top-most point $p'$ stored in $v'$ query data structure in $\mathcal{O}(1)$ I/O's using the block structure of the $Q_{v'}$. $p'$ is deleted from $Q_{v'}$ and inserted into $Q_{parent(v')}$. This process might cause one of the $Y$ sets of the children to become too small and we thus need to recursively promote a point. This recursion might in the worst case be on a path from $v$ down to a leaf. The process is called \textit{bubble-up}.
+Inserting a point in the structure involves two steps. The first is to insert the point in the base B-tree. This is done as described in Section~\ref{sec:prelim_b_tree} and may result in nodes splitting which in turn might result in splitting of query data structures. Let $v$ be a node in the tree that has just been split into $v'$ and $v''$ as depicted in Figure~\ref{fig:arge_split_1}. As a result $Y(v')$ and $Y(v'')$ may contain fewer that $B/2$ points. This is remedied by promoting points of $v'$ (resp. $v''$) into $Y(v')$ (resp. $Y(v'')$. Promoting a point from $v'$ to $parent(v')$ is done by finding the top-most point $p'$ stored in $v'$ query data structure in $\mathcal{O}(1)$ I/O's using the block structure of the $Q_{v'}$. The points found are as shown in Figure~\ref{fig:arge_split_2}. $p'$ is deleted from $Q_{v'}$ and inserted into $Q_{parent(v')}$. This process might cause one of the $Y$ sets of the children to become too small and we thus need to recursively promote a point. This recursion might in the worst case be on a path from $v$ down to a leaf. The process is called \textit{bubble-up}.
+
+\begin{figure}[h]
+	\centering
+     \includegraphics[width=\textwidth]{../figures/arge_split}
+     \caption{$v$ is split into $v'$ and $v''$. As a result $Y(v')$ and $Y(v'')$ may contain fewer than $B/2$ points.}
+     \label{fig:arge_split_1}
+\end{figure}
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\textwidth]{../figures/arge_split_2}
+	\caption{Too small $Y$-sets are remedied by promoting the topmost points from the children.}
+	\label{fig:arge_split_2}
+\end{figure}
+
 
 After inserting in the base tree and appropriate reorganization we need to insert the point in correct query data structure. This is done by starting in the root. The child responsible for the $x$-range which the points belongs to is found and its $Y$-set is found by a degenerate query to the query data structure of the root. If the number of points is $\geq B/2$ and the point is below them all then the point is recursively inserted into the found child. Otherwise the point joins the query data structure of the root. If the $Y$-set of the found child is now too large we recursively insert the lowest of these points into the child's query data structure.
 If we reach a leaf we simply insert the point into the query data structure of the leaf.
 
-\todo{figures}
-
 \subsection{Deletion}
 Deleting a point is simple as we adopt global rebuilding to rebalance the tree and not fusing of nodes. To delete a point we search down in the base tree for the point and mark it as deleted without actually removing the point. The next step is to remove the point from the query data structure that it resides in. This is done similar to finding the query data structure to insert the point into. The $Y$-set is recursively found on the search path of the point and if the $Y$-set contains the points, then the point is removed. If the $Y$-set becomes too small as a result we perform a \textit{bubble-up} operation.
-
-\todo{figures?}
 
 \subsection{Analysis}
 Inserting in the base tree can be done in $\mathcal{O}(\log_B N)$ I/O's by Section~\ref{sec:prelim_b_tree} and can cause as many splits on the path from a leaf to the root. Each split might cause $B/2$ \textit{bubble-up} operations. Each \textit{bubble-up} at $v$ costs $\mathcal{O}(1)$ I/O's and might recurse all the way to a leaf for a total of $\mathcal{O}(\log_B weight(v))$ where $weight(v)$ is the size of the subtree rooted at $v$. In the worst case $B/2$ of these operations are performed totalling at $\mathcal{O}(B\log_B weight(v)) = \mathcal{O}(weight(v))$ I/O's.
