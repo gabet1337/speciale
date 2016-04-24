@@ -1,5 +1,5 @@
 #!/usr/bin/gnuplot
-set terminal postscript eps enhanced color font 'Verdana,9'
+set terminal postscript eps enhanced color font 'Verdana,11'
 set output 'scaling_discrepancy_hdd_cpu.eps'
 set style line 11 lc rgb '#808080' lt 1
 set border 3 back ls 11
