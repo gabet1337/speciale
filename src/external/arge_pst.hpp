@@ -203,7 +203,7 @@ namespace ext {
     node* root;
 
     std::deque<node*> LRU_cache;
-    size_t cache_size = 1024*1024*500; //500Mb!
+    unsigned long long cache_size = 1024ULL*1024ULL*1024ULL*10ULL; //10GiB
 
 #ifdef VALIDATE
     std::set<point> CONTAINED_POINTS;
@@ -511,33 +511,25 @@ namespace ext {
         load_data(n, DATA_TYPE::points);
         load_data(n, DATA_TYPE::info_file);
         handle_insert_in_base_tree(n, p);
-        // flush_data(n, DATA_TYPE::points);
-        // flush_data(n, DATA_TYPE::info_file);
         break;
       case EVENT_TYPE::delete_in_base_tree:
         load_data(n, DATA_TYPE::points);
         load_data(n, DATA_TYPE::info_file);
         handle_delete_in_base_tree(n, p);
-        // flush_data(n, DATA_TYPE::points);
-        // flush_data(n, DATA_TYPE::info_file);
         break;
       case EVENT_TYPE::delete_in_query_data_structure:
         load_data(n, DATA_TYPE::all);
         handle_delete_in_query_data_structure(n,p);
-        // flush_data(n, DATA_TYPE::all);
         break;
       case EVENT_TYPE::insert_point_in_node:
         load_data(n, DATA_TYPE::points);
         load_data(n, DATA_TYPE::info_file);
         insert_point_in_node(n, p);
-        // flush_data(n, DATA_TYPE::points);
-        // flush_data(n, DATA_TYPE::info_file);
         break;
       case EVENT_TYPE::split_node:
         load_data(n, DATA_TYPE::points);
         load_data(n, DATA_TYPE::info_file);
         if ( !is_degree_overflow(n) ) {
-          // flush_data(n, DATA_TYPE::all);
           break;
         }
         if ( n->is_root() ) {
@@ -554,17 +546,10 @@ namespace ext {
           std::swap(root->query_data_structure, empty_node->query_data_structure);
           
           handle_split_child(empty_node, root, new_node, true);
-          //flush and delete properly here!
-
-          // flush_data(empty_node, DATA_TYPE::all);
-          // flush_data(root, DATA_TYPE::all);
-          // flush_data(new_node, DATA_TYPE::all);
-          LRU_cache.push_front(root);
           LRU_cache.push_front(new_node);
-
+          LRU_cache.push_front(root);
           root = empty_node;
-          // since root = n and n now no longer is root then we delete it later after switch. so dont worry.
-          //delete new_node;
+
         } else {
           load_data(n, DATA_TYPE::query_data_structure); 
           node* parent = retrieve_node(n->parent_id);
@@ -574,19 +559,13 @@ namespace ext {
           load_data(parent, DATA_TYPE::info_file);
 
           handle_split_child(parent, n, new_node, false);
-          // flush_data(parent, DATA_TYPE::all);
-          // flush_data(new_node, DATA_TYPE::all);
-          // flush_data(n, DATA_TYPE::all);
-          //delete new_node;
           LRU_cache.push_front(new_node);
-          //if (!parent->is_root()) delete parent;
         }
         break;
       case EVENT_TYPE::set_parent_of_children:
         {
           load_data(n, DATA_TYPE::info_file);
           if ( n->is_leaf() ) {
-            //flush_data(n, DATA_TYPE::info_file);
             break;
           }
           load_data(n, DATA_TYPE::points);
@@ -595,25 +574,17 @@ namespace ext {
             children.push_back(retrieve_node(c.c));
             load_data(children.back(), DATA_TYPE::info_file);
           }
-          // flush_data(n, DATA_TYPE::points);
+
           children.push_back(retrieve_node(n->right_most_child));
           load_data(children.back(), DATA_TYPE::info_file);
           
           handle_set_parent_of_children(n, children);
-          
-          // for (auto c : children) {
-          //   // flush_data(c, DATA_TYPE::info_file);
-          //   //delete c;
-          // }
-
-          // flush_data(n, DATA_TYPE::info_file);
         }
         break;
       case EVENT_TYPE::bubble_down:
         {
           load_data(n, DATA_TYPE::all);
           handle_bubble_down(n,p);
-          // flush_data(n, DATA_TYPE::all);
         }
         break;
       case EVENT_TYPE::bubble_up:
@@ -622,23 +593,18 @@ namespace ext {
           load_data(n, DATA_TYPE::all);
           
           handle_bubble_up(n,n2);
-
-          // flush_data(n, DATA_TYPE::all);
-          // flush_data(n2, DATA_TYPE::all);
         }
         break;
       case EVENT_TYPE::report:
         {
           load_data(n, DATA_TYPE::all);
           handle_report(n, cur_event.x1, cur_event.x2, cur_event.y, cur_event.lm, cur_event.rm, cur_event.stream);
-          // flush_data(n, DATA_TYPE::all);
         }
         break;
       case EVENT_TYPE::report_in_node:
         {
           load_data(n, DATA_TYPE::query_data_structure);
           handle_report_in_node(n, cur_event.x1, cur_event.x2, cur_event.y, cur_event.lm, cur_event.rm, cur_event.stream);
-          // flush_data(n, DATA_TYPE::query_data_structure);
         }
         break;
       case EVENT_TYPE::global_rebuild:
@@ -652,9 +618,6 @@ namespace ext {
         break;
 
       };
-      // flush_data(n, DATA_TYPE::all);
-      // if ( !n->is_root() ) delete n;
-      // if ( n2 && !n2->is_root() ) delete n2;
     }
     
   }
@@ -795,7 +758,6 @@ namespace ext {
     if (split_root) {
       parent->right_most_child = n->id;
     }
-
     add_event(event(EVENT_TYPE::split_node, parent->id, INF_POINT));
     add_event(event(EVENT_TYPE::bubble_up, parent->id, new_node->id, INF_POINT)); //we want to know the node aswell
     add_event(event(EVENT_TYPE::bubble_up, parent->id, n->id, INF_POINT)); //we want to know the node aswell
@@ -877,7 +839,6 @@ namespace ext {
     assert(n->is_info_file_loaded);
     assert(n->is_points_loaded);
 #endif
-    
     std::vector<point> Y_set_child = get_Y_set(parent, find_range(parent, n));
     DEBUG_MSG("Size of Y(" << n->id << ") = " << Y_set_child.size());
     if (Y_set_child.size() >= buffer_size/2) return;
