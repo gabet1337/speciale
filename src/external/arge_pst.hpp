@@ -203,7 +203,7 @@ namespace ext {
     node* root;
 
     std::deque<node*> LRU_cache;
-    unsigned long long cache_size = 1024ULL*1024ULL*1024ULL*10ULL; //10GiB
+    unsigned long long cache_size = 1024ULL*1024ULL*200ULL; //200MB
 
 #ifdef VALIDATE
     std::set<point> CONTAINED_POINTS;
