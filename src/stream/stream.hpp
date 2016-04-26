@@ -24,7 +24,7 @@ namespace io {
     void sync();
     off64_t seek(off64_t offset, int whence);
     T read();
-    size_t size();
+    off64_t size();
     bool eof();
     void truncate();
   private:
@@ -32,7 +32,7 @@ namespace io {
     void fill();
     bool should_refill();
     inline off64_t buffer_pos();
-    size_t buffer_size;
+    off64_t buffer_size;
     off64_t file_size;
     off64_t file_pos;
     off64_t buffer_start;
@@ -70,7 +70,7 @@ namespace io {
     struct stat sb;
     fstat(file_descriptor, &sb);
     file_size = sb.st_size;
-    b_eof = (size_t)file_size == file_pos;
+    b_eof = file_size == file_pos;
     posix_fadvise(file_descriptor, 0, 0, POSIX_FADV_SEQUENTIAL);
     posix_fadvise(file_descriptor, 0, 0, POSIX_FADV_WILLNEED);
     fill();
@@ -91,7 +91,7 @@ namespace io {
 
   template <typename T>
   bool buffered_stream<T>::eof() {
-    return b_eof && file_pos >= (size_t)file_size;
+    return b_eof && file_pos >= file_size;
   }
 
   template <typename T>
@@ -100,7 +100,7 @@ namespace io {
     if (is_dirty) sync();
     if (!e) {
       buffer_start = seek(0,SEEK_CUR);
-      if (buffer_start == (off_t)-1) {
+      if (buffer_start == (off64_t)-1) {
         perror(std::string("Error seeking file: ").append(file_name).append("'").c_str());
         exit(errno);
       }
@@ -109,7 +109,7 @@ namespace io {
         perror(std::string("Error reading from file '").append(file_name).append("'").c_str());
         exit(errno);
       }
-      if ((size_t)bytes_read < buffer_size) b_eof = true; else b_eof = false;
+      if (bytes_read < buffer_size) b_eof = true; else b_eof = false;
       if (buffer_start+bytes_read >= file_size) b_eof = true; else b_eof = false;
     } else {
       file_pos = seek(0,SEEK_END);
@@ -171,13 +171,13 @@ namespace io {
   bool buffered_stream<T>::should_refill() {
     if ( !(buffer_start <= file_pos &&
            file_pos < buffer_start+buffer_size) ) return true;
-    if (buffer_pos() >= buffer_size/sizeof(T)) return true;
+    if (buffer_pos() >= buffer_size/(off64_t)sizeof(T)) return true;
     return false;
   }
   
 
   template <typename T>
-  size_t buffered_stream<T>::size() {
+  off64_t buffered_stream<T>::size() {
     return std::max(file_size, file_pos)/sizeof(T);
   }
 
