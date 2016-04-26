@@ -44,7 +44,7 @@ namespace io {
   template <typename T>
   buffered_stream<T>::buffered_stream(size_t num_elements) {
     this->buffer_size = num_elements * sizeof(T);
-    buffer = new T[num_elements];
+    buffer = new T[num_elements]();
     is_open = false;
   }
 

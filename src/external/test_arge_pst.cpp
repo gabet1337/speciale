@@ -573,7 +573,7 @@ int main() {
   test_insert50_reverse();
   test_insert50_odd_then_even();
   test_100_random_inserts();
-  test_1000_random_inserts();
+  //test_1000_random_inserts();
   //test_insert_from_file("test/test_1000_random_inserts_point_log");
   test_insert5_delete_1();
   test_insert100_delete50();
