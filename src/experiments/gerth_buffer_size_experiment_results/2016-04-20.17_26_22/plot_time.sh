@@ -1,6 +1,6 @@
 #!/usr/bin/gnuplot
-set terminal postscript eps enhanced color font 'Verdana,9'
-set output 'gerth_buffer_size_experiment_results/2016-04-20.17_26_22/time'
+set terminal postscript eps enhanced color font 'Verdana,11'
+set output 'gerth_buffer_size_experiment_results/2016-04-20.17_26_22/time.eps'
 set style line 11 lc rgb '#808080' lt 1
 set border 3 back ls 11
 set tics nomirror

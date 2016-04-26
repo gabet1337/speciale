@@ -1,6 +1,6 @@
 #!/usr/bin/gnuplot
 set terminal postscript eps enhanced color font 'Verdana,11'
-set output 'gerth_fanout_experiment_results/2016-04-19.18_20_50/time.eps'
+set output 'stream_input_speed_experiment_results/2016-04-23.16_00_16/pfs.eps'
 set style line 11 lc rgb '#808080' lt 1
 set border 3 back ls 11
 set tics nomirror
@@ -16,13 +16,9 @@ set style line 7 lc rgb '#ff00ff' pt 7 ps 1 lt 1 lw 2 # --- magenta
 set style line 8 lc rgb '#87ceeb' pt 8 ps 1 lt 1 lw 2 # --- skyblue
 set key top left
 set xlabel 'N (input size in Mb)'
-set ylabel 'Time (s)'
+set ylabel 'page faults'
 #set xrange [0:0]
 #set yrange [0:0]
-plot 'gerth_fanout_experiment_results/2016-04-19.18_20_50/gerth_fanout2' u 1:2 t 'fanout2' w lp ls 2, \
-'gerth_fanout_experiment_results/2016-04-19.18_20_50/gerth_fanout3' u 1:2 t 'fanout3' w lp ls 3, \
-'gerth_fanout_experiment_results/2016-04-19.18_20_50/gerth_fanout4' u 1:2 t 'fanout4' w lp ls 4, \
-'gerth_fanout_experiment_results/2016-04-19.18_20_50/gerth_fanout8' u 1:2 t 'fanout8' w lp ls 5, \
-'gerth_fanout_experiment_results/2016-04-19.18_20_50/gerth_fanout16' u 1:2 t 'fanout16' w lp ls 6, \
-'gerth_fanout_experiment_results/2016-04-19.18_20_50/gerth_fanout32' u 1:2 t 'fanout32' w lp ls 7, \
-'gerth_fanout_experiment_results/2016-04-19.18_20_50/gerth_fanout128' u 1:2 t 'fanout128' w lp ls 8
+plot 'stream_input_speed_experiment_results/2016-04-23.16_00_16/buffered_stream_buffered' u 1:4 t 'buffered' w lp ls 8, \
+'stream_input_speed_experiment_results/2016-04-23.16_00_16/mmap_mmap' u 1:4 t 'mmap' w lp ls 7, \
+'stream_input_speed_experiment_results/2016-04-23.16_00_16/file_stream_file' u 1:4 t 'file' w lp ls 9

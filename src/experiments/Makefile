@@ -17,6 +17,9 @@ gerth_fanout_experiment: $(FILES) gerth_fanout_experiment.cpp
 gerth_buffer_size_experiment: $(FILES) gerth_buffer_size_experiment.cpp
 	$(CC) ../stream/old_stream.cpp gerth_buffer_size_experiment.cpp -o gerth_buffer_size_experiment $(MYSQL)
 
+arge_buffer_size_experiment: $(FILES) arge_buffer_size_experiment.cpp
+	$(CC) ../stream/old_stream.cpp arge_buffer_size_experiment.cpp -o arge_buffer_size_experiment $(MYSQL)
+
 stream_input_speed_experiment: $(FILES) stream_input_speed_experiment.cpp
 	$(CC) ../stream/old_stream.cpp stream_input_speed_experiment.cpp -o stream_input_speed_experiment $(MYSQL)
 

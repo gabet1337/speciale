@@ -14,8 +14,6 @@
 \usepackage{datetime}
 \usepackage{epstopdf}
 
-\usepackage{subfig}
-
 % This font looks so good.
 \usepackage[sc]{mathpazo}
 
@@ -117,6 +115,7 @@
 In the early days of electronic computers disks were faster than processors. Since then processor technology has advanced at an incredible rate achieving annual speedups of 40 to 60 percent~\cite{ruemmler_wilkes_1994}. Although this is also true for disk capacity an entirely different story can be told for the speedup of disk performance. The disparity between processor, internal memory, and external memory speeds have grown larger for each year and the gap is widening. This disparity presents serious problems when designing algorithms on large data sets, and with more and more applications of Big Data in social media, banking, etc., these problems become increasingly relevant.
 
 \todo{A workload that was ?? disk bound in 96 would be ?? disk bound in 05.}
+\todo{Fix source}
 \begin{figure}[h]
 	\centering
 		\includegraphics[width=\textwidth]{../plots/scaling_discrepancy_hdd_cpu/scaling_discrepancy_hdd_cpu}
@@ -258,7 +257,45 @@ $$ p \in Q \Leftrightarrow \hat{p} \in \hat{Q} $$
 From Lemma~\ref{lma:composite_universe_query} is follows that our approach is correct.
 
 \chapter{Related work}
+McCreight introduced the priority search tree for internal memory in~\cite{DBLP:journals/siamcomp/McCreight85}. The priority search tree is basically a combination of a binary search tree on the $x$-coordinate and a heap on the $y$-coordinate where the root stores the maximum $y$-value and points are distributed according to the median $x$-value. This allows updates to be done in $\mathcal{O}(\log N)$ time and three-sided range queries to be done in $\mathcal{O}(\log N + K)$ time, where $K$ is the number of points being reported.
 
+The study of adapting the priority search to external memory was initiated by Icking et al.~\cite{Icking1988}. They achieve a static external priority search tree that uses $\mathcal{O}(\nicefrac{N}{B})$ space and answers three-sided range queries in $\mathcal{O}(\log_B N + \nicefrac{K}{B})$ I/O's. The data structure uses a blocked B-tree with pointers to data buckets full of points. The idea is depicted in figure~\ref{fig:icking_external_pst}. In order to make the data structure dynamic the underlying B-tree is replaced with a Red-Black tree. This change of underlying search tree degenerates the solution to answer queries in $\mathcal{O}(\log_2 N + \nicefrac{K}{B})$ I/O's and handle updates in $\mathcal{O}(B \log_2 N)$ I/O's.
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=\textwidth]{../figures/icking_external_pst}
+	\caption{Illustration of the solution of Icking et al. Blocked B-tree with pointers to full buckets of data points.}
+	\label{fig:icking_external_pst}
+\end{figure}
+
+Kanellakis et al. presents a linear space partially dynamic solution in~\cite{Kanellakis1996589} that answers three-sided queries in $\mathcal{O}(\log_B N + K/B + log_2 B)$ I/O's. The data structure supports inserts in $\mathcal{O}(\log_B N + (\log^2_B N / B)$ I/O's. The result is of a highly theoretically nature and is unlikely to perform well in any practical manner. As a first step all points are shifted such that they lie above the line $y = x$. The basic building block of the data structure is the \textit{metablock tree}; a B-ary tree of \textit{metablocks}, each of which represents $B^2$ data points. The root represents the $B^2$ data points with the largest $y$-values. The remaining $n - B^2$ data points are divided into $B$ groups of $(n - B^2)/B$ data points each based on the $x$-coordinates. The first group contains the $(n - B^2)/B$ data points with the smallest $x$-values and so on. A recursive tree of the exact same type is constructed for each such gropu of data points. This process contiunues until a group has at most $B^2$ data points and can fit into a single metablock. Please refer to figure~\ref{fig:kanellakis_metablock_tree} for an illustration of a metablock tree.
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=0.5\textwidth]{../figures/kanellakis_metablock_tree}
+	\caption{A metablock tree for $B=3$ and $n=70$. All data points lie above the line $y=x$. Each region represents a metablock. The root is at the top. Note that each nonleafr metablock contains $B^2 = 9$ data points.}
+	\label{fig:kanellakis_metablock_tree}
+\end{figure}
+
+Points from each $metablock$ are copied into new blocks that both vertically and horizontally oriented as depicted in figure~\ref{fig:kanellakis_vertical_horizontally_oriented_blocks}. 
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=0.5\textwidth]{../figures/kanellakis_vertical_horizontally_oriented_blocks}
+	\caption{Vertically and horizontally oriented blockings of data points. Each rectangle represents a block: (a) vertically oriented; (b) horizontally oriented.}
+	\label{fig:kanellakis_vertical_horizontally_oriented_blocks}
+\end{figure}
+
+Finally, each metablok $M$ contains pointers to B blocks that represents the set TS(M) that is obtained by examining the left siblings of $M$ and taking the $B^2$ largest points according to the $y$-value. Depending on how the query spans the metablock tree we can query the auxiliary data structures in such a way that we can achieve the promised $\mathcal{O}(\log_B N + K/B + log_2 B)$ I/O's. The five different query cases are depicted in figure~\ref{fig:kanellakis_queries}.
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=1\textwidth]{../figures/kanellakis_queries}
+	\caption{The three-sided queries can span the metablock tree in five different ways.}
+	\label{fig:kanellakis_queries}
+\end{figure}
+
+Ramaswamy and Subramanian presents a suboptimal space data structure that answers queries with an optimal query bound in \cite{Ramaswamy:1994:PCT:182591.182595}.
 
 
 \chapter{Internal Priority Search Tree}
@@ -298,7 +335,7 @@ When answering a query on the form $[x_1,x_2] \times [y,\infty]$ we begin at the
 	\label{fig:static_pst_query}
 \end{figure}
 
-\subsection{Analysis}
+\subsection*{Analysis}
 The search operation follows two root to leaf paths each of size $\mathcal{O}(\log n)$. Using the search path and heap property of the tree we are guaranteed to only visit nodes that is actually reported when querying. This gives a total running time of $\mathcal{O}(\log n + K)$.
 
 \todo{Analyse in the I/O model as well.}
@@ -327,7 +364,7 @@ At the next level of the tree, we perform the same comparisons as before to dete
 
 Every tournament round will potential leave an empty interior node behind as the wining point is moved one level up. If this occurs we have to check if any previous tournament losers are now eligible to be represented higher in the tree. We must also remember that some interior nodes in the tree may not represent any points and will this remain empty when the construction is complete.
 
-\subsection{Analysis}
+\subsection*{Analysis}
 First, all points is inserted as leafs in the bottom layer of the data structure. The leafs counts for $\nicefrac{n}{2}$ of the total nodes in the tree. The next $\nicefrac{n}{2^2}$ nodes are created at height $h = 1$ and the tournaments are played one level down. For the $i$'th step we create $\nicefrac{n}{2^i}$ nodes and we will play tournaments $i$ levels down. The total steps $N$ to build the dynamic priority search tree of size $n$ is thus:
 
 $$ N = \sum\limits_{i=0}^{\log(n)} \frac{n}{2^{i+1}}i = \frac{n}{2} \left( \sum\limits_{i=0}^{\log(n)} i(\nicefrac{1}{2})^i \right) \leq \frac{n}{2} \left( \sum\limits_{i=0}^{\infty} i(\nicefrac{1}{2})^i \right)$$
@@ -348,7 +385,7 @@ This implies we can construct the dynamic priority search in linear time assumin
 
 In order to dynamically insert points into the data structure, we add a new leaf (placeholder) for the new point and perform a pushdown operation with the new point starting at the root. We can determine where to add the new placeholder as the dynamic priority search tree is a binary search tree on the $x$-coordinates of the points. When we reach an existing leaf, we add a new internal node in place of this leaf, and make the existing leaf one of the children of this new internal node. Then we add a new leaf to the tree as the other child, and store the new point in this leaf. In order to maintain the heap order of the priority search tree we now perform a pushdown operation, where we at each step compare the $y$-coordinate of the point to be inserted with $y$-coordinate of the point represented by the given internal node. If the $y$-coordinate of the point to be inserted is less than that of the point stored in the internal node, then we push the point to be inserted further down the tree. However, if the $y$-coordinate of the point to be inserted is greater than the $y$-coordinate of the point in the internal node, then we store the point to be inserted in this internal node, and take the point which was formerly represented by this internal node and continue the pushdown operation with this point instead.
 
-\subsection{Analysis}
+\subsection*{Analysis}
 
 The first step of the insertion algorithm is a binary search traversal on the $x$-coordinate of the new point. The path is of length $\mathcal{O}(\log n)$. Adding a new internal node in place of the old leaf takes a constant amount of operations. The pushdown operation follows a single root to leaf path of length $\mathcal{O}(\log n)$ and uses a constant amount of work in each node. So we conclude insertions can be done in $\mathcal{O}(\log n)$.
 
@@ -358,7 +395,7 @@ The first step of the insertion algorithm is a binary search traversal on the $x
 
 When dynamically deleting a point we must locate the interior node (if any) representing the point we wish to delete. After we have removed the point from the interior of the dynamic search tree, we must replay a portion of the tournament among the points below this interior node in order to replace it. Finally we must delete the leaf which is the placeholder for the point.
 
-\subsection{Analysis}
+\subsection*{Analysis}
 Locating the interior node representing the point to delete can be done in $\mathcal{O}(\log n)$ using the binary search property maintained by the priority search tree. Once we have located the interior node we can remove this point in $\mathcal{O}(1)$. The deletion of the point of an interior node leaves a hole in the tree that we fill by playing tournaments following a node to leaf path of length $\mathcal{O}(\log n)$. We conclude the deletion algorithm requires $\mathcal{O}(\log n)$ per deletion.
 
 \todo{Analyse in the I/O model as well.}
@@ -602,17 +639,27 @@ The base B-tree uses linear space and since each point is stored only once in a 
 \section{Updates}
 \label{sec:arge_updates}
 \subsection{Insertion}
-Inserting a point in the structure involves two steps. The first is to insert the point in the base B-tree. This is done as described in section~\ref{sec:prelim_b_tree} and may result in nodes splitting which might result in splitting query data structures. Let $v$ be a node in the tree that has just been split into $v'$ and $v''$. As a result $Y(v')$ and $Y(v'')$ may contain fewer that $B/2$ points. This is remedied by promoting points of $v'$ (resp. $v''$) into $Y(v')$ (resp. $Y(v'')$. Promoting a point from $v'$ to $parent(v')$ is done by finding the top-most point $p'$ stored in $v'$ query data structure in $\mathcal{O}(1)$ I/O's using the block structure of the $Q_{v'}$. $p'$ is deleted from $Q_{v'}$ and inserted into $Q_{parent(v')}$. This process might cause one of the $Y$ sets of the children to become too small and we thus need to recursively promote a point. This recursion might in the worst case be on a path from $v$ down to a leaf. The process is called \textit{bubble-up}.
+Inserting a point in the structure involves two steps. The first is to insert the point in the base B-tree. This is done as described in Section~\ref{sec:prelim_b_tree} and may result in nodes splitting which in turn might result in splitting of query data structures. Let $v$ be a node in the tree that has just been split into $v'$ and $v''$ as depicted in Figure~\ref{fig:arge_split_1}. As a result $Y(v')$ and $Y(v'')$ may contain fewer that $B/2$ points. This is remedied by promoting points of $v'$ (resp. $v''$) into $Y(v')$ (resp. $Y(v'')$. Promoting a point from $v'$ to $parent(v')$ is done by finding the top-most point $p'$ stored in $v'$ query data structure in $\mathcal{O}(1)$ I/O's using the block structure of the $Q_{v'}$. The points found are as shown in Figure~\ref{fig:arge_split_2}. $p'$ is deleted from $Q_{v'}$ and inserted into $Q_{parent(v')}$. This process might cause one of the $Y$ sets of the children to become too small and we thus need to recursively promote a point. This recursion might in the worst case be on a path from $v$ down to a leaf. The process is called \textit{bubble-up}.
+
+\begin{figure}[h]
+	\centering
+     \includegraphics[width=\textwidth]{../figures/arge_split}
+     \caption{$v$ is split into $v'$ and $v''$. As a result $Y(v')$ and $Y(v'')$ may contain fewer than $B/2$ points.}
+     \label{fig:arge_split_1}
+\end{figure}
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\textwidth]{../figures/arge_split_2}
+	\caption{Too small $Y$-sets are remedied by promoting the topmost points from the children.}
+	\label{fig:arge_split_2}
+\end{figure}
+
 
 After inserting in the base tree and appropriate reorganization we need to insert the point in correct query data structure. This is done by starting in the root. The child responsible for the $x$-range which the points belongs to is found and its $Y$-set is found by a degenerate query to the query data structure of the root. If the number of points is $\geq B/2$ and the point is below them all then the point is recursively inserted into the found child. Otherwise the point joins the query data structure of the root. If the $Y$-set of the found child is now too large we recursively insert the lowest of these points into the child's query data structure.
 If we reach a leaf we simply insert the point into the query data structure of the leaf.
 
-\todo{figures}
-
 \subsection{Deletion}
 Deleting a point is simple as we adopt global rebuilding to rebalance the tree and not fusing of nodes. To delete a point we search down in the base tree for the point and mark it as deleted without actually removing the point. The next step is to remove the point from the query data structure that it resides in. This is done similar to finding the query data structure to insert the point into. The $Y$-set is recursively found on the search path of the point and if the $Y$-set contains the points, then the point is removed. If the $Y$-set becomes too small as a result we perform a \textit{bubble-up} operation.
-
-\todo{figures?}
 
 \subsection{Analysis}
 Inserting in the base tree can be done in $\mathcal{O}(\log_B N)$ I/O's by Section~\ref{sec:prelim_b_tree} and can cause as many splits on the path from a leaf to the root. Each split might cause $B/2$ \textit{bubble-up} operations. Each \textit{bubble-up} at $v$ costs $\mathcal{O}(1)$ I/O's and might recurse all the way to a leaf for a total of $\mathcal{O}(\log_B weight(v))$ where $weight(v)$ is the size of the subtree rooted at $v$. In the worst case $B/2$ of these operations are performed totalling at $\mathcal{O}(B\log_B weight(v)) = \mathcal{O}(weight(v))$ I/O's.
@@ -640,7 +687,9 @@ In every internal node $v$ visited we spend $\mathcal{O}(1+K_v/B)$ I/O's. There 
 \chapter{Experimental setup}
 \label{chp:experimental_setup}
 Running experiments on I/O algorithms is extremely time consuming. In order to compare I/O efficient algorithms against internal memory algorithms we need input sizes that force the internal memory algorithms to store and load data to and from the disk (swapping). The input size to the algorithms can be severely minimized if run on machines with a small amount of internal memory.
-\todo{more considerations w.r.t to mechanical disks}
+
+It is important to mention some considerations when it comes to choice of persistent storage media. In recent years solid state drives have grown increasingly more desirably in terms of price per gigabyte and storage size, but there is still a significant gap in price between SSD's and HDD's. Disregarding this gap in price, solid state drives clearly outperforms the hard disk in every notable aspect. Solid state drives allow random access to blocks and diminish the seek time which is considered to be the culprit of the mechanical disks due to the rotational latency.
+The rotational latency makes it very important to store data on the disk in consecutive blocks as scattering data across the disk would be detrimental to the performance as each block would have to be wait for the rotational latency. As long as the mechanical disk is still as widespread as it is, these culprits of the mechanical disk have to be taken in consideration when designing I/O efficient algorithms.
 
 With these considerations in mind we acquired two very old Dell machines with the following specifications:
 
@@ -673,6 +722,23 @@ In order to obtain a deeper understanding of the results we chose to measure the
 
 \chapter{Our results}
 
+\section{Parameter tuning}
+
+\begin{figure}[h]
+\includegraphics[width=\textwidth]{../src/experiments/gerth_fanout_experiment_results/2016-04-19.18_20_50/time}
+\caption{Running the data structure of Brodal with a fixed buffer size at 8Mb and varying fanouts.}
+\label{fig:gerth_fanout_experiment}
+\end{figure}
+
+
+\begin{figure}[h]
+\includegraphics[width=\textwidth]{../src/experiments/gerth_buffer_size_experiment_results/2016-04-20.17_26_22/time}
+\caption{Running the data structure of Brodal with a maximum fanout of 2 and varying buffer sizes.}
+\label{fig:gerth_buffer_size_experiment}
+\end{figure}
+
+\todo{Larger buffer sizes were also tried but were terribly slow!}
+
 \chapter{Implementation considerations}
 %TODO We use a POSIX file-system on a Linux distribution.
 
@@ -689,27 +755,31 @@ There are many different ways to construct a stream. In order to substantiate ou
 	\item Direct invocation of the operating system call \texttt{mmap} and \texttt{munmap} that makes use of the operating systems virtual memory mechanism through demand paging.
 \end{itemize}
 
-It is clear that direct invocation of the \texttt{read} and \texttt{write} system calls cannot be better than adding buffering on top, which early experiments clearly showed. The results were so slow that we had to exclude them.
+It is clear that direct invocation of the \texttt{read} and \texttt{write} system calls cannot be better than adding buffering on top, which early experiments without doubt showed. The results were so slow that we had to exclude them.
 
 \begin{figure}
   \centering
-  \includegraphics[width=\linewidth]{../src/experiments/stream_input_speed_experiment_results/2016-04-23.11_05_51/timems}
-  \caption{Reading 1GB of data using \texttt{mmap} and \texttt{munmap}, \texttt{fread} and \texttt{fwrite}, and buffered \texttt{read} and \texttt{write}}
+  \includegraphics[width=\linewidth]{../src/experiments/stream_input_speed_experiment_results/2016-04-23.16_00_16/timems}
+  \caption{Reading 5GB of data using \texttt{mmap} and \texttt{munmap}, \texttt{fread} and \texttt{fwrite}, and buffered \texttt{read} and \texttt{write}}
   \label{fig:stream_input_speed}
 \end{figure}
 
 \begin{figure}
   \centering
-  \includegraphics[width=\linewidth]{../src/experiments/stream_output_speed_experiment_results/2016-04-23.11_09_02/timems}
-  \caption{Writing 1GB of data using \texttt{mmap} and \texttt{munmap}, \texttt{fread} and \texttt{fwrite}, and buffered \texttt{read} and \texttt{write}}
+  \includegraphics[width=\linewidth]{../src/experiments/stream_output_speed_experiment_results/2016-04-23.16_07_40/timems}
+  \caption{Writing 5GB of data using \texttt{mmap} and \texttt{munmap}, \texttt{fread} and \texttt{fwrite}, and buffered \texttt{read} and \texttt{write}}
   \label{fig:stream_output_speed}
 \end{figure}
 
-The results of Figure~\ref{fig:stream_input_speed} and~\ref{fig:stream_output_speed} shows that the \texttt{buffered\_stream} is clearly faster when it comes to reading 1GB of data.
+The results of Figure~\ref{fig:stream_input_speed} and~\ref{fig:stream_output_speed} shows that the \texttt{buffered\_stream} performs similarly to using \texttt{mmap} when reading 5GB of data.
 
-%TODO this is not the case when we have queries in the child structure which relies on seek.
+\todo{talk about results on SSD disks and newer computers}
 
-%TODO Redo experiments and comment on those.
+\todo{comments on the results}
+
+\todo{this is not the case when we have queries in the child structure which relies on seek.}
+
+\todo{Redo experiments and comment on those.}
 
 \section{Child structure}
 This section will present the implementation specific design choices made for the child structure presented in section~\ref{sec:child_structure}. \\

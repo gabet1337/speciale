@@ -8,7 +8,6 @@
 #include "../common/definitions.hpp"
 #include "child_structure_interface.hpp"
 #include "child_structure.hpp"
-//#include "child_structure_stub.hpp"
 #include "../common/pst_interface.hpp"
 #include <vector>
 #include <string>
@@ -102,21 +101,21 @@ namespace ext {
     class event {
     public:
       EVENT_TYPE type;
-      node* n = 0;
-      node* n2 = 0;
+      size_t n = -1;
+      size_t n2 = -1;
       point p = INF_POINT;
       int x1 = INF, x2 = INF, y = INF;
       bool lm = false,rm = false;
       point_stream_type* stream = 0;
-      event(EVENT_TYPE _type, node* _n, point _p) : type(_type), n(_n), n2(0), p(_p) {}
-      event(EVENT_TYPE _type, node* _n, node* _n2, point _p) : type(_type), n(_n), n2(_n2), p(_p) {}
-      event(EVENT_TYPE _type, node* _n, int _x1, int _x2, int _y, bool _lm, bool _rm, point_stream_type* _stream)
-        : type(_type), n(_n), n2(0), p(INF_POINT), x1(_x1), x2(_x2), y(_y), lm(_lm), rm(_rm), stream(_stream) {}
+      event(EVENT_TYPE _type, size_t _n, point _p) : type(_type), n(_n), n2(0), p(_p) {}
+      event(EVENT_TYPE _type, size_t _n, size_t _n2, point _p) : type(_type), n(_n), n2(_n2), p(_p) {}
+      event(EVENT_TYPE _type, size_t _n, int _x1, int _x2, int _y, bool _lm, bool _rm, point_stream_type* _stream)
+        : type(_type), n(_n), n2(-1), p(INF_POINT), x1(_x1), x2(_x2), y(_y), lm(_lm), rm(_rm), stream(_stream) {}
       ~event() {}
       friend std::ostream& operator<<(std::ostream& o, const event &e) {
-        o << e.type << " in node " << e.n->id;
+        o << e.type << " in node " << e.n;
         if (e.p != INF_POINT) o << " with point " << e.p;
-        if (e.n2) o << " and extra node " << e.n2->id;
+        if (e.n2 != (size_t)-1) o << " and extra node " << e.n2;
         if ( !(e.x1 == INF && e.x2 == INF && e.y == INF) ) {
           o << " report: [" << e.x1 << ", " << e.x2 << "] X [" << e.y << ", \u221E] ";
           o << (e.lm ? "LM" : "") << " " << (e.rm ? "RM" : "");
@@ -159,7 +158,7 @@ namespace ext {
       Helper methods
     ****************/
     void insert_point_in_node(node* n, const point &p);
-    void load_data(node* n, DATA_TYPE dt);
+    void load_data(node* &n, DATA_TYPE dt);
     void flush_data(node* n, DATA_TYPE dt);
     void load_points(node* n);
     void load_info_file(node* n);
@@ -172,7 +171,7 @@ namespace ext {
     node* copy_node(node* n);
     node* allocate_node();
     node* retrieve_node(size_t id);
-    node* find_child(node* n, const point &p);
+    size_t find_child(node* n, const point &p);
     range_type find_range(node* n, const point &p);
     range_type find_range(node* n, node* child);
     point find_top_most_point(node* n);
@@ -182,6 +181,8 @@ namespace ext {
     std::string get_directory(size_t id);
     bool is_degree_overflow(node* n);
     bool point_below_all(const point &p, const std::vector<point> &points);
+    void evict_nodes();
+    node* get_cached_node(size_t id);
 
 #ifdef VALIDATE
     bool validate_child(node& n, size_t c, const point &all_points_in_qs_should_be_below_this, std::stack<point> &qs, std::stack<size_t> &qs_size);
@@ -200,6 +201,9 @@ namespace ext {
     std::stack<event> event_stack;
 
     node* root;
+
+    std::deque<node*> LRU_cache;
+    unsigned long long cache_size = ARGE_CACHE_SIZE;//1024ULL*1024ULL*300ULL; //300MB
 
 #ifdef VALIDATE
     std::set<point> CONTAINED_POINTS;
@@ -233,6 +237,14 @@ namespace ext {
   {}
 
   external_priority_search_tree::~external_priority_search_tree() {
+    for (auto cached_node = LRU_cache.begin(); cached_node != LRU_cache.end(); ++cached_node) {
+      if ((*cached_node)->query_data_structure) {
+        (*cached_node)->query_data_structure->destroy();
+        delete (*cached_node)->query_data_structure;
+      }
+      delete (*cached_node);
+    }
+    LRU_cache.clear();
     root->query_data_structure->destroy();
     delete root->query_data_structure;
     delete root;
@@ -247,9 +259,9 @@ namespace ext {
 #ifdef VALIDATE
     CONTAINED_POINTS.insert(p);
 #endif
-    add_event(event(EVENT_TYPE::insert_in_base_tree, root, p));
+    add_event(event(EVENT_TYPE::insert_in_base_tree, 0, p));
     handle_events();
-    add_event(event(EVENT_TYPE::bubble_down, root, p));
+    add_event(event(EVENT_TYPE::bubble_down, 0, p));
     handle_events();
   }
 
@@ -258,12 +270,12 @@ namespace ext {
 #ifdef VALIDATE
     CONTAINED_POINTS.erase(p);
 #endif
-    add_event(event(EVENT_TYPE::delete_in_query_data_structure, root, p));
-    add_event(event(EVENT_TYPE::delete_in_base_tree, root, p));
+    add_event(event(EVENT_TYPE::delete_in_query_data_structure, 0, p));
+    add_event(event(EVENT_TYPE::delete_in_base_tree, 0, p));
     handle_events();
     delete_count++;
     if (delete_count == next_global_rebuild) {
-      add_event(event(EVENT_TYPE::global_rebuild, root, INF_POINT));
+      add_event(event(EVENT_TYPE::global_rebuild, 0, INF_POINT));
       handle_events();
     }
   }
@@ -273,7 +285,7 @@ namespace ext {
     if (x1 > x2) return;
     point_stream_type* stream = new point_stream_type(buffer_size);
     stream->open(output_file);
-    add_event(event(EVENT_TYPE::report_in_node, root, x1, x2, y, true, true, stream));
+    add_event(event(EVENT_TYPE::report_in_node, 0, x1, x2, y, true, true, stream));
     handle_events();
     stream->close();
     delete stream;
@@ -311,14 +323,15 @@ namespace ext {
           q.push(retrieve_node(n->right_most_child));
         }
       }
-      flush_data(n, DATA_TYPE::all);
-      if ( !n->is_root() ) delete n;
+      // flush_data(n, DATA_TYPE::all);
+      // if ( !n->is_root() ) delete n;
     }
     dot_file << "}";
     dot_file.close();
     int r = system("dot -Tpng -o tree.png temp.dot");
     //r = system("eog tree.png");
     r++;
+    evict_nodes();
   }
 #ifdef VALIDATE
   bool external_priority_search_tree::is_valid() {
@@ -410,8 +423,8 @@ namespace ext {
         ranges.push({ranges.top().second, range.second});
       }
       //VALIDATE_MSG_FAIL("10: " << n->id);
-      flush_data(n, DATA_TYPE::all);
-      if ( !n->is_root() ) delete n;
+      // flush_data(n, DATA_TYPE::all);
+      // if ( !n->is_root() ) delete n;
     }
 
     if (collected_points != CONTAINED_POINTS) {
@@ -430,6 +443,7 @@ namespace ext {
       for (point p : CONTAINED_POINTS) VALIDATE_MSG_FAIL(" - " << p);
       return false;
     }
+    evict_nodes();
     return true;
   }
 
@@ -474,8 +488,8 @@ namespace ext {
       return false;
     }
     //VALIDATE_MSG_FAIL("12: " << child->id);
-    flush_data(child, DATA_TYPE::all);
-    if (!child->is_root()) delete child;
+    // flush_data(child, DATA_TYPE::all);
+    // if (!child->is_root()) delete child;
     return true;
   }
 #endif
@@ -486,44 +500,37 @@ namespace ext {
   void external_priority_search_tree::handle_events() {
 
     while ( !event_stack.empty() ) {
+      evict_nodes();
       auto cur_event = event_stack.top();
       event_stack.pop();
       DEBUG_MSG("Popped event: " << cur_event << " from the event stack!");
-      node* n = cur_event.n;
-      node* n2 = cur_event.n2;
+      node* n = retrieve_node(cur_event.n);
+      node* n2 = retrieve_node(cur_event.n2);
       point p = cur_event.p;
       switch (cur_event.type) {
       case EVENT_TYPE::insert_in_base_tree:
         load_data(n, DATA_TYPE::points);
         load_data(n, DATA_TYPE::info_file);
         handle_insert_in_base_tree(n, p);
-        flush_data(n, DATA_TYPE::points);
-        flush_data(n, DATA_TYPE::info_file);
         break;
       case EVENT_TYPE::delete_in_base_tree:
         load_data(n, DATA_TYPE::points);
         load_data(n, DATA_TYPE::info_file);
         handle_delete_in_base_tree(n, p);
-        flush_data(n, DATA_TYPE::points);
-        flush_data(n, DATA_TYPE::info_file);
         break;
       case EVENT_TYPE::delete_in_query_data_structure:
         load_data(n, DATA_TYPE::all);
         handle_delete_in_query_data_structure(n,p);
-        flush_data(n, DATA_TYPE::all);
         break;
       case EVENT_TYPE::insert_point_in_node:
         load_data(n, DATA_TYPE::points);
         load_data(n, DATA_TYPE::info_file);
         insert_point_in_node(n, p);
-        flush_data(n, DATA_TYPE::points);
-        flush_data(n, DATA_TYPE::info_file);
         break;
       case EVENT_TYPE::split_node:
         load_data(n, DATA_TYPE::points);
         load_data(n, DATA_TYPE::info_file);
         if ( !is_degree_overflow(n) ) {
-          flush_data(n, DATA_TYPE::all);
           break;
         }
         if ( n->is_root() ) {
@@ -540,14 +547,10 @@ namespace ext {
           std::swap(root->query_data_structure, empty_node->query_data_structure);
           
           handle_split_child(empty_node, root, new_node, true);
-          //flush and delete properly here!
-
-          flush_data(empty_node, DATA_TYPE::all);
-          flush_data(root, DATA_TYPE::all);
-          flush_data(new_node, DATA_TYPE::all);
+          LRU_cache.push_front(new_node);
+          LRU_cache.push_front(root);
           root = empty_node;
-          // since root = n and n now no longer is root then we delete it later after switch. so dont worry.
-          delete new_node;
+
         } else {
           load_data(n, DATA_TYPE::query_data_structure); 
           node* parent = retrieve_node(n->parent_id);
@@ -557,18 +560,13 @@ namespace ext {
           load_data(parent, DATA_TYPE::info_file);
 
           handle_split_child(parent, n, new_node, false);
-          flush_data(parent, DATA_TYPE::all);
-          flush_data(new_node, DATA_TYPE::all);
-          flush_data(n, DATA_TYPE::all);
-          delete new_node;
-          if (!parent->is_root()) delete parent;
+          LRU_cache.push_front(new_node);
         }
         break;
       case EVENT_TYPE::set_parent_of_children:
         {
           load_data(n, DATA_TYPE::info_file);
           if ( n->is_leaf() ) {
-            flush_data(n, DATA_TYPE::info_file);
             break;
           }
           load_data(n, DATA_TYPE::points);
@@ -577,25 +575,17 @@ namespace ext {
             children.push_back(retrieve_node(c.c));
             load_data(children.back(), DATA_TYPE::info_file);
           }
-          flush_data(n, DATA_TYPE::points);
+
           children.push_back(retrieve_node(n->right_most_child));
           load_data(children.back(), DATA_TYPE::info_file);
           
           handle_set_parent_of_children(n, children);
-          
-          for (auto c : children) {
-            flush_data(c, DATA_TYPE::info_file);
-            delete c;
-          }
-
-          flush_data(n, DATA_TYPE::info_file);
         }
         break;
       case EVENT_TYPE::bubble_down:
         {
           load_data(n, DATA_TYPE::all);
           handle_bubble_down(n,p);
-          flush_data(n, DATA_TYPE::all);
         }
         break;
       case EVENT_TYPE::bubble_up:
@@ -604,23 +594,18 @@ namespace ext {
           load_data(n, DATA_TYPE::all);
           
           handle_bubble_up(n,n2);
-
-          flush_data(n, DATA_TYPE::all);
-          flush_data(n2, DATA_TYPE::all);
         }
         break;
       case EVENT_TYPE::report:
         {
           load_data(n, DATA_TYPE::all);
           handle_report(n, cur_event.x1, cur_event.x2, cur_event.y, cur_event.lm, cur_event.rm, cur_event.stream);
-          flush_data(n, DATA_TYPE::all);
         }
         break;
       case EVENT_TYPE::report_in_node:
         {
           load_data(n, DATA_TYPE::query_data_structure);
           handle_report_in_node(n, cur_event.x1, cur_event.x2, cur_event.y, cur_event.lm, cur_event.rm, cur_event.stream);
-          flush_data(n, DATA_TYPE::query_data_structure);
         }
         break;
       case EVENT_TYPE::global_rebuild:
@@ -634,9 +619,6 @@ namespace ext {
         break;
 
       };
-      flush_data(n, DATA_TYPE::all);
-      if ( !n->is_root() ) delete n;
-      if ( n2 && !n2->is_root() ) delete n2;
     }
     
   }
@@ -702,8 +684,8 @@ namespace ext {
     assert( n->is_info_file_loaded );
 #endif
     if ( n->is_leaf() ) {
-      add_event(event(EVENT_TYPE::split_node, copy_node(n), INF_POINT));
-      add_event(event(EVENT_TYPE::insert_point_in_node, copy_node(n), p));
+      add_event(event(EVENT_TYPE::split_node, n->id, INF_POINT));
+      add_event(event(EVENT_TYPE::insert_point_in_node, n->id, p));
     } else if (false) {
       //add case that the node has the current point and replace it
     } else {
@@ -777,16 +759,15 @@ namespace ext {
     if (split_root) {
       parent->right_most_child = n->id;
     }
-
-    add_event(event(EVENT_TYPE::split_node, copy_node(parent), INF_POINT));
-    add_event(event(EVENT_TYPE::bubble_up, copy_node(parent), copy_node(new_node), INF_POINT)); //we want to know the node aswell
-    add_event(event(EVENT_TYPE::bubble_up, copy_node(parent), copy_node(n), INF_POINT)); //we want to know the node aswell
+    add_event(event(EVENT_TYPE::split_node, parent->id, INF_POINT));
+    add_event(event(EVENT_TYPE::bubble_up, parent->id, new_node->id, INF_POINT)); //we want to know the node aswell
+    add_event(event(EVENT_TYPE::bubble_up, parent->id, n->id, INF_POINT)); //we want to know the node aswell
     // if (split_point.c != (size_t)-1) {
     //   add_event(event(EVENT_TYPE::bubble_up, copy_node(n), retrieve_node(split_point.c), INF_POINT));
     //   add_event(event(EVENT_TYPE::bubble_up, copy_node(new_node), retrieve_node(split_point.c), INF_POINT));
     // }
-    add_event(event(EVENT_TYPE::set_parent_of_children, copy_node(n), INF_POINT));
-    add_event(event(EVENT_TYPE::set_parent_of_children, copy_node(new_node), INF_POINT));
+    add_event(event(EVENT_TYPE::set_parent_of_children, n->id, INF_POINT));
+    add_event(event(EVENT_TYPE::set_parent_of_children, new_node->id, INF_POINT));
   }
 
 
@@ -810,14 +791,13 @@ namespace ext {
       //add_event(event(EVENT_TYPE::bubble_up, retrieve_node(n->parent_id), copy_node(n), INF_POINT));
     } else {
       auto Y_set = get_Y_set(n, find_range(n,p));
-      node* child = find_child(n,p);
+      size_t child = find_child(n,p);
       if (std::find(Y_set.begin(), Y_set.end(), p) != Y_set.end()) {
         n->query_data_structure->remove(p);
-        add_event(event(EVENT_TYPE::bubble_up, copy_node(n), copy_node(child), INF_POINT));
+        add_event(event(EVENT_TYPE::bubble_up, n->id, child, INF_POINT));
       } else {
-        add_event(event(EVENT_TYPE::delete_in_query_data_structure, copy_node(child), p));        
+        add_event(event(EVENT_TYPE::delete_in_query_data_structure, child, p));        
       }
-      delete child;
     }
   }
 
@@ -837,18 +817,17 @@ namespace ext {
 
     range_type range_of_child = find_range(n,p);
     std::vector<point> Y_set_child = get_Y_set(n, range_of_child);
-    node* child = find_child(n,p);
+    size_t child = find_child(n,p);
     if (Y_set_child.size() >= buffer_size/2 && point_below_all(p, Y_set_child)) { // not clear if buffer_size/2 or buffer_size. ionote says buffer_size
-      add_event(event(EVENT_TYPE::bubble_down, copy_node(child), p));
+      add_event(event(EVENT_TYPE::bubble_down, child, p));
     } else {
       n->query_data_structure->insert(p);
       if (Y_set_child.size() >= buffer_size) {
         point min_point = *std::min_element(Y_set_child.begin(), Y_set_child.end(), comp_y);
         n->query_data_structure->remove(min_point);
-        add_event(event(EVENT_TYPE::bubble_down, copy_node(child), min_point));
+        add_event(event(EVENT_TYPE::bubble_down, child, min_point));
       }
     }
-    delete child;
   }
 
   void external_priority_search_tree::handle_bubble_up(node* parent, node *n) {
@@ -861,7 +840,6 @@ namespace ext {
     assert(n->is_info_file_loaded);
     assert(n->is_points_loaded);
 #endif
-    
     std::vector<point> Y_set_child = get_Y_set(parent, find_range(parent, n));
     DEBUG_MSG("Size of Y(" << n->id << ") = " << Y_set_child.size());
     if (Y_set_child.size() >= buffer_size/2) return;
@@ -872,13 +850,11 @@ namespace ext {
     parent->query_data_structure->insert(top_most);
 
     if (Y_set_child.size() + 1 < buffer_size/2) {
-      add_event(event(EVENT_TYPE::bubble_up, copy_node(parent), copy_node(n), INF_POINT));
+      add_event(event(EVENT_TYPE::bubble_up, parent->id, n->id, INF_POINT));
     }
     
     if ( !n->is_leaf() ) {
-      node* child_of_point = find_child(n, top_most);
-      add_event(event(EVENT_TYPE::bubble_up, copy_node(n), copy_node(child_of_point), INF_POINT));
-      delete child_of_point;
+      add_event(event(EVENT_TYPE::bubble_up, n->id, find_child(n, top_most), INF_POINT));
     }
   }
 
@@ -891,28 +867,28 @@ namespace ext {
 
     if ( !n->is_leaf() ) {
       std::vector<event> upcoming_events;
-      node* left_most = find_child(n, point(x1,-INF));
-      node* right_most = find_child(n, point(x2,INF));
+      size_t left_most = find_child(n, point(x1,-INF));
+      size_t right_most = find_child(n, point(x2,INF));
       bool in_range = false;
       for (auto p : n->points) {
-        if (p.c == left_most->id) in_range = true;
+        if (p.c == left_most) in_range = true;
         if (!in_range) continue;
         
         add_event(event(EVENT_TYPE::report_in_node,
-                        retrieve_node(p.c),
+                        p.c,
                         x1, x2, y,
-                        lm && p.c == left_most->id,
-                        rm && p.c == right_most->id,
+                        lm && p.c == left_most,
+                        rm && p.c == right_most,
                         stream));
         
-        if (p.c == right_most->id) break;
+        if (p.c == right_most) break;
       }
-      if (right_most->id == n->right_most_child) {
+      if (right_most == n->right_most_child) {
         add_event(event(EVENT_TYPE::report_in_node,
-                        retrieve_node(n->right_most_child),
+                        n->right_most_child,
                         x1, x2, y,
-                        lm && n->right_most_child == left_most->id,
-                        rm && n->right_most_child == right_most->id,
+                        lm && n->right_most_child == left_most,
+                        rm && n->right_most_child == right_most,
                         stream));
       }
     }
@@ -927,7 +903,7 @@ namespace ext {
     for (point p : points_to_report_in_node)
       stream->write(p);
     if (points_to_report_in_node.empty() && !(lm || rm)) return;
-    add_event(event(EVENT_TYPE::report, copy_node(n), x1, x2, y, lm, rm, stream));
+    add_event(event(EVENT_TYPE::report, n->id, x1, x2, y, lm, rm, stream));
   }
 
   void external_priority_search_tree::handle_global_rebuild() {
@@ -952,15 +928,15 @@ namespace ext {
       load_data(n, DATA_TYPE::info_file);
       for (auto p : n->points) {
         if (!p.deleted) {
-          add_event(event(EVENT_TYPE::insert_in_base_tree, root, p.pt));
+          add_event(event(EVENT_TYPE::insert_in_base_tree, 0, p.pt));
           active_points++;
         }
         handle_events();
         if (!n->is_leaf())
           bfs.push(retrieve_node(p.c));
       }
-      flush_data(n, DATA_TYPE::points);
-      flush_data(n, DATA_TYPE::info_file);
+      // flush_data(n, DATA_TYPE::points);
+      // flush_data(n, DATA_TYPE::info_file);
       delete n;
     }
 
@@ -998,7 +974,7 @@ namespace ext {
   // each point k stores a pointer to a child c.
   // Invariant: k-1 < all keys of c < k
   // If p > all keys of n then we have pointer to that in right_most_child
-  external_priority_search_tree::node* external_priority_search_tree::find_child(node *n, const point &p) {
+  size_t external_priority_search_tree::find_child(node *n, const point &p) {
     DEBUG_MSG("Find child for point " << p << " in node " << n->id);
 #ifdef DEBUG
     assert(n->is_points_loaded);
@@ -1009,7 +985,7 @@ namespace ext {
     auto it = n->points.upper_bound(point_type(p,(size_t)-1));
     if (it == n->points.end()) child_id = n->right_most_child;
     else child_id = it->c;
-    return retrieve_node(child_id);
+    return child_id;
   }
 
   external_priority_search_tree::range_type external_priority_search_tree::find_range(node *n, const point &p) {
@@ -1106,8 +1082,26 @@ namespace ext {
   }
 
 
-  void external_priority_search_tree::load_data(node* n, DATA_TYPE dt) {
+  void external_priority_search_tree::load_data(node* &n, DATA_TYPE dt) {
+    DEBUG_MSG_FAIL("LOADING DATA FOR NODE" << n->id);
+
     if ( n->is_root() ) return;
+    //look in LRU_cache for n
+    auto hit = LRU_cache.end();
+    for (auto cached_node = LRU_cache.begin(); cached_node != LRU_cache.end(); ++cached_node) {
+      DEBUG_MSG_FAIL("CACHED NODE: " << (*cached_node)->id);
+      if ((*cached_node)->id == n->id) {
+        hit = cached_node;
+        break;
+      }
+    }
+    if (hit != LRU_cache.end()) {
+      if (n != *hit)
+        delete n;
+      n = *hit;
+      LRU_cache.erase(hit);
+    }
+    DEBUG_MSG_FAIL(n);
     switch (dt) {
     case DATA_TYPE::points:
       {
@@ -1134,8 +1128,10 @@ namespace ext {
     default:
       DEBUG_MSG_FAIL("Cannot load the given data type");
       break;
-
     };
+    DEBUG_MSG_FAIL("Adding " << n->id << " to cache");
+    LRU_cache.push_front(n);
+
   }
 
   void external_priority_search_tree::flush_data(node* n, DATA_TYPE dt) {
@@ -1262,7 +1258,13 @@ namespace ext {
   }
 
   external_priority_search_tree::node* external_priority_search_tree::retrieve_node(size_t id) {
+    if (id == (size_t)-1) return 0;
     if (id == 0) return root;
+    node* cached_node = get_cached_node(id);
+    if (cached_node) {
+      DEBUG_MSG_FAIL("Retrieving node from cache");
+      return cached_node;
+    }
     node* n = new node(id);
     return n;
   }
@@ -1273,6 +1275,27 @@ namespace ext {
 #endif
     if ( n->is_leaf() ) return n->points.size() > leaf_parameter;
     else return n->points.size()+1 > branching_parameter;
+  }
+
+  void external_priority_search_tree::evict_nodes() {
+    //first empty the cache if using too much memory:
+    while ( util::get_used_memory() > cache_size && !LRU_cache.empty() ) {
+      DEBUG_MSG_FAIL("USED MEMORY" << util::get_used_memory());
+      node* last = LRU_cache.back(); LRU_cache.pop_back();
+      flush_data(last, DATA_TYPE::all);
+      if (!last->is_root()) delete last;
+    }
+  }
+
+  external_priority_search_tree::node* external_priority_search_tree::get_cached_node(size_t id) {
+    for (auto it = LRU_cache.begin(); it != LRU_cache.end(); ++it)
+      if ((*it)->id == id) {
+        auto res = (*it);
+        LRU_cache.erase(it);
+        LRU_cache.push_front(res);
+        return res;
+      }
+    return 0;
   }
 
   /*

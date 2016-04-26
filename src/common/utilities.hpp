@@ -3,6 +3,8 @@
 #include "../stream/stream.hpp"
 #include "point.hpp"
 #include <string>
+#include <fstream>
+#include <ios>
 #include <iterator>
 #include <sys/types.h>
 #include <unistd.h>
@@ -26,6 +28,26 @@ namespace util {
 
   void remove_directory(const std::string &directory_name) {
     remove_file(directory_name);
+  }
+
+  unsigned long long get_used_memory() {
+    using std::ios_base;
+    using std::ifstream;
+    using std::string;
+
+    ifstream stat_stream("/proc/self/stat",ios_base::in);
+
+    string temp;
+
+    unsigned long long rss;
+    stat_stream >> temp >> temp >> temp >> temp >> temp >> temp >> temp
+                >> temp >> temp >> temp >> temp >> temp >> temp
+                >> temp >> temp >> temp >> temp >> temp >> temp
+                >> temp >> temp >> temp >> temp >> rss; // don't care about the rest
+
+    stat_stream.close();
+    long page_size = sysconf(_SC_PAGE_SIZE);
+    return rss * page_size;
   }
 
   template <class InputIterator, typename T>
