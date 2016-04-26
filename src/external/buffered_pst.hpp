@@ -3241,7 +3241,7 @@ namespace ext {
   }
 
   buffered_pst::~buffered_pst() {
-    DEBUG_MSG_FAIL("DESSTRUCTING EPST! " << next_id);
+    DEBUG_MSG_FAIL("DESTRUCTING EPST! " << next_id);
     delete root;
     for (int i=0; i < std::max(next_id,1); i++) {
       DEBUG_MSG("Destructing file " << i);

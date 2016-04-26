@@ -701,7 +701,9 @@ In every internal node $v$ visited we spend $\mathcal{O}(1+K_v/B)$ I/O's. There 
 \chapter{Experimental setup}
 \label{chp:experimental_setup}
 Running experiments on I/O algorithms is extremely time consuming. In order to compare I/O efficient algorithms against internal memory algorithms we need input sizes that force the internal memory algorithms to store and load data to and from the disk (swapping). The input size to the algorithms can be severely minimized if run on machines with a small amount of internal memory.
-\todo{more considerations w.r.t to mechanical disks}
+
+It is important to mention some considerations when it comes to choice of persistent storage media. In recent years solid state drives have grown increasingly more desirably in terms of price per gigabyte and storage size, but there is still a significant gap in price between SSD's and HDD's. Disregarding this gap in price, solid state drives clearly outperforms the hard disk in every notable aspect. Solid state drives allow random access to blocks and diminish the seek time which is considered to be the culprit of the mechanical disks due to the rotational latency.
+The rotational latency makes it very important to store data on the disk in consecutive blocks as scattering data across the disk would be detrimental to the performance as each block would have to be wait for the rotational latency. As long as the mechanical disk is still as widespread as it is, these culprits of the mechanical disk have to be taken in consideration when designing I/O efficient algorithms.
 
 With these considerations in mind we acquired two very old Dell machines with the following specifications:
 
@@ -749,7 +751,7 @@ In order to obtain a deeper understanding of the results we chose to measure the
 \label{fig:gerth_buffer_size_experiment}
 \end{figure}
 
-\todo{Larger buffer sizes were also tried but were teribly slow!}
+\todo{Larger buffer sizes were also tried but were terribly slow!}
 
 \chapter{Implementation considerations}
 %TODO We use a POSIX file-system on a Linux distribution.

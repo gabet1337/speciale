@@ -203,7 +203,7 @@ namespace ext {
     node* root;
 
     std::deque<node*> LRU_cache;
-    unsigned long long cache_size = 1024ULL*1024ULL*200ULL; //200MB
+    unsigned long long cache_size = ARGE_CACHE_SIZE;//1024ULL*1024ULL*300ULL; //300MB
 
 #ifdef VALIDATE
     std::set<point> CONTAINED_POINTS;
@@ -244,6 +244,7 @@ namespace ext {
       }
       delete (*cached_node);
     }
+    LRU_cache.clear();
     root->query_data_structure->destroy();
     delete root->query_data_structure;
     delete root;
@@ -1095,7 +1096,8 @@ namespace ext {
       }
     }
     if (hit != LRU_cache.end()) {
-      //delete n;
+      if (n != *hit)
+        delete n;
       n = *hit;
       LRU_cache.erase(hit);
     }
@@ -1256,6 +1258,7 @@ namespace ext {
   }
 
   external_priority_search_tree::node* external_priority_search_tree::retrieve_node(size_t id) {
+    if (id == (size_t)-1) return 0;
     if (id == 0) return root;
     node* cached_node = get_cached_node(id);
     if (cached_node) {
@@ -1276,8 +1279,8 @@ namespace ext {
 
   void external_priority_search_tree::evict_nodes() {
     //first empty the cache if using too much memory:
-    while ( (util::get_used_memory() > cache_size && !LRU_cache.empty()) && !(LRU_cache.size() == 1 && LRU_cache.front()->is_root())) {
-      DEBUG_MSG_FAIL(util::get_used_memory());
+    while ( util::get_used_memory() > cache_size && !LRU_cache.empty() ) {
+      DEBUG_MSG_FAIL("USED MEMORY" << util::get_used_memory());
       node* last = LRU_cache.back(); LRU_cache.pop_back();
       flush_data(last, DATA_TYPE::all);
       if (!last->is_root()) delete last;
