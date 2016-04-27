@@ -104,6 +104,7 @@
 
 \chapter*{Foreword}
 \label{chp:foreword}
+\addcontentsline{toc}{chapter}{Foreword}
 \todo{mention star wars and scaring the crap out of C}
 
 \todo{Getting hot in here}
@@ -332,6 +333,8 @@ Arge et al. presented the first optimal linear space dynamic data structure in~\
 Brodal~\cite{DBLP:journals/corr/Brodal15} introduced an amortized solution that improves the update bound of~\cite{arge_samoladas_vitter_1999} by a factor $\epsilon B^{1-\epsilon}$ and query bound by a factor $\epsilon^{-1}$ by adopting ideas of the buffer trees of Arge~\cite{Arge:1995:BTN:645930.672850} to the external memory priority search tree of Arge~\cite{arge_samoladas_vitter_1999}. The solution is presented in detail in chapter~\ref{chp:epst}.
 
 Please refer to table~\ref{tbl:related_work_summary} for a summary of the results.
+
+\todo{isn't epsilon between 0 and 0.5?}
 
 \begin{table}[h]
 \centering
@@ -796,17 +799,25 @@ In order to compare the structures' best performance against each other we neede
 \end{figure}
 
 \begin{figure}[h]
+\includegraphics[width=\textwidth]{../plots/gerth_update_buffer_size/gerth_buffer_size}
+\caption{Theoretical update time for different buffer sizes.}
+\label{fig:gerth_buffer_size_theory}
+\end{figure}
+
+\begin{figure}[h]
 \includegraphics[width=\textwidth]{../src/experiments/gerth_buffer_size_experiment_results/2016-04-20.17_26_22/time}
 \caption{Running the data structure of Brodal with a maximum fanout of 2 and varying buffer sizes.}
 \label{fig:gerth_buffer_size_experiment}
 \end{figure}
 
 
-Figure~\ref{fig:gerth_fanout_experiment} shows that the running time increases as the fanout increases. This is very much in line with the theoretical bounds as depicted in Figure~\ref{fig:gerth_fanout_theory}
+Figure~\ref{fig:gerth_fanout_experiment} shows that the running time increases as the fanout increases. This is very much in line with the theoretical bounds as depicted in Figure~\ref{fig:gerth_fanout_theory} and fits very well with the overall intuition that being able to send more points down on each overflow is key to increasing performance. The tree might increase significantly in height but we decrease the frequency of overflow.
 
-\todo{Larger buffer sizes were also tried but were terribly slow!}
-
+\todo{Do some math on this to show that the number of overflow decreases}
 \todo{Explain these results with the code in mind. Smaller fanout sends more points down at a time}
+\todo{Add the formulas that are plotted to text}
+
+In Figure~\ref{fig:gerth_buffer_size_experiment} we fixed the fanout to 2 and varied the buffer size. Theoretically the running time should decrease with ever increasing buffer sizes as shown in Figure~\ref{fig:gerth_buffer_size_theory}. We are however limited by the main memory size and we have to be careful not to start swapping out memory to disk as this greatly decreases performance. This is also what we see in Figure~\ref{fig:gerth_buffer_size_experiment} where the running time decreases as the buffer size increases until we reach 8MB. At this point the we started swapping out structures and the performance decreased. Larger buffer sizes was also tried but were simply too slow to measure.
 
 \chapter{Implementation considerations}
 %TODO We use a POSIX file-system on a Linux distribution.
