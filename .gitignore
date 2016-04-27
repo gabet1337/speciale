@@ -10,6 +10,7 @@ src/mpst
 src/rtree
 src/testexp
 src/testlib
+src/libspatial_pst
 src/experiments/stream_input_speed_experiment
 src/experiments/stream_output_speed_experiment
 src/experiments/gerth_fanout_experiment
@@ -64,8 +65,8 @@ src/test_data_report_random_1gb
 *.gz
 *.bbl
 *.blg
+*.ps
 /report/thesis.pdf
-/report/thesis.ps
 
 # dot files in src
 *.dot
