@@ -664,7 +664,7 @@ Deleting a point is simple as we adopt global rebuilding to rebalance the tree a
 \subsection{Analysis}
 Inserting in the base tree can be done in $\mathcal{O}(\log_B N)$ I/O's by Section~\ref{sec:prelim_b_tree} and can cause as many splits on the path from a leaf to the root. Each split might cause $B/2$ \textit{bubble-up} operations. Each \textit{bubble-up} at $v$ costs $\mathcal{O}(1)$ I/O's and might recurse all the way to a leaf for a total of $\mathcal{O}(\log_B weight(v))$ where $weight(v)$ is the size of the subtree rooted at $v$. In the worst case $B/2$ of these operations are performed totalling at $\mathcal{O}(B\log_B weight(v)) = \mathcal{O}(weight(v))$ I/O's.
 
-To prove that this gives an amortized $\mathcal{O}(\log_B N)$ I/O's cost we need the following Lemma from the original paper describing the weight balanced B-tree~\todo{\cite{weight-balanced}}.
+To prove that this gives an amortized $\mathcal{O}(\log_B N)$ I/O's cost we need the following Lemma from the original paper describing the weight balanced B-tree~\cite{arge_vitter_1996}.
 \begin{lemma}
 \label{lma:weight_balanced}
 After a split of a node $v_l$ on level $l$ into two nodes $v_l'$ and $v_l''$, at least $a^lk/2$ inserts have to pass through $v_l'$ (or $v_l''$) to make it split again. After a new root $r$ in a tree containing $N$ items is created, at least $3N$ inserts have to be done before $r$ splits again.
@@ -683,6 +683,9 @@ Querying the data structure with $Q = \left[ x_1, x_2 \right] \times \left[ y, \
 
 \subsection{Analysis}
 In every internal node $v$ visited we spend $\mathcal{O}(1+K_v/B)$ I/O's. There are $\mathcal{O}(\log_B N)$ nodes on the search path from root to the leftmost leaf and rightmost leaf and thus the number of I/O's used on these paths is $\mathcal{O}(\log_B N + K/B)$. All other internal nodes visited are visited because all points were reported in the parent. If we do not report all points from a $Y$-set we can charge the $\mathcal{O}(1)$ I/O's of visiting the child to the parent which must have reported $\Theta(B)$ points. As the cost of reporting from the query data structures is $\mathcal{O}(1+K/B)$ the total cost amounts to $\mathcal{O}(\log_B N + K/B)$.
+
+\chapter{Other structures}
+
 
 \chapter{Experimental setup}
 \label{chp:experimental_setup}
