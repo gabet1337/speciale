@@ -13,6 +13,7 @@
 #include "../common/debug.hpp"
 
 namespace io {
+  unsigned long long STREAM_NUM_IOS = 0;
   template <typename T>
   class buffered_stream {
   public:
@@ -105,6 +106,7 @@ namespace io {
         exit(errno);
       }
       ssize_t bytes_read = ::read(file_descriptor, buffer, buffer_size);
+      STREAM_NUM_IOS++;
       if (bytes_read == -1) {
         perror(std::string("Error reading from file '").append(file_name).append("'").c_str());
         exit(errno);
@@ -124,6 +126,7 @@ namespace io {
     off64_t cur_pos = seek(0, SEEK_CUR);
     seek(buffer_start, SEEK_SET);
     ssize_t bytes_written = ::write(file_descriptor, buffer, elems*sizeof(T));
+    STREAM_NUM_IOS++;
     if (bytes_written == (ssize_t)-1) {
       perror(std::string("Error on syncing buffer for file: '").append(file_name).append("'").c_str());
       exit(errno);

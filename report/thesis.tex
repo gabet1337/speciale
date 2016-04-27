@@ -780,10 +780,17 @@ In order to obtain a deeper understanding of the results we chose to measure the
 Many experiments were conducted to evaluate the performance of the structures against each other. We will in this chapter present the results of these experiments and discuss the results.
 
 \section{Parameter tuning}
-In order to compare the structures' best performance against eachother we needed to find the optimal parameters to run the structures on. The parameters of the structures were mainly the size of the buffer and for the tree structures it was also the size of the fanout in the nodes. These parameters are highly machine dependent as larger main memory allows for larger buffer sizes.
+In order to compare the structures' best performance against each other we needed to find the optimal parameters to run the structures on. The parameters of the structures were mainly the size of the buffer and for the tree structures it was also the size of the fanout in the nodes. These parameters are highly machine dependent as larger main memory allows for larger buffer sizes.
+
 
 \begin{figure}[h]
-\includegraphics[width=\textwidth]{../src/experiments/gerth_fanout_experiment_results/2016-04-19.18_20_50/time}
+\includegraphics[width=\textwidth]{../plots/gerth_update_epsilon/gerth_epsilon}
+\caption{Theoretical update time for different fanouts (epsilon).}
+\label{fig:gerth_fanout_theory}
+\end{figure}
+
+\begin{figure}[h]
+\includegraphics[width=\textwidth]{../src/experiments/gerth_fanout_experiment_results/2016-04-21.15_38_18/time_over_input}
 \caption{Running the data structure of Brodal with a fixed buffer size at 8Mb and varying fanouts.}
 \label{fig:gerth_fanout_experiment}
 \end{figure}
@@ -793,6 +800,9 @@ In order to compare the structures' best performance against eachother we needed
 \caption{Running the data structure of Brodal with a maximum fanout of 2 and varying buffer sizes.}
 \label{fig:gerth_buffer_size_experiment}
 \end{figure}
+
+
+Figure~\ref{fig:gerth_fanout_experiment} shows that the running time increases as the fanout increases. This is very much in line with the theoretical bounds as depicted in Figure~\ref{fig:gerth_fanout_theory}
 
 \todo{Larger buffer sizes were also tried but were terribly slow!}
 
