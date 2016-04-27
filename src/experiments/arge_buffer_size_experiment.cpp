@@ -47,11 +47,12 @@ class arge_buffer_size_experiment : public base_experiment {
 int main() {
 
   arge_buffer_size_experiment gfe("arge_buffer_size_experiment");
-  gfe.add(1, "buffer1024", common::PST_VARIANT::ARGE, 1024/8, 1);
-  gfe.add(2, "buffer2048", common::PST_VARIANT::ARGE, 1024/4, 1);
+  //gfe.add(1, "buffer1024", common::PST_VARIANT::ARGE, 1024/8, 1);
+  // gfe.add(2, "buffer2048", common::PST_VARIANT::ARGE, 1024/4, 1);
   gfe.add(3, "buffer4096", common::PST_VARIANT::ARGE, 1024/2, 1);
   gfe.add(4, "buffer8192", common::PST_VARIANT::ARGE, 1024, 1);
   gfe.add(5, "buffer16384", common::PST_VARIANT::ARGE, 1024*2, 1);
+  gfe.add(6, "buffer32768", common::PST_VARIANT::ARGE, 1024*4, 1);
   gfe.run();
   gfe.plot();
 
