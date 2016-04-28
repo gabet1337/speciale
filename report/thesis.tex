@@ -810,8 +810,7 @@ In order to compare the structures' best performance against each other we neede
 \label{fig:gerth_buffer_size_experiment}
 \end{figure}
 
-
-Figure~\ref{fig:gerth_fanout_experiment} shows that the running time increases as the fanout increases. This is very much in line with the theoretical bounds as depicted in Figure~\ref{fig:gerth_fanout_theory} and fits very well with the overall intuition that being able to send more points down on each overflow is key to increasing performance. The tree might increase significantly in height but we decrease the frequency of overflow.
+Figure~\ref{fig:gerth_fanout_experiment} shows that the running time increases as the fanout increases. This is very much in line with the theoretical bounds as depicted in Figure~\ref{fig:gerth_fanout_theory} and fits very well with the overall intuition that being able to send more points down on each overflow is key to increasing performance. The tree might increase significantly in height but we decrease the frequency of overflow in the root. It is also worth noting that smaller fanouts allow for larger buffer sizes as the child structures does not take up as much space if we do not have that many children.
 
 \todo{Do some math on this to show that the number of overflow decreases}
 \todo{Explain these results with the code in mind. Smaller fanout sends more points down at a time}
