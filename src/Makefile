@@ -32,7 +32,7 @@ ctest2 : $(STREAM) $(POINT) $(RB) $(DEFINITIONS) $(EXTERNAL_CHILD_STRUCTURE_STUB
 ctest : clean ctest1 ctest2
 	./ctest1 && ./ctest2
 
-epst : $(POINT) $(RANGE) $(STREAM) $(RB) $(DEFINITIONS) $(BUFFERED_PST) $(EXTERNAL_CHILD_STRUCTURE) $(UTILITIES) $(EXTERNAL_CHILD_STRUCTURE_STUB) external/test_buffered_pst.cpp
+epst : $(POINT) $(RANGE) $(STREAM) $(RB) $(DEFINITIONS) $(BUFFERED_PST) $(EXTERNAL_CHILD_STRUCTURE) $(UTILITIES) $(EXTERNAL_CHILD_STRUCTURE_STUB) $(TEST_LIB) external/test_buffered_pst.cpp
 	$(CC) $(LFLAGS) external/test_buffered_pst.cpp -o epst
 
 apst : $(POINT) $(EXTERNAL_PST) $(STREAM) $(DEFINITIONS) $(EXTERNAL_CHILD_STRUCTURE) $(UTILITIES) external/test_arge_pst.cpp

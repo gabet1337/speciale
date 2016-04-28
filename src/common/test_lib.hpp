@@ -21,6 +21,13 @@
 #include "utilities.hpp"
 
 namespace test {
+
+  unsigned long long GERTH_NUM_NODE_DEGREE_OVERFLOW = 0;
+  unsigned long long GERTH_NUM_INSERT_BUFFER_OVERFLOW = 0;
+  unsigned long long GERTH_NUM_POINT_BUFFER_OVERFLOW = 0;
+  unsigned long long GERTH_NUM_DELETE_BUFFER_OVERFLOW = 0;
+  unsigned long long GERTH_NUM_POINT_BUFFER_UNDERFLOW = 0;
+
   class clock {
     typedef std::chrono::high_resolution_clock hsc;
     typedef hsc::time_point tp;
@@ -321,19 +328,81 @@ namespace test {
   public:
     proc_io() { start = 0; }
     ~proc_io() {}
-    size_t total_ios() {
-      pid_t pid = getpid();
-      size_t rchar, wchar, syscr, syscw, read_bytes, write_bytes, cancelled_write_bytes;
-      FILE* f;
-      std::string name = "/proc/"+std::to_string(pid)+"/io";
-      f = fopen(name.c_str(), "r");
-      int r = fscanf(f, "rchar: %zu\nwchar: %zu\nsyscr: %zu\nsyscw: %zu\nread_bytes: %zu\nwrite_bytes: %zu\ncancelled_write_bytes: %zu", &rchar, &wchar, &syscr, &syscw, &read_bytes, &write_bytes, &cancelled_write_bytes);
-      fclose(f);
-      r++;
-      return syscr + syscw - start;
+    uint64_t total_ios() {
+      return io::STREAM_NUM_IOS - start;
     }
     void restart() {
       start = total_ios();
+    }
+  private:
+    size_t start;
+  };
+
+  class gerth_num_point_buffer_overflow {
+  public:
+    gerth_num_point_buffer_overflow() { start = 0; }
+    ~gerth_num_point_buffer_overflow() {}
+    uint64_t elapsed() {
+      return GERTH_NUM_POINT_BUFFER_OVERFLOW - start;
+    }
+    void restart() {
+      start = elapsed();
+    }
+  private:
+    size_t start;
+  };
+
+  class gerth_num_insert_buffer_overflow {
+  public:
+    gerth_num_insert_buffer_overflow() { start = 0; }
+    ~gerth_num_insert_buffer_overflow() {}
+    uint64_t elapsed() {
+      return GERTH_NUM_INSERT_BUFFER_OVERFLOW - start;
+    }
+    void restart() {
+      start = elapsed();
+    }
+  private:
+    size_t start;
+  };
+
+  class gerth_num_delete_buffer_overflow {
+  public:
+    gerth_num_delete_buffer_overflow() { start = 0; }
+    ~gerth_num_delete_buffer_overflow() {}
+    uint64_t elapsed() {
+      return GERTH_NUM_DELETE_BUFFER_OVERFLOW - start;
+    }
+    void restart() {
+      start = elapsed();
+    }
+  private:
+    size_t start;
+  };
+
+  class gerth_num_point_buffer_underflow {
+  public:
+    gerth_num_point_buffer_underflow() { start = 0; }
+    ~gerth_num_point_buffer_underflow() {}
+    uint64_t elapsed() {
+      return GERTH_NUM_POINT_BUFFER_UNDERFLOW - start;
+    }
+    void restart() {
+      start = elapsed();
+    }
+  private:
+    size_t start;
+  };
+
+  class gerth_num_node_degree_overflow {
+  public:
+    gerth_num_node_degree_overflow() { start = 0; }
+    ~gerth_num_node_degree_overflow() {}
+    uint64_t elapsed() {
+      return GERTH_NUM_NODE_DEGREE_OVERFLOW - start;
+    }
+    void restart() {
+      start = elapsed();
     }
   private:
     size_t start;

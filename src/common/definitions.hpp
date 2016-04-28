@@ -55,8 +55,13 @@ namespace common {
     time = 2, num_ios = 3,
     page_faults = 4,
     time_ms = 5,
+    gerth_num_point_buffer_overflow = 6,
+    gerth_num_delete_buffer_overflow = 7,
+    gerth_num_insert_buffer_overflow = 8,
+    gerth_num_point_buffer_underflow = 9,
+    gerth_num_node_degree_overflow = 10,
+    last = 11
     //L1 = 5, L2 = 6, L3 = 7, instr_count = 8,
-    last = 6
   };
 
   std::string MEASURE_to_string(MEASURE m) {
@@ -65,6 +70,11 @@ namespace common {
     case MEASURE::time_ms: return "timems";
     case MEASURE::num_ios: return "ios";
     case MEASURE::page_faults: return "pfs";
+    case MEASURE::gerth_num_point_buffer_overflow: return "pbo";
+    case MEASURE::gerth_num_insert_buffer_overflow: return "ibo";
+    case MEASURE::gerth_num_delete_buffer_overflow: return "dbo";
+    case MEASURE::gerth_num_point_buffer_underflow: return "pbu";
+    case MEASURE::gerth_num_node_degree_overflow: return "ndo";
     // case MEASURE::L1: return "L1";
     // case MEASURE::L2: return "L2";
     // case MEASURE::L3: return "L3";
@@ -94,6 +104,12 @@ namespace common {
     case MEASURE::time_ms: return "Time (ms)";
     case MEASURE::num_ios: return "I/Os";
     case MEASURE::page_faults: return "page faults";
+    case MEASURE::gerth_num_point_buffer_overflow: return "point buffer overflows";
+    case MEASURE::gerth_num_insert_buffer_overflow: return "insert buffer overflows";
+    case MEASURE::gerth_num_delete_buffer_overflow: return "delete buffer overflows";
+    case MEASURE::gerth_num_point_buffer_underflow: return "point buffer underflows";
+    case MEASURE::gerth_num_node_degree_overflow: return "node degree overflows";
+
     // case MEASURE::L1: return "L1 cache accesses";
     // case MEASURE::L2: return "L2 cache accesses";
     // case MEASURE::L3: return "L3 cache accesses";

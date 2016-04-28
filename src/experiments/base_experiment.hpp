@@ -56,9 +56,15 @@ namespace experiment {
 
     std::string name;
     std::string start_time;
+    
     test::clock timer;
     test::proc_io procio;
     test::pagefaults pagefaults;
+    test::gerth_num_point_buffer_overflow pbo;
+    test::gerth_num_insert_buffer_overflow ibo;
+    test::gerth_num_delete_buffer_overflow dbo;
+    test::gerth_num_point_buffer_underflow pbu;
+    test::gerth_num_node_degree_overflow ndo;
     
     std::string get_file_name(run_instance instance);
     std::string get_directory();
@@ -178,6 +184,11 @@ namespace experiment {
     pagefaults.stop();
     pagefaults.start();
     procio.restart();
+    pbo.restart();
+    ibo.restart();
+    dbo.restart();
+    pbu.restart();
+    ndo.restart();
   }
 
   void base_experiment::measure_everything(size_t id, ull input_size) {
@@ -185,6 +196,11 @@ namespace experiment {
     add_result(id, common::MEASURE::time_ms, input_size, timer.elapsed_ms());
     add_result(id, common::MEASURE::num_ios, input_size, procio.total_ios());
     add_result(id, common::MEASURE::page_faults, input_size, pagefaults.elapsed());
+    add_result(id, common::MEASURE::gerth_num_point_buffer_overflow, input_size, pbo.elapsed());
+    add_result(id, common::MEASURE::gerth_num_insert_buffer_overflow, input_size, ibo.elapsed());
+    add_result(id, common::MEASURE::gerth_num_delete_buffer_overflow, input_size, dbo.elapsed());
+    add_result(id, common::MEASURE::gerth_num_point_buffer_underflow, input_size, pbu.elapsed());
+    add_result(id, common::MEASURE::gerth_num_node_degree_overflow, input_size, ndo.elapsed());
   }
 
   void base_experiment::add_result
