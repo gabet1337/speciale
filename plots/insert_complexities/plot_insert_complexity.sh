@@ -1,6 +1,6 @@
 #!/usr/bin/gnuplot
 set terminal postscript eps enhanced color font 'Verdana,11'
-set output 'gerth_buffer_size.eps'
+set output 'insert_complexity.eps'
 set style line 11 lc rgb '#808080' lt 1
 set border 3 back ls 11
 set tics nomirror
@@ -19,13 +19,22 @@ set xlabel 'N'
 set ylabel 'Time / N'
 set xrange [1:10]
 set yrange [0:*]
-unset xtics
-unset ytics
+buffer_size = 8
 epsilon(fanout, B) = log(fanout)/log(B)
-f(x,B) = (1/(epsilon(2,B)*(B**(1-epsilon(2,B))))) * (log(x)/log(B))
+brodal(x,B) = (1/(epsilon(2,B)*(B**(1-epsilon(2,B))))) * (log(x)/log(B))
+internal(x) = log(x)/log(2)
+arge(x,B) = log(x)/log(B)
+rtree(x) = 0.8*x
+rstar(x) = x
+mysql(x) = 0.5
+unset ytics
+unset xtics
 
-plot f(x,1024*1024/8) with linespoint title sprintf("buffer1MB") ls 2,\
-     f(x,1024*1024/4) with linespoint title sprintf("buffer2MB") ls 3,\
-     f(x,1024*1024/2) with linespoint title sprintf("buffer4MB") ls 4,\
-     f(x,1024*1024) with linespoint title sprintf("buffer8MB") ls 5
+plot brodal(x,buffer_size) with linespoint title sprintf("Brodal") ls 2,\
+     internal(x) with linespoint title sprintf("McCreight Internal PST") ls 3,\
+     arge(x,buffer_size) with linespoint title sprintf("Arge et al") ls 4,\
+     rtree(x) with linespoint title sprintf("RTree") ls 5,\
+     rstar(x) with linespoint title sprintf("R*Tree") ls 6,\
+     mysql(x) with linespoint title sprintf("MySQL") ls 7
+
 

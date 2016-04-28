@@ -13,9 +13,9 @@ set style line 4 lc rgb '#225ea8' pt 3 ps 1 lt 1 lw 2 # --- blue
 set style line 5 lc rgb '#000000' pt 4 ps 1 lt 1 lw 2 # --- black
 set key top left
 set xlabel 'N (input size in Mb)'
-set ylabel 'Time (s)'
-plot 'gerth_buffer_size_experiment_results/2016-04-20.17_26_22/gerth_buffer1MB' u 1:2 t 'buffer1MB' w lp ls 1, \
-'gerth_buffer_size_experiment_results/2016-04-20.17_26_22/gerth_buffer2MB' u 1:2 t 'buffer2MB' w lp ls 2, \
-'gerth_buffer_size_experiment_results/2016-04-20.17_26_22/gerth_buffer4MB' u 1:2 t 'buffer4MB' w lp ls 3, \
-'gerth_buffer_size_experiment_results/2016-04-20.17_26_22/gerth_buffer8MB' u 1:2 t 'buffer8MB' w lp ls 4
+set ylabel 'Time (s) / N (input size in Mb)'
+plot 'gerth_buffer_size_experiment_results/2016-04-20.17_26_22/gerth_buffer1MB' u 1:($2/$1) t 'buffer1MB' w lp ls 1, \
+'gerth_buffer_size_experiment_results/2016-04-20.17_26_22/gerth_buffer2MB' u 1:($2/$1) t 'buffer2MB' w lp ls 2, \
+'gerth_buffer_size_experiment_results/2016-04-20.17_26_22/gerth_buffer4MB' u 1:($2/$1) t 'buffer4MB' w lp ls 3, \
+'gerth_buffer_size_experiment_results/2016-04-20.17_26_22/gerth_buffer8MB' u 1:($2/$1) t 'buffer8MB' w lp ls 4
 #'gerth_buffer_size_experiment_results/2016-04-20.17_26_22/gerth_buffer16MB' u 1:2 t 'buffer16MB' w lp ls 5
