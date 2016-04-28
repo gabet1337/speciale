@@ -743,6 +743,17 @@ In every internal node $v$ visited we spend $\mathcal{O}(1+K_v/B)$ I/O's. There 
 
 \section{R-tree}
 
+\todo{$\log_B N$ I/Os for updates. N/B + K I/Os for query.}
+
+\todo{While much work has been done on evaluating the practical
+query performance of the R-tree variants mentioned
+above, very little is known about their theoretical worst-case
+performance. Most theoretical work on R-trees is concerned
+with estimating the expected cost of queries under assumptions
+such as uniform distribution of the input and/or the
+queries, or assuming that the input are points rather than
+rectangles.}
+
 The R-tree was introduced by Antonin Guttman in~\cite{Guttman:1984:RDI:602259.602266}. The structure is heuristic in nature and does not provide any close to optimal search bounds. Arge et al. has, however, provided strong evidence for R-trees outperforming several theoretical optimal data structures in practice in~\cite{Arge:2008:PRP:1328911.1328920}. We will introduce the important ideas of the R-tree.
 
 Let $P$ be a set of points. An R-tree stores all points from $P$ in leaf nodes, each of which contains $\Theta(B)$ points. Each non-leaf node $u$ has $\Theta(B)$ children, except for the root which must have 2 children unless it is the only node in the tree. For each child $v$, $u$ stores a \textit{minimum bounding rectangle} (MBR), which is the smallest rectangle that \textit{tightly} encloses all the data points in the subtree of $v$. Note that there is no constraint on how points should be grouped into leafs nodes. Also, there is no constraint on how non-leaf nodes should be grouped in higher level nodes. Since each point is stored only once, the entire data structure consumes linear space. Please refer to figure~\ref{fig:r_tree_structure} for an illustration of an R-tree structure.
@@ -750,7 +761,7 @@ Let $P$ be a set of points. An R-tree stores all points from $P$ in leaf nodes, 
 \begin{figure}[h]
 	\centering
      \includegraphics[width=\textwidth]{../figures/r_tree_data_and_mbrs}
-     \caption{(a) Data and MBRs. (b) The R-Tree structure.}
+     \caption{(a) Data and MBRs (b) The R-Tree structure}
      \label{fig:r_tree_structure}
 \end{figure}
 
@@ -768,9 +779,14 @@ The formal definition of inserting a new point $p$ is as follows. Given a non-le
 
 \textbf{Node split in an R-Tree} was originally proposed done by Guttman using two different heuristics. The \textit{linear method} chooses far apart nodes as ends. Randomly nodes are then chosen and assigned such that require the smallest MBR enlargment. The \textit{quadratic method} chooses two nodes so the dead space between them is maximized. Nodes are then assigned such that MBR area is minimized.
 
-\textbf{Node split in an R$^*$-Tree is fairly more involved} but the main idea is to always split point set $S$ using an axis-orthogonal cut. This means that points of $S$ is sorted with respect to their $x$- and $y$-value respectively. Then, the first $\nicefrac{B}{2}$ points are inserted into $S_1$ and the rest is inserted into $S_2$ for the $x$-sorted points and into $S'_1$ and $S'_2$ for the $y$-sorted points. The final split is the better one of the two splits, i.e. the splits that have the least combined MBR perimeter and least combined MBR area. The above applies to splitting of a leaf node. The case of a non-leaf node is a bit different because the items be split are MBRs. The strategy is however the same and involves sorting the MBRs by their centroids.
+\textbf{Node split in an R$^*$-Tree is fairly more involved} but the main idea is to always split point set $S$ using an axis-orthogonal cut. This means that points of $S$ is sorted with respect to their $x$- and $y$-value respectively. Then, the first $\nicefrac{B}{2}$ points are inserted into $S_1$ and the rest is inserted into $S_2$ for the $x$-sorted points and into $S'_1$ and $S'_2$ for the $y$-sorted points. The final split is the better one of the two splits, i.e. the splits that have the least combined MBR perimeter and least combined MBR area. The above applies to splitting of a leaf node. The case of a non-leaf node is a bit different because the items be split are MBRs. The strategy is however the same and involves sorting the MBRs by their centroids. Please refer to figure~\ref{fig:r_tree_splitting} for an illustration of the splitting of a node.
 
-FIGURE ???
+\begin{figure}[h]
+	\centering
+     \includegraphics[width=\textwidth]{../figures/r_tree_splitting}
+     \caption{(a) Split by cutting the $x$-dimension (b) Split by cutting the $y$-dimension}
+     \label{fig:r_tree_splitting}
+\end{figure}
 
 \subsection{Deletions}
 Let $p$ be the point to be deleted. First the leaf node $u$ which stores $p$ is found using $p$ as search region. Then $p$ is removed from $u$. The deletion is finished if the node has $\lambda B$ points, where $\lambda$ denotes the minimum node utilization. Otherwise, $u$ \textit{underflows}, which is handled by first removing $u$ from its parent, and then re-inserting all points in $u$ using the insert algorithm described above. Now, removing $u$ from from $parent(u)$ may cause $parent(u)$ to underflow too. In general, the underflow of a non-leaf node $u'$ is also handled by re-insertions, with the only difference that the items re-inserted are MBRs, and each MBR is re-inserted to the same level of $u'$.
