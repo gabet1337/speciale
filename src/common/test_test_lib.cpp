@@ -29,12 +29,20 @@ void test_1_line() {
 }
 
 void test_proc_io() {
+  test::drop_cache();
+  util::remove_file("lol");
+  util::remove_file("lol2");
   test::proc_io pi;
-  io::buffered_stream<int> lol(1);
+  io::buffered_stream<int> lol(1), lol2(2);
   lol.open("lol");
-  for (int i = 0; i < 1337; i++) lol.write(i);
+  lol2.open("lol2");
+  for (int i = 0; i < 700; i++) lol.write(i);
   lol.close();
-  cout << pi.total_ios() << endl;
+  pi.restart();
+  for (int i = 0; i < 700; i++) lol2.write(i);
+
+  lol2.close();
+  std::cout << pi.total_ios() << std::endl;
 }
 
 void test_available_line() {
@@ -61,9 +69,9 @@ int main() {
   cout << "\033[0;33m\e[4mSTARTING TEST OF TEST LIB\e[24m\033[0m" << endl;
 
   //test_1_line();
-  //test_proc_io();
+  test_proc_io();
   //test_available_line();
-  test_beeper();
+  //test_beeper();
   
 
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
