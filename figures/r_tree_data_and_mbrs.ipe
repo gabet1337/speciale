@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70005" creator="Ipe 7.1.4">
-<info created="D:20160428150624" modified="D:20160428154949"/>
+<info created="D:20160428150624" modified="D:20160428162559"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -620,7 +620,7 @@ h
 h
 </path>
 <text matrix="1 0 0 1 108 -140" transformations="translations" pos="340 792" stroke="black" type="label" width="13.453" height="4.297" depth="1.93" valign="baseline">$p_{10}$</text>
-<text matrix="1 0 0 1 112 -144" transformations="translations" pos="356 796" stroke="black" type="label" width="12.935" height="4.294" depth="1.49" valign="baseline">$r_{11}$</text>
+<text matrix="1 0 0 1 112 -144" transformations="translations" pos="356 796" stroke="black" type="label" width="13.453" height="4.297" depth="1.93" valign="baseline">$p_{11}$</text>
 <text matrix="1 0 0 1 124 -156" transformations="translations" pos="324 796" stroke="black" type="label" width="10.173" height="4.294" depth="1.49" valign="baseline">$u_4$</text>
 <path matrix="1.25 0 0 0.75 80 60" stroke="black">
 336 800 m
@@ -644,7 +644,7 @@ h
 h
 </path>
 <text matrix="1 0 0 1 164 -140" transformations="translations" pos="340 792" stroke="black" type="label" width="13.453" height="4.297" depth="1.93" valign="baseline">$p_{12}$</text>
-<text matrix="1 0 0 1 168 -144" transformations="translations" pos="356 796" stroke="black" type="label" width="12.935" height="4.294" depth="1.49" valign="baseline">$r_{13}$</text>
+<text matrix="1 0 0 1 168 -144" transformations="translations" pos="356 796" stroke="black" type="label" width="13.453" height="4.297" depth="1.93" valign="baseline">$p_{13}$</text>
 <text matrix="1 0 0 1 180 -156" transformations="translations" pos="324 796" stroke="black" type="label" width="10.173" height="4.294" depth="1.49" valign="baseline">$u_5$</text>
 <path matrix="1 0 0 1 0 8" stroke="black">
 328 676 m
