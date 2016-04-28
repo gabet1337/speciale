@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70005" creator="Ipe 7.1.4">
-<info created="D:20160428150624" modified="D:20160428154415"/>
+<info created="D:20160428150624" modified="D:20160428154949"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -436,7 +436,7 @@ h
 224 736 l
 h
 </path>
-<text matrix="1 0 0 1 28 -4" transformations="translations" pos="100 624" stroke="black" type="label" width="87.644" height="7.473" depth="2.49" valign="baseline">(a) Data and MBRs</text>
+<text matrix="1 0 0 1 76 -4" transformations="translations" pos="100 624" stroke="black" type="label" width="12.73" height="7.473" depth="2.49" valign="baseline">(a)</text>
 <text matrix="0.730985 0 0 0.727273 65.217 171.636" transformations="translations" pos="124 708" stroke="black" type="label" width="8.964" height="4.294" depth="1.49" valign="baseline">$r_3$</text>
 <text matrix="0.730985 0 0 0.727273 65.217 177.455" transformations="translations" pos="172 676" stroke="black" type="label" width="8.964" height="4.294" depth="1.49" valign="baseline">$r_4$</text>
 <text matrix="0.730985 0 0 0.727273 65.217 174.545" transformations="translations" pos="212 684" stroke="black" type="label" width="8.964" height="4.294" depth="1.49" valign="baseline">$r_5$</text>
@@ -679,7 +679,7 @@ h
 312 688 l
 312 688 l
 </path>
-<text matrix="1 0 0 1 8 -4" transformations="translations" pos="352 624" stroke="black" type="label" width="109.589" height="7.473" depth="2.49" valign="baseline">(b) The R-Tree structure</text>
+<text matrix="1 0 0 1 40 -4" transformations="translations" pos="352 624" stroke="black" type="label" width="13.284" height="7.473" depth="2.49" valign="baseline">(b)</text>
 <text matrix="1 0 0 1 -48 -144" transformations="translations" pos="356 796" stroke="black" type="label" width="9.482" height="4.297" depth="1.93" valign="baseline">$p_3$</text>
 <text matrix="1 0 0 1 8 -144" transformations="translations" pos="356 796" stroke="black" type="label" width="9.482" height="4.297" depth="1.93" valign="baseline">$p_6$</text>
 <text matrix="1 0 0 1 72 -144" transformations="translations" pos="356 796" stroke="black" type="label" width="9.482" height="4.297" depth="1.93" valign="baseline">$p_9$</text>
