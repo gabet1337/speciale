@@ -46,11 +46,11 @@
 
 \usepackage[hidelinks]{hyperref}
 \usepackage{url}
-\bibliographystyle{alpha}
 
 % Set fonts for section
 \usepackage{titlesec}
-\titleformat*{\section}{\normalsize\bfseries}
+\titleformat*{\section}{\LARGE\bfseries}
+\titleformat*{\subsection}{\large\bfseries}
 
 \bibliographystyle{alpha}
 
@@ -113,7 +113,6 @@
 
 \pagenumbering{arabic}
 \setcounter{secnumdepth}{2}
-
 
 \chapter{Introduction}
 \label{chp:introduction}
@@ -744,11 +743,16 @@ In every internal node $v$ visited we spend $\mathcal{O}(1+K_v/B)$ I/O's. There 
 
 \section{R-tree}
 
-The R-tree was instroduced by Antonin Guttman in ???. The structure is heuristic in nature and does not provide any close to optimal search bounds. Arge et al. has, however, provided strong evidence for R-trees outperforming several theoretical optimal data structures in practice. This is backed by the fact that R-trees has become the de facto structure for multi-dimensional indexing in database systems nowadays ????. We will introduce the important ideas of the R-tree.
+The R-tree was introduced by Antonin Guttman in~\cite{Guttman:1984:RDI:602259.602266}. The structure is heuristic in nature and does not provide any close to optimal search bounds. Arge et al. has, however, provided strong evidence for R-trees outperforming several theoretical optimal data structures in practice in~\cite{Arge:2008:PRP:1328911.1328920}. This is backed by the fact that R-trees has become the de facto structure for multi-dimensional indexing in database systems nowadays ????. We will introduce the important ideas of the R-tree.
 
-Let $P$ be a set of points. An R-tree stores all points from $P$ in leaf nodes, each of which contains $\Theta(B)$ points. Each non-leaf node $u$ has $\Theta(B)$ children, except for the root which must have 2 children unless it is the only node in the tree. For each child $v$, $u$ stores a \textit{minimum bounding rectangle} (MBR), which is the smallest rectangle that \textit{tightly} encloses all the data points in the subtree of $v$. Note that there is no constraint on how points should be grouped into leafs nodes. Also, there is no constraint on how non-leaf nodes should be grouped in higher level nodes. Since each point is stored only once, the entire data structure consumes $\mathcal{O}(\nicefrac{N}{B})$ space. NO, NO, NO.
+Let $P$ be a set of points. An R-tree stores all points from $P$ in leaf nodes, each of which contains $\Theta(B)$ points. Each non-leaf node $u$ has $\Theta(B)$ children, except for the root which must have 2 children unless it is the only node in the tree. For each child $v$, $u$ stores a \textit{minimum bounding rectangle} (MBR), which is the smallest rectangle that \textit{tightly} encloses all the data points in the subtree of $v$. Note that there is no constraint on how points should be grouped into leafs nodes. Also, there is no constraint on how non-leaf nodes should be grouped in higher level nodes. Since each point is stored only once, the entire data structure consumes linear space. Please refer to figure~\ref{fig:r_tree_structure} for an illustration of an R-tree structure.
 
-FIGURE ???
+\begin{figure}[h]
+	\centering
+     \includegraphics[width=\textwidth]{../figures/r_tree_data_and_mbrs}
+     \caption{(a) Data and MBRs. (b) The R-Tree structure.}
+     \label{fig:r_tree_structure}
+\end{figure}
 
 \subsection{Query}
 Given a query rectangle $q$ we want to find all the points in $P$ that are covered by $q$. The relation to the R-tree is that we only need to visit those nodes whose MBRs intersect $q$. Intuitively, this means that we desire as \textit{small} MBRs as possible, as this directly implies that we a query ispans fewer MBRs leading to fewer nodes to be visited. A good heuristic is therefore to minimize the perimiter of each MBR as this directly implies MBRs that covers smaller areas.
@@ -771,6 +775,20 @@ FIGURE ???
 \subsection{Deletions}
 Let $p$ be the point to be deleted. First the leaf node $u$ which stores $p$ is found using $p$ as search region. Then $p$ is removed from $u$. The deletion is finished if the node has $\lambda B$ points, where $\lambda$ denotes the minimum node utilization. Otherwise, $u$ \textit{underflows}, which is handled by first removing $u$ from its parent, and then re-inserting all points in $u$ using the insert algorithm described above. Now, removing $u$ from from $parent(u)$ may cause $parent(u)$ to underflow too. In general, the underflow of a non-leaf node $u'$ is also handled by re-insertions, with the only difference that the items re-inserted are MBRs, and each MBR is re-inserted to the same level of $u'$.
 
+\section{MySQL}
+\label{sec:mysql}
+MySQL is a very popular open-source relational database management system. We will not give an in depth description of how relational databases work but we will describe how to very simply adapted MySQL to answer three-sided range queries. A very minimal table was constructed with just two columns. One for the $x$ coordinate and one for the $y$ coordinate. Inserting in the table was done using simple \texttt{INSERT INTO table VALUES \{ values \}} SQL queries. In order to make this work efficiently we buffer inserts in memory and bulk insert whenever the buffer overflows. This gave a significant speedup. Deletion was done similarly simple using \texttt{DELETE FROM table WHERE (x,y) IN \{ values \}} and buffers on top.
+
+Queries of the form $\left[x_1,x_2\right] \times \left[y_1,\infty\right]$ were answered using a \texttt{SELECT * FROM table WHERE $x_1$ <= x AND x <= $x_2$ AND y >= $y_1$}.
+
+\subsection{Analysis}
+It is important to keep an open connection to the server at all times or you will end up spending a lot of time reconnecting to the server.
+
+Inserting points in the database involves sending the query to the server, parsing the query, and finally inserting the rows. None of these operations depend on the size of the database as no indices were created on the data. As we buffer inserts together we get an amortized insertion time of $\mathcal{O}(1)$ I/O's.
+
+Deleting points is however very expensive due to the missing index on the data as there is no real way of finding the point in the database without searching through it all. This gives the very expensive $\mathcal{O}(N/B)$ I/O's amortized bound for deleting points.
+
+The same goes for querying the database as we once again have to go through every single point in the database to test if it is in the query range. This also gives an $\mathcal{O}(N/B)$ I/O's bound.
 
 \chapter{Experimental setup}
 \label{chp:experimental_setup}
