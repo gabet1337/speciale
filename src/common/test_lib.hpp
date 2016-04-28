@@ -321,16 +321,8 @@ namespace test {
   public:
     proc_io() { start = 0; }
     ~proc_io() {}
-    size_t total_ios() {
-      pid_t pid = getpid();
-      size_t rchar, wchar, syscr, syscw, read_bytes, write_bytes, cancelled_write_bytes;
-      FILE* f;
-      std::string name = "/proc/"+std::to_string(pid)+"/io";
-      f = fopen(name.c_str(), "r");
-      int r = fscanf(f, "rchar: %zu\nwchar: %zu\nsyscr: %zu\nsyscw: %zu\nread_bytes: %zu\nwrite_bytes: %zu\ncancelled_write_bytes: %zu", &rchar, &wchar, &syscr, &syscw, &read_bytes, &write_bytes, &cancelled_write_bytes);
-      fclose(f);
-      r++;
-      return syscr + syscw - start;
+    uint64_t total_ios() {
+      return io::STREAM_NUM_IOS - start;
     }
     void restart() {
       start = total_ios();

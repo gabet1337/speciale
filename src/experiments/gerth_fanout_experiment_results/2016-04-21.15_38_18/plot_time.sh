@@ -1,6 +1,6 @@
 #!/usr/bin/gnuplot
-set terminal postscript eps enhanced color font 'Verdana,9'
-set output 'gerth_fanout_experiment_results/2016-04-21.15_38_18/time'
+set terminal postscript eps enhanced color font 'Verdana,11'
+set output 'gerth_fanout_experiment_results/2016-04-21.15_38_18/time.eps'
 set style line 11 lc rgb '#808080' lt 1
 set border 3 back ls 11
 set tics nomirror
@@ -24,5 +24,5 @@ plot 'gerth_fanout_experiment_results/2016-04-21.15_38_18/gerth_fanout2' u 1:2 t
 'gerth_fanout_experiment_results/2016-04-21.15_38_18/gerth_fanout4' u 1:2 t 'fanout4' w lp ls 4, \
 'gerth_fanout_experiment_results/2016-04-21.15_38_18/gerth_fanout8' u 1:2 t 'fanout8' w lp ls 5, \
 'gerth_fanout_experiment_results/2016-04-21.15_38_18/gerth_fanout16' u 1:2 t 'fanout16' w lp ls 6, \
-'gerth_fanout_experiment_results/2016-04-21.15_38_18/gerth_fanout32' u 1:2 t 'fanout32' w lp ls 7
-#'gerth_fanout_experiment_results/2016-04-21.15_38_18/gerth_fanout128' u 1:2 t 'fanout128' w lp ls 8
+'gerth_fanout_experiment_results/2016-04-21.15_38_18/gerth_fanout32' u 1:2 t 'fanout32' w lp ls 7,\
+'gerth_fanout_experiment_results/2016-04-21.15_38_18/gerth_fanout128' u 1:2 t 'fanout128' w lp ls 8

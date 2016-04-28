@@ -10,10 +10,13 @@ src/mpst
 src/rtree
 src/testexp
 src/testlib
+src/libspatial_pst
 src/experiments/stream_input_speed_experiment
 src/experiments/stream_output_speed_experiment
 src/experiments/gerth_fanout_experiment
 src/experiments/gerth_buffer_size_experiment
+src/experiments/arge_buffer_size_experiment
+src/experiments/insert_experiment
 
 # data folders
 src/c_*
@@ -21,6 +24,7 @@ src/test
 src/experiments/c_*
 src/data/insert_experiment
 src/test_data_report_random_1gb
+src/internal/test
 
 #stuff
 *~
@@ -64,8 +68,8 @@ src/test_data_report_random_1gb
 *.gz
 *.bbl
 *.blg
+*.ps
 /report/thesis.pdf
-/report/thesis.ps
 
 # dot files in src
 *.dot
