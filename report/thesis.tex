@@ -357,8 +357,8 @@ In this section we will present an internal memory data structure for the range 
 	\item If $P = \varnothing$ then the priority search tree is an empty leaf.
 	\item Otherwise, let $p_\text{max}$ be the point in the set $P$ with the largest $y$-coordinate. \\ \\
 			Let $x_{\text{mid}}$ be the median of the $x$-coordinates of the remaining points. \\ \\ Now let
-			$$ P_\text{below} \coloneqq \{p \in P \setminus \{p_\text{min} \} : p_x < x_\text{mid} \}\text{,}$$
-			$$ P_\text{above} \coloneqq \{p \in P \setminus \{p_\text{min} \} : p_x > x_\text{mid} \}\text{.}$$
+			$$ P_\text{below} \coloneqq \{p \in P \setminus \{p_\text{max} \} : p_x < x_\text{mid} \}\text{,}$$
+			$$ P_\text{above} \coloneqq \{p \in P \setminus \{p_\text{max} \} : p_x > x_\text{mid} \}\text{.}$$
 			
 			The priority search tree consists of a root node $v$ where the point \\
 			$p(v) \coloneqq p_{\text{max}}$ and the value $x(v) \coloneqq x_{\text{mid}}$ are stored. Furthemore,
@@ -739,6 +739,19 @@ In every internal node $v$ visited we spend $\mathcal{O}(1+K_v/B)$ I/O's. There 
 
 \chapter{Other structures}
 
+\section{R-tree}
+
+The R-tree was instroduced by Antonin Guttman in ???. The structure is heuristic in nature and does not provide any close to optimal search bounds. Arge et al. has, however, provided strong evidence for R-trees outperforming several theoretical optimal data structures in practice. This is backed by the fact that R-trees has become the de facto structure for multi-dimensional indexing in database systems nowadays ????. We will introduce the important ideas of the R-tree.
+
+Let $P$ be a set of points. An R-tree stores all points from $P$ in leaf nodes, each of which contains $\Theta(B)$ points. Each non-leaf node $u$ has $\Theta(B)$ children, except for the root which must have 2 children unless it is the only node in the tree. For each child $v$, $u$ stores a \textit{minimum bounding rectangle} (MBR), which is the smallest rectangle that \textit{tightly} encloses all the data points in the subtree of $v$. Note that there is no constraint on how points should be grouped into leafs nodes. Also, there is no constraint on how non-leaf nodes should be grouped in higher level nodes. Since each point is stored only once, the entire data structure consumes $\mathcal{O}(\nicefrac{N}{B})$ space.
+
+FIGURE ???
+
+\subsection{Query}
+Given a query rectangle $q$ we want to find all the points in $P$ that are covered by $q$. The relation to the R-tree is that we only need to visit those nodes whose MBRs intersect $q$. Intuitively, this means that we desire as \textit{small} MBRs as possible, as this directly implies that we a query ispans fewer MBRs leading to fewer nodes to be visited. A good heuristic is therefore to minimize the perimiter of each MBR as this directly implies MBRs that covers smaller areas.
+
+\subsection{Insertions}
+To insert a point $p$, we add $p$ to a lead node $u$ by following a single root-to-leaf path. If $u$ overflows we split it, which create a new child of $parent(u)$. This could cause $parent(u)$ to overflow which is handled in a recursive manner. Finally, if the root split, then a new root is created. Note that is legal to insert a point $p$ into \textit{any} leaf.
 
 \chapter{Experimental setup}
 \label{chp:experimental_setup}
