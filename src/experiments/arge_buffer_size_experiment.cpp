@@ -15,7 +15,7 @@ class arge_buffer_size_experiment : public base_experiment {
     size_t data_size = sizeof(point);
     size_t interval = 5 * 1024 * 1024; //10 mb intervals
     size_t print_interval = 1024*64;
-    size_t stop_at = 1024 * 1024 * 100;
+    size_t stop_at = 1024 * 1024 * 50;
 
     restart_timers();
 
@@ -49,7 +49,7 @@ int main() {
   arge_buffer_size_experiment gfe("arge_buffer_size_experiment");
   //gfe.add(1, "buffer1024", common::PST_VARIANT::ARGE, 1024/8, 1);
   // gfe.add(2, "buffer2048", common::PST_VARIANT::ARGE, 1024/4, 1);
-  gfe.add(3, "buffer4096", common::PST_VARIANT::ARGE, 1024/2, 1);
+  //gfe.add(3, "buffer4096", common::PST_VARIANT::ARGE, 1024/2, 1);
   gfe.add(4, "buffer8192", common::PST_VARIANT::ARGE, 1024, 1);
   gfe.add(5, "buffer16384", common::PST_VARIANT::ARGE, 1024*2, 1);
   gfe.add(6, "buffer32768", common::PST_VARIANT::ARGE, 1024*4, 1);
