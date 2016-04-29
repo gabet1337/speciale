@@ -846,7 +846,10 @@ In order to obtain a deeper understanding of the results we chose to measure the
 Many experiments were conducted to evaluate the performance of the structures against each other. We will in this chapter present the results of these experiments and discuss the results.
 
 \section{Parameter tuning}
-In order to compare the structures' best performance against each other we needed to find the optimal parameters to run the structures on. The parameters of the structures were mainly the size of the buffer and for the tree structures it was also the size of the fanout in the nodes. These parameters are highly machine dependent as larger main memory allows for larger buffer sizes.
+In order to compare the structures' best performance against each other we needed to find the optimal parameters to run the structures on. The parameters of the structures were mainly the size of the buffer and for the tree structures it was also the size of the fanout in the nodes. These parameters are highly machine dependent as larger main memory allows for larger buffer sizes. In Subsection~\ref{subsec:tuning_gerth} we will present our tuning parameters for the structure presented in Chapter~\ref{chp:epst} by Brodal, and in Subsection~\ref{subsec:tuning_arge} we will present our findings for the structure presented in Chapter~\ref{chp:arge_pst} by Arge et al.
+
+\subsection{External memory buffered priority search tree}
+\label{subsec:tuning_gerth}
 
 \begin{figure}[htp]
 \includegraphics[width=\textwidth]{../plots/gerth_update_epsilon/gerth_epsilon}
@@ -897,6 +900,10 @@ In Figure~\ref{fig:gerth_buffer_size_experiment} we fixed the fanout to 2 and va
 \caption{Theoretical query time for all tested structures.}
 \label{fig:theory_query_complexity}
 \end{figure}
+
+\subsection{External memory priority search tree}
+\label{subsec:tuning_arge}
+\todo{add figure and explain results of Arge}
 
 \chapter{Implementation considerations}
 %TODO We use a POSIX file-system on a Linux distribution.
