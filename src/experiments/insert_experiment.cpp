@@ -18,6 +18,7 @@ class insert_experiment : public base_experiment {
     test::clock exp_time;
     exp_time.start();
     long long one_day = 60*60*24;
+    restart_timers();
     while (!data.eof()) {
       point p = data.read();
       pst->insert(p);
