@@ -18,6 +18,8 @@
 #define MYSQL_EPSILON 1
 #define RTREE_BUFFER_SIZE 4096
 #define RTREE_EPSILON 1
+#define SPATIAL_BUFFER_SIZE 4096
+#define SPATIAL_EPSILON 1
 
 
 namespace common {
@@ -28,11 +30,12 @@ namespace common {
     RTREE = 3,
     MYSQL = 4,
     INTERNAL = 5,
-    READ_WRITE_STREAM = 6,
-    MMAP_STREAM = 7,
-    BUFFERED_STREAM = 8,
-    FILE_STREAM = 9,
-    end = 10
+    SPATIAL = 6,
+    READ_WRITE_STREAM = 7,
+    MMAP_STREAM = 8,
+    BUFFERED_STREAM = 9,
+    FILE_STREAM = 10,
+    end = 11
   };
 
   std::string PST_VARIANT_to_string(PST_VARIANT type) {
@@ -42,6 +45,7 @@ namespace common {
     case PST_VARIANT::MYSQL: return "MySQL";
     case PST_VARIANT::RTREE: return "RTree";
     case PST_VARIANT::INTERNAL: return "Internal";
+    case PST_VARIANT::SPATIAL: return "libspatial r*tree";
     case PST_VARIANT::MMAP_STREAM: return "mmap stream";
     case PST_VARIANT::READ_WRITE_STREAM: return "read write stream";
     case PST_VARIANT::FILE_STREAM: return "file stream";
