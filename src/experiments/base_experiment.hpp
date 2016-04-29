@@ -17,6 +17,7 @@
 #include "../stream/stream.hpp"
 #include "../external/arge_pst.hpp"
 #include "../external/buffered_pst.hpp"
+#include "../external/libspatial_pst.hpp"
 #include "../internal/mysql_pst.hpp"
 #include "../internal/boost_r_tree.hpp"
 #include "../internal/dynamic_pst.hpp"
@@ -32,7 +33,7 @@ namespace experiment {
   protected:
     typedef ext::external_priority_search_tree arge_pst;
     typedef ext::buffered_pst gerth_pst;
-    typedef ext::libstatial_pst spat_pst;
+    typedef ext::libspatial_pst spat_pst;
     typedef internal::boost_r_tree rtree;
     typedef internal::mysql_pst mysql_pst;
     typedef internal::dynamic_pst dyn_pst;
