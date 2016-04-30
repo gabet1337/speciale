@@ -155,9 +155,15 @@ The thesis will present several solutions to this problem, implement, and experi
 %TODO above section should be better presented.
 
 \section{Outline of thesis}
-In disk-based systems, algorithms and data structures cannot be measured in the traditional models used for internal memory algorithms since the performance is bound by disk latency. In Section~\ref{chp:iomodel} we investigate a model that encapsulates performance of the I/O bottleneck.
+In disk-based systems, algorithms and data structures cannot be measured in the traditional models used for internal memory algorithms since the performance is bound by disk latency. In Chapter~\ref{chp:iomodel} we investigate a model that encapsulates performance of the I/O bottleneck.
 
-In Section~\ref{chp:prelims} we give a preliminary overview of some of the techniques used in developing external memory efficient data structures.
+In Chapter~\ref{chp:prelims} we give a preliminary overview of some of the techniques used in developing external memory efficient data structures.
+
+Much work has been done on the three sided range queries and more general range queries. Some of the main ideas leading up to the main focus of this thesis is presented in Chapter~\ref{chp:related_work}.
+
+Chapter~\ref{chp:internal_pst} gives a detailed description and analysis of the priority search tree for internal memory by McCreight~\cite{DBLP:journals/siamcomp/McCreight85}.
+
+The main focus of this thesis, the external memory buffered priority search tree of Brodal~\cite{DBLP:journals/corr/Brodal15} is presented in Chapter~\ref{chp:epst}.
 
 \todo{add more sections!}
 
@@ -266,6 +272,7 @@ $$ p \in Q \Leftrightarrow \hat{p} \in \hat{Q} $$
 From Lemma~\ref{lma:composite_universe_query} is follows that our approach is correct.
 
 \chapter{Related work}
+\label{chp:related_work}
 McCreight introduced the priority search tree for internal memory in~\cite{DBLP:journals/siamcomp/McCreight85}. The priority search tree is basically a combination of a binary search tree on the $x$-coordinate and a heap on the $y$-coordinate where the root stores the maximum $y$-value and points are distributed according to the median $x$-value. This allows updates to be done in $\mathcal{O}(\log N)$ time and three-sided range queries to be done in $\mathcal{O}(\log N + K)$ time, where $K$ is the number of points being reported. The internal priority search tree is explained in greater detail in chapter~\ref{chp:internal_pst}.
 
 The study of adapting the priority search to external memory was initiated by Icking et al.~\cite{Icking1988}. They achieve a static external priority search tree that uses $\mathcal{O}(\nicefrac{N}{B})$ space and answers three-sided range queries in $\mathcal{O}(\log_B N + \nicefrac{K}{B})$ I/O's. The data structure uses a blocked B-tree with pointers to data buckets full of points. The idea is depicted in figure~\ref{fig:icking_external_pst}. In order to make the data structure dynamic the underlying B-tree is replaced with a Red-Black tree. This change of underlying search tree results in a solution that answer queries in $\mathcal{O}(\log_2 N + \nicefrac{K}{B})$ I/O's and handle updates in $\mathcal{O}(B \log_2 N)$ I/O's.
@@ -846,7 +853,13 @@ In order to obtain a deeper understanding of the results we chose to measure the
 Many experiments were conducted to evaluate the performance of the structures against each other. We will in this chapter present the results of these experiments and discuss the results.
 
 \section{Parameter tuning}
-In order to compare the structures' best performance against each other we needed to find the optimal parameters to run the structures on. The parameters of the structures were mainly the size of the buffer and for the tree structures it was also the size of the fanout in the nodes. These parameters are highly machine dependent as larger main memory allows for larger buffer sizes. In Subsection~\ref{subsec:tuning_gerth} we will present our tuning parameters for the structure presented in Chapter~\ref{chp:epst} by Brodal, and in Subsection~\ref{subsec:tuning_arge} we will present our findings for the structure presented in Chapter~\ref{chp:arge_pst} by Arge et al.
+In order to compare the structures' best performance against each other we needed to find the optimal parameters to run the structures on. The parameters of the structures were mainly the size of the buffer and for the tree structures it was also the size of the fanout in the nodes. These parameters are highly machine dependent as larger main memory allows for larger buffer sizes. 
+
+\todo{change data size when larger results are added}
+
+The experiments consist of inserting 500Mb of data. The data is uniformly random generated among the positive integers.
+
+In Subsection~\ref{subsec:tuning_gerth} we present our tuning parameters for the structure presented in Chapter~\ref{chp:epst} by Brodal, and in Subsection~\ref{subsec:tuning_arge} we present our findings for the structure presented in Chapter~\ref{chp:arge_pst} by Arge et al.
 
 \subsection{External memory buffered priority search tree}
 \label{subsec:tuning_gerth}
@@ -886,6 +899,12 @@ In Figure~\ref{fig:gerth_buffer_size_experiment} we fixed the fanout to 2 and va
 \caption{Theoretical insert time for all tested structures.}
 \label{fig:theory_insert_complexity}
 \end{figure}
+
+\todo{Expectations}
+
+\todo{Limitations}
+
+\todo{24 hours experiment setup}
 
 \section{Deletion}
 \begin{figure}[htp]
