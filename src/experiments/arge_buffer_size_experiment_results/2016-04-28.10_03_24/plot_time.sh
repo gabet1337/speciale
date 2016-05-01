@@ -19,6 +19,7 @@ set xlabel 'N (input size in Mb)'
 set ylabel 'Time (s)'
 #set xrange [0:0]
 #set yrange [0:0]
-plot 'arge_buffer_size_experiment_results/2016-04-28.10_03_24/arge_buffer8192' u 1:2 t 'buffer8192' w lp ls 1, \
-'arge_buffer_size_experiment_results/2016-04-28.10_03_24/arge_buffer16384' u 1:2 t 'buffer16384' w lp ls 2, \
-'arge_buffer_size_experiment_results/2016-04-28.10_03_24/arge_buffer32768' u 1:2 t 'buffer32768' w lp ls 3
+plot 'arge_buffer_size_experiment_results/2016-04-28.10_03_24/arge_buffer4096' u 1:($2/$1) t 'buffer4096' w lp ls 1, \
+    'arge_buffer_size_experiment_results/2016-04-28.10_03_24/arge_buffer8192' u 1:($2/$1) t 'buffer8192' w lp ls 2, \
+    'arge_buffer_size_experiment_results/2016-04-28.10_03_24/arge_buffer16384' u 1:($2/$1) t 'buffer16384' w lp ls 3, \
+    'arge_buffer_size_experiment_results/2016-04-28.10_03_24/arge_buffer32768' u 1:($2/$1) t 'buffer32768' w lp ls 4
