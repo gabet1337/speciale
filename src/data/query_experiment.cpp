@@ -49,7 +49,7 @@ void fill_points_outside_ranges(vector<iii> &ranges,
 
   test::random rand;
 
-  for (size_t i = 0; i < num_data / 8; ) {
+  for (unsigned long long i = 0; i < num_data / sizeof(point); ) {
 
     point p(rand.next(INF), rand.next(INF));
 
