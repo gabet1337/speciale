@@ -1,8 +1,8 @@
-#include "buffered_pst.hpp"
 #include "../stream/stream.hpp"
 #include "../common/utilities.hpp"
 #include "../internal/rb_tree.hpp"
 #include "../common/test_lib.hpp"
+#include "buffered_pst.hpp"
 #include "range.hpp"
 #include <assert.h>
 #include <iomanip>
@@ -3154,6 +3154,51 @@ void test_contained_points_error() {
   
 }
 
+void test_query_experiment_data() {
+
+  print_description("starting test query experiment data ");
+
+  ext::buffered_pst epst(8*1024*1024,0.07);
+
+  io::buffered_stream<point> bs(4096);
+  bs.open("data/query_experiment");
+
+  size_t count = 0;
+  while (!bs.eof()) {
+    epst.insert(bs.read());
+    if (count % (128*1024) == 0 && count != 0)
+      cout << "- " << count / (128*1024) << " Mb inserted" << endl;
+    count++;
+  }
+
+  bs.close();
+
+  epst.report(107374182, 214748364, 0, "test/query_experiment1");
+  epst.report(472446402, 837518622, 429496729, "test/query_experiment2");
+  epst.report(1009317314, 1245540515, 1288490188, "test/query_experiment3");
+  epst.report(1460288879, 1760936590, 858993458, "test/query_experiment4");
+  epst.report(1868310772, 2040109464, 1717986917, "test/query_experiment5");
+
+  struct stat st;
+  stat("test/query_experiment1", &st);
+  cout << st.st_size << endl;
+
+  stat("test/query_experiment2", &st);
+  cout << st.st_size << endl;
+
+  stat("test/query_experiment3", &st);
+  cout << st.st_size << endl;
+
+  stat("test/query_experiment4", &st);
+  cout << st.st_size << endl;
+
+  stat("test/query_experiment5", &st);
+  cout << st.st_size << endl;
+  
+  print_success();
+  
+}
+
 int main() {
 
   cleanup();
@@ -3221,8 +3266,10 @@ int main() {
   //  generate_data_report_random_1gb();
   // test_report_random_1gb(128*1024, 0.5);
   // test_report_random_1gb(2097152, 0.048);
-  test_report_random_1gb(2097152, 0.070);
-  // cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
+  //test_report_random_1gb(2097152, 0.070);
+  test_query_experiment_data();
+  cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
+  
   // test_insert_all("test_data_3gb", 2097152, 0.07);
   
   cleanup();
