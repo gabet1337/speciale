@@ -2,7 +2,7 @@ CC = c++ -std=c++0x -D_FILE_OFFSET_BITS=64 -O2 -Wall -I/usr/include/cppconn -L/u
 
 PROGRAMS = insert_experiment gerth_fanout_experiment stream_input_speed_experiment gerth_buffer_size_experiment stream_output_speed_experiment
 
-MYSQL = -lmysqlcppconn
+MYSQL = -lmysqlcppconn -lspatialindex_c -lspatialindex
 
 STREAM_STUBS = stream_stubs/buffered_stream_stub.hpp stream_stubs/f_stream_stub.hpp stream_stubs/mmap_stream_stub.hpp stream_stubs/sys_stream_stub.hpp ../stream/old_stream.hpp ../stream/old_stream.cpp
 
