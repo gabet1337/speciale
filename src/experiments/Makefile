@@ -1,6 +1,6 @@
 CC = c++ -std=c++0x -D_FILE_OFFSET_BITS=64 -O2 -Wall -I/usr/include/cppconn -L/usr/lib
 
-PROGRAMS = insert_experiment gerth_fanout_experiment stream_input_speed_experiment gerth_buffer_size_experiment stream_output_speed_experiment
+PROGRAMS = insert_experiment gerth_fanout_experiment stream_input_speed_experiment gerth_buffer_size_experiment stream_output_speed_experiment query_experiment
 
 MYSQL = -lmysqlcppconn -lspatialindex_c -lspatialindex
 
@@ -10,6 +10,9 @@ FILES = ../common/definitions.hpp ../common/point.hpp ../common/pst_interface.hp
 
 insert_experiment: $(FILES) insert_experiment.cpp
 	$(CC) ../stream/old_stream.cpp insert_experiment.cpp -o insert_experiment $(MYSQL)
+
+query_experiment: $(FILES) query_experiment.cpp
+	$(CC) ../stream/old_stream.cpp query_experiment.cpp -o query_experiment $(MYSQL)
 
 gerth_fanout_experiment: $(FILES) gerth_fanout_experiment.cpp
 	$(CC) ../stream/old_stream.cpp gerth_fanout_experiment.cpp -o gerth_fanout_experiment $(MYSQL)
