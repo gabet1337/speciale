@@ -9,13 +9,14 @@ class gerth_buffer_size_experiment : public base_experiment {
   ~gerth_buffer_size_experiment() {}
 
   void run_experiment(run_instance instance) {
+    typedef unsigned long long ull;
     stream data = get_data_stream("../data/insert_experiment");
     auto pst = PST_factory(instance.type, instance.buffer_size, instance.epsilon);
-    size_t data_read = 0;
-    size_t data_size = sizeof(point);
-    size_t interval = 10 * 1024 * 1024; //10 mb intervals
-    size_t print_interval = 1024 * 1024;
-    size_t stop_at = 1024 * 1024 * 500;
+    ull data_read = 0;
+    ull data_size = sizeof(point);
+    ull interval = 25 * 1024 * 1024; //25 mb intervals
+    ull print_interval = 1024 * 1024;
+    ull stop_at = 1024ULL * 1024ULL * 1024ULL * 5ULL;
 
     restart_timers();
 

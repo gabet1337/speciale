@@ -30,10 +30,11 @@ year={1994},
 pages={17-28}
 }
 
-@article{ionote,
+@unpublished{ionote,
 author={Arge, Lars},
 title={External Memory Geometric Data Structures(Lecture Note)},
-year={2005}
+year={2005},
+note={Lecture note}
 }
 
 @ARTICLE{Zhang2015, 
@@ -167,17 +168,16 @@ year={2008}
 } 
 
 @article{bayer_mccreight_1972,
-author="Bayer, R.
-and McCreight, E. M.",
+author="Bayer, R. and McCreight, E. M.",
 title="Organization and maintenance of large ordered indexes",
 journal="Acta Informatica",
 volume="1",
 number="3",
 pages="173--189",
-abstract="Organization and maintenance of an index for a dynamic random access file is considered. It is assumed that the index must be kept on some pseudo random access backup store like a disc or a drum. The index organization described allows retrieval, insertion, and deletion of keys in time proportional to logkI where I is the size of the index and k is a device dependent natural number such that the performance of the scheme becomes near optimal. Storage utilization is at least 50\% but generally much higher. The pages of the index are organized in a special datastructure, so-called B-trees. The scheme is analyzed, performance bounds are obtained, and a near optimal k is computed. Experiments have been performed with indexes up to 100000 keys. An index of size 15000 (100000) can be maintained with an average of 9 (at least 4) transactions per second on an IBM 360/44 with a 2311 disc.",
 issn="1432-0525",
 doi="10.1007/BF00288683",
-url="http://dx.doi.org/10.1007/BF00288683"
+url="http://dx.doi.org/10.1007/BF00288683",
+year=1972
 }
 
 @article{DBLP:journals/siamcomp/McCreight85,
@@ -199,8 +199,6 @@ url="http://dx.doi.org/10.1007/BF00288683"
 author="Icking, Ch.
 and Klein, R.
 and Ottmann, Th.",
-editor="G{\"o}ttler, Herbert
-and Schneider, Hana-J{\"u}rgen",
 chapter="Priority search trees in secondary memory (extended abstract)",
 title="Graph-Theoretic Concepts in Computer Science: International Workshop WG '87 Kloster Banz/Staffelstein, FRG, June 29 -- July 1, 1987 Proceedings",
 year="1988",
@@ -275,3 +273,40 @@ abstract = "We examine I/O-efficient data structures that provide indexing suppo
  address = {London, UK, UK},
 } 
 
+@inproceedings{Guttman:1984:RDI:602259.602266,
+ author = {Guttman, Antonin},
+ title = {R-trees: A Dynamic Index Structure for Spatial Searching},
+ booktitle = {Proceedings of the 1984 ACM SIGMOD International Conference on Management of Data},
+ series = {SIGMOD '84},
+ year = {1984},
+ isbn = {0-89791-128-8},
+ location = {Boston, Massachusetts},
+ pages = {47--57},
+ numpages = {11},
+ url = {http://doi.acm.org/10.1145/602259.602266},
+ doi = {10.1145/602259.602266},
+ acmid = {602266},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+} 
+
+@article{Arge:2008:PRP:1328911.1328920,
+ author = {Arge, Lars and Berg, Mark De and Haverkort, Herman and Yi, Ke},
+ title = {The Priority R-tree: A Practically Efficient and Worst-case Optimal R-tree},
+ journal = {ACM Trans. Algorithms},
+ issue_date = {March 2008},
+ volume = {4},
+ number = {1},
+ month = mar,
+ year = {2008},
+ issn = {1549-6325},
+ pages = {9:1--9:30},
+ articleno = {9},
+ numpages = {30},
+ url = {http://doi.acm.org/10.1145/1328911.1328920},
+ doi = {10.1145/1328911.1328920},
+ acmid = {1328920},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+ keywords = {R-trees},
+} 

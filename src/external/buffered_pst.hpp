@@ -31,6 +31,7 @@
 #define MINUS_INF_POINT point(-INF,-INF)
 namespace ext {
   int next_id = 1;
+
 #ifdef VALIDATE
   std::multiset<point> CONTAINED_POINTS;
 #endif
@@ -1404,9 +1405,12 @@ namespace ext {
           if ( node->is_root() && node->is_leaf() ) {
             clear_cache();
             handle_point_buffer_overflow_of_leaf_root();
+            test::GERTH_NUM_POINT_BUFFER_OVERFLOW++;
+            test::GERTH_NUM_NODE_DEGREE_OVERFLOW++;
           } else if ( node->is_root() ) {
             clear_cache();
             handle_point_buffer_overflow_in_root(node);
+            test::GERTH_NUM_POINT_BUFFER_OVERFLOW++;
           } else if ( node->is_leaf() ) {
             load_data_in_node(node, DATA::point_buffer);
             buffered_pst_node* parent = node->parent_id == 0
@@ -1418,6 +1422,7 @@ namespace ext {
 
             clear_cache();
             split_leaf(node, parent);
+            test::GERTH_NUM_NODE_DEGREE_OVERFLOW++;
             
           } else if ( node->is_virtual_leaf() ) {
             load_data_in_node(node, DATA::ranges);
@@ -1444,6 +1449,7 @@ namespace ext {
 
             clear_cache();
             handle_point_buffer_overflow_in_virtual_leaf(parent, node, children);
+            test::GERTH_NUM_POINT_BUFFER_OVERFLOW++;
 
           } else assert(true==false);
         }
@@ -1470,7 +1476,7 @@ namespace ext {
             
             clear_cache();
             handle_insert_buffer_overflow_in_leaf_and_virtual_leaf(node, parent);
-
+            test::GERTH_NUM_INSERT_BUFFER_OVERFLOW++;
           } else {
             load_data_in_node(node, DATA::ranges);
             load_data_in_node(node, DATA::delete_buffer);
@@ -1482,6 +1488,7 @@ namespace ext {
               load_data_in_node(child, DATA::all);
               clear_cache();
               handle_insert_buffer_overflow(node, child);
+              test::GERTH_NUM_INSERT_BUFFER_OVERFLOW++;
             }
           }
         }
@@ -1510,6 +1517,7 @@ namespace ext {
             clear_cache();
             handle_delete_buffer_overflow(node, child);
           }
+          test::GERTH_NUM_DELETE_BUFFER_OVERFLOW++;
         }
         break;
       case EVENT::node_degree_overflow:
@@ -1543,6 +1551,7 @@ namespace ext {
           }
           clear_cache();
           handle_node_degree_overflow(node, parent, children);
+          test::GERTH_NUM_NODE_DEGREE_OVERFLOW++;
         }
         break;
       case EVENT::point_buffer_underflow_construct:
@@ -1594,6 +1603,7 @@ namespace ext {
           }
           clear_cache();
           handle_point_buffer_underflow(parent, node, children);
+          test::GERTH_NUM_POINT_BUFFER_UNDERFLOW++;
           
           if (state == STATE::normal || state == STATE::fix_up
               || state == STATE::global_rebuild || state == STATE::construct) {

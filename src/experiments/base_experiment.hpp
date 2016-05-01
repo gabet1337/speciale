@@ -17,6 +17,7 @@
 #include "../stream/stream.hpp"
 #include "../external/arge_pst.hpp"
 #include "../external/buffered_pst.hpp"
+#include "../external/libspatial_pst.hpp"
 #include "../internal/mysql_pst.hpp"
 #include "../internal/boost_r_tree.hpp"
 #include "../internal/dynamic_pst.hpp"
@@ -32,9 +33,11 @@ namespace experiment {
   protected:
     typedef ext::external_priority_search_tree arge_pst;
     typedef ext::buffered_pst gerth_pst;
+    typedef ext::libspatial_pst spat_pst;
     typedef internal::boost_r_tree rtree;
     typedef internal::mysql_pst mysql_pst;
     typedef internal::dynamic_pst dyn_pst;
+
     typedef experiment::mmap_stream_stub mmap_stream;
     typedef experiment::buffered_stream_stub buffered_stream;
     typedef experiment::f_stream_stub file_stream;
@@ -56,9 +59,15 @@ namespace experiment {
 
     std::string name;
     std::string start_time;
+    
     test::clock timer;
     test::proc_io procio;
     test::pagefaults pagefaults;
+    test::gerth_num_point_buffer_overflow pbo;
+    test::gerth_num_insert_buffer_overflow ibo;
+    test::gerth_num_delete_buffer_overflow dbo;
+    test::gerth_num_point_buffer_underflow pbu;
+    test::gerth_num_node_degree_overflow ndo;
     
     std::string get_file_name(run_instance instance);
     std::string get_directory();
@@ -116,8 +125,6 @@ namespace experiment {
       run_experiment(ri);
       save_results(ri);
     }
-    
-
   }
 
   void base_experiment::finished() {
@@ -140,6 +147,7 @@ namespace experiment {
     case PST_TYPE::MYSQL: return new mysql_pst(buffer_size, epsilon);
     case PST_TYPE::RTREE: return new rtree(buffer_size, epsilon);
     case PST_TYPE::INTERNAL: return new dyn_pst(buffer_size, epsilon);
+    case PST_TYPE::SPATIAL: return new spat_pst(buffer_size, epsilon);
     case PST_TYPE::MMAP_STREAM: return new mmap_stream(buffer_size, epsilon);
     case PST_TYPE::READ_WRITE_STREAM: return new read_write_stream(buffer_size, epsilon);
     case PST_TYPE::FILE_STREAM: return new file_stream(buffer_size, epsilon);
@@ -178,6 +186,11 @@ namespace experiment {
     pagefaults.stop();
     pagefaults.start();
     procio.restart();
+    pbo.restart();
+    ibo.restart();
+    dbo.restart();
+    pbu.restart();
+    ndo.restart();
   }
 
   void base_experiment::measure_everything(size_t id, ull input_size) {
@@ -185,6 +198,11 @@ namespace experiment {
     add_result(id, common::MEASURE::time_ms, input_size, timer.elapsed_ms());
     add_result(id, common::MEASURE::num_ios, input_size, procio.total_ios());
     add_result(id, common::MEASURE::page_faults, input_size, pagefaults.elapsed());
+    add_result(id, common::MEASURE::gerth_num_point_buffer_overflow, input_size, pbo.elapsed());
+    add_result(id, common::MEASURE::gerth_num_insert_buffer_overflow, input_size, ibo.elapsed());
+    add_result(id, common::MEASURE::gerth_num_delete_buffer_overflow, input_size, dbo.elapsed());
+    add_result(id, common::MEASURE::gerth_num_point_buffer_underflow, input_size, pbu.elapsed());
+    add_result(id, common::MEASURE::gerth_num_node_degree_overflow, input_size, ndo.elapsed());
   }
 
   void base_experiment::add_result
@@ -220,6 +238,7 @@ namespace experiment {
     case PST_TYPE::MYSQL: return get_directory()+"/mysql_"+instance.name;
     case PST_TYPE::RTREE: return get_directory()+"/rtree_"+instance.name;
     case PST_TYPE::INTERNAL: return get_directory()+"/internal_"+instance.name;
+    case PST_TYPE::SPATIAL: return get_directory()+"/spatial_"+instance.name;
     case PST_TYPE::MMAP_STREAM: return get_directory()+"/mmap_"+instance.name;
     case PST_TYPE::READ_WRITE_STREAM: return get_directory()+"/read_write_"+instance.name;
     case PST_TYPE::FILE_STREAM: return get_directory()+"/file_stream_"+instance.name;

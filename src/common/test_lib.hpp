@@ -21,6 +21,13 @@
 #include "utilities.hpp"
 
 namespace test {
+
+  unsigned long long GERTH_NUM_NODE_DEGREE_OVERFLOW = 0;
+  unsigned long long GERTH_NUM_INSERT_BUFFER_OVERFLOW = 0;
+  unsigned long long GERTH_NUM_POINT_BUFFER_OVERFLOW = 0;
+  unsigned long long GERTH_NUM_DELETE_BUFFER_OVERFLOW = 0;
+  unsigned long long GERTH_NUM_POINT_BUFFER_UNDERFLOW = 0;
+
   class clock {
     typedef std::chrono::high_resolution_clock hsc;
     typedef hsc::time_point tp;
@@ -326,6 +333,76 @@ namespace test {
     }
     void restart() {
       start = total_ios();
+    }
+  private:
+    size_t start;
+  };
+
+  class gerth_num_point_buffer_overflow {
+  public:
+    gerth_num_point_buffer_overflow() { start = 0; }
+    ~gerth_num_point_buffer_overflow() {}
+    uint64_t elapsed() {
+      return GERTH_NUM_POINT_BUFFER_OVERFLOW - start;
+    }
+    void restart() {
+      start = elapsed();
+    }
+  private:
+    size_t start;
+  };
+
+  class gerth_num_insert_buffer_overflow {
+  public:
+    gerth_num_insert_buffer_overflow() { start = 0; }
+    ~gerth_num_insert_buffer_overflow() {}
+    uint64_t elapsed() {
+      return GERTH_NUM_INSERT_BUFFER_OVERFLOW - start;
+    }
+    void restart() {
+      start = elapsed();
+    }
+  private:
+    size_t start;
+  };
+
+  class gerth_num_delete_buffer_overflow {
+  public:
+    gerth_num_delete_buffer_overflow() { start = 0; }
+    ~gerth_num_delete_buffer_overflow() {}
+    uint64_t elapsed() {
+      return GERTH_NUM_DELETE_BUFFER_OVERFLOW - start;
+    }
+    void restart() {
+      start = elapsed();
+    }
+  private:
+    size_t start;
+  };
+
+  class gerth_num_point_buffer_underflow {
+  public:
+    gerth_num_point_buffer_underflow() { start = 0; }
+    ~gerth_num_point_buffer_underflow() {}
+    uint64_t elapsed() {
+      return GERTH_NUM_POINT_BUFFER_UNDERFLOW - start;
+    }
+    void restart() {
+      start = elapsed();
+    }
+  private:
+    size_t start;
+  };
+
+  class gerth_num_node_degree_overflow {
+  public:
+    gerth_num_node_degree_overflow() { start = 0; }
+    ~gerth_num_node_degree_overflow() {}
+    uint64_t elapsed() {
+      return GERTH_NUM_NODE_DEGREE_OVERFLOW - start;
+    }
+    void restart() {
+      start = elapsed();
     }
   private:
     size_t start;

@@ -44,8 +44,10 @@ namespace internal {
     delete con;
     //create a table for use:
     stmt->execute("DROP TABLE IF EXISTS test");
-    stmt->execute("CREATE TABLE test(x int, y int) ENGINE=InnoDB");
+    stmt->execute("CREATE TABLE test(x int, y int) ENGINE=MYISAM;");
+    stmt->execute("ALTER TABLE test MAX_ROWS=1000000000;");
   }
+  
 
   mysql_pst::mysql_pst(size_t buffer_size, double epsilon) : mysql_pst() {
     this->buffer_size = buffer_size;
