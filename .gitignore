@@ -25,6 +25,8 @@ src/experiments/c_*
 src/data/insert_experiment
 src/test_data_report_random_1gb
 src/internal/test
+src/test_data_3gb
+src/data/query_experiment
 
 #stuff
 *~
