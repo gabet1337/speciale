@@ -87,7 +87,7 @@ int main() {
   os.open("query_experiment");
   
   fill_points_inside_ranges(reserved_query_windows, os, 5*1024*1024);
-  fill_points_outside_ranges(reserved_query_windows, os, 10ul*1024ul*1024ul*1024ul-5ul*5ul*1024ul*1024ul);
+  fill_points_outside_ranges(reserved_query_windows, os, 10ULL*1024ULL*1024ULL*1024ULL-5ULL*5ULL*1024ULL*1024ULL);
   
   os.close();
   
