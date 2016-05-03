@@ -249,17 +249,17 @@ $\mathcal{T}$ is a B-tree with branching parameter $b$ if
 
 It follows from the definition that if $b=\Theta(B)$ then a B-tree will have height $\mathcal{O}(\log_B N)$.
 
-\textbf{Searching} in a B-tree is very much similar to searching in a binary search tree. Instead of making a binary decision at each node we instead have to make a multiway branching decision. If the element we are searching for is not contained in the current node, we find the smallest $i$ such that the key we are searching for is less than $x.key_i$. We then recursively search for the key in child $c_i$.
+\textbf{Searching} in a B-tree is very much similar to searching in a binary search tree. Instead of making a binary decision at each node we instead have to make a multiway branching decision. If the element we are searching for is not contained in the current node, we find the smallest $i$ such that the key we are searching for is less than $x.key_i$. We then recursively search for the key in child $c_i$. This will in the worst case require $\mathcal{O}(\log_B N)$ I/O to search for an element residing in a leaf.
 
 \textbf{Inserting} in a B-tree is not as simple as inserting into a binary search tree. Similarly to binary trees we search for the leaf node to insert the key, but we cannot simply create a new node for the key. Instead we insert the key into the found leaf node and if the leaf now contains too many elements we split the leaf into two leaves each containing half the elements of the original leaf. Splitting a leaf might cause its parent to have too many children which causes the parent to similarly split.
+Searching for the leaf node to insert into takes $\mathcal{O}(\log_B N)$ and so does recursively splitting nodes from a leaf to root path as a split operation requires $\mathcal{O}(1)$ I/O's.
 
 \textbf{Deleting} in a B-tree introduces an opposite to splitting, fusing. To delete a key from the tree we search the tree for the key, which now can reside in an internal node. We then delete the key from the node $x$, which might cause $x$ to have too few elements. To remedy this situation we will have to potentially fuse $x$ with a neighbouring node. If $x$ together with either its predecessor or successor contains less than $b$ elements we can fuse the two nodes. If this is not the case then we know that we are able to steal an element from a neighbouring node in order to satisfy the properties of the B-tree. As in the case of insertion, fusing nodes might recursively cause the parent to fuse with one of its neighbours.
+Fusing two nodes require $\mathcal{O}(1)$ I/O's but a fuse can cascade from a leaf to root path causing $\mathcal{O}(\log_B N)$ I/O's.
 
 A B-tree on $N$ elements are stored in $\mathcal{O}(\nicefrac{N}{B})$ blocks and can be constructed in the sorting bound.
 
-\todo{fint, men en kort beskrivelse af update/tider kunne måske være god. Splits/fuses der cascader osv.}
-
-\todo{Måske lav nogle figurer}
+\todo{Maaske lav nogle figurer}
 
 \section{General Sets of Points}
 Throughout this thesis we will impose the restriction that no two points have equal $x$- or $y$-coordinate. The restriction is made in order to simplify the description and analysis of the algorithms we introduce. As it is a highly unrealistic restriction we will show that it is easy to remedy. The key observation is that we never assume coordinates to be real numbers. The only thing we assume is that points come from a totally ordered universe such we can compare points. This means we can replace the real-valued coordinates with elements from the \textit{composite-number space} where all elements are defined to be pairs of reals. The \textit{composite number} of two reals $a$ and $b$ is denoted by $(a \mid b)$. We define a total order on the composite-number space by using a lexicographic order. So, for two composite numbers $(a \mid b)$ and $(a' \mid b')$, we have:
@@ -483,11 +483,16 @@ If we use the operations for dynamic updates as stated above without any measure
 In this section we present an external memory data structure described by Brodal in~\cite{DBLP:journals/corr/Brodal15}. This structure supports updates in amortized $\mathcal{O}\left(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N\right)$, three sided range queries in $\mathcal{O}\left(\frac{1}{\epsilon}\log_B N + \nicefrac{K}{B}\right)$ for $0 \leq \epsilon \leq \frac{1}{2}$, and can be constructed on $N$ points in the sorting bound. $\epsilon$ is a parameter that determines the size of the fanout and in turn the size of a bootstrapped substructure for storing $\mathcal{O}(B^{1+\epsilon})$ points, $0 \leq \epsilon \leq \frac{1}{2}$.
 The substructure is very similar to that of Arge et al.~\cite[Section~3.1]{arge_vitter_2003} for handling $\mathcal{O}(B^2)$ points with the main difference being that we reduce the capacity to allow an amortized constant number of I/O's per update. The bootstrapped structure is in ~\cite{arge_vitter_2003} used to store the top $\mathcal{O}(B^2)$ points w.r.t. $y$ value for the subtree rooted at the given node of the substructure. This structure uses it in a slightly different way to store the top $\mathcal{O}(B^{1+\epsilon})$ points of the children of the given  node. This structure is described further in Section~\ref{sec:child_structure}.
 
-\todo{ insert references to Arges epst and buffer tree.}
+The external memory buffered priority search tree is a combination of the external memory priority search tree of Arge et al. described in Chapter~\ref{chp:arge_pst}, and the buffered updates of the buffer tree also thanks to Arge~\cite{Arge:1995:BTN:645930.672850}. The data structure is described in Section~\ref{sec:main_data_structure}.
 
-The external memory buffered priority search tree is a combination of the external memory priority search tree of Arge et al. and the buffered updates of the buffer tree also thanks to Arge~\cite{Arge:1995:BTN:645930.672850}. The data structure is described in Section~\ref{sec:main_data_structure}.
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{../figures/gerth_tree}
+	\caption{External memory priority search tree with buffers. The point buffers of the children is in the child structure of the parent allowing for fast queries.}
+	\label{fig:gerth_tree}
+\end{figure}
 
-\section{Child structure} %TODO rename to \mathcal{O}(O^{1+\epsilon}) ?
+\section{Child structure}
 \label{sec:child_structure}
 In this section we will describe a data structure that supports the operations stated in Theorem~\ref{thm:child_structure}.
 \begin{theorem}
@@ -596,9 +601,14 @@ To be able to maintain the above invariants we must be very careful whenever we 
 We will in the following look at each step individually and argue their complexity.
 
 \begin{enumerate}[label=(\roman*)]
-	\item\label{update:del} A deletion buffer at node $v$ overflows when $\vert D_v \vert > B/4$. Since the structure is a B-tree on the lexicographically ordering of points we must by the pigeon-hole principle have that there exist a child $c$ such that we can push $U \subseteq D_v$ of $\lceil \vert D_v \vert / \Delta \rceil$ deletions to $c$. Points in $U$ are removed from $D_v$, $I_c$, $D_c$, $P_c$, and $C_v$. Any point $p$ in $U$ lexicographically larger than the minimum point in $P_c$ (w.r.t. $y$) is removed from $U$ as the deletion cannot cancel any updates further down in the tree.
+	\item\label{update:del} A deletion buffer at node $v$ overflows when $\vert D_v \vert > B/4$. Since the structure is a B-tree on the lexicographically ordering of points we must by the pigeon-hole principle have that there exist a child $c$ such that we can push $U \subseteq D_v$ of $\lceil \vert D_v \vert / \Delta \rceil$ deletions to $c$. This is illustrated in Figure~\ref{fig:pigeon_hole}. Points in $U$ are removed from $D_v$, $I_c$, $D_c$, $P_c$, and $C_v$. Any point $p$ in $U$ lexicographically larger than the minimum point in $P_c$ (w.r.t. $y$) is removed from $U$ as the deletion cannot cancel any updates further down in the tree.
 	
-	\todo{figure of pigeon-hole principle in our case}
+	\begin{figure}[htp!]
+		\centering
+		\includegraphics[width=\textwidth]{../figures/pigeon_hole}
+		\caption{Each point represents a deletion. $B=25$ and $\epsilon = 0.5$. This gives $B^{\epsilon} = 5$. By the pigeon hole principle we must have that at least one of the x-ranges contains $\frac{B}{B^\epsilon}$ points.}
+		\label{fig:pigeon_hole}
+	\end{figure}
 	
 	If $v$ is a leaf we do not need to do more. If not, the remaining points in $U$ are inserted in $D_c$ which might recursively overflow. In the worst case we might recursively overflow along a path from the root to a leaf each time causing $\mathcal{O}(\lceil \vert B \vert / \Delta \rceil)$ deletes to be pushed one level down. Updating $C_v$ with $\mathcal{O}(\lceil \vert B \vert / \Delta \rceil)$ updates takes amortized $\mathcal{O}(1+ (B/\Delta) / B^{1-\epsilon}) = \mathcal{O}(1)$ I/O's.
 	
@@ -647,7 +657,11 @@ Global rebuilding works by constructing an empty structure and then reinserting 
 
 The points to reinsert are found by doing a top-down traversal of the tree while flushing insertion and deletion buffers to children. The points to reinsert are then found in the point buffers after flushing. This might cause buffers to temporarily overflow but we will allow this as the old structure will be deleted.
 
+Once the set of points to reinsert have been found be simply insert the points on an initially empty tree.
+
 \textbf{Analysis}
+
+\todo{Kasper:  Er der altid lige langt til alle leaves?}
 
 Elements at level $i$ (leaf layer being level 0) can at most be flushed $i$ levels down.
 The structure holds at most $\frac{3\bar{N}}{2B}$ nodes in total and at level $i$ the structure has at most $\frac{3\bar{N}}{2B} \frac{1}{\Delta^i}$ nodes. The cost of flushing all the buffers at level $i$ becomes:
@@ -666,18 +680,18 @@ By summing over all layers of the tree we get the total cost of flushing all buf
 
 This gives an amortized cost of $\mathcal{O}(1/B)$ per update to flush all buffers.
 
-The $\mathcal{O}(\bar{N})$ reinsertions into the new tree can be done in amortized $\mathcal{O}(\nicefrac{\bar{N}}{\epsilon B^{1-\epsilon}} \log_B N)$ I/O's is are paid by the $\bar{N}/2$ updates during the epoch.
+The $\mathcal{O}(\bar{N})$ reinsertions into the new tree can be done in amortized $\mathcal{O}(\nicefrac{\bar{N}}{\epsilon B^{1-\epsilon}} \log_B N)$ I/O's are paid by the $\bar{N}/2$ updates during the epoch.
 
 %\includegraphics[width=\textwidth]{../handwritten notes/Notes on global rebuilding analysis.jpg}
 
 \subsection{Three sided range queries}
 \label{subsec:brodal_3_sided}
-Reporting a query $Q = \left[ x_1,x_2 \right] \times \left[y, \infty \right]$ is done in a breadth first search of the tree. Starting from the root we identify, from the query ranges, the relevant children and push all relevant updates in the root to the identified children. After having done this we know that the point buffers of the children do not change further and we can thus report all points in the query range from the child structure of the root and the point buffer of the root. The children are added to the back of the bfs queue. All nodes except for the root do not need to report from their point buffers as the parent of the node has already reported the relevant points.
+Reporting a query $Q = \left[ x_1,x_2 \right] \times \left[y, \infty \right]$ is done in a breadth first search of the tree. Starting from the root we identify, from the query's x-range, the relevant children and push all relevant updates in the root to the identified children. After having done this we know that the point buffers of the children do not change further and we can thus report all points in the query range from the child structure of the root and the point buffer of the root. The children are added to the back of the bfs queue. All nodes except for the root do not need to report from their point buffers as the parent of the node has already reported the relevant points.
 
 During the breadth first search some buffers might temporarily overflow. This is handled using the update operations described earlier. This can be done in a bottom up fashion starting from the leaf layer of the tree while maintaining the invariant that the subtree at the current node is in a good state and making sure that no recursions recurse above the current node and into a subtree which potentially is in a bad state.
 
 \todo{Describe with more detailed descriptions what is done or refer to implementation details for more?}
-
+\todo{Kasper: Ikke helt klart hvad der menes her}
 \textbf{Analysis}
 \todo{Insert analysis of three sided range queries here}
 
@@ -689,6 +703,8 @@ The first step of the construction is to construct a B-tree with each internal n
 The point buffers of the internal nodes are now filled bottom up pulling the top $B/2$ highest $y$-value points up. If this results in a child having an underflowing point buffer we recursively fill that child before proceeding. In a second iteration we do the same but in a top-down fashion.
 
 All insertion and deletion buffers are initially empty and the child structures are constructed from the point buffers of the children.
+
+This construction algorithm could also have been used for global rebuilding giving a matching amortized cost.
 
 \todo{Analysis}
 
@@ -970,7 +986,7 @@ The experiment on the \textbf{report} part of the algorithms was conducted by fi
 %TODO We use a POSIX file-system on a Linux distribution.
 
 \section{Stream}
-The implementation we present makes use of the concept of \textit{streams}. Although the C++ standard library provides several streams that allow for the internal buffer to be managed we introduce an implementation of our own. We denote this stream \texttt{buffered\_stream}. This design choice was made because of the nature of our experiments in which it is of extreme importance that we are able to argue about the exact number of I/O's being used. By introducing a stream of our own we avoid that any undefined behaviour in the standard library implementations gives rise to a potential I/O overhead. Such an overhead would be reflected directly in the overall running time of our implementation.
+The implementation we present makes use of the concept of \textit{streams}. A stream gives access to reading and writing from/to disk to/from memory. A stream typically manages an internal buffer which is a mirror a small portion of the disk allowing for fast interaction with that small piece. Although the C++ standard library provides several streams that allow for the internal buffer to be managed we introduce an implementation of our own. We denote this stream \texttt{buffered\_stream}. This design choice was made because of the nature of our experiments in which it is of extreme importance that we are able to argue about the exact number of I/O's being used. By introducing a stream of our own we avoid that any undefined behaviour in the standard library implementations gives rise to a potential I/O overhead. Such an overhead would be reflected directly in the overall running time of our implementation.
 
 The stream we introduce makes use of the \texttt{read} and \texttt{write} system calls and is equipped with a buffer of size $B$ in internal memory that is maintained on all operations.
 
