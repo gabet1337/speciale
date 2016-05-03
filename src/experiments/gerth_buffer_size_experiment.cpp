@@ -16,7 +16,7 @@ class gerth_buffer_size_experiment : public base_experiment {
     ull data_size = sizeof(point);
     ull interval = 25 * 1024 * 1024; //25 mb intervals
     ull print_interval = 1024 * 1024;
-    ull stop_at = 1024ULL * 1024ULL * 1024ULL * 5ULL;
+    ull stop_at = 1024ULL * 1024ULL * 1024ULL * 5ULL; //5Gb
 
     restart_timers();
 
@@ -26,7 +26,7 @@ class gerth_buffer_size_experiment : public base_experiment {
       data_read += data_size;
 
       if (data_read % print_interval == 0) {
-        std::cout << data_read/print_interval << "MB" << std::endl;
+        std::cout << data_read/(1024*1024) << "Mb" << std::endl;
       }
 
       if (data_read % interval == 0) {
