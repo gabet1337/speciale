@@ -6,6 +6,8 @@
 #include <map>
 #include <vector>
 #include <stdio.h>
+#include <sys/wait.h>
+#include <unistd.h>
 #include <iostream>
 #include <fstream>
 #include <time.h>
@@ -26,6 +28,7 @@
 #include "stream_stubs/buffered_stream_stub.hpp"
 #include "stream_stubs/f_stream_stub.hpp"
 #include "result.hpp"
+
 
 namespace experiment {
 
@@ -97,12 +100,14 @@ namespace experiment {
     name = experiment_name;
     int r = system(("mkdir -p "+get_directory()).c_str());
     std::cout << "Creating result directory: " << get_directory() << std::endl;
-    r++;
     std::cout << "Cleaning up folders..." << std::endl;
     for (int i = 0; i < 10000; i++) {
       util::remove_directory(std::to_string(i));
       util::remove_directory("c_"+std::to_string(i));
     }
+    std::cout << "Closing MySQL instances" << std::endl;
+    r = system("sudo service mysql stop");
+    r++;    
   }
 
   base_experiment::~base_experiment() {
@@ -117,13 +122,20 @@ namespace experiment {
   void base_experiment::run() {
 
     for (auto ri : run_instances) {
-      std::cout << "Running " << ri.name << std::endl
-                << "type: " << common::PST_VARIANT_to_string(ri.type) << std::endl
-                << "buffer size: " << ri.buffer_size << std::endl
-                << "epsilon: " <<  ri.epsilon << std::endl;
-      test::drop_cache();
-      run_experiment(ri);
-      save_results(ri);
+      pid_t child;
+      int status = 0;
+      if ( (child = fork()) == 0) {
+        std::cout << "Running " << ri.name << std::endl
+                  << "type: " << common::PST_VARIANT_to_string(ri.type) << std::endl
+                  << "buffer size: " << ri.buffer_size << std::endl
+                  << "epsilon: " <<  ri.epsilon << std::endl;
+        test::drop_cache();
+        run_experiment(ri);
+        save_results(ri);
+        break;
+      } else {
+        while (wait(&status) > 0) break;
+      }
     }
   }
 

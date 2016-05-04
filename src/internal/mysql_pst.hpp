@@ -37,6 +37,8 @@ namespace internal {
 
 
   mysql_pst::mysql_pst() {
+    int r = system("sudo service mysql restart");
+    r++;
     buffer_size = 4096;
     Connection *con = get_driver_instance()->connect("tcp://127.0.0.1:3306", "root", "thesis2016");
     con->setSchema("TESTDB");
@@ -55,6 +57,8 @@ namespace internal {
 
   mysql_pst::~mysql_pst() {
     delete stmt;
+    int r = system("sudo service mysql stop");
+    r++;
   }
 
   void mysql_pst::insert(const point &p) {
