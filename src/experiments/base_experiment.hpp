@@ -120,7 +120,7 @@ namespace experiment {
 
   void base_experiment::run() {
 
-    pid_t child;
+    pid_t child = 0;
     
     for (auto ri : run_instances) { 
       int status = 0;
