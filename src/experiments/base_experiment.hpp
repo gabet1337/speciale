@@ -111,8 +111,7 @@ namespace experiment {
   }
 
   base_experiment::~base_experiment() {
-    std::cout << "DONE DONE DONE!" << std::endl;
-    finished();
+
   }
 
   void base_experiment::add(size_t id, std::string name, PST_TYPE type, size_t buffer_size, double epsilon) {
@@ -121,8 +120,9 @@ namespace experiment {
 
   void base_experiment::run() {
 
-    for (auto ri : run_instances) {
-      pid_t child;
+    pid_t child;
+    
+    for (auto ri : run_instances) { 
       int status = 0;
       if ( (child = fork()) == 0) {
         std::cout << "Running " << ri.name << std::endl
@@ -136,6 +136,11 @@ namespace experiment {
       } else {
         while (wait(&status) > 0) break;
       }
+    }
+
+    if (child != 0) {
+      std::cout << "DONE DONE DONE!" << std::endl;
+      finished();
     }
   }
 
