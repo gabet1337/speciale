@@ -588,6 +588,7 @@ For a node $v$ in the main data structure the following invariants must be true:
 \end{itemize}
 
 \subsection{Updates}
+\label{subsec:gerth_updates}
 We update the structure by adding points to either the insertion or deletion buffer of the root while maintaining the above invariants.
 To be able to maintain the above invariants we must be very careful whenever we update the data structure. During an update the insertion or deletion buffers might overflow. This is handled in the following five steps:
 \begin{inlinelist}
@@ -894,7 +895,7 @@ In order to compare the structures' best performance against each other we neede
 
 \todo{change data size when larger results are added}
 
-The experiments consist of inserting 500Mb of data. The data is uniformly random generated among the positive integers.
+The experiments consist of inserting 5Gb of data. The data is uniformly random generated among the positive integers.
 
 In Subsection~\ref{subsec:tuning_gerth} we present our tuning parameters for the structure presented in Chapter~\ref{chp:epst} by Brodal, and in Subsection~\ref{subsec:tuning_arge} we present our findings for the structure presented in Chapter~\ref{chp:arge_pst} by Arge et al.
 
@@ -928,10 +929,26 @@ Figure~\ref{fig:gerth_fanout_experiment} shows that the running time increases a
 \todo{Explain these results with the code in mind. Smaller fanout sends more points down at a time}
 \todo{Add the formulas that are plotted to text}
 
-In Figure~\ref{fig:gerth_buffer_size_experiment} we fixed the fanout to 2 and varied the buffer size. Theoretically the running time should decrease with ever increasing buffer sizes as shown in Figure~\ref{fig:gerth_buffer_size_theory}. We are however limited by the main memory size and we have to be careful not to start swapping out memory to disk as this greatly decreases performance. This is also what we see in Figure~\ref{fig:gerth_buffer_size_experiment} where the running time decreases as the buffer size increases until we reach 8MB. At this point the we started swapping out structures and the performance decreased. Larger buffer sizes was also tried but were simply too slow to measure.
+In Figure~\ref{fig:gerth_buffer_size_experiment} we fixed the fanout to 2 and varied the buffer size. Theoretically the running time should decrease with ever increasing buffer sizes as shown in Figure~\ref{fig:gerth_buffer_size_theory}. We are however limited by the main memory size and we have to be careful not to start swapping out memory to disk as this greatly decreases performance.
+
+\begin{figure}[htp]
+\includegraphics[width=\textwidth]{../src/experiments/gerth_buffer_size_experiment_results/2016-05-03.13_51_54/ios}
+\caption{Number of calls to read and writ for different buffer sizes.}
+\label{fig:gerth_buffer_size_ios}
+
+\includegraphics[width=\textwidth]{../src/experiments/gerth_buffer_size_experiment_results/2016-05-03.13_51_54/ibo}
+\caption{Number of insert buffer overflows in the structure of Brodal.}
+\label{fig:gerth_buffer_size_ibo}
+\end{figure}
+
+Figure~\ref{fig:gerth_buffer_size_ios} aligns very well with the actual running time and our expectations. The number of I/O's decreases with increasing buffer sizes.
+
+Figure~\ref{fig:gerth_buffer_size_ibo} show the number of times an insertion buffer overflows. In fact we see a similar decrease in the number of operations in all of the update operations described in Subsection~\ref{subsec:gerth_updates}.
+
+\todo{This is also what we see in Figure~\ref{fig:gerth_buffer_size_experiment} where the running time decreases as the buffer size increases until we reach 8MB. At this point the we started swapping out structures and the performance decreased. Larger buffer sizes was also tried but were simply too slow to measure.}
 
 \section{Insertion}
-\begin{figure}[htp]
+\begin{figure}[htp!]
 \includegraphics[width=\textwidth]{../plots/insert_complexities/insert_complexity}
 \caption{Theoretical insert time for all tested structures.}
 \label{fig:theory_insert_complexity}
@@ -939,10 +956,9 @@ In Figure~\ref{fig:gerth_buffer_size_experiment} we fixed the fanout to 2 and va
 
 Figure ~\ref{fig:theory_insert_complexity} shows the theoretical complexities of inserting an element into the different structures for different $N$. We expect the actual running times to be very similar to these. The experiment will consist of inserting uniformly random data for 24 hours. If the non-I/O efficient data structures fill out the internal memory we expect to see some jumps in the running time at this point.
 
-\todo{move down constant of mysql to almost bottom}
 
 \section{Deletion}
-\begin{figure}[htp]
+\begin{figure}[htp!]
 \includegraphics[width=\textwidth]{../plots/delete_complexities/delete_complexity}
 \caption{Theoretical delete time for all tested structures.}
 \label{fig:theory_delete_complexity}
@@ -968,11 +984,11 @@ The experiment on the \textbf{report} part of the algorithms was conducted by fi
 	\centering
 	\includegraphics[width=0.8\textwidth]{../figures/query_uniform_fix_x}
 	\caption{Distribution of points for the uniform reporting experiment (reporting). The points $x_1, x_2$ and $y_1, \cdots y_n$ are fixed. There is 1 Mb data in all ranges $[x_1, x_2] \times [y_i, y_{i+1}]$}.
-	\label{fig:experiment_query_uniform}
+	\label{fig:experiment_query_uniform_fix_x}
 \end{figure}
 
 
-\begin{figure}[htp]
+\begin{figure}[htp!]
 \includegraphics[width=\textwidth]{../plots/query_complexities/query_complexity}
 \caption{Theoretical query time for all tested structures.}
 \label{fig:theory_query_complexity}
