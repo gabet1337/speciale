@@ -26,7 +26,7 @@ internal(x) = log(x)/log(2)
 arge(x,B) = log(x)/log(B)
 rtree(x) = 0.8*x
 rstar(x) = x
-mysql(x) = 0.5
+mysql(x) = 0.1
 unset ytics
 unset xtics
 
