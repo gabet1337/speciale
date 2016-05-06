@@ -23,4 +23,4 @@ plot 'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_buffer1MB' 
 'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_buffer2MB' u 1:6 t 'buffer2MB' w lp ls 3, \
 'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_buffer4MB' u 1:6 t 'buffer4MB' w lp ls 4, \
 'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_buffer8MB' u 1:6 t 'buffer8MB' w lp ls 5, \
-'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_buffer16MB' u 1:6 t 'buffer16MB' w lp ls 6
+'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_buffer16MB' u 1:($6-176967) t 'buffer16MB' w lp ls 6
