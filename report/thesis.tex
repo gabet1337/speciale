@@ -28,6 +28,13 @@
 \newlist{inlinelist}{enumerate*}{1}
 \setlist[inlinelist]{label=(\roman*)}
 
+% tikz
+\usepackage{tikz}
+% git graph
+\newcommand\commit[3]{\node[commit] (#1) {}; \node[clabel] at (#1) {\texttt{#1}: (\textit{#2}) #3};}
+\newcommand\ghost[1]{\coordinate (#1);}
+\newcommand\connect[2]{\path (#1) to[out=90,in=-90] (#2);}
+
 % Code comments like [CLRS]
 \renewcommand{\algorithmiccomment}[1]{\makebox[5cm][l]{$\triangleright$ \textit{#1}}}
 \usepackage{framed,graphicx,xcolor}
@@ -110,6 +117,71 @@
 \todo{Getting hot in here}
 
 \todo{number of lines of code}
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\tikzstyle{commit}=[draw,circle,fill=white,inner sep=0pt,minimum size=5pt]
+\tikzstyle{clabel}=[right,outer sep=1em]
+\tikzstyle{every path}=[draw]
+\matrix [column sep={1em,between origins},row sep=\lineskip]
+{
+\commit{4ee8a7a}{19.Apr}{Base experiment class added} & \\
+\commit{e028c0b}{17.Apr}{Merge: MySQL PST done + Internal PST done} & \\
+& & \ghost{branch6} & \commit{f585f41}{14.Apr 2016}{Internal dynamic PST added} \\
+& \commit{f96b91a}{12.Apr}{Merge: Boost R-tree done and MySQL PST started} & & \\
+& \ghost{branch5} & \commit{1132d2e}{12.Apr 2016}{Documenting theory of Arge} \\
+\ghost{branch4} & \commit{ecd8b6e}{11.Apr 2016}{Wrapper of Boost R-tree implemented} \\
+\commit{5f2471b}{07.Apr 2016}{Merge: All tests of Arge passes} & \\
+\commit{3db0fea}{06.Apr 2016}{All tests of Brodal passes} & \ghost{branch3} \\
+& \commit{1e4e94b}{30.Mar 2016}{Implementation of Arge begun} \\
+\commit{69296f7}{29.Mar 2016}{Cache event loop and intense bug hunting} & \ghost{branch2} \\
+& \commit{ebad13f}{28.Mar 2016}{Documenting theory on Brodal} \\
+\commit{6d7910d}{15.Mar 2016}{Total refactoring from recursion to event loop} & \\
+\commit{d3857d6}{05.Mar 2016}{Cascading overflowing of point buffers} & \\
+\commit{d4db0d5}{24.Feb 2016}{Node degree overflow might work} & \ghost{branch1}\\
+\commit{d764b48}{19.Feb 2016}{Implementation of Brodal started} & \\
+& \commit{7657914}{18.Feb 2016}{Documenting theory on Child structure} \\
+\commit{54ba4b2}{17.Feb 2016}{All tests of Child structure passes} & \\
+\commit{c589395}{11.Feb 2016}{Implementation of Child structure started} & \\
+\commit{9f9c652}{10.Feb 2016}{All tests of I/O streams passes} & \\
+\commit{b3bd158}{08.Feb 2016}{Implementation of I/O streams started} & \\
+\commit{63268c1}{01.Feb 2016}{Initial commit}& \\
+};
+\connect{63268c1}{b3bd158};
+\connect{b3bd158}{9f9c652};
+\connect{9f9c652}{c589395};
+\connect{c589395}{54ba4b2};
+\connect{54ba4b2}{d764b48};
+\connect{54ba4b2}{7657914};
+\connect{7657914}{branch1};
+\connect{branch1}{d3857d6};
+\connect{d764b48}{d4db0d5};
+\connect{d4db0d5}{d3857d6};
+\connect{d3857d6}{6d7910d};
+\connect{6d7910d}{ebad13f};
+\connect{6d7910d}{69296f7};
+\connect{ebad13f}{branch2};
+\connect{branch2}{3db0fea};
+\connect{69296f7}{1e4e94b};
+\connect{1e4e94b}{branch3};
+\connect{branch3}{5f2471b};
+\connect{3db0fea}{5f2471b};
+\connect{69296f7}{3db0fea};
+\connect{5f2471b}{ecd8b6e};
+\connect{5f2471b}{branch4};
+\connect{branch4}{f96b91a};
+\connect{branch4}{1132d2e};
+\connect{f96b91a}{f585f41};
+\connect{ecd8b6e}{branch5};
+\connect{branch5}{f96b91a};
+\connect{f96b91a}{e028c0b};
+\connect{f585f41}{e028c0b};
+\connect{1132d2e}{branch6};
+\connect{branch6}{e028c0b};
+\connect{e028c0b}{4ee8a7a};
+\end{tikzpicture}
+\caption{Excerpt of git history for the entire project}
+\end{figure}
 
 \pagenumbering{arabic}
 \setcounter{secnumdepth}{2}
