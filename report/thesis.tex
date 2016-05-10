@@ -441,6 +441,50 @@ Please refer to table~\ref{tbl:related_work_summary} for a summary of the result
 }
 \end{table}
 
+\todo{Add description of buffer tree as this structure is what Brodal is based upon}
+
+\section{Lower bounds}	
+Solving the problem of three sided range queries is very closely related to that of the 1D-dictionary. Any solution that solves the three sided range query problem can solve the 1D-dictionary problem by testing membership of an element $(x,y)$ by reporting all points in the range $\left[x,x\right] \times \left[y, \infty\right]$. By reduction we must have that the lower bounds of the 1D-dictionary problem also applies to that of three sided range queries.
+
+The 1D-dictionary problem has been a popular topic in the case of internal memory. It has been proved by a simply adversary argument that a query can be forced to cost $\log_2 N$ comparisons no matter the cost of updates, and more generally it has been proved that if an insertion perform at most $\mathcal{O}(k)$ comparisons then queries can be forced to cost at most $\max\left\lbrace \log_2 N, N/2^{\Theta(k)}\right\rbrace$ comparisons~\cite{Borodin81efficientsearching}.
+
+There has also been much work on the lower bounds of the 1D-dictionary problem in external memory.
+
+We here give an adversary argument which shows that for any dictionary storing $N$ elements, there exists a query requiring at least $\log_B \frac{N}{M} - \mathcal{O}(1)$ I/O's, i.e. a lower bound for queries in external memory dictionaries. The argument goes like this: 
+
+Assume that we are at a position in our dictionary where the elements that can still be equal to our query are denoted \textit{candidate elements}. These elements form a consecutive subsequence in the partial ordering of the $N$ elements in the dictionary.
+Initially we can have at most $M$ elements in internal memory. The adversary will now select a partial ordering of these $M$ elements, i.e. select answers to each comparison between these $M$ elements, such that there are at least $\frac{N-M}{M+1} > \frac{N}{M+1}-1$ candidate elements left.
+Each I/O will bring in $B$ elements. If we have $k$ candidate elements before this I/O then the adversary will choose a partial ordering such that there are at least $\frac{k-B}{B+1} > \frac{k}{B+1}-1$ candidate elements left.
+An argument by induction will show that after $i$ I/O's there are at least $\frac{N}{(M+1)(B+1)^i} - 2$ candidate elements left. As a consistent answer to the member query cannot be given before we have only one candidate element left we have that $\frac{N}{(M+1)(B+1)^i} - 2 \leq 1 \Rightarrow i = \log_{B+1} \frac{N}{M} - \mathcal{O}(1)$.
+
+As mentioned in Section~\ref{sec:prelim_b_tree} the B-tree is the external memory version of a binary search tree. The query bounds of the B-tree, $\mathcal{O}(\log_B N + K/B)$, are optimal, i.e. equal to the lower bound, but this is not the case for the update bounds.
+
+Brodal and Fagerberg~\cite{Brodal:2003:LBE:644108.644201} studied two lower bound trade-offs between the I/O complexity of membership queries and updates. They arrive at the following theorem:
+\begin{theorem}
+If $N$ insertions perform at most $\delta \cdot N/B$ I/O's, for $1 \leq \delta \leq B \log_B N$ then
+\begin{enumerate}
+	\item There exists a query requiring at least $\log_{B+1} \frac{N}{M} - \mathcal{O}(1)$ I/O's.
+	\item There exists a query requiring $N/(M\cdot (\frac{M}{B})^{\mathcal{O}(\delta)})$ I/O's for $N > M$.
+	\item There exists a query requiring $\Omega(\log_{\delta \log^2 N} \frac{N}{M})$ I/O's for N > M.
+\end{enumerate}
+\end{theorem}
+
+The first is essentially just the result proved by the above adversary argument saying that B-trees have an optimal query bound.
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{../figures/lower_bound_summary}
+\caption{A summary of the results of Brodal and Fagerberg~\cite{Brodal:2003:LBE:644108.644201}. It depicts the trade-off between insert and search/query. On one end we can achieve really fast insert operations but pay the price with slow queries. In the other end we have the B-tree which query bound matches the optimal but has suboptimal insertions. No results exists for the gaps.}
+\label{fig:lower_bound_summary}
+\end{figure}
+
+The results by Brodal and Fagerberg assume that points are indivisible. Iacono and P\v{a}tra\c{s}cu~\cite{Iacono:2012:UHS:2095116.2095164} looks at what happens when we do not have this assumption and are thus allowed to use hashing. They improve the update time of the buffer tree by roughly a logarithmic factor. More precisely they arrive at the following theorem:
+
+\begin{theorem}
+For any $\max\left\lbrace \log\log N, \log_M N \right\rbrace \leq \lambda \leq B$, we can solve the dictionary problem by a Las Vegas data structure with update time $t_u = \mathcal{O}(\frac{\lambda}{B})$ and query time $t_q = \mathcal{O}(\log_\lambda N)$ with high probability.
+\end{theorem}
+
+This means that in one end of the trade-off they can for $\lambda = B^\epsilon$ obtain an update time of $\mathcal{O}(1/B^{1-\epsilon})$ and query time of $\mathcal{O}(\log_B N)$. This matches the bounds of the buffer tree of Arge. In the other end of the trade-off where they are able to achieve fast updates very close to the optimal disk transfer rate of $1/B$ namely they obtain: $t_u^{\min} = \mathcal{O}(\frac{1}{B} \cdot \max\left\lbrace \log\log N, \log_M N \right\rbrace)$.
 
 \chapter{Internal Priority Search Tree}
 \label{chp:internal_pst}
