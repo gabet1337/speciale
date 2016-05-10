@@ -444,7 +444,7 @@ Please refer to table~\ref{tbl:related_work_summary} for a summary of the result
 \todo{Add description of buffer tree as this structure is what Brodal is based upon}
 
 \section{Lower bounds}	
-Solving the problem of three sided range queries is very closely related to that of the 1D-dictionary. Any solution that solves the three sided range query problem can solve the 1D-dictionary problem by testing membership of an element $(x,y)$ by reporting all points in the range $\left[x,x\right] \times \left[y, \infty\right]$.
+Solving the problem of three sided range queries is very closely related to that of the 1D-dictionary. Any solution that solves the three sided range query problem can solve the 1D-dictionary problem by testing membership of an element $(x,y)$ by reporting all points in the range $\left[x,x\right] \times \left[y, \infty\right]$. By reduction we must have that the lower bounds of the 1D-dictionary problem also applies to that of three sided range queries.
 
 The 1D-dictionary problem has been a popular topic in the case of internal memory. It has been proved by a simply adversary argument that a query can be forced to cost $\log_2 N$ comparisons no matter the cost of updates, and more generally it has been proved that if an insertion perform at most $\mathcal{O}(k)$ comparisons then queries can be forced to cost at most $\max\left\lbrace \log_2 N, N/2^{\Theta(k)}\right\rbrace$ comparisons~\cite{Borodin81efficientsearching}.
 
