@@ -963,8 +963,23 @@ This construction algorithm could also have been used for global rebuilding givi
 
 \textbf{Analysis}
 
-\todo{analysis}
+We have that level $i$ of the tree contains at most $\frac{N}{B\Delta^i}$ nodes. It follows that the number of points stored at or above level $i$ is $\mathcal{O}(\sum\limits_{j=i}^\infty B\frac{N}{B\Delta^j}) = \mathcal{O}(\frac{N}{\Delta^i})$. This must mean that we cannot move $B/2$ points to level $i$ from $i-1$ more than $\mathcal{O}(\frac{N}{\Delta^i} / \frac{B}{2})$ times. We know that we can move $B/2$ points using $\mathcal{O}(\Delta)$ I/O's and the total number of I/O's to fill the point buffers becomes:
+$$\mathcal{O}\left(\sum\limits_{i=1}^\infty \Delta \frac{N}{B\Delta^i}\right) = \mathcal{O}\left(\frac{N}{B}\sum\limits_{i=1}^\infty \Delta \frac{1}{\Delta^i}\right) = \mathcal{O}\left(\frac{N}{B}\sum\limits_{i=0}^\infty \frac{1}{\Delta^i}\right) = \mathcal{O}\left(\frac{N}{B}\right)$$
 
+Another aspect we have to look at is what happens to the amortized analysis when we initialize our data structure using this construction method, i.e. we have to argue that the amortized cost of the remain unchanged during the epoch started by the construction.
+
+In order to argue this we consider a sequence of operations containing $N_{ins}$ insertions and $N_{del}$ deletions and a newly constructed tree of $N$ points.
+
+Let us first consider the cost of creating new nodes in the tree. Each leaf has initially at most $B/2$ points and it follows that we can at most create $2N_{ins}/B$ new leaves. Each new leaf is created in $\mathcal{O}(1)$ I/O's and it thus cost at most $\mathcal{O}(N_{ins}/B)$ I/O's to create new leaves during $N_{ins}$ insertions.
+By a similar argument it follows that at most $\mathcal{O}(\frac{N_{ins}}{\Delta B})$ new internal nodes can be created since each internal node initially has a degree of $\leq \Delta/2$. Each new internal node is created in $\mathcal{O}(\Delta)$ I/O's and it thus costs $\mathcal{O}(N_{ins}/B)$ I/O's to create new internal nodes without the cost of refilling point buffers which we look at below.
+
+An insertion has to be moved at most the height of the tree levels down before it is cancelled or moved into a point buffer. Since the height of the tree is $\mathcal{O}(\frac{1}{\epsilon} \log_B N)$ it follows that the cost of handling overflowing insertions buffers during the course of $N_{ins}$ insertions becomes $\mathcal{O}(\frac{N_{ins}}{B/\Delta}\frac{1}{\epsilon}\log_B N)$ I/O's.
+A similar argument can be given for the case of deletions.
+
+Each deletion leaves behind a hole which needs to be filled. This hole is filled by recursively pulling up points which effectively moves down the hole. Each split of internal nodes also potentially creates up to $B$ holes.
+In total we need to handle $\mathcal{O}(N_{del} + \frac{N_{ins}}{\Delta B})$ holes. We can move up $B/2$ points using $\mathcal{O}(\Delta)$ I/O's and they at most need to be moved to the top of the tree, i.e. they need to be at most moved the height of the tree levels up. This gives a total cost of $\mathcal{O}((N_{del} + \frac{N_{ins}}{\Delta B})\frac{\Delta}{B}\frac{1}{\epsilon} \log_B N)$ I/O's.
+
+All this adds up to $\mathcal{O}(\frac{N_{ins}+N_{del}}{B/\Delta} \frac{1}{\epsilon} \log_B N) = \mathcal{O}(\frac{N_{ins}+N_{del}}{\epsilon B^{1-\epsilon}} \log_B N)$  I/O's for handling updates. This matches the amortized bounds of the structure.
 \todo{Figures}
 
 \chapter{Other structures}
