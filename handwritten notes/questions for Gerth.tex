@@ -1,0 +1,32 @@
+\documentclass[a4paper,11pt,agenda,chair]{meetingmins}
+
+\setcommittee{Thesis on External Range Reporting}
+
+\setmembers{
+  \chair{G.~Brodal},
+  P.~Gabrielsen,
+  C.~Hansen
+}
+
+\setdate{May 11., 2016}
+
+\begin{document}
+\maketitle
+
+\section{Questions}
+\begin{items}
+\item Vi navngiver din struktur: External Memory Buffered Priority Search Tree. Cool?
+
+\item Hvis $\epsilon$ blot er en konstant s\aa ~vil vi vel i query bounded $\frac{1}{\epsilon} \log_B N + K/B$ kunne udelukke ledet med $\epsilon$ fuldst\ae ndigt?
+
+\item Hvorfor holder vi ikke child structure af roden i main memory?
+
+\item Da point buffer har $O(B)$ points, og vi har et fanout af $B^\epsilon$ s\aa ~er det sv\ae rt at konstruere et B-tree over x-v\ae rdierne i point bufferen. Vi har l\o st dette ved en ekstra struktur der holder styr p\aa ~ranges af b\o rn, men dette burde m\aa ske beskrives bedre i artiklen.
+
+\item Hvorfor m\aa ~en point buffer i et leaf kun holde $B/2$ elementer?
+
+\item Hvorfor overflower en delete buffer allerede ved $B/4$?
+
+\item Beh\o ver man at s\o ge hele vejen ned til $x_1$ og $x_2$? Vi har jo heap orden og det g\ae lder ogs\aa ~for s\o gestierne.
+\end{items}
+\end{document}
