@@ -911,7 +911,12 @@ After all points have been reported we might have some buffers that have tempora
 
 This process could also be described recursively. The base case of the recursion is the leaf $l$ which is handled by moving points from $I_l$ into $P_l$ and potentially splitting. At a layer above $l$ at node $v$ we might have many children which are all leafs and handled according to the base case. Node $v$ is now handled as described before and we have thus taken a step in the recursion. This process continues up to the root of the tree leaving the tree in a state with no overflows or underflows.
 
-\todo{Figure of fixup}
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{../figures/gerth_fixup}
+\caption{missing}
+\label{fig:gerth_fixup}
+\end{figure}
 
 \textbf{Analysis}
 
