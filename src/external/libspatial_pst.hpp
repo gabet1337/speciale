@@ -31,7 +31,7 @@ namespace ext {
       io::buffered_stream<point> *stream = 0;
     public:
       stream_visitor(size_t buffer_size, const std::string &output_file) {
-        stream = new io::buffered_stream<point>(buffer_size);
+        stream = new io::buffered_stream<point>(STREAM_BUFFER_SIZE);
         stream->open(output_file);
       }
 

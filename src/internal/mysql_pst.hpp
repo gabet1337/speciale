@@ -103,7 +103,7 @@ namespace internal {
   void mysql_pst::report(int x1, int x2, int y, const std::string &output_file) {
     flush_insert_buffer();
     flush_delete_buffer();
-    io::buffered_stream<point> output(buffer_size);
+    io::buffered_stream<point> output(STREAM_BUFFER_SIZE);
     output.open(output_file);
     std::string x1s = std::to_string(x1);
     std::string x2s = std::to_string(x2);
