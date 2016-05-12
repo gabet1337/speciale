@@ -482,7 +482,7 @@ Please refer to Table~\ref{tbl:related_work_summary} for a summary of the result
 \end{table}
 
 \section{Lower bounds}	
-Solving the problem of three sided range queries is very closely related to that of the 1D-dictionary. Any solution that solves the three sided range query problem can solve the 1D-dictionary problem by testing membership of an element $(x,y)$ by reporting all points in the range $\left[x,x\right] \times \left[y, \infty\right]$. By reduction we must have that the lower bounds of the 1D-dictionary problem also applies to that of three sided range queries.
+Solving the problem of three-sided range queries is very closely related to that of the 1D-dictionary. Any solution that solves the three-sided range query problem can solve the 1D-dictionary problem by testing membership of an element $(x,y)$ by reporting all points in the range $\left[x,x\right] \times \left[y, \infty\right]$. By reduction we must have that the lower bounds of the 1D-dictionary problem also applies to that of three-sided range queries.
 
 The 1D-dictionary problem has been a popular topic in the case of internal memory. It has been proved by a simply adversary argument that a query can be forced to cost $\log_2 N$ comparisons no matter the cost of updates, and more generally it has been proved that if an insertion perform at most $\mathcal{O}(k)$ comparisons then queries can be forced to cost at most $\max\left\lbrace \log_2 N, N/2^{\Theta(k)}\right\rbrace$ comparisons~\cite{Borodin81efficientsearching}.
 
@@ -495,7 +495,7 @@ Initially we can have at most $M$ elements in internal memory. The adversary wil
 Each I/O will bring in $B$ elements. If we have $k$ candidate elements before this I/O then the adversary will choose a partial ordering such that there are at least $\frac{k-B}{B+1} > \frac{k}{B+1}-1$ candidate elements left.
 An argument by induction will show that after $i$ I/O's there are at least $\frac{N}{(M+1)(B+1)^i} - 2$ candidate elements left. As a consistent answer to the member query cannot be given before we have only one candidate element left we have that $\frac{N}{(M+1)(B+1)^i} - 2 \leq 1 \Rightarrow i = \log_{B+1} \frac{N}{M} - \mathcal{O}(1)$.
 
-As mentioned in Section~\ref{sec:prelim_b_tree} the B-tree is the external memory version of a binary search tree. The query bounds of the B-tree, $\mathcal{O}(\log_B N + K/B)$, are optimal, i.e. equal to the lower bound, but this is not the case for the update bounds.
+As mentioned in Section~\ref{sec:prelim_b_tree}, the B-tree is the external memory version of a binary search tree. The query bounds of the B-tree, $\mathcal{O}(\log_B N + K/B)$, are optimal, i.e. equal to the lower bound, but this is not the case for the update bounds.
 
 Brodal and Fagerberg~\cite{Brodal:2003:LBE:644108.644201} studied two lower bound trade-offs between the I/O complexity of membership queries and updates. They arrive at the following theorem:
 \begin{theorem}
@@ -507,12 +507,12 @@ If $N$ insertions perform at most $\delta \cdot N/B$ I/O's, for $1 \leq \delta \
 \end{enumerate}
 \end{theorem}
 
-The first is essentially just the result proved by the above adversary argument saying that B-trees have an optimal query bound.
+The first is essentially just the result proved by the above adversary argument saying that B-trees have an optimal query bound. This result is summarized in Figure~\ref{fig:lower_bound_summary}.
 
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{../figures/lower_bound_summary}
-\caption{A summary of the results of Brodal and Fagerberg~\cite{Brodal:2003:LBE:644108.644201}. It depicts the trade-off between insert and search/query. On one end we can achieve really fast insert operations but pay the price with slow queries. In the other end we have the B-tree which query bound matches the optimal but has suboptimal insertions. No results exists for the gaps.}
+\caption{A summary of the results of Brodal and Fagerberg~\cite{Brodal:2003:LBE:644108.644201}. It depicts the trade-off between insert and search/query. On one end we can achieve really fast insert operations but pay the price with slow queries. In the other end we have the B-tree which query bound matches the optimal but has suboptimal insertions. No results exists for the gaps.\todo{colours and size}}
 \label{fig:lower_bound_summary}
 \end{figure}
 
