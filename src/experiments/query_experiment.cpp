@@ -17,7 +17,7 @@ class query_experiment : public base_experiment {
     ull print_interval = 1024 * 1024;
     test::clock exp_time;
     exp_time.start();
-    long long one_day = 60*60*24;
+    long long one_day = 120;
 
     while (!data.eof()) {
       point p = data.read();
@@ -38,6 +38,9 @@ class query_experiment : public base_experiment {
         pst->report(1868310772, 2040109464, 1717986917, "query_result5");
         measure_everything(instance.id, data_read/(1024*1024));
         save_results(instance);
+        //std::cout << "waiting for input..." << std::endl;
+        //int k;
+        //std::cin >> k;
         util::remove_directory("query_result1");
         util::remove_directory("query_result2");
         util::remove_directory("query_result3");
@@ -57,12 +60,12 @@ class query_experiment : public base_experiment {
 int main() {
 
   query_experiment qe("query_experiment");
-  qe.add(5, "MySQL", common::PST_VARIANT::MYSQL, MYSQL_BUFFER_SIZE, MYSQL_EPSILON);
-  qe.add(3, "Internal", common::PST_VARIANT::INTERNAL, INTERNAL_BUFFER_SIZE, INTERNAL_EPSILON);
-  qe.add(4, "Boost R-tree", common::PST_VARIANT::RTREE, RTREE_BUFFER_SIZE, RTREE_EPSILON);
   qe.add(1, "Gerth", common::PST_VARIANT::GERTH, GERTH_BUFFER_SIZE, GERTH_EPSILON);
-  qe.add(2, "Arge", common::PST_VARIANT::ARGE, ARGE_BUFFER_SIZE, ARGE_EPSILON);
-  qe.add(6, "libspatial", common::PST_VARIANT::SPATIAL, SPATIAL_BUFFER_SIZE, SPATIAL_EPSILON);
+  qe.add(5, "MySQL", common::PST_VARIANT::MYSQL, MYSQL_BUFFER_SIZE, MYSQL_EPSILON);
+  //qe.add(3, "Internal", common::PST_VARIANT::INTERNAL, INTERNAL_BUFFER_SIZE, INTERNAL_EPSILON);
+  //qe.add(4, "Boost R-tree", common::PST_VARIANT::RTREE, RTREE_BUFFER_SIZE, RTREE_EPSILON);
+  //qe.add(2, "Arge", common::PST_VARIANT::ARGE, ARGE_BUFFER_SIZE, ARGE_EPSILON);
+  //qe.add(6, "libspatial", common::PST_VARIANT::SPATIAL, SPATIAL_BUFFER_SIZE, SPATIAL_EPSILON);
   qe.run();
   qe.plot();
 
