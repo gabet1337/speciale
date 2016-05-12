@@ -332,7 +332,7 @@ namespace test {
       return io::STREAM_NUM_IOS - start;
     }
     void restart() {
-      start = total_ios();
+      start = io::STREAM_NUM_IOS;
     }
   private:
     size_t start;
@@ -346,7 +346,7 @@ namespace test {
       return GERTH_NUM_POINT_BUFFER_OVERFLOW - start;
     }
     void restart() {
-      start = elapsed();
+      start = GERTH_NUM_POINT_BUFFER_OVERFLOW;
     }
   private:
     size_t start;
@@ -360,7 +360,7 @@ namespace test {
       return GERTH_NUM_INSERT_BUFFER_OVERFLOW - start;
     }
     void restart() {
-      start = elapsed();
+      start = GERTH_NUM_INSERT_BUFFER_OVERFLOW;
     }
   private:
     size_t start;
@@ -374,7 +374,7 @@ namespace test {
       return GERTH_NUM_DELETE_BUFFER_OVERFLOW - start;
     }
     void restart() {
-      start = elapsed();
+      start = GERTH_NUM_DELETE_BUFFER_OVERFLOW;
     }
   private:
     size_t start;
@@ -388,7 +388,7 @@ namespace test {
       return GERTH_NUM_POINT_BUFFER_UNDERFLOW - start;
     }
     void restart() {
-      start = elapsed();
+      start = GERTH_NUM_POINT_BUFFER_UNDERFLOW;
     }
   private:
     size_t start;
@@ -402,7 +402,7 @@ namespace test {
       return GERTH_NUM_NODE_DEGREE_OVERFLOW - start;
     }
     void restart() {
-      start = elapsed();
+      start = GERTH_NUM_NODE_DEGREE_OVERFLOW;
     }
   private:
     size_t start;

@@ -48,11 +48,12 @@ class gerth_fanout_experiment : public base_experiment {
 int main() {
 
   gerth_fanout_experiment gfe("gerth_fanout_experiment");
-  gfe.add(1, "fanout2", common::PST_VARIANT::GERTH, 1024*1024, log(2.5)/log(1024.0*1024.0)); //fanout 2
-  gfe.add(2, "fanout3", common::PST_VARIANT::GERTH, 1024*1024, log(3.0)/log(1024.0*1024.0)); // 3
-  gfe.add(3, "fanout4", common::PST_VARIANT::GERTH, 1024*1024, log(4.5)/log(1024.0*1024.0)); // 4
-  gfe.add(4, "fanout5", common::PST_VARIANT::GERTH, 1024*1024, log(5.5)/log(1024.0*1024.0)); // 5
-  gfe.add(5, "fanout6", common::PST_VARIANT::GERTH, 1024*1024, log(6.5)/log(1024.0*1024.0)); // 6
+  gfe.add(1, "fanout8", common::PST_VARIANT::GERTH, 1024*1024, log(8.5)/log(1024.0*1024.0));
+  gfe.add(2, "fanout16", common::PST_VARIANT::GERTH, 1024*1024, log(16.5)/log(1024.0*1024.0));
+  gfe.add(3, "fanout32", common::PST_VARIANT::GERTH, 1024*1024, log(32.5)/log(1024.0*1024.0));
+  gfe.add(4, "fanout64", common::PST_VARIANT::GERTH, 1024*1024, log(64.5)/log(1024.0*1024.0));
+  gfe.add(5, "fanout128", common::PST_VARIANT::GERTH, 1024*1024, log(128.5)/log(1024.0*1024.0));
+
   gfe.run();
   gfe.plot();
 
