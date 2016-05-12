@@ -54,7 +54,7 @@ namespace util {
   void flush_container_to_file
   (InputIterator first, InputIterator last, const std::string &file_name, size_t buffer_size) {
     if (file_exists(file_name)) remove_file(file_name);
-    io::buffered_stream<T> file(buffer_size);
+    io::buffered_stream<T> file(STREAM_BUFFER_SIZE);
     file.open(file_name);
     //file.truncate();
     while (first != last) {
@@ -66,7 +66,7 @@ namespace util {
 
   template <class Container, typename T>
   void load_file_to_container(Container &c, const std::string &file_name, size_t buffer_size) {
-    io::buffered_stream<T> file(buffer_size);
+    io::buffered_stream<T> file(STREAM_BUFFER_SIZE);
     file.open(file_name);
     //DEBUG_MSG("file_size: " << file.size() / sizeof(T));
     while (!file.eof()) {
