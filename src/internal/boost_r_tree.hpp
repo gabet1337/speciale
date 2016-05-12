@@ -27,7 +27,7 @@ namespace internal {
     size_t size();
     void print();
   private:
-    bgi::rtree<pt, bgi::linear<16> > rtree;
+    bgi::rtree<pt, bgi::quadratic<16> > rtree;
     unsigned next_id;
     size_t buffer_size;
   };
