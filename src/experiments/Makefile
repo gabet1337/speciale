@@ -17,13 +17,11 @@ query_experiment: $(FILES) query_experiment.cpp
 query_experiment_report_50mb: $(FILES) query_experiment_report_50mb.cpp
 	$(CC) ../stream/old_stream.cpp query_experiment_report_50mb.cpp -o query_experiment_report_50mb $(MYSQL)
 
-<<<<<<< HEAD
 gerth_query_fanout_experiment: $(FILES) gerth_query_fanout_experiment.cpp
 	$(CC) ../stream/old_stream.cpp gerth_query_fanout_experiment.cpp -o gerth_query_fanout_experiment $(MYSQL)
-=======
+
 delete_experiment: $(FILES) delete_experiment.cpp
 	$(CC) ../stream/old_stream.cpp delete_experiment.cpp -o delete_experiment $(MYSQL)
->>>>>>> 2616ef62e4b795c4378ea04890b7353e010892a8
 
 gerth_fanout_experiment: $(FILES) gerth_fanout_experiment.cpp
 	$(CC) ../stream/old_stream.cpp gerth_fanout_experiment.cpp -o gerth_fanout_experiment $(MYSQL)
