@@ -28,6 +28,13 @@
 \newlist{inlinelist}{enumerate*}{1}
 \setlist[inlinelist]{label=(\roman*)}
 
+% tikz
+\usepackage{tikz}
+% git graph
+\newcommand\commit[3]{\node[commit] (#1) {}; \node[clabel] at (#1) {\texttt{#1}: (\textit{#2}) #3};}
+\newcommand\ghost[1]{\coordinate (#1);}
+\newcommand\connect[2]{\path (#1) to[out=90,in=-90] (#2);}
+
 % Code comments like [CLRS]
 \renewcommand{\algorithmiccomment}[1]{\makebox[5cm][l]{$\triangleright$ \textit{#1}}}
 \usepackage{framed,graphicx,xcolor}
@@ -102,14 +109,79 @@
 
 \tableofcontents
 
-\chapter*{Foreword}
-\label{chp:foreword}
-\addcontentsline{toc}{chapter}{Foreword}
+\chapter*{Preface}
+\label{chp:preface}
+\addcontentsline{toc}{chapter}{Preface}
 \todo{mention star wars and scaring the crap out of C}
 
 \todo{Getting hot in here}
 
 \todo{number of lines of code}
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\tikzstyle{commit}=[draw,circle,fill=white,inner sep=0pt,minimum size=5pt]
+\tikzstyle{clabel}=[right,outer sep=1em]
+\tikzstyle{every path}=[draw]
+\matrix [column sep={1em,between origins},row sep=\lineskip]
+{
+\commit{4ee8a7a}{19.Apr}{Base experiment class added} & \\
+\commit{e028c0b}{17.Apr}{Merge: MySQL PST done + Internal PST done} & \\
+& & \ghost{branch6} & \commit{f585f41}{14.Apr 2016}{Internal dynamic PST added} \\
+& \commit{f96b91a}{12.Apr}{Merge: Boost R-tree done and MySQL PST started} & & \\
+& \ghost{branch5} & \commit{1132d2e}{12.Apr 2016}{Documenting theory of Arge} \\
+\ghost{branch4} & \commit{ecd8b6e}{11.Apr 2016}{Wrapper of Boost R-tree implemented} \\
+\commit{5f2471b}{07.Apr 2016}{Merge: All tests of Arge passes} & \\
+\commit{3db0fea}{06.Apr 2016}{All tests of Brodal passes} & \ghost{branch3} \\
+& \commit{1e4e94b}{30.Mar 2016}{Implementation of Arge begun} \\
+\commit{69296f7}{29.Mar 2016}{Cache event loop and intense bug hunting} & \ghost{branch2} \\
+& \commit{ebad13f}{28.Mar 2016}{Documenting theory on Brodal} \\
+\commit{6d7910d}{15.Mar 2016}{Total refactoring from recursion to event loop} & \\
+\commit{d3857d6}{05.Mar 2016}{Cascading overflowing of point buffers} & \\
+\commit{d4db0d5}{24.Feb 2016}{Node degree overflow might work} & \ghost{branch1}\\
+\commit{d764b48}{19.Feb 2016}{Implementation of Brodal started} & \\
+& \commit{7657914}{18.Feb 2016}{Documenting theory on Child structure} \\
+\commit{54ba4b2}{17.Feb 2016}{All tests of Child structure passes} & \\
+\commit{c589395}{11.Feb 2016}{Implementation of Child structure started} & \\
+\commit{9f9c652}{10.Feb 2016}{All tests of I/O streams passes} & \\
+\commit{b3bd158}{08.Feb 2016}{Implementation of I/O streams started} & \\
+\commit{63268c1}{01.Feb 2016}{Initial commit}& \\
+};
+\connect{63268c1}{b3bd158};
+\connect{b3bd158}{9f9c652};
+\connect{9f9c652}{c589395};
+\connect{c589395}{54ba4b2};
+\connect{54ba4b2}{d764b48};
+\connect{54ba4b2}{7657914};
+\connect{7657914}{branch1};
+\connect{branch1}{d3857d6};
+\connect{d764b48}{d4db0d5};
+\connect{d4db0d5}{d3857d6};
+\connect{d3857d6}{6d7910d};
+\connect{6d7910d}{ebad13f};
+\connect{6d7910d}{69296f7};
+\connect{ebad13f}{branch2};
+\connect{branch2}{3db0fea};
+\connect{69296f7}{1e4e94b};
+\connect{1e4e94b}{branch3};
+\connect{branch3}{5f2471b};
+\connect{3db0fea}{5f2471b};
+\connect{69296f7}{3db0fea};
+\connect{5f2471b}{ecd8b6e};
+\connect{5f2471b}{branch4};
+\connect{branch4}{f96b91a};
+\connect{branch4}{1132d2e};
+\connect{f96b91a}{f585f41};
+\connect{ecd8b6e}{branch5};
+\connect{branch5}{f96b91a};
+\connect{f96b91a}{e028c0b};
+\connect{f585f41}{e028c0b};
+\connect{1132d2e}{branch6};
+\connect{branch6}{e028c0b};
+\connect{e028c0b}{4ee8a7a};
+\end{tikzpicture}
+\caption{Excerpt of git history for the entire project}
+\end{figure}
 
 \pagenumbering{arabic}
 \setcounter{secnumdepth}{2}
@@ -211,6 +283,7 @@ The total amortized cost becomes
 If we can show that $\Phi(D_i) \geq \Phi(D_0)$ for all $i$ then we know that we always are able to build up enough potential in advance.
 
 \section{Global rebuilding}
+\label{sec:prelim_global_rebuilding}
 The term \textit{global rebuilding} refers to the standard technique of making a (typically small) static data structure dynamic. We simply store all updates in a \textit{update block} and once a certain threshold has been collected we rebuild the data structure~\cite{ionote}. For data structures that does not allow the space for deleted records to be reoccupied we \textit{mark} (or \textit{weak delete}) the elements. Whenever $\alpha N$ elements have been marked, for some constant $\alpha > 0$, the entire data structure is rebuilt from scratch with only the non-marked elements. The cost of rebuilding is at most a constant factor higher than the cost of inserting $\alpha N$ elements and so the amortized cost of global rebuilding can be charged to the insertions of the deleted elements~\cite{Meyer:2003/AMH/1744652}.
 
 \section{Filtering}
@@ -260,6 +333,43 @@ Fusing two nodes require $\mathcal{O}(1)$ I/O's but a fuse can cascade from a le
 A B-tree on $N$ elements are stored in $\mathcal{O}(\nicefrac{N}{B})$ blocks and can be constructed in the sorting bound.
 
 \todo{Maaske lav nogle figurer}
+
+\section{Buffer tree}
+\label{sec:prelim_buffer_tree}
+The Buffer Tree of Arge~\cite{Arge:1995:BTN:645930.672850} combines the basic B-Tree with a \textit{buffer-technique} that will be introduced shortly. The result is an external data structure supporting batched operations I/O efficiently. The ideas introduced by Arge has proven especially useful when generalizing well-known internal-memory algorithms into efficient I/O algorithms. The main idea of the buffer-technique is to introduce \textit{laziness} in the update algorithms and utilizing main memory to process a large number of updates simultaneously. For example, when inserting a point we do not search all the way down the tree to find the leaf. Instead, the point is inserted into a buffer of the root. Whenever the size of a buffer exceeds a certain threshold we push elements from the buffer one level down to buffers on the next level of the tree. This process of emptying full buffers is repeated recursively down the tree.
+
+Formally the basic Buffer tree is defined as follows:
+
+\begin{definition}
+\label{def:buffer_tree}
+A basic buffer tree $\mathcal{T}$ is
+\begin{itemize}
+	\item A B-tree with branching parameter $\nicefrac{M}{B}$ and leaf parameter $B$
+	\item Each internal node has a buffer of size $M$
+\end{itemize}
+\end{definition}
+
+\textbf{Updates} are handled handled by augmenting the element in question with information on whether we are inserting or deleting. Since an element can be represented in multiple buffers, we also augment elements with a time stamp.
+Whenever we have collected $B$ elements we insert all of them into the root buffer of size $M$. Whenever the buffer overflows, i.e. have more than $M$ points, we initiate a buffer-emptying process that distributes all elements in the buffers to the children.
+
+For an \textit{internal} node that do not have leaves as children this process is done as follows. First, we load the $M$ unsorted elements into main memory and sort them. Then we scan through the sorted list while removing matching inserts and deletes with respect to the time stamps of each element. Now we simply scan distribute the remaining elements one level down. We make sure to distribute the elements in sorted order, since this will guarantee that we leave no buffer of a child with more than $M$ unsorted elements followed by list of sorted elements. Thus, we are able to sort the resulting buffer in a linear number of I/O's.
+
+We then recursively empty full child buffers provided the children are internal nodes that do not have leaves as children. Only when we have emptied buffers of all overflowing internal nodes which does not have leaves as children, we proceed and process the buffer-emptying process to leave nodes. The reason is that a buffer-emptying process on a leaf node may result in the need for rebalancing. By only emptying leaf nodes after all internal node buffer-emptying processes have been performed we prevent rebalancing and buffer-emptying processes from interfering with each other.
+
+We empty all relevant leaf nodes buffers one-by-one while maintaining the \textit{leaf-emptying invariant} that all buffers of nodes on the path from root of $\mathcal{T}$ to a leaf node with full buffer are empty. Since we handle all internal nodes before emptying the leaf nodes this invariant is true when we handle the buffer-emptying of the first leaf. To empty a node $u$ with $K$ elements in the leaves, we start by sorting the buffer and remove matching inserts and deletes. Then, we merge the buffer elements with the $K$ leaves below, again removing matching inserts and deletes. The resulting set of $K'$ sorted elements now needs to replace the $K$ original leaves along with new routing elements of $u$ reflecting the changes. If we end up with a resulting set of size $K' < K$, i.e. we do not have enough elements to fill the $K$ leaves, we introduce $K-K'$ dummy elements and insert those in the remaining leaves. If we have $K' \geq K'$ we place $K$ elements in the leaves. The remaining (if any) are finally placed one-by-one and rebalance the B-tree when necessary. We can rebalance as normally using splits as depicted in figure \todo{reference to figure that should be placed in B-tree section}, since the leaf emptying invariant insures that all nodes from $u$ to the root of $\mathcal{T}$ have empty buffers.
+
+After we have emptied all leaf-node buffers we remove the placeholder-elements one-by-one. The leaf-emptying invariant ensures that a node $v$ on the path from $u$ to the root has an empty buffer, but $v's$ siblings may not have empty buffers. Therefore we can not fuse in a normal B-tree manner. Instead, we perform a buffer-emptying process on $v's$ immediate sibling(s) before performing the actual fuse. Note that we empty the buffers of both immediate siblings of $v$ because insert rebalancing may result in one of them having the same parent as $v$. This happens if the parent of $v$ splits.
+
+The emptying of the buffer of a sibling node $v'$ can result in buffers running full. We empty all such full non-leaf buffers before performing the actual fuse on $v$. The place-holder elements ensures we are always only in the process of handling a rebalancing caused by a single delete.
+
+\subsection{Analysis}
+Emptying an internal node buffer of size $X$ takes $\mathcal{O}(\nicefrac{X}{B})$ to scan the elements and $\mathcal{O}(\nicefrac{M}{B})$ to distribute them one level down. In order to empty a leaf node we have to scan the $\Theta(M)$ elements below it which gives an additional $\mathcal{O}(\nicefrac{X}{B} + \nicefrac{M}{B})$ I/O's.
+
+By letting the branching parameter equal $\nicefrac{M}{B}$ and the leaf parameter equal $B$, we can push all elements in a buffer of size $M$ down to the next level in $\mathcal{O}(\nicefrac{M}{B})$ I/O's. This follows from the fact all the elements fit into main memory and we use $\mathcal{O}(1)$ I/O's to push one block one level down. Disregarding rebalancing of the tree, we can argue that we touch each block of elements a constant number of times on each of the $\mathcal{O}(\log_{\nicefrac{M}{B}} \frac{N}{B})$ levels of the tree. Thus, inserting $N$ elements can be done in an optimal $\mathcal{O}(\frac{N}{B} \log_{\nicefrac{M}{B}} \frac{N}{B})$ I/O's in total assuming no rebalancing of the tree.
+
+It is showed in~\cite{ionote} that a $N$-element B-tree $T$ with branching parameter $b$ and leaf parameter $k = \Omega(B)$ has an amortized number of internal node rebalancing operations (split/fuse) needed after an update equal to $\mathcal{O}(\frac{1}{b \cdot k}\log_b \frac{N}{B}$ I/O's. From this it follows directly that the total number of internal node rebalancing operations performed during $N$ updates is $\mathcal{O}(\frac{N}{b \cdot M/B}\log_{M/B} \frac{N}{B})$ Since each operations takes $\mathcal{O}(\nicefrac{M}{B})$ I/O's to empty a non-empty buffer, the total cost of the rebalancing is also $\mathcal{O}(\frac{N}{B} \log_{\nicefrac{M}{B}} \frac{N}{B})$.
+
+We conclude that the total cost of a sequence of $N$ update operations on an initially empty buffer tree is $\mathcal{O}(\frac{N}{B} \log_{\nicefrac{M}{B}} \frac{N}{B})$.
 
 \section{General Sets of Points}
 Throughout this thesis we will impose the restriction that no two points have equal $x$- or $y$-coordinate. The restriction is made in order to simplify the description and analysis of the algorithms we introduce. As it is a highly unrealistic restriction we will show that it is easy to remedy. The key observation is that we never assume coordinates to be real numbers. The only thing we assume is that points come from a totally ordered universe such we can compare points. This means we can replace the real-valued coordinates with elements from the \textit{composite-number space} where all elements are defined to be pairs of reals. The \textit{composite number} of two reals $a$ and $b$ is denoted by $(a \mid b)$. We define a total order on the composite-number space by using a lexicographic order. So, for two composite numbers $(a \mid b)$ and $(a' \mid b')$, we have:
@@ -369,6 +479,50 @@ Please refer to table~\ref{tbl:related_work_summary} for a summary of the result
 }
 \end{table}
 
+\todo{Add description of buffer tree as this structure is what Brodal is based upon}
+
+\section{Lower bounds}	
+Solving the problem of three sided range queries is very closely related to that of the 1D-dictionary. Any solution that solves the three sided range query problem can solve the 1D-dictionary problem by testing membership of an element $(x,y)$ by reporting all points in the range $\left[x,x\right] \times \left[y, \infty\right]$. By reduction we must have that the lower bounds of the 1D-dictionary problem also applies to that of three sided range queries.
+
+The 1D-dictionary problem has been a popular topic in the case of internal memory. It has been proved by a simply adversary argument that a query can be forced to cost $\log_2 N$ comparisons no matter the cost of updates, and more generally it has been proved that if an insertion perform at most $\mathcal{O}(k)$ comparisons then queries can be forced to cost at most $\max\left\lbrace \log_2 N, N/2^{\Theta(k)}\right\rbrace$ comparisons~\cite{Borodin81efficientsearching}.
+
+There has also been much work on the lower bounds of the 1D-dictionary problem in external memory.
+
+We here give an adversary argument which shows that for any dictionary storing $N$ elements, there exists a query requiring at least $\log_B \frac{N}{M} - \mathcal{O}(1)$ I/O's, i.e. a lower bound for queries in external memory dictionaries. The argument goes like this: 
+
+Assume that we are at a position in our dictionary where the elements that can still be equal to our query are denoted \textit{candidate elements}. These elements form a consecutive subsequence in the partial ordering of the $N$ elements in the dictionary.
+Initially we can have at most $M$ elements in internal memory. The adversary will now select a partial ordering of these $M$ elements, i.e. select answers to each comparison between these $M$ elements, such that there are at least $\frac{N-M}{M+1} > \frac{N}{M+1}-1$ candidate elements left.
+Each I/O will bring in $B$ elements. If we have $k$ candidate elements before this I/O then the adversary will choose a partial ordering such that there are at least $\frac{k-B}{B+1} > \frac{k}{B+1}-1$ candidate elements left.
+An argument by induction will show that after $i$ I/O's there are at least $\frac{N}{(M+1)(B+1)^i} - 2$ candidate elements left. As a consistent answer to the member query cannot be given before we have only one candidate element left we have that $\frac{N}{(M+1)(B+1)^i} - 2 \leq 1 \Rightarrow i = \log_{B+1} \frac{N}{M} - \mathcal{O}(1)$.
+
+As mentioned in Section~\ref{sec:prelim_b_tree} the B-tree is the external memory version of a binary search tree. The query bounds of the B-tree, $\mathcal{O}(\log_B N + K/B)$, are optimal, i.e. equal to the lower bound, but this is not the case for the update bounds.
+
+Brodal and Fagerberg~\cite{Brodal:2003:LBE:644108.644201} studied two lower bound trade-offs between the I/O complexity of membership queries and updates. They arrive at the following theorem:
+\begin{theorem}
+If $N$ insertions perform at most $\delta \cdot N/B$ I/O's, for $1 \leq \delta \leq B \log_B N$ then
+\begin{enumerate}
+	\item There exists a query requiring at least $\log_{B+1} \frac{N}{M} - \mathcal{O}(1)$ I/O's.
+	\item There exists a query requiring $N/(M\cdot (\frac{M}{B})^{\mathcal{O}(\delta)})$ I/O's for $N > M$.
+	\item There exists a query requiring $\Omega(\log_{\delta \log^2 N} \frac{N}{M})$ I/O's for N > M.
+\end{enumerate}
+\end{theorem}
+
+The first is essentially just the result proved by the above adversary argument saying that B-trees have an optimal query bound.
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{../figures/lower_bound_summary}
+\caption{A summary of the results of Brodal and Fagerberg~\cite{Brodal:2003:LBE:644108.644201}. It depicts the trade-off between insert and search/query. On one end we can achieve really fast insert operations but pay the price with slow queries. In the other end we have the B-tree which query bound matches the optimal but has suboptimal insertions. No results exists for the gaps.}
+\label{fig:lower_bound_summary}
+\end{figure}
+
+The results by Brodal and Fagerberg assume that points are indivisible. Iacono and P\v{a}tra\c{s}cu~\cite{Iacono:2012:UHS:2095116.2095164} looks at what happens when we do not have this assumption and are thus allowed to use hashing. They improve the update time of the buffer tree by roughly a logarithmic factor. More precisely they arrive at the following theorem:
+
+\begin{theorem}
+For any $\max\left\lbrace \log\log N, \log_M N \right\rbrace \leq \lambda \leq B$, we can solve the dictionary problem by a Las Vegas data structure with update time $t_u = \mathcal{O}(\frac{\lambda}{B})$ and query time $t_q = \mathcal{O}(\log_\lambda N)$ with high probability.
+\end{theorem}
+
+This means that in one end of the trade-off they can for $\lambda = B^\epsilon$ obtain an update time of $\mathcal{O}(1/B^{1-\epsilon})$ and query time of $\mathcal{O}(\log_B N)$. This matches the bounds of the buffer tree of Arge. In the other end of the trade-off where they are able to achieve fast updates very close to the optimal disk transfer rate of $1/B$ namely they obtain: $t_u^{\min} = \mathcal{O}(\frac{1}{B} \cdot \max\left\lbrace \log\log N, \log_M N \right\rbrace)$.
 
 \chapter{Internal Priority Search Tree}
 \label{chp:internal_pst}
@@ -411,8 +565,6 @@ When answering a query on the form $[x_1,x_2] \times [y,\infty]$ we begin at the
 \subsection*{Analysis}
 The search operation follows two root to leaf paths each of size $\mathcal{O}(\log n)$. Using the search path and heap property of the tree we are guaranteed to only visit nodes that is actually reported when querying. This gives a total running time of $\mathcal{O}(\log n + K)$.
 
-\todo{Analyse in the I/O model as well.}
-
 \section{Dynamic Priority Search Tree}
 The key difference between the static solution presented by McCreight and a dynamic solution is that we always ensure that each point is placed in exactly one leaf and the order of the leaves from left to right corresponds to the order of the $x$-coordinates of the points. The internal nodes of the tree store the point with greatest $y$-coordinate represented by a leaf in the subtree of the node which is not already stored by an ancestor of this interior node. It is clear we have $n$ leaf nodes and $n-1$ internal nodes in the data structure.
 Whenever we store a point in an interior node, then the leaf node which corresponds to this point is considered a \textit{placeholder} for this point. A total of $n - 1$ nodes are left as placeholders. Please refer to figure~\ref{fig:dynamic_pst} for an illustration of a dynamic priority search tree over the points $P = \{A, B, C, D, E, F, G \}$.
@@ -425,7 +577,7 @@ Whenever we store a point in an interior node, then the leaf node which correspo
 \end{figure}
 
 \section{Construction}
-Assuming we are given a list of $x$-sorted points we can construct the dynamic priority search tree using a bottom-up construction method similar to the bottom-up construction of a heap. At the first phase of construction we associate each points point with a placeholder in the priority search tree. These placeholders will become the leaf level of the data structure. Next we select pairs of placeholders and compare them to one another in terms of their $y$-coordiates. We denote the point with the highest $y$-coordinate as the winning point and the comparison between points as a tournament round. It is the winning point that will be represented by a new internal node at one level higher in the tree. Please refer to figure~\ref{fig:dynamic_pst_construction} for an illustration of the construction of the leaf level of the data structure.
+Assuming we are given a list of $x$-sorted points we can construct the dynamic priority search tree using a bottom-up construction method similar to the bottom-up construction of a heap. At the first phase of construction we associate each point with a placeholder in the priority search tree. These placeholders will become the leaf level of the data structure. Next we select pairs of placeholders and compare them to one another in terms of their $y$-coordiates. We denote the point with the highest $y$-coordinate as the winning point and the comparison between points as a tournament round. It is the winning point that will be represented by a new internal node at one level higher in the tree. Please refer to figure~\ref{fig:dynamic_pst_construction} for an illustration of the construction of the leaf level of the data structure.
 At the next level of the tree, we perform the same comparisons as before to determine which nodes will advance to the third level. At most $\nicefrac{n}{2}$ are compared at this level.
 
 \begin{figure}[h]
@@ -435,14 +587,14 @@ At the next level of the tree, we perform the same comparisons as before to dete
 	\label{fig:dynamic_pst_construction}
 \end{figure}
 
-Every tournament round will potential leave an empty interior node behind as the wining point is moved one level up. If this occurs we have to check if any previous tournament losers are now eligible to be represented higher in the tree. We must also remember that some interior nodes in the tree may not represent any points and will this remain empty when the construction is complete.
+Every tournament round will potential leave an empty interior node behind as the wining point is moved one level up. If this occurs we have to check if any previous tournament losers are now eligible to be represented higher in the tree. We must also remember that some interior nodes in the tree may not represent any points and will thus remain empty when the construction is complete.
 
 \subsection*{Analysis}
 First, all points is inserted as leafs in the bottom layer of the data structure. The leafs counts for $\nicefrac{n}{2}$ of the total nodes in the tree. The next $\nicefrac{n}{2^2}$ nodes are created at height $h = 1$ and the tournaments are played one level down. For the $i$'th step we create $\nicefrac{n}{2^i}$ nodes and we will play tournaments $i$ levels down. The total steps $N$ to build the dynamic priority search tree of size $n$ is thus:
 
 $$ N = \sum\limits_{i=0}^{\log(n)} \frac{n}{2^{i+1}}i = \frac{n}{2} \left( \sum\limits_{i=0}^{\log(n)} i(\nicefrac{1}{2})^i \right) \leq \frac{n}{2} \left( \sum\limits_{i=0}^{\infty} i(\nicefrac{1}{2})^i \right)$$
 
-The solution to the last summation can be found by taking the derivative of the both sides of the well known geometric series:
+The solution to the last summation can be found by taking the derivative of both sides of the well known geometric series:
 
 $$ \frac{\partial}{\partial x} \left( \sum\limits_{i=0}^{\infty} x^i \right) = \frac{\partial}{\partial x} \left( \frac{1}{1-x} \right) \Rightarrow \sum_{i=1}^{\infty} ix^i = \frac{x}{(1-x)^2} $$
 
@@ -452,8 +604,6 @@ $$N \leq \frac{2n}{2} = n $$
 
 This implies we can construct the dynamic priority search in linear time assuming we are given sorted input.
 
-\todo{Analyse in the I/O model as well.}
-
 \section{Insertion}
 
 In order to dynamically insert points into the data structure, we add a new leaf (placeholder) for the new point and perform a pushdown operation with the new point starting at the root. We can determine where to add the new placeholder as the dynamic priority search tree is a binary search tree on the $x$-coordinates of the points. When we reach an existing leaf, we add a new internal node in place of this leaf, and make the existing leaf one of the children of this new internal node. Then we add a new leaf to the tree as the other child, and store the new point in this leaf. In order to maintain the heap order of the priority search tree we now perform a pushdown operation, where we at each step compare the $y$-coordinate of the point to be inserted with $y$-coordinate of the point represented by the given internal node. If the $y$-coordinate of the point to be inserted is less than that of the point stored in the internal node, then we push the point to be inserted further down the tree. However, if the $y$-coordinate of the point to be inserted is greater than the $y$-coordinate of the point in the internal node, then we store the point to be inserted in this internal node, and take the point which was formerly represented by this internal node and continue the pushdown operation with this point instead.
@@ -462,7 +612,6 @@ In order to dynamically insert points into the data structure, we add a new leaf
 
 The first step of the insertion algorithm is a binary search traversal on the $x$-coordinate of the new point. The path is of length $\mathcal{O}(\log n)$. Adding a new internal node in place of the old leaf takes a constant amount of operations. The pushdown operation follows a single root to leaf path of length $\mathcal{O}(\log n)$ and uses a constant amount of work in each node. So we conclude insertions can be done in $\mathcal{O}(\log n)$.
 
-\todo{Analyse in the I/O model as well.}
 
 \section{Deletion}
 
@@ -471,49 +620,43 @@ When dynamically deleting a point we must locate the interior node (if any) repr
 \subsection*{Analysis}
 Locating the interior node representing the point to delete can be done in $\mathcal{O}(\log n)$ using the binary search property maintained by the priority search tree. Once we have located the interior node we can remove this point in $\mathcal{O}(1)$. The deletion of the point of an interior node leaves a hole in the tree that we fill by playing tournaments following a node to leaf path of length $\mathcal{O}(\log n)$. We conclude the deletion algorithm requires $\mathcal{O}(\log n)$ per deletion.
 
-\todo{Analyse in the I/O model as well.}
 
 \section{Rebalancing}
 If we use the operations for dynamic updates as stated above without any measures for tree rebalancing, we could end up with a highly unbalanced tree. We fix this using global rebuilding when a linear number of updates have been performed. We can collect all points in sorted order in linear time by visiting leafs from left to right using a DFS traversal of the tree. On the collected points we now use the linear construction algorithm to rebalance the tree. Using this strategy yields a data structure that handles updates in $\mathcal{O}(\log n)$ amortized. By using a Red-Black tree as the heart of the tree we can achieve a data structure that is $\mathcal{O}(\log n)$ worst case.
 
-\todo{Analyse in the I/O model as well.}
+\section{Bounds in the I/O model}
+The above bounds translate directly to the I/O model as we cannot guarentee that nodes on the search path are perfectly placed in blocks, which in the worst case means that each visit to a node will equal 1 I/O.
 
-\chapter{External Memory Buffered Priority Search Tree}
-\label{chp:epst}
-In this section we present an external memory data structure described by Brodal in~\cite{DBLP:journals/corr/Brodal15}. This structure supports updates in amortized $\mathcal{O}\left(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N\right)$, three sided range queries in $\mathcal{O}\left(\frac{1}{\epsilon}\log_B N + \nicefrac{K}{B}\right)$ for $0 \leq \epsilon \leq \frac{1}{2}$, and can be constructed on $N$ points in the sorting bound. $\epsilon$ is a parameter that determines the size of the fanout and in turn the size of a bootstrapped substructure for storing $\mathcal{O}(B^{1+\epsilon})$ points, $0 \leq \epsilon \leq \frac{1}{2}$.
-The substructure is very similar to that of Arge et al.~\cite[Section~3.1]{arge_vitter_2003} for handling $\mathcal{O}(B^2)$ points with the main difference being that we reduce the capacity to allow an amortized constant number of I/O's per update. The bootstrapped structure is in ~\cite{arge_vitter_2003} used to store the top $\mathcal{O}(B^2)$ points w.r.t. $y$ value for the subtree rooted at the given node of the substructure. This structure uses it in a slightly different way to store the top $\mathcal{O}(B^{1+\epsilon})$ points of the children of the given  node. This structure is described further in Section~\ref{sec:child_structure}.
+\chapter{External Memory Priority Search Tree}
+\label{chp:arge_pst}
+In this chapter we present an older result on dynamic three-sided range queries due to Arge et al.~\cite{arge_samoladas_vitter_1999}.
+The result by Arge et al. is a weight-balanced B-tree where each node is augmented with a bootstrapped structure for storing the top $\Theta(B^2)$ points w.r.t. the $y$-value of the subtree rooted at that node. This bootstrapped structure is described in Section~\ref{sec:child_structure} and the main data structure of Arge et al. is described in Section~\ref{sec:arge_structure} and it will describe a structure proving Theorem~\ref{thm:arge_structure}.
 
-The external memory buffered priority search tree is a combination of the external memory priority search tree of Arge et al. described in Chapter~\ref{chp:arge_pst}, and the buffered updates of the buffer tree also thanks to Arge~\cite{Arge:1995:BTN:645930.672850}. The data structure is described in Section~\ref{sec:main_data_structure}.
+\begin{theorem}
+\label{thm:arge_structure}
+An external memory data structure exists supporting insertion and deletion in amortized $\mathcal{O}(\log_B N/B)$ I/O's and three sided range queries in $\mathcal{O}(\log_B N/B + K/B)$ I/O's, where $N$ is the input size, and $K$ is the size of the output. The structure uses $\mathcal{O}(N/B)$ space, i.e. linear space.
+\end{theorem}
 
-\begin{figure}
-	\centering
-	\includegraphics[width=\textwidth]{../figures/gerth_tree}
-	\caption{External memory priority search tree with buffers. The point buffers of the children is in the child structure of the parent allowing for fast queries.}
-	\label{fig:gerth_tree}
-\end{figure}
-
-\section{Child structure}
+\section{Dynamic 3-sided queries on $\Theta(B^2)$ points}
 \label{sec:child_structure}
 In this section we will describe a data structure that supports the operations stated in Theorem~\ref{thm:child_structure}.
 \begin{theorem}
 \label{thm:child_structure}
-There exists a dynamic data structure for storing $\mathcal{O}(B^{1+\epsilon})$ two dimensional points, $0 \leq \epsilon \leq \frac{1}{2}$.
+There exists a dynamic data structure for storing $\mathcal{O}(B^{1+\epsilon})$ two dimensional points, $0 \leq \epsilon \leq 1$.
 Insertion and deletion of $s$ points requires amortized $\mathcal{O}(1+\nicefrac{s}{B^{1-\epsilon}})$ I/O's.
 The data structure supports reporting all points inside a query range of the form $[x_1,x_2] \times [y,\infty]$ in $\mathcal{O}(1+\nicefrac{K}{B})$ I/O's.
 The structure uses linear space.
-Finally the structure can be constructed using $\mathcal{O}(\nicefrac{N}{B})$ I/O's given a x-sorted set of $N$ points.
+Finally the structure can be constructed using $\mathcal{O}(B^{1+\epsilon} / B)$ I/O's given a x-sorted set of $B^{1+\epsilon}$ points.
 \end{theorem}
 
-\todo{Kasper: Troede det var $B^{1+\epsilon}$ points??}
-
-The child structure consists of a static structure $\mathcal{L}$ storing $\mathcal{O}(B^{1+\epsilon})$ points and two buffers $\mathcal{I}$ and $\mathcal{D}$ storing at most $B$ points. $\mathcal{I}$ and $\mathcal{D}$ are initially empty and store delayed insertions and deletions, respectively. A point can appear in either $\mathcal{I}$ or $\mathcal{D}$ but not both as they cancel each other out.
+The structure consists of a static structure $\mathcal{L}$ storing $\mathcal{O}(B^{1+\epsilon})$ points and two buffers $\mathcal{I}$ and $\mathcal{D}$ storing at most $B$ points. $\mathcal{I}$ and $\mathcal{D}$ are initially empty and store delayed insertions and deletions, respectively. A point can appear in either $\mathcal{I}$ or $\mathcal{D}$ but not both as they cancel each other out.
 
 Let $L$ be the points stored in $\mathcal{L}$ and let $\ell = \lceil \nicefrac{\vert L \vert}{B}\rceil$, then $\mathcal{L}$ consists of $2\ell-1$ blocks of $B$ points in each block. The points in $L$ are first partitioned into blocks $b_1,\dots,b_\ell$ sorted by $x$-value. The last block may have size less than $B$.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=1]{../figures/sweep-line}
-	\caption{Child structure for $B=4$. The points are represented by white nodes. The sweep line has merged blocks $b_1$ and $b_2$ at the point where the blocks contain $4$ points on or above the line. This is represented by a line segment with black endpoints and the $b_{1,2}$ label. The same goes for the other merged blocks created.}
+	\caption{The structure for $B=4$. The points are represented by white nodes. The sweep line has merged blocks $b_1$ and $b_2$ at the point where the blocks contain $4$ points on or above the line. This is represented by a line segment with black endpoints and the $b_{1,2}$ label. The same goes for the other merged blocks created.}
 	\label{fig:sweep-line}
 \end{figure}
 
@@ -526,7 +669,7 @@ A catalog structure stores in $\mathcal{O}(1)$ disk blocks a reference to each o
 %%%%%%%%%%%%%
 % UPDATES %%%
 %%%%%%%%%%%%%
-\textbf{Insertions and deletions} are stored in $\mathcal{I}$ and $\mathcal{D}$ respectively. When a point is inserted in $\mathcal{I}$ or $\mathcal{D}$ we make sure to remove any existing occurrence of the point in $\mathcal{I}$ and $\mathcal{D}$ such that the new update overrides any previous updates. Whenever $\mathcal{I}$ or $\mathcal{D}$ overflows, i.e. $\vert \mathcal{I} \vert > B$ or $\vert \mathcal{D} \vert > B$, the stored updates are applied to the the set of points in $\mathcal{L}$. This is done by scanning $L$ in increasing $x$-order while applying insertions and deletions, i.e. for each point in $L$ we check whether we should insert a new point from $\mathcal{I}$ before it or if the point should be deleted. This process results in a new set of points $L'$ which once again is partitioned into blocks $b_1,\dots,b_{\ell'}$ and a vertical sweep similar to the previously described sweep is performed to rebuild the merged blocks and catalog.
+\textbf{Insertions and deletions} are stored in $\mathcal{I}$ and $\mathcal{D}$ respectively. When a point is inserted in $\mathcal{I}$ or $\mathcal{D}$ we make sure to remove any existing occurrence of the point in $\mathcal{I}$ and $\mathcal{D}$ such that the new update overrides any previous updates. Whenever $\mathcal{I}$ or $\mathcal{D}$ overflows, i.e. $\vert \mathcal{I} \vert > B$ or $\vert \mathcal{D} \vert > B$, the stored updates are applied to the set of points in $\mathcal{L}$. This is done by scanning $L$ in increasing $x$-order while applying insertions and deletions, i.e. for each point in $L$ we check whether we should insert a new point from $\mathcal{I}$ before it or if the point should be deleted. This process results in a new set of points $L'$ which once again is partitioned into blocks $b_1,\dots,b_{\ell'}$ and a vertical sweep similar to the previously described sweep is performed to rebuild the merged blocks and catalog.
 This reconstruction is done in $\mathcal{O}(\ell')$ I/O's. As $\ell' = \lceil \nicefrac{\vert L \vert}{B}\rceil$ it requires $\mathcal{O}(\lceil \nicefrac{\vert L \vert}{B}\rceil) = \mathcal{O}(B^\epsilon)$ I/O's to rebuild $\mathcal{L}$. If we amortize this cost over the $>B$ updates that caused the overflow the cost becomes $\mathcal{O}\left(\frac{B^\epsilon}{B}\right) = \mathcal{O}\left(\nicefrac{1}{B^{1-\epsilon}}\right)$ amortized I/O's per delayed update.
 
 %%%%%%%%%%%%%
@@ -547,189 +690,17 @@ The $t$ relevant blocks are scanned and the points contained in the query are re
 
 We have now showed that we are able to construct a dynamic data structure with the bounds stated in Theorem~\ref{thm:child_structure}.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%
-% Main data structure %%%
-%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Main structure}
+\label{sec:arge_structure}
+As mentioned earlier we have that the main structure is a weight-balanced B-tree~\cite{arge_vitter_1996} with the normal lexicographical ordering of points with regards to $x$. The differences between a weight balanced B-tree and a regular B-tree are with the regards to how and when splitting and fusing of nodes takes place. Constraints are imposed on the \textit{weight} of a node rather than the number of children of it. The weight of a node $v$ is the number of elements stored in the subtree rooted at $v$. Let $a$ be the branching parameter and $k$ the leaf parameter of the tree. An internal node on level $l$ has weight between $\frac{1}{2}a^lk$ and $2a^lk$ and has atleast one child. Inserting in a weight balanced B-tree is similar to a normal B-tree and when a leaf splits it might cause the weights of the parent to become too large and recursively split on a path from a leaf to the root.
 
-\section{Main data structure}
-\label{sec:main_data_structure}
-This section presents the main data structure achieving the results of Theorem~\ref{thm:main_structure}.
-\begin{theorem}
-\label{thm:main_structure}
-An external memory data structure exists supporting insertion and deletion of points in amortized $\mathcal{O}(\nicefrac{1}{\epsilon B^{1-\epsilon}} \log_B N)$ I/O's and three sided range queries in amortized $\mathcal{O}(\nicefrac{1}{\epsilon} \log_B N + \nicefrac{K}{B})$, where $\epsilon$ is a constant, $0 < \epsilon \leq \nicefrac{1}{2}$, $N$ is the number of points in the structure, and $K$ is the size of the output. The structure can be constructed in amortized $\mathcal{O}(\nicefrac{N}{B})$ I/O's on an x-sorted set of points and stored in $\mathcal{O}(\nicefrac{N}{B})$ blocks.
-\end{theorem}
-\todo{Kasper: Skal $\epsilon$ vaere en konstant. I saafald kan man vel bare slette $\frac{1}{\epsilon}$ ledet?}
-
-The structure is a slightly modified version of the B-tree. Each internal node, except for the root, has a degree between $\frac{\Delta}{2}$ and $\Delta$, with $\Delta = \lceil B^\epsilon \rceil$. The root has degree between $2$ and $\Delta$.
-
-Each node $v$ stores three buffers containing $\mathcal{O}(B)$ points each. A point buffer $P_v$, an insertion buffer $I_v$, and a deletion buffer $D_v$.
-
-The subtree at node $v$ contains points in range spanned by the points in the point buffer $P_v$, i.e. the structure is a search tree on the point in $P_v$ w.r.t. to the normal lexicographical ordering of points.
-
-As in the internal priority search tree the points with highest $y$-value resides in the top of the tree, i.e. we have a heap ordering among the nodes of the tree on the $y$-value. This means that for a node $v$, no child $c$ of $v$ stores an element in $P_c$ with a larger $y$-value than the minimum $y$-value in $P_v$.
-$I_v$ and $D_v$ stores buffered insertions and deletions on their way down to a point buffer of a descendent and are handled recursively whenever a buffer overflows.
-
-For each internal node, $v$, we also store an instance of the child structure, $C_v$, containing the elements $P_c$ for every child $c$ of $v$.
-
-Finally, for each internal node, $v$, we store, in $\mathcal{O}(1)$ blocks, information about the minimum $y$-value of the points of each of $v$'s children or $\infty$ if the child does not store any points.
-
-All information at the root is kept in internal memory except for the child structure.
-\todo{Kasper: Hvorfor ikke child structure?}
-
-\subsection{Invariants}
-For a node $v$ in the main data structure the following invariants must be true:
+Each internal node of the structures stores an instance of the bootstrapped structure for answering 3-sided queries on $\Theta(B^2)$ points. Arge et al. names this structure the query data structure as it allows for fast queries as will be explained later. Points are stored in the query data structure according to the following rules:
 \begin{itemize}
-	\item $P_v$, $I_v$, and $D_v$ are disjoint and points in the buffers have $x$-values spanned by the subtree at $v$.
-	\todo{Kasper: Hvad betyder det? Maaske skal i beskrive mere grundigt ovenfor at det er et soegetrae paa x. PETER: Er gjort ovenfor. Godt nok?}.
-	\item All points in $I_v \cup D_v$ have $y$-value less than the points in $P_v$.
-	\item An update in a buffer at $v$ is more recent and should eventually overwrite any update in a descendent of $v$ with the same point.
-	\item A leaf in the tree has empty insertion and deletion buffers and the size of its point buffer is less than $B/2$.
-	\item An internal node in the tree has $B/2 \leq \vert P_v \vert \leq B$, $\vert D_v \vert \leq B/4$, and $\vert I_v \vert \leq B$.
-\end{itemize}
-
-\subsection{Updates}
-We update the structure by adding points to either the insertion or deletion buffer of the root while maintaining the above invariants.
-To be able to maintain the above invariants we must be very careful whenever we update the data structure. During an update the insertion or deletion buffers might overflow. This is handled in the following five steps:
-\begin{inlinelist}
-	\item handle overflowing deletion buffers
-	\item handle overflowing insertion buffers
-	\item split leaves with overflowing point buffers
-	\item split nodes of degree $\Delta+1$
-	\item fill underflowing point buffers
-\end{inlinelist}
-
-We will in the following look at each step individually and argue their complexity.
-
-\begin{enumerate}[label=(\roman*)]
-	\item\label{update:del} A deletion buffer at node $v$ overflows when $\vert D_v \vert > B/4$. Since the structure is a B-tree on the lexicographically ordering of points we must by the pigeon-hole principle have that there exist a child $c$ such that we can push $U \subseteq D_v$ of $\lceil \vert D_v \vert / \Delta \rceil$ deletions to $c$. This is illustrated in Figure~\ref{fig:pigeon_hole}. Points in $U$ are removed from $D_v$, $I_c$, $D_c$, $P_c$, and $C_v$. Any point $p$ in $U$ lexicographically larger than the minimum point in $P_c$ (w.r.t. $y$) is removed from $U$ as the deletion cannot cancel any updates further down in the tree.
-	
-	\begin{figure}[htp!]
-		\centering
-		\includegraphics[width=\textwidth]{../figures/pigeon_hole}
-		\caption{Each point represents a deletion. $B=25$ and $\epsilon = 0.5$. This gives $B^{\epsilon} = 5$. By the pigeon hole principle we must have that at least one of the x-ranges contains $\frac{B}{B^\epsilon}$ points.}
-		\label{fig:pigeon_hole}
-	\end{figure}
-	
-	If $v$ is a leaf we do not need to do more. If not, the remaining points in $U$ are inserted in $D_c$ which might recursively overflow. In the worst case we might recursively overflow along a path from the root to a leaf each time causing $\mathcal{O}(\lceil \vert B \vert / \Delta \rceil)$ deletes to be pushed one level down. Updating $C_v$ with $\mathcal{O}(\lceil \vert B \vert / \Delta \rceil)$ updates takes amortized $\mathcal{O}(1+ (B/\Delta) / B^{1-\epsilon}) = \mathcal{O}(1)$ I/O's.
-	
-	\item\label{update:ins} An insertion buffer at $v$ overflows when $\vert I_v \vert > B$. Similar to handling a deletion buffer overflow we find a child $c$ such that we can push $U \subseteq I_v$ of $\lceil \vert D_v \vert / \Delta \rceil$ insertions to $c$. Points in $U$ are removed from $I_v$, $I_c$, $D_c$, $P_c$, and $C_v$.
-	Any point $p$ in $U$ lexicographically larger than the minimum point in $P_c$ (w.r.t. $y$) is removed from $U$ and inserted into $P_c$ and $C_v$.
-	If $P_c$ overflows, the lexicographically smallest points w.r.t. $y$ are moved from $P_c$ to $U$ until $P_c$ no longer overflows.
-	If $c$ is a leaf then all points are inserted into $P_c$ and $U$ is now empty.
-	Otherwise, the remaining points in $U$ are added to $I_c$ which might overflow and cause a similar overflow along a path from the root to a leaf in the worst case as in the case of the deletion buffer overflow.
-	
-	\item\label{update:pbo} A point buffer overflows at a leaf $v$ when $\vert P_v \vert > B/2$. If this is the case then we split the leaf into two nodes and evenly distribute the points in $P_v$ among the two new nodes using $\mathcal{O}(1)$ I/O's. The splitting of the node might cause the parent to get a degree of $\Delta+1$.
-	
-	\item\label{update:deg} An internal node $v$ with a degree larger than $\Delta$ is split into two new nodes $v'$ and $v''$. $I_v$, $D_v$, and $P_v$ are distributed among $v'$ and $v''$ according to the $x$-value. Finally the child structures of $v'$ and $v''$ are rebuilt from the children's point buffers. The split might cause the parent of $v$ to have a degree overflow and in the worst case we need to split along a path from a leaf to the root. The splitting of a single node costs $\mathcal{O}(\Delta)$ I/O's due to the reconstruction of the child structures.
-	
-	\item\label{update:pbu} A point buffer underflows at $v$ when $\vert P_v \vert < B/2$. In that case we try to move the highest $B/2$ points from the children of $v$ into $P_v$. If $v$'s subtree does not store any points then we remove all points from $D_v$ and move points from $I_v$ to $P_v$ until $\vert P_v \vert = B$ or $I_v = \emptyset$.
-	Otherwise we use $\mathcal{O}(\Delta)$ I/O's to identify $X$ as the top $B/2$ points from the children of $v$ and remove the identified points from the point buffers of the children and the child structure of $v$.
-	All points in $X \cap D_v$ are removed from $X$.
-	\todo{Describe what is done about moving points from $I_v$, refilling empty children, grabbing again if still empty etc.}
-	
-	Finally the remaining points of $X$ are inserted into $P_v$ and the child structure of the parent of $v$.
-\end{enumerate}
-
-\textbf{Analysis}
-
-The tree grows in height during insertions by splitting leaves and internal nodes which also keeps the tree balanced. We stay balanced during insertions since we only increase in height whenever the root splits which causes every path from root to leaf to increase by one. In the B-tree we handle rebalancing using fusion of nodes. We do not apply this method here but instead apply global rebuilding when a linear number of updates have been performed. By~\ref{update:pbo} it follows that the total number of leaves created during $N$ insertions can be at most $\mathcal{O}(N/B)$ implying that at most $\mathcal{O}(\frac{N}{\Delta B})$ internal nodes can be created by splitting internal nodes. From this it follows that the tree has height $\mathcal{O}(\log_\Delta \frac{N}{B}) = \mathcal{O}(\frac{1}{\epsilon} \log_B N)$.
-
-We can now argue that every update in~\ref{update:del} and~\ref{update:ins} requires amortized $\mathcal{O}(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N)$ I/O's. As every $\Theta (B/\Delta)$ update require $\mathcal{O}(1)$ I/O's on every layer of the tree we get correct amortized bound:
-\begin{align*}
-\mathcal{O}(\frac{1}{B/\Delta} \log_\Delta \frac{N}{B}) &= \frac{B^\epsilon}{B} \log_{B^\epsilon} \frac{N}{B} \\
-&= \frac{B^\epsilon}{B} \frac{1}{\epsilon} \log_{B} N \\
-&= \frac{1}{B^{1-\epsilon}\epsilon} \log_B N
-\end{align*}
-
-In~\ref{update:pbo}, we know that at most $\mathcal{O}(N/B)$ leaves are created each requiring $\mathcal{O}(1)$ I/O's giving amortized $\mathcal{O}(1/B)$ I/O's per update.
-
-In~\ref{update:deg}, we know that at most $\mathcal{O}(\frac{N}{B\Delta})$ internal nodes are created. The creation of such a node costs $\mathcal{O}(\Delta)$ giving an amortized cost of $\mathcal{O}(1/B)$ I/O's per update.
-
-\todo{Analysis of \ref{update:pbu}}
-
-\subsection{Global rebuilding}
-\todo{Reference to earlier section on global rebuilding}
-As we do not fuse nodes with a too low node degree we might end up with an unbalanced tree. We use global rebuilding to guarantee that the tree is rebalanced and thus that our amortized bounds hold.
-Updates are partitioned into epochs. After a rebuild a new epoch begins and if the data structure at this points stores $\bar{N}$ points, then the next epoch will begin after $\bar{N}/2$ updates, i.e. a global rebuild will be performed.
-Having a new epoch after every $\bar{N}/2$ updates ensures that our tree does not grow higher than $\mathcal{O}\left(\frac{1}{\epsilon}\log_B\frac{3\bar{N}}{2}\right) = \mathcal{O}\left(\frac{1}{\epsilon}\log_B N\right)$ as the size is $\frac{1}{2}\bar{N} \leq N \leq \frac{3}{2}\bar{N}$.
-
-Global rebuilding works by constructing an empty structure and then reinserting all the points of the old structure that has not been deleted.
-
-The points to reinsert are found by doing a top-down traversal of the tree while flushing insertion and deletion buffers to children. The points to reinsert are then found in the point buffers after flushing. This might cause buffers to temporarily overflow but we will allow this as the old structure will be deleted.
-
-Once the set of points to reinsert have been found be simply insert the points on an initially empty tree.
-
-\textbf{Analysis}
-
-\todo{Kasper:  Er der altid lige langt til alle leaves?}
-
-Elements at level $i$ (leaf layer being level 0) can at most be flushed $i$ levels down.
-The structure holds at most $\frac{3\bar{N}}{2B}$ nodes in total and at level $i$ the structure has at most $\frac{3\bar{N}}{2B} \frac{1}{\Delta^i}$ nodes. The cost of flushing all the buffers at level $i$ becomes:
-
-$$ i \cdot \frac{3\bar{N}}{2B} \frac{1}{\Delta^i}$$
-
-By summing over all layers of the tree we get the total cost of flushing all buffers to be:
-\begin{align*}
-\sum\limits_{i=0}^{\mathcal{O}(\log_\Delta \frac{3N}{2B})} i \cdot \frac{3\bar{N}}{2B} \frac{1}{\Delta^i} &< 
-\sum\limits_{i=0}^{\infty} i \cdot \frac{3\bar{N}}{2B} \frac{1}{\Delta^i} \\
-&= \frac{3\bar{N}}{2B} \sum\limits_{i=0}^{\infty} \frac{i}{\Delta^i} \\
-&= \frac{3\bar{N}}{2B} \sum\limits_{i=0}^{\infty} \left(\frac{1}{\Delta}\right)^i \\
-&= \frac{3\bar{N}}{2B} \frac{1}{1-\Delta} \\
-&= \mathcal{O}(N/B)
-\end{align*}
-
-This gives an amortized cost of $\mathcal{O}(1/B)$ per update to flush all buffers.
-
-The $\mathcal{O}(\bar{N})$ reinsertions into the new tree can be done in amortized $\mathcal{O}(\nicefrac{\bar{N}}{\epsilon B^{1-\epsilon}} \log_B N)$ I/O's are paid by the $\bar{N}/2$ updates during the epoch.
-
-%\includegraphics[width=\textwidth]{../handwritten notes/Notes on global rebuilding analysis.jpg}
-
-\subsection{Three sided range queries}
-\label{subsec:brodal_3_sided}
-Reporting a query $Q = \left[ x_1,x_2 \right] \times \left[y, \infty \right]$ is done in a breadth first search of the tree. Starting from the root we identify, from the query's x-range, the relevant children and push all relevant updates in the root to the identified children. After having done this we know that the point buffers of the children do not change further and we can thus report all points in the query range from the child structure of the root and the point buffer of the root. The children are added to the back of the bfs queue. All nodes except for the root do not need to report from their point buffers as the parent of the node has already reported the relevant points.
-
-During the breadth first search some buffers might temporarily overflow. This is handled using the update operations described earlier. This can be done in a bottom up fashion starting from the leaf layer of the tree while maintaining the invariant that the subtree at the current node is in a good state and making sure that no recursions recurse above the current node and into a subtree which potentially is in a bad state.
-
-\todo{Describe with more detailed descriptions what is done or refer to implementation details for more?}
-\todo{Kasper: Ikke helt klart hvad der menes her}
-\textbf{Analysis}
-\todo{Insert analysis of three sided range queries here}
-
-\subsection{Construction}
-The structure can be initialized with an initial set of $N$ points using just $\mathcal{O}(\text{Sort}(N))$ I/O's. If the points are already sorted on $x$ we just need $\mathcal{O}(\text{Scan}(N))$. For the remainder of this Section we assume that the points are initially sorted with regards to $x$.
-
-The first step of the construction is to construct a B-tree with each internal node having a degree of $\Delta/2$ over the $x$-values such that each leaf stores $\nicefrac{B}{2}$ points with the exception of the rightmost leaf which might contain less than $\nicefrac{B}{2}$ points and the rightmost internal nodes having a degree less than $\Delta/2$.
-
-The point buffers of the internal nodes are now filled bottom up pulling the top $B/2$ highest $y$-value points up. If this results in a child having an underflowing point buffer we recursively fill that child before proceeding. In a second iteration we do the same but in a top-down fashion.
-
-All insertion and deletion buffers are initially empty and the child structures are constructed from the point buffers of the children.
-
-This construction algorithm could also have been used for global rebuilding giving a matching amortized cost.
-
-\todo{Analysis}
-
-\todo{Figures}
-
-
-\chapter{External Memory Priority Search Tree}
-\label{chp:arge_pst}
-In this section we will present an older result on dynamic three-sided range queries due to Arge et al.~\cite{arge_samoladas_vitter_1999}
-The structure described by Arge et al. utilizes the same child structure as described in Section~\ref{sec:child_structure} and was invented in the original paper. The structure is however applied on sets of $\mathcal{O}(B^2)$ points instead of $\mathcal{O}(B^{1+\epsilon})$. As this suggests the fanout of the structure of Arge et al. is larger.
-
-\begin{theorem}
-An external memory data structure exists supporting insertion and deletion in amortized $\mathcal{O}(\log_B N/B)$ I/O's and three sided range queries in $\mathcal{O}(\log_B N/B + K/B)$ I/O's, where $N$ is the input size, and $K$ is the size of the output. The structure uses $\mathcal{O}(N/B)$ space, i.e. linear space.
-\end{theorem}
-
-\section{Structure}
-The main structure is a weight-balanced B-tree~\cite{arge_vitter_1996} with the normal lexicographical ordering of points with regards to $x$. The differences between a weight balanced B-tree and a regular B-tree are with the regards to how and when splitting and fusing of nodes takes place. Constraints are imposed on the \textit{weight} of a node rather than the number of children of it. The weight of a node $v$ is the number of elements stores in the subtree rooted at $v$. Let $a$ be the branching parameter and $k$ the leaf parameter of the tree. An internal node on level $l$ has weight between $\frac{1}{2}a^lk$ and $2a^lk$ and has at least one child. Inserting in a weight balanced B-tree is similar to a normal B-tree and when a leaf split it might cause the weights of the parent to become to large and recursively split on a path from leaf to root.
-
-Each internal node of the structures stores an instance of the child structure. Points in the structure are stored in these structures according to the following rules:
-\begin{itemize}
-	\item{An internal node stores at most $B^2$ points in the associated child structure.}
-	\item{For a child $w$ of internal node $v$ the Y-set of $w$ denoted $Y(w)$ is the points of the child structure of $v$ that is associated with the range that is associated with $w$.}
+	\item{An internal node stores at most $B^2$ points in the associated query data structure.}
+	\item{For a child $w$ of internal node $v$ the Y-set of $w$ denoted $Y(w)$ is the points of the query data structure of $v$ that is associated with the range that is associated with $w$.}
 	\item{An internal nodes stores at most $B$ points for each child of the node, i.e. for all children $w$ of an internal node $v$ we have that the size of $Y(w)$ is at most $B$.}
-	\item{A leaf stores at most $2k$ points in its child structure where $k$ is the leaf parameter of the B-tree}
-	\item{If a node or leaf $v$ stores points in its child structure then $Y(v)$ in $parent(v)$ must contain atleast $B/2$ points.}
+	\item{A leaf stores at most $2k$ points in its query data structure where $k$ is the leaf parameter of the B-tree}
+	\item{If a node or leaf $v$ stores points in its query data structure then $Y(v)$ in $parent(v)$ must contain atleast $B/2$ points.}
 \end{itemize}
 
 The base B-tree uses linear space and since each point is stored only once in a query data structure and the query data structure uses linear space, we can conclude that the structure stores $N$ points in $\mathcal{O}(N/B)$ blocks.
@@ -777,10 +748,244 @@ Rebalancing of the tree is done using global rebuilding. After $\Theta(N)$ delet
 
 \section{Query}
 \label{sec:arge_query}
+\todo{Burde ikke referere frem}
 Querying the data structure with $Q = \left[ x_1, x_2 \right] \times \left[ y, \infty \right]$ is very similar to as described in Section~\ref{subsec:brodal_3_sided}. We search on a path from root to leaf along paths corresponding to $x_1$ and $x_2$ and visit nodes in between the two paths. We proceed to visit a child if we report all points in the $Y$-set of that child with the exception of the leftmost and rightmost paths which are always visited all the way to a leaf. We do not miss any points since, by the rules, a point in $Q$ cannot be in an unvisited subtree as this would have been visited if all points were reported and no points in the subtree has lower $y$-values.
 
 \subsection{Analysis}
 In every internal node $v$ visited we spend $\mathcal{O}(1+K_v/B)$ I/O's. There are $\mathcal{O}(\log_B N)$ nodes on the search path from root to the leftmost leaf and rightmost leaf and thus the number of I/O's used on these paths is $\mathcal{O}(\log_B N + K/B)$. All other internal nodes visited are visited because all points were reported in the parent. If we do not report all points from a $Y$-set we can charge the $\mathcal{O}(1)$ I/O's of visiting the child to the parent which must have reported $\Theta(B)$ points. As the cost of reporting from the query data structures is $\mathcal{O}(1+K/B)$ the total cost amounts to $\mathcal{O}(\log_B N + K/B)$.
+
+\chapter{External Memory Buffered Priority Search Tree}
+\label{chp:epst}
+In this chapter we present an external memory data structure described by Brodal~\cite{DBLP:journals/corr/Brodal15}. The structure supports updates in amortized $\mathcal{O}\left(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N\right)$, three sided range queries in $\mathcal{O}\left(\frac{1}{\epsilon}\log_B N + \nicefrac{K}{B}\right)$ for $0 \leq \epsilon \leq \frac{1}{2}$, and can be constructed on $N$ points in the sorting bound. $\epsilon$ is a parameter that determines the size of the fanout and in turn the size of a bootstrapped substructure for storing $\mathcal{O}(B^{1+\epsilon})$ points, $0 \leq \epsilon \leq \frac{1}{2}$.
+The substructure is very similar to that of Arge et al.~\cite[Section~3.1]{arge_vitter_2003} for handling $\Theta(B^2)$ points with the main difference being that we reduce the capacity to allow an amortized constant number of I/O's per update. The bootstrapped structure is in~\cite{arge_vitter_2003} used to store the top $\Theta(B^2)$ points w.r.t. the $y$ value for the subtree rooted at the given node of the substructure. This structure uses it in a slightly different way to store the top $\mathcal{O}(B^{1+\epsilon})$ points of the children of the given  node. This bootstrapped structure is described further in Section~\ref{sec:child_structure} and in the following it will be refered to as the child structure.
+
+The external memory buffered priority search tree is a combination of the external memory priority search tree of Arge et al. described in Chapter~\ref{chp:arge_pst}, and the buffered updates of the buffer tree also thanks to Arge~\cite{Arge:1995:BTN:645930.672850}. The data structure is described in Section~\ref{sec:main_data_structure}.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{../figures/gerth_tree}
+	\caption{External memory priority search tree with buffers. The point buffers of the children is in the child structure of the parent allowing for fast queries.}
+	\label{fig:gerth_tree}
+\end{figure}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+% Main data structure %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Main data structure}
+\label{sec:main_data_structure}
+This section presents the main data structure achieving the results of Theorem~\ref{thm:main_structure}.
+\begin{theorem}
+\label{thm:main_structure}
+An external memory data structure exists supporting insertion and deletion of points in amortized $\mathcal{O}(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N)$ I/O's and three sided range queries in amortized $\mathcal{O}(\frac{1}{\epsilon} \log_B N + \nicefrac{K}{B})$, where $\epsilon$ is a constant, $0 < \epsilon \leq \nicefrac{1}{2}$, $N$ is the number of points in the structure, and $K$ is the size of the output. The structure can be constructed in amortized $\mathcal{O}(\nicefrac{N}{B})$ I/O's on an x-sorted set of points and stored in $\mathcal{O}(\nicefrac{N}{B})$ blocks.
+\end{theorem}
+\todo{Kasper: Skal $\epsilon$ vaere en konstant. I saafald kan man vel bare slette $\frac{1}{\epsilon}$ ledet?}
+
+The structure is a slightly modified version of the B-tree. Each internal node, except for the root, has a degree between $\frac{\Delta}{2}$ and $\Delta$, with $\Delta = \lceil B^\epsilon \rceil$. The root has degree between $2$ and $\Delta$.
+
+Each node $v$ stores three buffers containing $\mathcal{O}(B)$ points each. A point buffer $P_v$, an insertion buffer $I_v$, and a deletion buffer $D_v$.
+
+The subtree at node $v$ contains points in the range spanned by the points in the point buffer $P_v$, i.e. the structure is a search tree on the points in $P_v$ w.r.t. to the normal lexicographical ordering of points.
+
+As in the internal priority search tree the points with highest $y$-value resides in the top of the tree, i.e. we have a heap ordering among the nodes of the tree on the $y$-value. This means that for a node $v$, no child $c$ of $v$ stores an element in $P_c$ with a larger $y$-value than the minimum $y$-value in $P_v$.
+$I_v$ and $D_v$ stores buffered insertions and deletions on their way down to a point buffer of a descendent and are handled recursively whenever a buffer overflows.
+
+For each internal node, $v$, we also store an instance of the child structure, $C_v$, containing the elements $P_c$ for every child $c$ of $v$.
+
+Finally, for each internal node, $v$, we store, in $\mathcal{O}(1)$ blocks, information about the minimum $y$-value of the points of each of $v$'s children or $\infty$ if the child does not store any points.
+
+All information at the root is kept in internal memory except for the child structure.
+\todo{Kasper: Hvorfor ikke child structure?}
+
+\subsection{Invariants}
+For a node $v$ in the main data structure the following invariants must be true:
+\begin{itemize}
+	\item $P_v$, $I_v$, and $D_v$ are disjoint and points in the buffers have $x$-values spanned by the subtree at $v$.
+	\item All points in $I_v \cup D_v$ have $y$-value less than the points in $P_v$.
+	\item An update in a buffer at $v$ is more recent and should eventually overwrite any update in a descendent of $v$ with the same point.
+	\item A leaf in the tree has empty insertion and deletion buffers and the size of its point buffer is less than $B/2$.
+	\item An internal node in the tree has $B/2 \leq \vert P_v \vert \leq B$, $\vert D_v \vert \leq B/4$, and $\vert I_v \vert \leq B$.
+\end{itemize}
+
+\subsection{Updates}
+\label{subsec:gerth_updates}
+We update the structure by adding points to either the insertion or deletion buffer of the root while maintaining the above invariants.
+To be able to maintain the above invariants we must be very careful whenever we update the data structure. During an update the insertion or deletion buffers might overflow. This is handled in the following five steps:
+\begin{inlinelist}
+	\item handle overflowing deletion buffers
+	\item handle overflowing insertion buffers
+	\item split leaves with overflowing point buffers
+	\item split nodes of degree $\Delta+1$
+	\item fill underflowing point buffers
+\end{inlinelist}
+
+We will in the following look at each step individually and argue their complexity.
+
+\begin{enumerate}[label=(\roman*)]
+	\item\label{update:del} A deletion buffer at node $v$ overflows when $\vert D_v \vert > B/4$. Since the structure is a B-tree on the lexicographically ordering of points we must by the pigeon-hole principle have that there exist a child $c$ such that we can push $U \subseteq D_v$ of $\lceil \vert D_v \vert / \Delta \rceil$ deletions to $c$. This is illustrated in Figure~\ref{fig:pigeon_hole}. Points in $U$ are removed from $D_v$, $I_c$, $D_c$, $P_c$, and $C_v$. Any point $p$ in $U$ lexicographically larger than the minimum point in $P_c$ (w.r.t. $y$) is removed from $U$ as the deletion cannot cancel any updates further down in the tree.
+	
+	\begin{figure}[htp!]
+		\centering
+		\includegraphics[width=\textwidth]{../figures/pigeon_hole}
+		\caption{Each point represents a deletion. $B=25$ and $\epsilon = 0.5$. This gives $B^{\epsilon} = 5$. By the pigeon hole principle we must have that at least one of the x-ranges contains $\frac{B}{B^\epsilon}$ points.}
+		\label{fig:pigeon_hole}
+	\end{figure}
+	
+	If $v$ is a leaf we do not need to do more. If not, the remaining points in $U$ are inserted in $D_c$ which might recursively overflow. In the worst case we might recursively overflow along a path from the root to a leaf each time causing $\mathcal{O}(\lceil \vert B \vert / \Delta \rceil)$ deletes to be pushed one level down. Updating $C_v$ with $\mathcal{O}(\lceil \vert B \vert / \Delta \rceil)$ updates takes amortized $\mathcal{O}(1+ (B/\Delta) / B^{1-\epsilon}) = \mathcal{O}(1)$ I/O's.
+	
+	\item\label{update:ins} An insertion buffer at $v$ overflows when $\vert I_v \vert > B$. Similar to handling a deletion buffer overflow we find a child $c$ such that we can push $U \subseteq I_v$ of $\lceil \vert D_v \vert / \Delta \rceil$ insertions to $c$. Points in $U$ are removed from $I_v$, $I_c$, $D_c$, $P_c$, and $C_v$.
+	Any point $p$ in $U$ lexicographically larger than the minimum point in $P_c$ (w.r.t. $y$) is removed from $U$ and inserted into $P_c$ and $C_v$.
+	If $P_c$ overflows, the lexicographically smallest points w.r.t. $y$ are moved from $P_c$ to $U$ until $P_c$ no longer overflows.
+	If $c$ is a leaf then all points are inserted into $P_c$ and $U$ is now empty.
+	Otherwise, the remaining points in $U$ are added to $I_c$ which might overflow and cause a similar overflow along a path from the root to a leaf in the worst case as in the case of the deletion buffer overflow.
+	
+	\item\label{update:pbo} A point buffer overflows at a leaf $v$ when $\vert P_v \vert > B/2$. If this is the case then we split the leaf into two nodes and evenly distribute the points in $P_v$ among the two new nodes using $\mathcal{O}(1)$ I/O's. The splitting of the node might cause the parent to get a degree of $\Delta+1$.
+	
+	\item\label{update:deg} An internal node $v$ with a degree larger than $\Delta$ is split into two new nodes $v'$ and $v''$. $I_v$, $D_v$, and $P_v$ are distributed among $v'$ and $v''$ according to the $x$-value. Finally the child structures of $v'$ and $v''$ are rebuilt from the children's point buffers. The split might cause the parent of $v$ to have a degree overflow and in the worst case we need to split along a path from a leaf to the root. The splitting of a single node costs $\mathcal{O}(\Delta)$ I/O's due to the reconstruction of the child structures.
+	
+	\item\label{update:pbu} A point buffer underflows at $v$ when $\vert P_v \vert < B/2$. In that case we try to move the highest $B/2$ points from the children of $v$ into $P_v$. If $v$'s subtree does not store any points then we remove all points from $D_v$ and move points from $I_v$ to $P_v$ until $\vert P_v \vert = B$ or $I_v = \emptyset$.
+	Otherwise we use $\mathcal{O}(\Delta)$ I/O's to identify $X$ as the top $B/2$ points from the children of $v$ and remove the identified points from the point buffers of the children and the child structure of $v$.
+
+	If a point buffer of a child becomes empty before having identified all of the top $B/2$ points we have to recursively fill that child as the subtree might contain points with larger $y$-value than the remaining children of $v$. After this is done we can continue to grab points from the children.
+	
+	All points in $X \cap D_v$ are removed from $X$. This might cause the point buffer of $v$ to become empty once again and the procedure must be repeated.
+	
+	The remaining points of $X$ are inserted into $P_v$ and the child structure of the parent of $v$.	
+	
+	The points of $X$ now inserted into $P_v$ might have a smaller $y$ value than the points in $I_v$. We solve this problem by swapping the highest point in $I_v$ with the lowest point in $P_v$ while there exists a point in $I_v$ that is higher than a point in $P_v$.	
+	
+	If the subtree of $v$ becomes empty as a result of pulling points up to $v$ we must remove all points of $D_v$ and move points from $I_v$ to $P_v$. This might cause $P_v$ to overflow.
+	
+	Finally, after having pulled points from the children, we check if any of the children's point buffers underflows and should be refilled.
+\end{enumerate}
+
+\textbf{Analysis}
+
+The tree grows in height during insertions by splitting leaves and internal nodes which also keeps the tree balanced. We stay balanced during insertions since we only increase in height whenever the root splits which causes every path from root to leaf to increase by one. In the B-tree we handle rebalancing using fusion of nodes. We do not apply this method here but instead apply global rebuilding when a linear number of updates have been performed. By~\ref{update:pbo} it follows that the total number of leaves created during $N$ insertions can be at most $\mathcal{O}(N/B)$ implying that at most $\mathcal{O}(\frac{N}{\Delta B})$ internal nodes can be created by splitting internal nodes. From this it follows that the tree has height $\mathcal{O}(\log_\Delta \frac{N}{B}) = \mathcal{O}(\frac{1}{\epsilon} \log_B N)$.
+
+We can now argue that every update in~\ref{update:del} and~\ref{update:ins} requires amortized $\mathcal{O}(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N)$ I/O's. As every $\Theta (B/\Delta)$ update require $\mathcal{O}(1)$ I/O's on every layer of the tree we get the correct amortized bound:
+\begin{align*}
+\mathcal{O}(\frac{1}{B/\Delta} \log_\Delta \frac{N}{B}) &= \frac{B^\epsilon}{B} \log_{B^\epsilon} \frac{N}{B} \\
+&= \frac{B^\epsilon}{B} \frac{1}{\epsilon} \log_{B} N \\
+&= \frac{1}{\epsilon B^{1-\epsilon}} \log_B N
+\end{align*}
+
+In~\ref{update:pbo}, we know that at most $\mathcal{O}(N/B)$ leaves are created each requiring $\mathcal{O}(1)$ I/O's giving amortized $\mathcal{O}(1/B)$ I/O's per update.
+
+In~\ref{update:deg}, we know that at most $\mathcal{O}(\frac{N}{B\Delta})$ internal nodes are created. The creation of such a node costs $\mathcal{O}(\Delta)$ giving an amortized cost of $\mathcal{O}(1/B)$ I/O's per update.
+
+In~\ref{update:pbu} each refilling might trigger a cascaded recursive refilling of one or more of the children. Every refilling takes $\mathcal{O}(\Delta)$ I/O's and moves $\Theta(B)$ points one level up through the tree's point buffers. Each point can at most move $\mathcal{O}(\log_\Delta \frac{N}{B})$ levels up, as this is the tree's height. This means that the total number of I/O's for the refillings during the course of $N$ operations is amortized $\mathcal{O}(\frac{1}{B/\Delta} \log_\Delta \frac{N}{B}) = \frac{1}{\epsilon B^{1-\epsilon}} \log_B N$ per point.
+
+This argument ignores the fact that when pulling up points some points might swap positions from $I_v$ to $P_v$. This swap does not change the fact that the number of points we pull up remain the same and therefore it does not change the amortized accounting.
+
+Another fact that we ignore is what happens if we are not able to pull up $B/2$ points from the children. This is solved by a simple amortization argument. We double charge the operation responsible for pushing points to a child. This way we can ensure each node with non-empty point buffers always has saved an I/O for being emptied by a recursive pull up.
+
+\subsection{Global rebuilding}
+As we do not fuse nodes with too low node degree we might end up with an unbalanced tree. We use global rebuilding as described in Section~\ref{sec:prelim_global_rebuilding} to guarantee that the tree is rebalanced and thus that our amortized bounds hold.
+Updates are partitioned into epochs. After a rebuild a new epoch begins and if the data structure at this points stores $\bar{N}$ points, then the next epoch will begin after $\bar{N}/2$ updates, i.e. a global rebuild will be performed.
+Having a new epoch after every $\bar{N}/2$ updates ensures that our tree does not grow higher than $\mathcal{O}\left(\frac{1}{\epsilon}\log_B\frac{3\bar{N}}{2}\right) = \mathcal{O}\left(\frac{1}{\epsilon}\log_B N\right)$ as the size is $\frac{1}{2}\bar{N} \leq N \leq \frac{3}{2}\bar{N}$.
+
+Global rebuilding works by constructing an empty structure and then reinserting all the points of the old structure that has not been deleted.
+
+The points to reinsert are found by doing a top-down traversal of the tree while flushing insertion and deletion buffers to children. The points to reinsert are then found in the point buffers after flushing. This might cause buffers to temporarily overflow but we will allow this as the old structure will be deleted.
+
+Once the set of points to reinsert have been found we simply insert the points on an initially empty tree.
+
+\textbf{Analysis}
+
+Elements at level $i$ (leaf layer being level 0) can at most be flushed $i$ levels down.
+The structure holds at most $\frac{3\bar{N}}{2B}$ nodes in total and at level $i$ the structure has at most $\frac{3\bar{N}}{2B} \frac{1}{\Delta^i}$ nodes. The cost of flushing all the buffers at level $i$ becomes:
+
+$$ i \cdot \frac{3\bar{N}}{2B} \frac{1}{\Delta^i}$$
+
+By summing over all layers of the tree we get the total cost of flushing all buffers to be:
+\begin{align*}
+\sum\limits_{i=0}^{\mathcal{O}(\log_\Delta \frac{3N}{2B})} i \cdot \frac{3\bar{N}}{2B} \frac{1}{\Delta^i} &< 
+\sum\limits_{i=0}^{\infty} i \cdot \frac{3\bar{N}}{2B} \frac{1}{\Delta^i} \\
+&= \frac{3\bar{N}}{2B} \sum\limits_{i=0}^{\infty} \frac{i}{\Delta^i} \\
+&= \frac{3\bar{N}}{2B} \sum\limits_{i=0}^{\infty} \left(\frac{1}{\Delta}\right)^i \\
+&= \frac{3\bar{N}}{2B} \frac{1}{1-\Delta} \\
+&= \mathcal{O}(N/B)
+\end{align*}
+
+This gives an amortized cost of $\mathcal{O}(1/B)$ per update to flush all buffers.
+
+The $\mathcal{O}(\bar{N})$ reinsertions into the new tree can be done in amortized $\mathcal{O}(\nicefrac{\bar{N}}{\epsilon B^{1-\epsilon}} \log_B N)$ I/O's are paid by the $\bar{N}/2$ updates during the epoch.
+
+%\includegraphics[width=\textwidth]{../handwritten notes/Notes on global rebuilding analysis.jpg}
+
+\subsection{Three sided range queries}
+\label{subsec:brodal_3_sided}
+Reporting a query $Q = \left[ x_1,x_2 \right] \times \left[y, \infty \right]$ consists of three steps. Identifying the nodes to visit, push down delayed insertions and deletions between these identified nodes, and finally reporting the points in $Q$.
+
+We identify the nodes to visit in a breadth first manner.
+Starting from the root we identify, from the query's $x$-range, the children that are relevant to the query and push all insertions and deletions in the root to the identified children without handling possible overflows. After having done this we know that the point buffers of the children do not change further and we can thus report all points in the query range from the child structure of the root and the point buffer of the root. The children worth visiting are added to the back of the breadth first search queue. We can decide whether a child is worth visiting without reading the node by comparing $y$ with the minimum $y$-value of that child's point buffer. This value is stored in the parent.
+All nodes other than the root do not need to report from their point buffers as the parent of the node has already reported the relevant points from the child structure.
+
+After all points have been reported we might have some buffers that have temporarily overflowed. This is now handled in a bottom up fashion using the update operations described in Subsection~\ref{subsec:gerth_updates}. We will handle a single subtree at a time and make sure that the entire subtree has no buffers that overflow or underflow or any nodes with a too high node degree. We do this by the update operations~\ref{update:del}-\ref{update:deg} and at the same time we disallow that any recursion leaves the subtree, i.e. no splits may recursively split nodes outside of the subtree. When the entire subtree has no overflows or underflows we can remedy a potential underflowed point buffer using update operation~\ref{update:pbu} and continue to the next subtree one level higher in the tree.
+
+This process could also be described recursively. The base case of the recursion is the leaf $l$ which is handled by moving points from $I_l$ into $P_l$ and potentially splitting. At a layer above $l$ at node $v$ we might have many children which are all leafs and handled according to the base case. Node $v$ is now handled as described before and we have thus taken a step in the recursion. This process continues up to the root of the tree leaving the tree in a state with no overflows or underflows.
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{../figures/gerth_fixup}
+\caption{missing}
+\label{fig:gerth_fixup}
+\end{figure}
+
+\textbf{Analysis}
+
+Assume that during a query we visit $V$ nodes that are not on the search paths for $x_1$ or $x_2$ and $\mathcal{O}(\frac{1}{\epsilon}\log_B N)$ nodes on the search paths. We know that the $V$ nodes must have atleast $VB/2$ points in their point buffers before pushing down updates. The number of deletions we push down to visited nodes can at most be $(V + \mathcal{O}(\frac{1}{\epsilon}\log_B N))B/4$. It now follows that the number of points that we report, $K$, must be atleast the number of points in the point buffers before pushing down minus the deletions that we push down: $VB/2 - (V + \mathcal{O}(\frac{1}{\epsilon}\log_B N))B/4 = VB/4 - \mathcal{O}(\frac{B}{\epsilon}\log_B N) = K$. By isolating $V$ it follows that $V = \mathcal{O}(\frac{1}{\epsilon}\log_B N + K/B)$.
+
+The worst case bound now becomes the sum of visiting the $V$ nodes, the nodes on the search paths for $x_1$ and $x_2$, and the output: $\mathcal{O}(V+\frac{1}{\epsilon}\log_B N + K/B) = \mathcal{O}(\frac{1}{\epsilon}\log_B N + K/B)$.
+On top of this comes the cost of pushing down update buffer elements and handling overflowing update buffers and overflowing point buffers.
+
+This cost of pushing $\Omega(B/\Delta)$ is however already paid for by the update operations and is thus covered by the analysis of Subsection~\ref{subsec:gerth_updates}. It is only when we push down $\mathcal{O}(B/\Delta)$ updates to a child, with an amortized cost of $\mathcal{O}(1)$, that this cost is covered by the cost of visiting the child.
+
+Handling the overflowing update buffers and underflowing point buffers is also paid by the update operations and thus the analysis in Subsection~\ref{subsec:gerth_updates}.
+
+It all adds up to a total amortized cost of $\mathcal{O}(\frac{1}{\epsilon} \log_B N + K/B)$ I/O's for a 3-sided range query.
+
+\subsection{Construction}
+The structure can be initialized with an initial set of $N$ points using just $\mathcal{O}(\text{Sort}(N))$ I/O's. If the points are already sorted on $x$ we just need $\mathcal{O}(\text{Scan}(N))$. For the remainder of this Section we assume that the points are initially sorted with regards to $x$.
+
+The first step of the construction is to construct a B-tree with each internal node having a degree of $\Delta/2$ over the $x$-values such that each leaf stores $\nicefrac{B}{2}$ points with the exception of the rightmost leaf which might contain less than $\nicefrac{B}{2}$ points and the rightmost internal nodes having a degree less than $\Delta/2$.
+
+The point buffers of the internal nodes are now filled bottom up pulling the top $B/2$ highest $y$-value points up. If this results in a child having an underflowing point buffer we recursively fill that child before proceeding. In a second iteration we do the same but in a top-down fashion.
+
+All insertion and deletion buffers are initially empty and the child structures are constructed from the point buffers of the children.
+
+This construction algorithm could also have been used for global rebuilding giving a matching amortized cost.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{../figures/gerth_construction}
+	\caption{A B-tree with each internal node having a degree of $\Delta/2$. Each leaf stores $B/2$ points with the exception of the rightmost. The marked points are the top $B/2$ points that is pulled up from the leaves into the layer above.}
+	\label{fig:gerth_construction}
+\end{figure}
+
+\textbf{Analysis}
+
+We have that level $i$ of the tree contains at most $\frac{N}{B\Delta^i}$ nodes. It follows that the number of points stored at or above level $i$ is $\mathcal{O}(\sum\limits_{j=i}^\infty B\frac{N}{B\Delta^j}) = \mathcal{O}(\frac{N}{\Delta^i})$. This must mean that we cannot move $B/2$ points to level $i$ from $i-1$ more than $\mathcal{O}(\frac{N}{\Delta^i} / \frac{B}{2})$ times. We know that we can move $B/2$ points using $\mathcal{O}(\Delta)$ I/O's and the total number of I/O's to fill the point buffers becomes:
+$$\mathcal{O}\left(\sum\limits_{i=1}^\infty \Delta \frac{N}{B\Delta^i}\right) = \mathcal{O}\left(\frac{N}{B}\sum\limits_{i=1}^\infty \Delta \frac{1}{\Delta^i}\right) = \mathcal{O}\left(\frac{N}{B}\sum\limits_{i=0}^\infty \frac{1}{\Delta^i}\right) = \mathcal{O}\left(\frac{N}{B}\right)$$
+
+Another aspect we have to look at is what happens to the amortized analysis when we initialize our data structure using this construction method, i.e. we have to argue that the amortized cost of the remain unchanged during the epoch started by the construction.
+
+In order to argue this we consider a sequence of operations containing $N_{ins}$ insertions and $N_{del}$ deletions and a newly constructed tree of $N$ points.
+
+Let us first consider the cost of creating new nodes in the tree. Each leaf has initially at most $B/2$ points and it follows that we can at most create $2N_{ins}/B$ new leaves. Each new leaf is created in $\mathcal{O}(1)$ I/O's and it thus cost at most $\mathcal{O}(N_{ins}/B)$ I/O's to create new leaves during $N_{ins}$ insertions.
+By a similar argument it follows that at most $\mathcal{O}(\frac{N_{ins}}{\Delta B})$ new internal nodes can be created since each internal node initially has a degree of $\leq \Delta/2$. Each new internal node is created in $\mathcal{O}(\Delta)$ I/O's and it thus costs $\mathcal{O}(N_{ins}/B)$ I/O's to create new internal nodes without the cost of refilling point buffers which we look at below.
+
+An insertion has to be moved at most the height of the tree levels down before it is cancelled or moved into a point buffer. Since the height of the tree is $\mathcal{O}(\frac{1}{\epsilon} \log_B N)$ it follows that the cost of handling overflowing insertions buffers during the course of $N_{ins}$ insertions becomes $\mathcal{O}(\frac{N_{ins}}{B/\Delta}\frac{1}{\epsilon}\log_B N)$ I/O's.
+A similar argument can be given for the case of deletions.
+
+Each deletion leaves behind a hole which needs to be filled. This hole is filled by recursively pulling up points which effectively moves down the hole. Each split of internal nodes also potentially creates up to $B$ holes.
+In total we need to handle $\mathcal{O}(N_{del} + \frac{N_{ins}}{\Delta B})$ holes. We can move up $B/2$ points using $\mathcal{O}(\Delta)$ I/O's and they at most need to be moved to the top of the tree, i.e. they need to be at most moved the height of the tree levels up. This gives a total cost of $\mathcal{O}((N_{del} + \frac{N_{ins}}{\Delta B})\frac{\Delta}{B}\frac{1}{\epsilon} \log_B N)$ I/O's.
+
+All this adds up to $\mathcal{O}(\frac{N_{ins}+N_{del}}{B/\Delta} \frac{1}{\epsilon} \log_B N) = \mathcal{O}(\frac{N_{ins}+N_{del}}{\epsilon B^{1-\epsilon}} \log_B N)$  I/O's for handling updates. This matches the amortized bounds of the structure.
+\todo{Figures}
 
 \chapter{Other structures}
 
@@ -809,7 +1014,7 @@ Let $P$ be a set of points. An R-tree stores all points from $P$ in leaf nodes, 
 \end{figure}
 
 \subsection{Query}
-Given a query rectangle $q$ we want to find all the points in $P$ that are covered by $q$. The relation to the R-tree is that we only need to visit those nodes whose MBRs intersect $q$. Intuitively, this means that we desire as \textit{small} MBRs as possible, as this directly implies that we a query ispans fewer MBRs leading to fewer nodes to be visited. A good heuristic is therefore to minimize the perimiter of each MBR as this directly implies MBRs that covers smaller areas.
+Given a query rectangle $q$ we want to find all the points in $P$ that are covered by $q$. The relation to the R-tree is that we only need to visit those nodes whose MBRs intersect $q$. Intuitively, this means that we desire as \textit{small} MBRs as possible, as this directly implies that we a query ispans fewer MBRs leading to fewer nodes to be visited. A good heuristic is therefore to minimize the perimeter of each MBR as this directly implies MBRs that covers smaller areas.
 
 \subsection{Insertions}
 To insert a point $p$, we add $p$ to a lead node $u$ by following a single root-to-leaf path. If $u$ overflows we split it, which create a new child of $parent(u)$. This could cause $parent(u)$ to overflow which is handled in a recursive manner. Finally, if the root split, then a new root is created. Note that is legal to insert a point $p$ into \textit{any} leaf after which the data structure will still be considered legal. This is the main property that differs R-trees from standard B-trees. There are several different heuristics for chosing a subtree to insert that all gives rise to different R-tree names. We will cover the original R-tree heuristic and the R$^*$-tree.
@@ -894,7 +1099,7 @@ In order to compare the structures' best performance against each other we neede
 
 \todo{change data size when larger results are added}
 
-The experiments consist of inserting 500Mb of data. The data is uniformly random generated among the positive integers.
+The experiments consist of inserting 5Gb of data. The data is uniformly random generated among the positive integers.
 
 In Subsection~\ref{subsec:tuning_gerth} we present our tuning parameters for the structure presented in Chapter~\ref{chp:epst} by Brodal, and in Subsection~\ref{subsec:tuning_arge} we present our findings for the structure presented in Chapter~\ref{chp:arge_pst} by Arge et al.
 
@@ -916,7 +1121,7 @@ In Subsection~\ref{subsec:tuning_gerth} we present our tuning parameters for the
 \caption{Theoretical update time for different buffer sizes.}
 \label{fig:gerth_buffer_size_theory}
 
-\includegraphics[width=\textwidth]{../src/experiments/gerth_buffer_size_experiment_results/2016-04-20.17_26_22/time}
+\includegraphics[width=\textwidth]{../src/experiments/gerth_buffer_size_experiment_results/2016-05-03.13_51_54/time}
 \caption{Running the data structure of Brodal with a maximum fanout of 2 and varying buffer sizes.}
 \label{fig:gerth_buffer_size_experiment}
 \end{figure}
@@ -928,10 +1133,26 @@ Figure~\ref{fig:gerth_fanout_experiment} shows that the running time increases a
 \todo{Explain these results with the code in mind. Smaller fanout sends more points down at a time}
 \todo{Add the formulas that are plotted to text}
 
-In Figure~\ref{fig:gerth_buffer_size_experiment} we fixed the fanout to 2 and varied the buffer size. Theoretically the running time should decrease with ever increasing buffer sizes as shown in Figure~\ref{fig:gerth_buffer_size_theory}. We are however limited by the main memory size and we have to be careful not to start swapping out memory to disk as this greatly decreases performance. This is also what we see in Figure~\ref{fig:gerth_buffer_size_experiment} where the running time decreases as the buffer size increases until we reach 8MB. At this point the we started swapping out structures and the performance decreased. Larger buffer sizes was also tried but were simply too slow to measure.
+In Figure~\ref{fig:gerth_buffer_size_experiment} we fixed the fanout to 2 and varied the buffer size. Theoretically the running time should decrease with ever increasing buffer sizes as shown in Figure~\ref{fig:gerth_buffer_size_theory}. We are however limited by the main memory size and we have to be careful not to start swapping out memory to disk as this greatly decreases performance.
+
+\begin{figure}[htp]
+\includegraphics[width=\textwidth]{../src/experiments/gerth_buffer_size_experiment_results/2016-05-03.13_51_54/ios}
+\caption{Number of calls to read and writ for different buffer sizes.}
+\label{fig:gerth_buffer_size_ios}
+
+\includegraphics[width=\textwidth]{../src/experiments/gerth_buffer_size_experiment_results/2016-05-03.13_51_54/ibo}
+\caption{Number of insert buffer overflows in the structure of Brodal.}
+\label{fig:gerth_buffer_size_ibo}
+\end{figure}
+
+Figure~\ref{fig:gerth_buffer_size_ios} aligns very well with the actual running time and our expectations. The number of I/O's decreases with increasing buffer sizes.
+
+Figure~\ref{fig:gerth_buffer_size_ibo} show the number of times an insertion buffer overflows. In fact we see a similar decrease in the number of operations in all of the update operations described in Subsection~\ref{subsec:gerth_updates}.
+
+\todo{This is also what we see in Figure~\ref{fig:gerth_buffer_size_experiment} where the running time decreases as the buffer size increases until we reach 8Mb. At this point the we started swapping out structures and the performance decreased. Larger buffer sizes was also tried but were simply too slow to measure.}
 
 \section{Insertion}
-\begin{figure}[htp]
+\begin{figure}[htp!]
 \includegraphics[width=\textwidth]{../plots/insert_complexities/insert_complexity}
 \caption{Theoretical insert time for all tested structures.}
 \label{fig:theory_insert_complexity}
@@ -939,10 +1160,9 @@ In Figure~\ref{fig:gerth_buffer_size_experiment} we fixed the fanout to 2 and va
 
 Figure ~\ref{fig:theory_insert_complexity} shows the theoretical complexities of inserting an element into the different structures for different $N$. We expect the actual running times to be very similar to these. The experiment will consist of inserting uniformly random data for 24 hours. If the non-I/O efficient data structures fill out the internal memory we expect to see some jumps in the running time at this point.
 
-\todo{move down constant of mysql to almost bottom}
 
 \section{Deletion}
-\begin{figure}[htp]
+\begin{figure}[htp!]
 \includegraphics[width=\textwidth]{../plots/delete_complexities/delete_complexity}
 \caption{Theoretical delete time for all tested structures.}
 \label{fig:theory_delete_complexity}
@@ -952,7 +1172,7 @@ Figure ~\ref{fig:theory_insert_complexity} shows the theoretical complexities of
 Since the analysis of the theoretical query bounds are done using filtering, we conduct test that focuses both on the \textit{search} and the \textit{report} part of the algorithms. Please refer to section~\ref{sec:filtering} for a description of the method of filtering.
 
 \subsection{Uniform reporting}
-The experiment on the \textbf{search} part of the algorithms was conducted by first inserting data \textit{inside} 5 fixed query windows of 5 MB each. This was followed by inserting uniformly distributed data \textit{outside} the fixed query windows. For insertion of every 10 Mb we report all reports inside the fixed query windows giving a total of 25 Mb reported points. The idea is that we report on both small and large ranges and high and low in the tree. Please refer to figure~\ref{fig:experiment_query_uniform} for an illustration of the distribution of data points. We make sure to stop all clocks when inserting such that our measures only reflect the actual reporting being done.
+The experiment on the \textbf{search} part of the algorithms was conducted by first inserting data \textit{inside} 5 fixed query windows of 5 Mb each. This was followed by inserting uniformly distributed data \textit{outside} the fixed query windows. For insertion of every 10 Mb we report all reports inside the fixed query windows giving a total of 25 Mb reported points. The idea is that we report on both small and large ranges and high and low in the tree. Please refer to figure~\ref{fig:experiment_query_uniform} for an illustration of the distribution of data points. We make sure to stop all clocks when inserting such that our measures only reflect the actual reporting being done.
 
 \begin{figure}[h]
 	\centering
@@ -968,11 +1188,11 @@ The experiment on the \textbf{report} part of the algorithms was conducted by fi
 	\centering
 	\includegraphics[width=0.8\textwidth]{../figures/query_uniform_fix_x}
 	\caption{Distribution of points for the uniform reporting experiment (reporting). The points $x_1, x_2$ and $y_1, \cdots y_n$ are fixed. There is 1 Mb data in all ranges $[x_1, x_2] \times [y_i, y_{i+1}]$}.
-	\label{fig:experiment_query_uniform}
+	\label{fig:experiment_query_uniform_fix_x}
 \end{figure}
 
 
-\begin{figure}[htp]
+\begin{figure}[htp!]
 \includegraphics[width=\textwidth]{../plots/query_complexities/query_complexity}
 \caption{Theoretical query time for all tested structures.}
 \label{fig:theory_query_complexity}
@@ -1003,18 +1223,18 @@ It is clear that direct invocation of the \texttt{read} and \texttt{write} syste
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{../src/experiments/stream_input_speed_experiment_results/2016-04-23.16_00_16/timems}
-  \caption{Reading 5GB of data using \texttt{mmap} and \texttt{munmap}, \texttt{fread} and \texttt{fwrite}, and buffered \texttt{read} and \texttt{write}}
+  \caption{Reading 5Gb of data using \texttt{mmap} and \texttt{munmap}, \texttt{fread} and \texttt{fwrite}, and buffered \texttt{read} and \texttt{write}}
   \label{fig:stream_input_speed}
 \end{figure}
 
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{../src/experiments/stream_output_speed_experiment_results/2016-04-23.16_07_40/timems}
-  \caption{Writing 5GB of data using \texttt{mmap} and \texttt{munmap}, \texttt{fread} and \texttt{fwrite}, and buffered \texttt{read} and \texttt{write}}
+  \caption{Writing 5Gb of data using \texttt{mmap} and \texttt{munmap}, \texttt{fread} and \texttt{fwrite}, and buffered \texttt{read} and \texttt{write}}
   \label{fig:stream_output_speed}
 \end{figure}
 
-The results of Figure~\ref{fig:stream_input_speed} and~\ref{fig:stream_output_speed} shows that the \texttt{buffered\_stream} performs similarly to using \texttt{mmap} when reading 5GB of data.
+The results of Figure~\ref{fig:stream_input_speed} and~\ref{fig:stream_output_speed} shows that the \texttt{buffered\_stream} performs similarly to using \texttt{mmap} when reading 5Gb of data.
 
 \todo{talk about results on SSD disks and newer computers}
 
@@ -1128,6 +1348,7 @@ The article uses a different query data structure for leaves in the B-tree. The 
 
 Updates and reporting are done as described in Section~\ref{sec:arge_updates} and~\ref{sec:arge_query} with no remarkably deviations.
 
+\clearpage
 \addcontentsline{toc}{chapter}{Bibliography}
 \bibliography{references}
 

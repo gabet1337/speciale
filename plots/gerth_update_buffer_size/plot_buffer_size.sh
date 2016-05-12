@@ -27,5 +27,6 @@ f(x,B) = (1/(epsilon(2,B)*(B**(1-epsilon(2,B))))) * (log(x)/log(B))
 plot f(x,1024*1024/8) with linespoint title sprintf("buffer1MB") ls 2,\
      f(x,1024*1024/4) with linespoint title sprintf("buffer2MB") ls 3,\
      f(x,1024*1024/2) with linespoint title sprintf("buffer4MB") ls 4,\
-     f(x,1024*1024) with linespoint title sprintf("buffer8MB") ls 5
+     f(x,1024*1024) with linespoint title sprintf("buffer8MB") ls 5,\
+     f(x,1024*1024*2) with linespoint title sprintf("buffer16MB") ls 6
 

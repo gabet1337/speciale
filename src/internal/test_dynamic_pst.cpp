@@ -221,6 +221,48 @@ void test_report_random_1gb(size_t buffer_size, double epsilon) {
 
 }
 
+void test_delete_big_data() {
+
+  io::buffered_stream<point> bs(4096);
+  bs.open("data/insert_experiment");
+
+  dpst dpst;
+
+  for (int i = 0; i < 100000; i++) {
+    point p;
+    p = bs.read();
+    //std::cout << "INSERTING " << p << std::endl;
+    dpst.insert(p);
+    if (i % 100 == 0) {
+      //std::cout << "inserted " << i << " points" << std::endl;
+    }
+  }
+
+  bs.close();
+
+  bs.open("data/insert_experiment");
+
+  for (int i = 0; i < 100000; i++) {
+    point p;
+    p = bs.read();
+    dpst.remove(p);
+    // if (p == point(342043705,400380323)) {
+    //   dpst.print();
+    //   int k;
+    //   std::cin >> k;
+    // }
+    //cout << bs.read() << endl;
+    if (i % 1 == 0) {
+      //std::cout << "deleted " << i << " points" << std::endl;
+    }
+  }
+
+  //dpst.print();
+  
+  bs.close();
+  
+}
+
 void cleanup() {
   util::remove_file("test/dpst_result");
   util::remove_file("test/report_rand_1gb");
@@ -232,9 +274,10 @@ int main() {
   //test_insert();
   //test_remove_report();
   //test_report();
-  test_report_random_1gb(4096, 0.5);
+  //test_report_random_1gb(4096, 0.5);
   //test_error();
-
+  test_delete_big_data();
+  
   //test_construct();
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
 
