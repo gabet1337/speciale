@@ -2,8 +2,8 @@
 #define LIBSPATIAL_PST_HPP
 
 #include "../common/point.hpp"
-#include "../common/utilities.hpp"
 #include "../common/definitions.hpp"
+#include "../common/utilities.hpp"
 #include "../common/pst_interface.hpp"
 #include "../stream/stream.hpp"
 #include <math.h>
@@ -94,6 +94,7 @@ namespace ext {
   }
 
   void libspatial_pst::insert(const point &p) {
+    remove(p);
     double coords[] = {(double)p.x, (double)p.y};
     uint8_t* pData = 0;
     uint32_t nDataLength = 0;
