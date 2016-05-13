@@ -420,7 +420,7 @@ namespace ext {
 
     io::buffered_stream<point>* L_file = 0;
     if (!L_in_memory) {
-      L_file = new io::buffered_stream<point>(buffer_size);
+      L_file = new io::buffered_stream<point>(STREAM_BUFFER_SIZE);
       L_file->open(get_L_file());
     }
     
@@ -509,7 +509,7 @@ namespace ext {
           if (D.find(L[j]) == D.end())
             result = std::max(L[j], result, comp_y);
       } else {
-        io::buffered_stream<point> L_file(buffer_size);
+        io::buffered_stream<point> L_file(STREAM_BUFFER_SIZE);
         L_file.open(get_L_file());
         L_file.seek((off_t)(last_catalog_item.start_idx*sizeof(point)),SEEK_SET);
         for (int j = last_catalog_item.start_idx; j < last_catalog_item.end_idx; j++) {

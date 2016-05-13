@@ -18,6 +18,8 @@
 #include <error.h>
 #include <queue>
 #include <map>
+#include <boost/unordered_set.hpp>
+#include <set>
 #include <iostream>
 #include <fstream>
 #include <stack>
@@ -54,6 +56,7 @@ namespace ext {
 
     //Type definitions:
     typedef std::set<point_type> points_type;
+    //typedef boost::unordered_set<point_type> points_type;
     typedef size_t info_file_entry_type;
     typedef std::vector<info_file_entry_type> info_file_type;
     typedef std::pair<point,point> range_type;
@@ -283,7 +286,7 @@ namespace ext {
   void external_priority_search_tree::report(int x1, int x2, int y, const std::string &output_file) {
     DEBUG_MSG("Starting to report [" << x1 << ", " << x2 << "] X [" << y << ", \u221E]");
     if (x1 > x2) return;
-    point_stream_type* stream = new point_stream_type(buffer_size);
+    point_stream_type* stream = new point_stream_type(STREAM_BUFFER_SIZE);
     stream->open(output_file);
     add_event(event(EVENT_TYPE::report_in_node, 0, x1, x2, y, true, true, stream));
     handle_events();
