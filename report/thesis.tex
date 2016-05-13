@@ -1099,8 +1099,6 @@ Some of the experiments will only be run for 24 hours and not up to a specific a
 \section{Parameter tuning}
 In order to compare the structures' best performance against each other we needed to find the optimal parameters to run the structures on. The parameters of the structures were mainly the size of the buffer and for the tree structures it was also the size of the fanout in the nodes. These parameters are highly machine dependent as larger main memory allows for larger buffer sizes. 
 
-\todo{change data size when larger results are added}
-
 The experiments consist of inserting 5Gb of data. The data is uniformly random generated among the positive integers.
 
 In Subsection~\ref{subsec:tuning_gerth} we present our tuning parameters for the structure presented in Chapter~\ref{chp:epst} by Brodal, and in Subsection~\ref{subsec:tuning_arge} we present our findings for the structure presented in Chapter~\ref{chp:arge_pst} by Arge et al.
@@ -1109,6 +1107,7 @@ In Subsection~\ref{subsec:tuning_gerth} we present our tuning parameters for the
 \label{subsec:tuning_gerth}
 
 \begin{figure}[htp]
+\centering
 \includegraphics[width=\textwidth]{../plots/gerth_update_epsilon/gerth_epsilon}
 \caption{Theoretical update time for different fanouts (epsilon).}
 \label{fig:gerth_fanout_theory}
@@ -1118,7 +1117,22 @@ In Subsection~\ref{subsec:tuning_gerth} we present our tuning parameters for the
 \label{fig:gerth_fanout_experiment}
 \end{figure}
 
+Figure~\ref{fig:gerth_fanout_experiment} shows how the time per insert grows as the input size increases with regards to different fanout sizes in the data structure of Brodal. The result is very much in line with the theoretical bounds as depicted in Figure~\ref{fig:gerth_fanout_theory} but the results are slightly inconsistent with the theoretical bounds in the area between fanout sizes of 2 and 6 - running time decreases with increasing fanout sizes. In Figure~\ref{fig:gerth_fanout_experiment_ios} we have plotted the number of I/O's for each fanout and it shows that the number of I/O's increases with increasing fanout sizes in line with the theoretical expectations. The explanation for this small inconsistency might be found in the fact that larger fanouts decrease the number of node degree overflows and in turn the number of point buffer underflows. For small fanouts this fact might decrease the running time more than the decreased amount of points sent down on each overflow, caused by the increased fanout, increase the running time.
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{../src/experiments/gerth_fanout_experiment_results/2016-05-06.11_52_24/ios}
+\caption{The number of I/O's per insert as a function of input size when running the structure of Brodal with a fixed buffer size and varying fanouts.}
+\label{fig:gerth_fanout_experiment_ios}
+\end{figure}
+
+\todo{Do some math on this to show that the number of overflow decreases}
+\todo{Add plots of gerth statistics}
+\todo{Explain these results with the code in mind. Smaller fanout sends more points down at a time}
+\todo{Add the formulas that are plotted to text}
+
 \begin{figure}[htp]
+\centering
 \includegraphics[width=\textwidth]{../plots/gerth_update_buffer_size/gerth_buffer_size}
 \caption{Theoretical update time for different buffer sizes.}
 \label{fig:gerth_buffer_size_theory}
@@ -1127,13 +1141,6 @@ In Subsection~\ref{subsec:tuning_gerth} we present our tuning parameters for the
 \caption{Running the data structure of Brodal with a maximum fanout of 2 and varying buffer sizes.}
 \label{fig:gerth_buffer_size_experiment}
 \end{figure}
-
-Figure~\ref{fig:gerth_fanout_experiment} shows that the running time increases as the fanout increases. This is very much in line with the theoretical bounds as depicted in Figure~\ref{fig:gerth_fanout_theory} and fits very well with the overall intuition that being able to send more points down on each overflow is key to increasing performance. The tree might increase significantly in height but we decrease the frequency of overflow in the root. It is also worth noting that smaller fanouts allow for larger buffer sizes as the child structures does not take up as much space if we do not have that many children.
-
-\todo{Do some math on this to show that the number of overflow decreases}
-\todo{Add plots of gerth statistics}
-\todo{Explain these results with the code in mind. Smaller fanout sends more points down at a time}
-\todo{Add the formulas that are plotted to text}
 
 In Figure~\ref{fig:gerth_buffer_size_experiment} we fixed the fanout to 2 and varied the buffer size. Theoretically the running time should decrease with ever increasing buffer sizes as shown in Figure~\ref{fig:gerth_buffer_size_theory}. We are however limited by the main memory size and we have to be careful not to start swapping out memory to disk as this greatly decreases performance.
 
