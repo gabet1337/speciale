@@ -1109,7 +1109,7 @@ In Subsection~\ref{subsec:tuning_gerth} we present our tuning parameters for the
 \begin{figure}[htp]
 \centering
 \includegraphics[width=\textwidth]{../plots/gerth_update_epsilon/gerth_epsilon}
-\caption{Theoretical update time for different fanouts (epsilon).}
+\caption{Theoretical update time for different fanouts (epsilon). More precisely we have plotted $f(x) = \frac{1}{\epsilon B^{1-\epsilon}} \log_B x$ for epsilon such that the fanout becomes the desired. An $\epsilon$ for a desired fanout can be found by $\epsilon = \log(\text{fanout})/\log(B)$}
 \label{fig:gerth_fanout_theory}
 
 \includegraphics[width=\textwidth]{../src/experiments/gerth_fanout_experiment_results/2016-05-06.11_52_24/time}
@@ -1119,6 +1119,8 @@ In Subsection~\ref{subsec:tuning_gerth} we present our tuning parameters for the
 
 Figure~\ref{fig:gerth_fanout_experiment} shows how the time per insert grows as the input size increases with regards to different fanout sizes in the data structure of Brodal. The result is very much in line with the theoretical bounds as depicted in Figure~\ref{fig:gerth_fanout_theory} but the results are slightly inconsistent with the theoretical bounds in the area between fanout sizes of 2 and 6 - running time decreases with increasing fanout sizes. In Figure~\ref{fig:gerth_fanout_experiment_ios} we have plotted the number of I/O's for each fanout and it shows that the number of I/O's increases with increasing fanout sizes in line with the theoretical expectations. The explanation for this small inconsistency might be found in the fact that larger fanouts decrease the number of node degree overflows and in turn the number of point buffer underflows. For small fanouts this fact might decrease the running time more than the decreased amount of points sent down on each overflow, caused by the increased fanout, increase the running time.
 
+We see that the behaviour returns to the expected theoretical bounds for fanouts above 6. The experiment with fanout 64 was terminated before time as it would have taken too long to finish either ways.
+
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{../src/experiments/gerth_fanout_experiment_results/2016-05-06.11_52_24/ios}
@@ -1126,10 +1128,7 @@ Figure~\ref{fig:gerth_fanout_experiment} shows how the time per insert grows as 
 \label{fig:gerth_fanout_experiment_ios}
 \end{figure}
 
-\todo{Do some math on this to show that the number of overflow decreases}
-\todo{Add plots of gerth statistics}
-\todo{Explain these results with the code in mind. Smaller fanout sends more points down at a time}
-\todo{Add the formulas that are plotted to text}
+\todo{Add plots of gerth statistics. Maybe just the plot of node degree overflow}
 
 \begin{figure}[htp]
 \centering
@@ -1142,23 +1141,28 @@ Figure~\ref{fig:gerth_fanout_experiment} shows how the time per insert grows as 
 \label{fig:gerth_buffer_size_experiment}
 \end{figure}
 
-In Figure~\ref{fig:gerth_buffer_size_experiment} we fixed the fanout to 2 and varied the buffer size. Theoretically the running time should decrease with ever increasing buffer sizes as shown in Figure~\ref{fig:gerth_buffer_size_theory}. We are however limited by the main memory size and we have to be careful not to start swapping out memory to disk as this greatly decreases performance.
+In Figure~\ref{fig:gerth_buffer_size_experiment} we fixed the fanout to 2 and varied the buffer size. Theoretically the running time should decrease with ever increasing buffer sizes as shown in Figure~\ref{fig:gerth_buffer_size_theory}. We are however limited by the main memory size and we have to be careful not to start swapping out memory to disk as this greatly decreases performance. This means that this parameter is very machine dependent - we want to utilitize as much memory as possible.
 
 \begin{figure}[htp]
 \includegraphics[width=\textwidth]{../src/experiments/gerth_buffer_size_experiment_results/2016-05-03.13_51_54/ios}
-\caption{Number of calls to read and writ for different buffer sizes.}
+\caption{Number of calls to read and write for different buffer sizes.}
 \label{fig:gerth_buffer_size_ios}
-
-\includegraphics[width=\textwidth]{../src/experiments/gerth_buffer_size_experiment_results/2016-05-03.13_51_54/ibo}
-\caption{Number of insert buffer overflows in the structure of Brodal.}
-\label{fig:gerth_buffer_size_ibo}
 \end{figure}
 
 Figure~\ref{fig:gerth_buffer_size_ios} aligns very well with the actual running time and our expectations. The number of I/O's decreases with increasing buffer sizes.
 
-Figure~\ref{fig:gerth_buffer_size_ibo} show the number of times an insertion buffer overflows. In fact we see a similar decrease in the number of operations in all of the update operations described in Subsection~\ref{subsec:gerth_updates}.
+We see the effect of the limited amount of internal memory when we reach 16Mb. We should have seen a significant increase in performance compared to 8Mb but instead we see that 8Mb performs just as well as 16Mb.
 
-\todo{This is also what we see in Figure~\ref{fig:gerth_buffer_size_experiment} where the running time decreases as the buffer size increases until we reach 8Mb. At this point the we started swapping out structures and the performance decreased. Larger buffer sizes was also tried but were simply too slow to measure.}
+We also tried with buffer sizes of 32Mb and 64Mb but they never terminated as they started swapping out memory heavily which decreased performance to a point where there was no point in continuing.
+
+We conclude from our experiments with different fanouts and buffer sizes that in order to get as fast an update time as possible we need a fanout of between 2-6 and as large a buffer size as internal memory allows.
+
+It is also worth noting that since the experimental results are very much in line with the theoretical results it can be concluded that the data structure is I/O bound.
+
+\subsection{External memory priority search tree}
+\label{subsec:tuning_arge}
+
+\todo{We need a single experiment where we test different buffer sizes with Arge's structure for good measure}
 
 \section{Insertion}
 \begin{figure}[htp!]
@@ -1206,10 +1210,6 @@ The experiment on the \textbf{report} part of the algorithms was conducted by fi
 \caption{Theoretical query time for all tested structures.}
 \label{fig:theory_query_complexity}
 \end{figure}
-
-\subsection{External memory priority search tree}
-\label{subsec:tuning_arge}
-\todo{add figure and explain results of Arge}
 
 \chapter{Implementation considerations}
 %TODO We use a POSIX file-system on a Linux distribution.
