@@ -274,7 +274,7 @@ namespace test {
   private:
     long perf_event_open(perf_event_attr*, pid_t, int, int, long unsigned int);
     struct perf_event_attr pe_attr_page_faults;
-    int page_faults_fd = 0;
+    int page_faults_fd = -1;
     uint64_t page_faults_count;
   };
 
@@ -300,10 +300,13 @@ namespace test {
   }
 
   void pagefaults::start() {    
+
+    if (page_faults_fd != -1)
+      close(page_faults_fd);
     
     page_faults_fd = perf_event_open(&pe_attr_page_faults, getpid(), -1, -1, 0);
     
-    if (page_faults_fd ==  -1) {
+    if (page_faults_fd == -1) {
       printf("perf_event_open failed for page faults %s\n", strerror(errno));
       return;
     }
@@ -317,7 +320,7 @@ namespace test {
     ioctl(page_faults_fd, PERF_EVENT_IOC_DISABLE, 0);
     int r = read(page_faults_fd, &page_faults_count, sizeof(page_faults_count));
     r++;
-    if (page_faults_fd != 0)
+    if (page_faults_fd != -1)
       close(page_faults_fd);
   }
 
