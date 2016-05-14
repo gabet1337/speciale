@@ -665,7 +665,7 @@ Let $L$ be the points stored in $\mathcal{L}$ and let $\ell = \lceil \nicefrac{\
 
 A catalog structure stores in $\mathcal{O}(1)$ disk blocks a reference to each of the $2\ell-1$ blocks. For block $b_i$ we store the minimum and maximum $x$-values for the points contained in the block. For a merged block $b_{i,j}$ we store the interval $\left[ i,j\right]$ and the minimum $y$-value of the points in the block. Note, this minimum $y$-value is also the point where the sweep line created the block $b_{i,j}$.
 
-%TODO maybe argue that L uses \mathcal{O}(B^{1+\epsilon}) blocks
+%TODO maybe argue that L uses \mathcal{O}(B^{1+\epsilon}) blocks. Edit: I believe L uses B^epsilon blocks, right?
 
 %%%%%%%%%%%%%
 % UPDATES %%%
@@ -691,10 +691,10 @@ The $t$ relevant blocks are scanned and the points contained in the query are re
 
 We have now showed that we are able to construct a dynamic data structure with the bounds stated in Theorem~\ref{thm:child_structure}.
 
+\todo{Consider moving no-splitting lemma from implementation considerations to here.}
+
 \section{Main structure}
 \label{sec:arge_structure}
-\todo{Figure of "force merge"}
-
 As mentioned earlier, the main structure is a weight-balanced B-tree~\cite{arge_vitter_1996} on the normal lexicographical ordering of points with regards to $x$. The differences between a weight balanced B-tree and a regular B-tree are with the regards to how and when splitting and fusing of nodes takes place. Constraints are imposed on the \textit{weight} of a node rather than the number of children. The weight of a node $v$ is the number of elements stored in the subtree rooted at $v$. Let $a$ be the branching parameter and $k$ the leaf parameter of the tree. An internal node on level $l$ has weight between $\frac{1}{2}a^lk$ and $2a^lk$ and has at least one child. Inserting in a weight balanced B-tree is similar to a normal B-tree and when a leaf splits it might cause the weight of the parent to become too large and recursively split on a path from a leaf to the root.
 
 Each internal node of the structures stores an instance of the bootstrapped structure for answering three-sided queries on $\Theta(B^2)$ points. Arge et al. denotes this structure the \textit{query data structure} as it allows for fast queries which will be explained later. Points are stored in the query data structure according to the following rules.
