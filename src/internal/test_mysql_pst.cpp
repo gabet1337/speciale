@@ -1,6 +1,7 @@
 #include <iostream>
 #include <assert.h>
 #include "mysql_pst.hpp"
+#include "../common/definitions.hpp"
 #include "../common/utilities.hpp"
 #include "../common/test_lib.hpp"
 #include "../stream/stream.hpp"
@@ -137,14 +138,23 @@ void test_report_random_1gb(size_t buffer_size, double epsilon) {
 
 }
 
+void test_duplicate_inserts() {
 
+  print_description("Starting to test insert duplicate in mysql pst");
+  mpst r(1,0);
+  r.insert(point(100,100));
+  r.insert(point(100,100));
+  print_success();
+  
+}
 
 int main() {
   cout << "\033[0;33m\e[4mSTARTING TEST OF MYSQL PST\e[24m\033[0m" << endl;
-  test_insert();
+  //test_insert();
   test_report();
-  test_remove_report();
-  test_report_random_1gb(4096, 0);
+  //test_remove_report();
+  //test_report_random_1gb(4096, 0);
+  test_duplicate_inserts();
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;
 
   return 0;

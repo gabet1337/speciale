@@ -631,11 +631,11 @@ The above bounds translate directly to the I/O model as we cannot guarentee that
 \chapter{External Memory Priority Search Tree}
 \label{chp:arge_pst}
 In this chapter we present an older result on dynamic three-sided range queries due to Arge et al.~\cite{arge_samoladas_vitter_1999}.
-The result by Arge et al. is a weight-balanced B-tree where each node is augmented with a bootstrapped structure for storing the top $\Theta(B^2)$ points w.r.t. the $y$-value of the subtree rooted at that node. This bootstrapped structure is described in Section~\ref{sec:child_structure} and the main data structure of Arge et al.~is described in Section~\ref{sec:arge_structure} proving Theorem~\ref{thm:arge_structure}.
+The result is a weight-balanced B-tree where each node is augmented with a bootstrapped structure for storing the top $\Theta(B^2)$ points w.r.t. the $y$-value of the subtree rooted at that node. The bootstrapped structure is described in Section~\ref{sec:child_structure} and the main data structure of Arge et al.~that proves Theorem~\ref{thm:arge_structure} is described in Section~\ref{sec:arge_structure}.
 
 \begin{theorem}
 \label{thm:arge_structure}
-An external memory data structure exists supporting insertion and deletion in amortized $\mathcal{O}(\log_B N/B)$ I/O's and three sided range queries in $\mathcal{O}(\log_B N/B + K/B)$ I/O's, where $N$ is the input size, and $K$ is the size of the output. The structure uses $\mathcal{O}(N/B)$ space, i.e. linear space.
+An external memory data structure exists supporting insertion and deletion in amortized $\mathcal{O}(\log_B N/B)$ I/O's and three sided range queries in $\mathcal{O}(\log_B N/B + K/B)$ I/O's, where $N$ is the input size, and $K$ is the size of the output. The structure uses $\mathcal{O}(N/B)$ space.
 \end{theorem}
 
 \section{Dynamic 3-sided queries on $\Theta(B^2)$ points}
@@ -650,28 +650,28 @@ The structure uses linear space.
 Finally the structure can be constructed using $\mathcal{O}(B^{1+\epsilon} / B)$ I/O's given a x-sorted set of $B^{1+\epsilon}$ points.
 \end{theorem}
 
-The structure consists of a static structure $\mathcal{L}$ storing $\mathcal{O}(B^{1+\epsilon})$ points and two buffers $\mathcal{I}$ and $\mathcal{D}$ storing at most $B$ points. $\mathcal{I}$ and $\mathcal{D}$ are initially empty and store delayed insertions and deletions, respectively. A point can appear in either $\mathcal{I}$ or $\mathcal{D}$ but not both as they cancel each other out.
+The structure consists of a static structure $\mathcal{L}$ storing $\mathcal{O}(B^{1+\epsilon})$ points and two buffers $\mathcal{I}$ and $\mathcal{D}$ storing at most $B$ points each. The buffers $\mathcal{I}$ and $\mathcal{D}$ store delayed insertions and deletions, respectively, and are initially empty. A point can appear in either $\mathcal{I}$ or $\mathcal{D}$ but not both as updates from either cancel each other out.
 
-Let $L$ be the points stored in $\mathcal{L}$ and let $\ell = \lceil \nicefrac{\vert L \vert}{B}\rceil$, then $\mathcal{L}$ consists of $2\ell-1$ blocks of $B$ points in each block. The points in $L$ are first partitioned into blocks $b_1,\dots,b_\ell$ sorted by $x$-value. The last block may have size less than $B$.
+Let $L$ be the points stored in $\mathcal{L}$ and let $\ell = \lceil \nicefrac{\vert L \vert}{B}\rceil$. When $\mathcal{L}$ is fully constructed it will consists of $2\ell-1$ blocks of $B$ points in each block. The points in $L$ are first partitioned into blocks $b_1,\dots,b_\ell$ sorted by $x$-value. The last block may have size less than $B$.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=1]{../figures/sweep-line}
-	\caption{The structure for $B=4$. The points are represented by white nodes. The sweep line has merged blocks $b_1$ and $b_2$ at the point where the blocks contain $4$ points on or above the line. This is represented by a line segment with black endpoints and the $b_{1,2}$ label. The same goes for the other merged blocks created.}
+	\caption{The structure for $B=4$. The points are represented by circles. The sweep line has merged blocks $b_1$ and $b_2$ at the point where the blocks contain $4$ points on or above the line. This is represented by a line segment with black endpoints and the $b_{1,2}$ label. The same goes for the other merged blocks created.}
 	\label{fig:sweep-line}
 \end{figure}
 
-\textbf{To construct} blocks $b_{\ell+1},\dots,b_{2\ell}$ we make a vertical sweep over the points in increasing $y$-order. When the sweep line reaches a point in a block $b_i$ that together with an adjacent block, i.e. either $b_{i-1}$ or $b_{i+1}$, contains exactly $B$ points on or above the sweep line, we replace the two blocks by a single block containing the $B$ points on or above the sweep line.  The merged block is denoted $b_{i,j}$ if it contains points from the initial blocks in the range from $i$ to $j$. The two merged blocks are then excluded from the sweep line and the newly created merged block continues in the sweep line. Every merge of adjacent blocks causes the sweep line to intersect one block less resulting in at most $\ell-1$ blocks being created from the sweep.
+\textbf{To construct} blocks $b_{\ell+1},\dots,b_{2\ell}$ we make a vertical sweep over the points in increasing $y$-order. When the sweep line reaches a point in a block $b_i$ that together with an adjacent block, i.e. either $b_{i-1}$ or $b_{i+1}$, contains exactly $B$ points on or above the sweep line, we replace the two blocks by a single block containing the $B$ points on or above the sweep line.  The merged block is denoted $b_{i,j}$ if it contains points from the initial blocks in the range from, and including, $i$ to $j$. The two merged blocks are then excluded from the sweep and the newly created merged block is included in the continued sweep. Every merge of adjacent blocks causes the sweep line to intersect one block less resulting in at most $\ell-1$ blocks being created from the sweep.
 
-A catalog structure stores in $\mathcal{O}(1)$ disk blocks a reference to each of the $2\ell-1$ blocks. For block $b_i$ we store the minimum and maximum $x$-values for the points contained in the block. For a merged block $b_{i,j}$ we store the interval $\left[ i,j\right]$ and the minimum $y$-value of the points in the block. This minimum $y$-value is also the point where the sweep line created the block $b_{i,j}$.
+A catalog structure stores in $\mathcal{O}(1)$ disk blocks a reference to each of the $2\ell-1$ blocks. For block $b_i$ we store the minimum and maximum $x$-values for the points contained in the block. For a merged block $b_{i,j}$ we store the interval $\left[ i,j\right]$ and the minimum $y$-value of the points in the block. Note, this minimum $y$-value is also the point where the sweep line created the block $b_{i,j}$.
 
 %TODO maybe argue that L uses \mathcal{O}(B^{1+\epsilon}) blocks
 
 %%%%%%%%%%%%%
 % UPDATES %%%
 %%%%%%%%%%%%%
-\textbf{Insertions and deletions} are stored in $\mathcal{I}$ and $\mathcal{D}$ respectively. When a point is inserted in $\mathcal{I}$ or $\mathcal{D}$ we make sure to remove any existing occurrence of the point in $\mathcal{I}$ and $\mathcal{D}$ such that the new update overrides any previous updates. Whenever $\mathcal{I}$ or $\mathcal{D}$ overflows, i.e. $\vert \mathcal{I} \vert > B$ or $\vert \mathcal{D} \vert > B$, the stored updates are applied to the set of points in $\mathcal{L}$. This is done by scanning $L$ in increasing $x$-order while applying insertions and deletions, i.e. for each point in $L$ we check whether we should insert a new point from $\mathcal{I}$ before it or if the point should be deleted. This process results in a new set of points $L'$ which once again is partitioned into blocks $b_1,\dots,b_{\ell'}$ and a vertical sweep similar to the previously described sweep is performed to rebuild the merged blocks and catalog.
-This reconstruction is done in $\mathcal{O}(\ell')$ I/O's. As $\ell' = \lceil \nicefrac{\vert L \vert}{B}\rceil$ it requires $\mathcal{O}(\lceil \nicefrac{\vert L \vert}{B}\rceil) = \mathcal{O}(B^\epsilon)$ I/O's to rebuild $\mathcal{L}$. If we amortize this cost over the $>B$ updates that caused the overflow the cost becomes $\mathcal{O}\left(\frac{B^\epsilon}{B}\right) = \mathcal{O}\left(\nicefrac{1}{B^{1-\epsilon}}\right)$ amortized I/O's per delayed update.
+\textbf{Insertions and deletions} are stored in $\mathcal{I}$ and $\mathcal{D}$ respectively. When a point is inserted in $\mathcal{I}$ or $\mathcal{D}$ we make sure to remove any existing occurrence of the point in $\mathcal{I}$ and $\mathcal{D}$ such that the new update overrides any previous updates. Whenever $\mathcal{I}$ or $\mathcal{D}$ overflows, i.e. $\vert \mathcal{I} \vert > B$ or $\vert \mathcal{D} \vert > B$, the stored updates are applied to the set of points in $\mathcal{L}$. This is done by scanning $L$ in increasing $x$-order while applying insertions and deletions, i.e. for each point in $L$ we check whether we should insert a new point from $\mathcal{I}$ before it or if the point should be deleted. This process results in a new set of points $L'$ which once again is partitioned into blocks $b_1,\dots,b_{\ell'}$ and a vertical sweep similar to the previously described sweep is performed to rebuild the merged blocks and catalog structure.
+This reconstruction is done in $\mathcal{O}(\ell')$ I/O's. As $\ell' \leq \lceil \nicefrac{(\vert L \vert + 1)}{B}\rceil$ it requires $\mathcal{O}(\lceil \nicefrac{\vert L \vert}{B}\rceil) = \mathcal{O}(B^\epsilon)$ I/O's to rebuild $\mathcal{L}$. If we amortize this cost over the $>B$ updates that caused the overflow the cost becomes $\mathcal{O}\left(\nicefrac{B^\epsilon}{B}\right) = \mathcal{O}\left(\nicefrac{1}{B^{1-\epsilon}}\right)$ amortized I/O's per delayed update.
 
 %%%%%%%%%%%%%
 % QUERIES %%%
@@ -693,23 +693,31 @@ We have now showed that we are able to construct a dynamic data structure with t
 
 \section{Main structure}
 \label{sec:arge_structure}
-As mentioned earlier we have that the main structure is a weight-balanced B-tree~\cite{arge_vitter_1996} with the normal lexicographical ordering of points with regards to $x$. The differences between a weight balanced B-tree and a regular B-tree are with the regards to how and when splitting and fusing of nodes takes place. Constraints are imposed on the \textit{weight} of a node rather than the number of children. The weight of a node $v$ is the number of elements stored in the subtree rooted at $v$. Let $a$ be the branching parameter and $k$ the leaf parameter of the tree. An internal node on level $l$ has weight between $\frac{1}{2}a^lk$ and $2a^lk$ and has atleast one child. Inserting in a weight balanced B-tree is similar to a normal B-tree and when a leaf splits it might cause the weight of the parent to become too large and recursively split on a path from a leaf to the root.
+As mentioned earlier, the main structure is a weight-balanced B-tree~\cite{arge_vitter_1996} on the normal lexicographical ordering of points with regards to $x$. The differences between a weight balanced B-tree and a regular B-tree are with the regards to how and when splitting and fusing of nodes takes place. Constraints are imposed on the \textit{weight} of a node rather than the number of children. The weight of a node $v$ is the number of elements stored in the subtree rooted at $v$. Let $a$ be the branching parameter and $k$ the leaf parameter of the tree. An internal node on level $l$ has weight between $\frac{1}{2}a^lk$ and $2a^lk$ and has at least one child. Inserting in a weight balanced B-tree is similar to a normal B-tree and when a leaf splits it might cause the weight of the parent to become too large and recursively split on a path from a leaf to the root.
 
-Each internal node of the structures stores an instance of the bootstrapped structure for answering 3-sided queries on $\Theta(B^2)$ points. Arge et al. names this structure the query data structure as it allows for fast queries as will be explained later. Points are stored in the query data structure according to the following rules:
+Each internal node of the structures stores an instance of the bootstrapped structure for answering three-sided queries on $\Theta(B^2)$ points. Arge et al. denotes this structure the \textit{query data structure} as it allows for fast queries which will be explained later. Points are stored in the query data structure according to the following rules.
 \begin{itemize}
 	\item{An internal node stores at most $B^2$ points in the associated query data structure.}
-	\item{For a child $w$ of internal node $v$ the Y-set of $w$ denoted $Y(w)$ is the points of the query data structure of $v$ that is associated with the range that is associated with $w$.}
+	\item{For a child $w$ of internal node $v$ the Y-set of $w$ denoted $Y(w)$ is the points of the query data structure of $v$ that is associated with the range that is associated with $w$. See Figure~\ref{fig:arge_child_strucutre}.}
 	\item{An internal node stores at most $B$ points for each child of the node, i.e. for all children $w$ of an internal node $v$ we have that the size of $Y(w)$ is at most $B$.}
 	\item{A leaf stores at most $2k$ points in its query data structure where $k$ is the leaf parameter of the B-tree.}
-	\item{If a node or leaf $v$ stores points in its query data structure then $Y(v)$ in $parent(v)$ must contain atleast $B/2$ points.}
+	\item{If a node or leaf $v$ stores points in its query data structure then $Y(v)$ in $parent(v)$ must contain at least $B/2$ points.}
 \end{itemize}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.7\textwidth]{../figures/arge_child_structure}
+	\caption{An internal node $v$ of the base tree. For each child $w$ of $v$, the Y-set $Y(w)$ consists of the $\Theta(B)$ highest points stored in the subtree of $v$ that are within the $x$-range of $w$. The Y-sets of the five chrildren of $v$ are indicated by bold points. They are stored collectively in the query structure of $v$.}
+	\label{fig:arge_child_strucutre}
+\end{figure}
+
 
 The base B-tree uses linear space and since each point is stored only once in a query data structure and the query data structure uses linear space, we can conclude that the structure stores $N$ points in $\mathcal{O}(N/B)$ blocks, i.e. uses linear space.
 
 \section{Updates}
 \label{sec:arge_updates}
 \subsection{Insertion}
-Inserting a point in the structure involves two steps. The first is to insert the point in the base B-tree. This is done as described in Section~\ref{sec:prelim_b_tree} and may result in nodes splitting which in turn might result in the splitting of query data structures. Let $v$ be a node in the tree that has just been split into $v'$ and $v''$ as depicted in Figure~\ref{fig:arge_split_1}. As a result $Y(v')$ and $Y(v'')$ may contain fewer than $B/2$ points. This is remedied by promoting points of $v'$ (resp. $v''$) into $Y(v')$ (resp. $Y(v'')$. Promoting a point from $v'$ to $parent(v')$ is done by finding the top-most point $p'$ stored in the query data structure of $v'$ in $\mathcal{O}(1)$ I/O's using the block structure of $Q_{v'}$. The points found are as shown in Figure~\ref{fig:arge_split_2}. $p'$ is deleted from $Q_{v'}$ and inserted into $Q_{parent(v')}$. This process might cause one of the $Y$ sets of the children to become too small and we thus need to recursively promote a point. This recursion might in the worst case be on a path from $v$ down to a leaf. The process is called \textit{bubble-up}.
+Inserting a point in the structure involves two steps. The first is to insert the point in the base B-tree. This is done as described in Section~\ref{sec:prelim_b_tree} and may result in nodes splitting which in turn might result in the splitting of query data structures. Let $v$ be a node in the tree that has just been split into $v'$ and $v''$ as depicted in Figure~\ref{fig:arge_split_1}. As a result $Y(v')$ and $Y(v'')$ may contain fewer than $B/2$ points. This is remedied by promoting points of $v'$ (resp. $v''$) into $Y(v')$ (resp. $Y(v'')$). Promoting a point from $v'$ to $parent(v')$ is done by finding the top-most point $p'$ stored in the query data structure of $v'$ in $\mathcal{O}(1)$ I/O's using the block structure of $Q_{v'}$. The points found are as shown in Figure~\ref{fig:arge_split_2}. Now, $p'$ is deleted from $Q_{v'}$ and inserted into $Q_{parent(v')}$. This process might cause one of the $Y$ sets of the children to become too small and we thus need to recursively promote a point. This recursion might in the worst case be on a path from $v$ down to a leaf. The process is called \textit{bubble-up}.
 
 \begin{figure}[h]
 	\centering
@@ -719,17 +727,16 @@ Inserting a point in the structure involves two steps. The first is to insert th
 \end{figure}
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=\textwidth]{../figures/arge_split_2}
+	\includegraphics[width=0.8\textwidth]{../figures/arge_split_2}
 	\caption{Too small $Y$-sets are remedied by promoting the topmost points from the children.}
 	\label{fig:arge_split_2}
 \end{figure}
 
-
-After inserting in the base tree and appropriate reorganization we need to insert the point in the correct query data structure. This is done by starting in the root. The child responsible for the $x$-range which the points belongs to is found and its $Y$-set is found by a degenerate query to the query data structure of the root. If the number of points is $\geq B/2$ and the point is below all of them the point is recursively inserted into the found child. Otherwise the point joins the query data structure of the root. If the $Y$-set of the found child is now too large we recursively insert the lowest of these points into the child's query data structure.
+After inserting in the base tree and appropriate reorganization we need to insert the point in the correct query data structure. The search starts in the root. The child responsible for the $x$-range which the points belongs to is found and its $Y$-set is found by a degenerate query to the query data structure of the root. If the number of points is $\geq B/2$ and the point is below all of them the point is recursively inserted into the found child. Otherwise the point joins the query data structure of the root. If the $Y$-set of the found child is now too large we recursively insert the lowest of these points into the child's query data structure.
 If we reach a leaf we simply insert the point into the query data structure of the leaf.
 
 \subsection{Deletion}
-Deleting a point is simple as we adopt global rebuilding to rebalance the tree and not fusion of nodes. To delete a point we search down in the base tree for the point and mark it as deleted without actually removing the point. The next step is to remove the point from the query data structure that it resides in. This is done similar to finding the query data structure to insert the point into. The $Y$-set is recursively found on the search path of the point and if the $Y$-set contains the points, then the point is removed. If the $Y$-set becomes too small as a result we perform a \textit{bubble-up} operation.
+Rebalancing the tree after handling a delete is done by adopting global rebuilding instead of using fusion of nodes. To delete a point we search down in the base tree for the point and mark it as deleted without actually removing the point. The next step is to remove the point from the query data structure that it resides in. This is done similar to finding the query data structure to insert the point into. The $Y$-set is recursively found on the search path of the point and if the $Y$-set contains the points, then the point is removed. If the $Y$-set becomes too small as a result we perform a \textit{bubble-up} operation.
 
 \subsection{Analysis}
 Inserting in the base tree can be done in $\mathcal{O}(\log_B N)$ I/O's by Section~\ref{sec:prelim_b_tree} and can cause as many splits on the path from a leaf to the root. Each split might cause $B/2$ \textit{bubble-up} operations. Each \textit{bubble-up} at $v$ costs $\mathcal{O}(1)$ I/O's and might recurse all the way to a leaf for a total of $\mathcal{O}(\log_B weight(v))$ where $weight(v)$ is the size of the subtree rooted at $v$. In the worst case $B/2$ of these operations are performed totalling at $\mathcal{O}(B\log_B weight(v)) = \mathcal{O}(weight(v))$ I/O's.
@@ -750,8 +757,8 @@ Rebalancing of the tree is done using global rebuilding. After $\Theta(N)$ delet
 \label{sec:arge_query}
 Querying the data structure with $Q = \left[ x_1, x_2 \right] \times \left[ y, \infty \right]$ consists of two steps. The first step is to identify which nodes to visit and the second consists of reporting points in $Q$ from the query data structures of the identified nodes. 
 We identify which nodes to visit by searching on a path from the root to leaf along paths corresponding to $x_1$ and $x_2$ and visit nodes in between the two paths. As the tree is a search tree on $x$ we know that nodes in between the search paths for $x_1$ and $x_2$ will be in the query range of $Q$.
-We will only proceed to visit a child of $v$ if we report all points from the query data structure of $v$ in the $Y$-set of that child with the exception of the leftmost and rightmost paths which are always visited all the way to a leaf.
-We do not miss any points, i.e. report all points in $Q$, since, by the rules, a point in $Q$ cannot be in an unvisited subtree as this would have been visited if all points were reported and no points in the subtree has lower $y$-values.
+We will only proceed to visit a child of $v$ if we report all points from the query data structure of $v$ in the $Y$-set of that child, with the exception of the leftmost and rightmost paths which are always visited all the way to a leaf.
+We report all points in $Q$, since, by the rules, a point in $Q$ cannot be in an unvisited subtree as this would have been visited if all points were reported and no points in the subtree has lower $y$-values.
 
 \subsection{Analysis}
 In every internal node $v$ visited we spend $\mathcal{O}(1+K_v/B)$ I/O's. There are $\mathcal{O}(\log_B N)$ nodes on the search path from root to the leftmost leaf and rightmost leaf and thus the number of I/O's used on these paths is $\mathcal{O}(\log_B N + K/B)$. All other internal nodes visited are visited because all points were reported in the parent. If we do not report all points from a $Y$-set we can charge the $\mathcal{O}(1)$ I/O's of visiting the child to the parent which must have reported $\Theta(B)$ points. As the cost of reporting from the query data structures is $\mathcal{O}(1+K/B)$ the total cost amounts to $\mathcal{O}(\log_B N + K/B)$.
@@ -1109,7 +1116,7 @@ In Subsection~\ref{subsec:tuning_gerth} we present our tuning parameters for the
 \begin{figure}[htp]
 \centering
 \includegraphics[width=\textwidth]{../plots/gerth_update_epsilon/gerth_epsilon}
-\caption{Theoretical update time for different fanouts (epsilon).}
+\caption{Theoretical update time for different fanouts (epsilon). More precisely we have plotted $f(x) = \frac{1}{\epsilon B^{1-\epsilon}} \log_B x$ for epsilon such that the fanout becomes the desired. An $\epsilon$ for a desired fanout can be found by $\epsilon = \log(\text{fanout})/\log(B)$}
 \label{fig:gerth_fanout_theory}
 
 \includegraphics[width=\textwidth]{../src/experiments/gerth_fanout_experiment_results/2016-05-06.11_52_24/time}
@@ -1119,6 +1126,8 @@ In Subsection~\ref{subsec:tuning_gerth} we present our tuning parameters for the
 
 Figure~\ref{fig:gerth_fanout_experiment} shows how the time per insert grows as the input size increases with regards to different fanout sizes in the data structure of Brodal. The result is very much in line with the theoretical bounds as depicted in Figure~\ref{fig:gerth_fanout_theory} but the results are slightly inconsistent with the theoretical bounds in the area between fanout sizes of 2 and 6 - running time decreases with increasing fanout sizes. In Figure~\ref{fig:gerth_fanout_experiment_ios} we have plotted the number of I/O's for each fanout and it shows that the number of I/O's increases with increasing fanout sizes in line with the theoretical expectations. The explanation for this small inconsistency might be found in the fact that larger fanouts decrease the number of node degree overflows and in turn the number of point buffer underflows. For small fanouts this fact might decrease the running time more than the decreased amount of points sent down on each overflow, caused by the increased fanout, increase the running time.
 
+We see that the behaviour returns to the expected theoretical bounds for fanouts above 6. The experiment with fanout 64 was terminated before time as it would have taken too long to finish either ways.
+
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{../src/experiments/gerth_fanout_experiment_results/2016-05-06.11_52_24/ios}
@@ -1126,10 +1135,7 @@ Figure~\ref{fig:gerth_fanout_experiment} shows how the time per insert grows as 
 \label{fig:gerth_fanout_experiment_ios}
 \end{figure}
 
-\todo{Do some math on this to show that the number of overflow decreases}
-\todo{Add plots of gerth statistics}
-\todo{Explain these results with the code in mind. Smaller fanout sends more points down at a time}
-\todo{Add the formulas that are plotted to text}
+\todo{Add plots of gerth statistics. Maybe just the plot of node degree overflow}
 
 \begin{figure}[htp]
 \centering
@@ -1142,23 +1148,28 @@ Figure~\ref{fig:gerth_fanout_experiment} shows how the time per insert grows as 
 \label{fig:gerth_buffer_size_experiment}
 \end{figure}
 
-In Figure~\ref{fig:gerth_buffer_size_experiment} we fixed the fanout to 2 and varied the buffer size. Theoretically the running time should decrease with ever increasing buffer sizes as shown in Figure~\ref{fig:gerth_buffer_size_theory}. We are however limited by the main memory size and we have to be careful not to start swapping out memory to disk as this greatly decreases performance.
+In Figure~\ref{fig:gerth_buffer_size_experiment} we fixed the fanout to 2 and varied the buffer size. Theoretically the running time should decrease with ever increasing buffer sizes as shown in Figure~\ref{fig:gerth_buffer_size_theory}. We are however limited by the main memory size and we have to be careful not to start swapping out memory to disk as this greatly decreases performance. This means that this parameter is very machine dependent - we want to utilitize as much memory as possible.
 
 \begin{figure}[htp]
 \includegraphics[width=\textwidth]{../src/experiments/gerth_buffer_size_experiment_results/2016-05-03.13_51_54/ios}
-\caption{Number of calls to read and writ for different buffer sizes.}
+\caption{Number of calls to read and write for different buffer sizes.}
 \label{fig:gerth_buffer_size_ios}
-
-\includegraphics[width=\textwidth]{../src/experiments/gerth_buffer_size_experiment_results/2016-05-03.13_51_54/ibo}
-\caption{Number of insert buffer overflows in the structure of Brodal.}
-\label{fig:gerth_buffer_size_ibo}
 \end{figure}
 
 Figure~\ref{fig:gerth_buffer_size_ios} aligns very well with the actual running time and our expectations. The number of I/O's decreases with increasing buffer sizes.
 
-Figure~\ref{fig:gerth_buffer_size_ibo} show the number of times an insertion buffer overflows. In fact we see a similar decrease in the number of operations in all of the update operations described in Subsection~\ref{subsec:gerth_updates}.
+We see the effect of the limited amount of internal memory when we reach 16Mb. We should have seen a significant increase in performance compared to 8Mb but instead we see that 8Mb performs just as well as 16Mb.
 
-\todo{This is also what we see in Figure~\ref{fig:gerth_buffer_size_experiment} where the running time decreases as the buffer size increases until we reach 8Mb. At this point the we started swapping out structures and the performance decreased. Larger buffer sizes was also tried but were simply too slow to measure.}
+We also tried with buffer sizes of 32Mb and 64Mb but they never terminated as they started swapping out memory heavily which decreased performance to a point where there was no point in continuing.
+
+We conclude from our experiments with different fanouts and buffer sizes that in order to get as fast an update time as possible we need a fanout of between 2-6 and as large a buffer size as internal memory allows.
+
+It is also worth noting that since the experimental results are very much in line with the theoretical results it can be concluded that the data structure is I/O bound.
+
+\subsection{External memory priority search tree}
+\label{subsec:tuning_arge}
+
+\todo{We need a single experiment where we test different buffer sizes with Arge's structure for good measure}
 
 \section{Insertion}
 \begin{figure}[htp!]
@@ -1200,11 +1211,20 @@ The experiment on the \textbf{report} part of the algorithms was conducted by fi
 	\label{fig:experiment_query_uniform_fix_x}
 \end{figure}
 
+The expected query bounds for searching is depicted in Figure~\ref{fig:theory_query_complexity}.
 
 \begin{figure}[htp!]
 \includegraphics[width=\textwidth]{../plots/query_complexities/query_complexity}
 \caption{Theoretical query time for all tested structures.}
 \label{fig:theory_query_complexity}
+\end{figure}
+
+The result of the experiment on the \textbf{search} part of the algorithms is depicted in Figure~\ref{fig:result_query_search_complexity}. Arges structure is limited by the ???
+
+\begin{figure}[htp!]
+\includegraphics[width=\textwidth]{../src/experiments/query_experiment_results/2016-05-05.21_00_12/time}
+\caption{Theoretical query time for all tested structures.}
+\label{fig:result_query_search_complexity}
 \end{figure}
 
 \subsection{External memory priority search tree}

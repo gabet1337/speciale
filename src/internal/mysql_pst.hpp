@@ -1,5 +1,6 @@
 #ifndef MYSQL_PST_HPP
 #define MYSQL_PST_HPP
+#include "../common/definitions.hpp"
 #include "../common/pst_interface.hpp"
 #include "../common/point.hpp"
 #include "../stream/stream.hpp"
@@ -46,7 +47,7 @@ namespace internal {
     delete con;
     //create a table for use:
     stmt->execute("DROP TABLE IF EXISTS test");
-    stmt->execute("CREATE TABLE test(x int, y int) ENGINE=MYISAM;");
+    stmt->execute("CREATE TABLE test(x int, y int, PRIMARY KEY (x, y)) ENGINE=MYISAM;");
     stmt->execute("ALTER TABLE test MAX_ROWS=1000000000;");
   }
   
@@ -81,7 +82,7 @@ namespace internal {
 
   void mysql_pst::flush_insert_buffer() {
     if (insert_buffer.empty()) return;
-    stmt->execute("INSERT INTO test VALUES "+ get_values(insert_buffer));
+    stmt->execute("INSERT IGNORE INTO test VALUES "+ get_values(insert_buffer));
     insert_buffer.clear();
   }
 
