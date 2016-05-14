@@ -693,6 +693,8 @@ We have now showed that we are able to construct a dynamic data structure with t
 
 \section{Main structure}
 \label{sec:arge_structure}
+\todo{Figure of "force merge"}
+
 As mentioned earlier, the main structure is a weight-balanced B-tree~\cite{arge_vitter_1996} on the normal lexicographical ordering of points with regards to $x$. The differences between a weight balanced B-tree and a regular B-tree are with the regards to how and when splitting and fusing of nodes takes place. Constraints are imposed on the \textit{weight} of a node rather than the number of children. The weight of a node $v$ is the number of elements stored in the subtree rooted at $v$. Let $a$ be the branching parameter and $k$ the leaf parameter of the tree. An internal node on level $l$ has weight between $\frac{1}{2}a^lk$ and $2a^lk$ and has at least one child. Inserting in a weight balanced B-tree is similar to a normal B-tree and when a leaf splits it might cause the weight of the parent to become too large and recursively split on a path from a leaf to the root.
 
 Each internal node of the structures stores an instance of the bootstrapped structure for answering three-sided queries on $\Theta(B^2)$ points. Arge et al. denotes this structure the \textit{query data structure} as it allows for fast queries which will be explained later. Points are stored in the query data structure according to the following rules.
@@ -732,7 +734,7 @@ Inserting a point in the structure involves two steps. The first is to insert th
 	\label{fig:arge_split_2}
 \end{figure}
 
-After inserting in the base tree and appropriate reorganization we need to insert the point in the correct query data structure. The search starts in the root. The child responsible for the $x$-range which the points belongs to is found and its $Y$-set is found by a degenerate query to the query data structure of the root. If the number of points is $\geq B/2$ and the point is below all of them the point is recursively inserted into the found child. Otherwise the point joins the query data structure of the root. If the $Y$-set of the found child is now too large we recursively insert the lowest of these points into the child's query data structure.
+After inserting in the base tree and appropriate reorganization we need to insert the point in the correct query data structure. The search starts in the root. The child $w$ responsible for the $x$-range which the points belongs to is found and its Y-set is found by a degenerate query on the form  $\left[ x\text{-range of }w \right] \times \left[ - \infty, \infty \right]$ to the query data structure of the root. If the number of points is $\geq B/2$ and the point is below all of them the point is recursively inserted into the found child. Otherwise the point joins the query data structure of the root. If the $Y$-set of the found child is now too large we recursively insert the lowest of these points into the child's query data structure.
 If we reach a leaf we simply insert the point into the query data structure of the leaf.
 
 \subsection{Deletion}
