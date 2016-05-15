@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70107" creator="Ipe 7.2.2">
-<info created="D:20160503183544" modified="D:20160515163623"/>
+<info created="D:20160503183544" modified="D:20160515182746"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -275,190 +275,6 @@ h
 472 704 l
 472 704 l
 </path>
-<path matrix="1 0 0 1 -204 -80" stroke="black" fill="white">
-232 668 m
-228 668
-228 672
-228 672
-228 712
-228 712
-228 716
-232 716
-232 716
-344 716
-344 716
-348 716
-348 712
-348 712
-348 672
-348 672
-348 668
-344 668
-344 668
-232 668
-232 668 c
-</path>
-<text matrix="1 0 0 1 -204 -84" transformations="translations" pos="284 712" stroke="black" type="label" width="8.781" height="4.294" depth="1.49" valign="baseline">$c_1$</text>
-<path matrix="1.16667 0 0 1 -177.333 -160" stroke="black" fill="1">
-176 784 m
-176 752 l
-272 752 l
-272 784 l
-h
-</path>
-<path matrix="1.16667 0 0 1 -233.333 -176" stroke="black">
-224 784 m
-320 784 l
-</path>
-<path matrix="1 0 0 1 -172 -176" stroke="black">
-256 800 m
-256 784 l
-</path>
-<path matrix="1 0 0 1 -172 -176" stroke="black">
-288 800 m
-288 784 l
-</path>
-<text matrix="1 0 0 1 -180 -180" transformations="translations" pos="232 792" stroke="darkgray" type="label" width="14.343" height="6.808" depth="2.49" valign="baseline">$P_{c_2}$</text>
-<text matrix="1 0 0 1 -172 -176" transformations="translations" pos="268 788" stroke="darkgray" type="label" width="12.326" height="6.808" depth="2.49" valign="baseline">$I_{c_2}$</text>
-<text matrix="1 0 0 1 -180 -176" transformations="translations" pos="300 788" stroke="darkgray" type="label" width="16.195" height="6.808" depth="2.49" valign="baseline">$D_{c_2}$</text>
-<path matrix="1 0 0 1 -68 -80" stroke="black" fill="white">
-232 668 m
-228 668
-228 672
-228 672
-228 712
-228 712
-228 716
-232 716
-232 716
-344 716
-344 716
-348 716
-348 712
-348 712
-348 672
-348 672
-348 668
-344 668
-344 668
-232 668
-232 668 c
-</path>
-<text matrix="1 0 0 1 -68 -84" transformations="translations" pos="284 712" stroke="black" type="label" width="8.781" height="4.294" depth="1.49" valign="baseline">$c_2$</text>
-<path matrix="1.16667 0 0 1 -41.333 -160" stroke="black" fill="1">
-176 784 m
-176 752 l
-272 752 l
-272 784 l
-h
-</path>
-<path matrix="1.16667 0 0 1 -97.333 -176" stroke="black">
-224 784 m
-320 784 l
-</path>
-<path matrix="1 0 0 1 -36 -176" stroke="black">
-256 800 m
-256 784 l
-</path>
-<path matrix="1 0 0 1 -36 -176" stroke="black">
-288 800 m
-288 784 l
-</path>
-<text matrix="1 0 0 1 -44 -180" transformations="translations" pos="232 792" stroke="darkgray" type="label" width="14.343" height="6.808" depth="2.49" valign="baseline">$P_{c_2}$</text>
-<text matrix="1 0 0 1 -36 -176" transformations="translations" pos="268 788" stroke="darkgray" type="label" width="12.326" height="6.808" depth="2.49" valign="baseline">$I_{c_2}$</text>
-<text matrix="1 0 0 1 -44 -176" transformations="translations" pos="300 788" stroke="darkgray" type="label" width="16.195" height="6.808" depth="2.49" valign="baseline">$D_{c_2}$</text>
-<path matrix="1 0 0 1 68 -80" stroke="black" fill="white">
-232 668 m
-228 668
-228 672
-228 672
-228 712
-228 712
-228 716
-232 716
-232 716
-344 716
-344 716
-348 716
-348 712
-348 712
-348 672
-348 672
-348 668
-344 668
-344 668
-232 668
-232 668 c
-</path>
-<text matrix="1 0 0 1 68 -84" transformations="translations" pos="284 712" stroke="black" type="label" width="8.781" height="4.294" depth="1.49" valign="baseline">$c_3$</text>
-<path matrix="1.16667 0 0 1 94.667 -160" stroke="black" fill="1">
-176 784 m
-176 752 l
-272 752 l
-272 784 l
-h
-</path>
-<path matrix="1.16667 0 0 1 38.667 -176" stroke="black">
-224 784 m
-320 784 l
-</path>
-<path matrix="1 0 0 1 100 -176" stroke="black">
-256 800 m
-256 784 l
-</path>
-<path matrix="1 0 0 1 100 -176" stroke="black">
-288 800 m
-288 784 l
-</path>
-<text matrix="1 0 0 1 92 -180" transformations="translations" pos="232 792" stroke="darkgray" type="label" width="14.343" height="6.808" depth="2.49" valign="baseline">$P_{c_3}$</text>
-<text matrix="1 0 0 1 100 -176" transformations="translations" pos="268 788" stroke="darkgray" type="label" width="12.326" height="6.808" depth="2.49" valign="baseline">$I_{c_3}$</text>
-<text matrix="1 0 0 1 92 -176" transformations="translations" pos="300 788" stroke="darkgray" type="label" width="16.195" height="6.808" depth="2.49" valign="baseline">$D_{c_3}$</text>
-<path matrix="1 0 0 1 204 -80" stroke="black" fill="white">
-232 668 m
-228 668
-228 672
-228 672
-228 712
-228 712
-228 716
-232 716
-232 716
-344 716
-344 716
-348 716
-348 712
-348 712
-348 672
-348 672
-348 668
-344 668
-344 668
-232 668
-232 668 c
-</path>
-<text matrix="1 0 0 1 204 -84" transformations="translations" pos="284 712" stroke="black" type="label" width="8.781" height="4.294" depth="1.49" valign="baseline">$c_4$</text>
-<path matrix="1.16667 0 0 1 230.667 -160" stroke="black" fill="1">
-176 784 m
-176 752 l
-272 752 l
-272 784 l
-h
-</path>
-<path matrix="1.16667 0 0 1 174.667 -176" stroke="black">
-224 784 m
-320 784 l
-</path>
-<path matrix="1 0 0 1 236 -176" stroke="black">
-256 800 m
-256 784 l
-</path>
-<path matrix="1 0 0 1 236 -176" stroke="black">
-288 800 m
-288 784 l
-</path>
-<text matrix="1 0 0 1 228 -180" transformations="translations" pos="232 792" stroke="darkgray" type="label" width="14.343" height="6.808" depth="2.49" valign="baseline">$P_{c_4}$</text>
-<text matrix="1 0 0 1 236 -176" transformations="translations" pos="268 788" stroke="darkgray" type="label" width="12.326" height="6.808" depth="2.49" valign="baseline">$I_{c_4}$</text>
-<text matrix="1 0 0 1 228 -176" transformations="translations" pos="300 788" stroke="darkgray" type="label" width="16.195" height="6.808" depth="2.49" valign="baseline">$D_{c_4}$</text>
 <path matrix="1 0 0 1 -4 -4" stroke="black" dash="dashed">
 156 568 m
 156 820 l
@@ -610,5 +426,21 @@ h
 62.6099 0 0 62.6099 208 672 190.009 731.969 a
 </path>
 <text transformations="translations" pos="372 668" stroke="black" type="label" width="11.875" height="6.808" depth="0" valign="baseline">$B^{\epsilon}$</text>
+<path stroke="black" fill="white">
+23.3238 0 0 23.3238 84 608 e
+</path>
+<text transformations="translations" pos="80 608" stroke="black" type="label" width="8.781" height="4.294" depth="1.49" valign="baseline">$c_1$</text>
+<path matrix="1 0 0 1 136 0" stroke="black" fill="white">
+23.3238 0 0 23.3238 84 608 e
+</path>
+<text matrix="1 0 0 1 136 0" transformations="translations" pos="80 608" stroke="black" type="label" width="8.781" height="4.294" depth="1.49" valign="baseline">$c_2$</text>
+<path matrix="1 0 0 1 268 0" stroke="black" fill="white">
+23.3238 0 0 23.3238 84 608 e
+</path>
+<text matrix="1 0 0 1 268 0" transformations="translations" pos="80 608" stroke="black" type="label" width="8.781" height="4.294" depth="1.49" valign="baseline">$c_3$</text>
+<path matrix="1 0 0 1 408 0" stroke="black" fill="white">
+23.3238 0 0 23.3238 84 608 e
+</path>
+<text matrix="1 0 0 1 408 0" transformations="translations" pos="80 608" stroke="black" type="label" width="8.781" height="4.294" depth="1.49" valign="baseline">$c_4$</text>
 </page>
 </ipe>
