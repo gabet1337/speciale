@@ -22,10 +22,11 @@ namespace internal {
       bool leaf() {
         return left == 0 && right == 0;
       }
-      node() : left(0), right(0), key(point(-INF,-INF)), key_y(point(-INF,-INF)),
+      node() : left(0), right(0), parent(this),
+               key(point(-INF,-INF)), key_y(point(-INF,-INF)),
                placeholder(false) {};
-      node(point p) : left(0), right(0), key(p), key_y(p),
-                      placeholder(false) {};
+      node(point p) : left(0), right(0), parent(this),
+                      key(p), key_y(p), placeholder(false) {};
     };
     
   public:
@@ -123,6 +124,8 @@ namespace internal {
       root->left = left_child;
       root->right = right_child;
 
+      //root->parent = root;
+      
       return;
     } 
 
@@ -208,7 +211,12 @@ namespace internal {
       } else {
         node->parent->right = 0;
       }
-      delete node;
+
+      if (node != root)
+        delete node;
+      else
+        root = new dynamic_pst::node();
+
       size--;
     }
 
@@ -222,7 +230,7 @@ namespace internal {
         if (in_node->right != 0 && !in_node->right->placeholder)
           right_cand = in_node->right->key_y;
         in_node->key_y = std::max(left_cand,right_cand,comp_y);
-        if (in_node->key == point(-INF,-INF)) break;
+        if (in_node->key_y == point(-INF,-INF)) break;
         if (in_node->key_y == left_cand)
           in_node = in_node->left;
         else
@@ -234,7 +242,7 @@ namespace internal {
     }
 
     handle_global_rebuild();
-    
+
   }
 
   void dynamic_pst::report(int x1, int x2, int y,
@@ -243,7 +251,7 @@ namespace internal {
     if (util::file_exists(output_file))
       error(1, ECANCELED, "Output file exists. Aborting.");
 
-    io::buffered_stream<point> result(buffer_size);
+    io::buffered_stream<point> result(STREAM_BUFFER_SIZE);
     result.open(output_file);
 
     if (x2 < x1) {
@@ -335,7 +343,8 @@ namespace internal {
     std::stack<node*> q;
     std::vector<point> points;
       
-    q.push(root);
+    if (!root->leaf())
+      q.push(root);
 
     while (!q.empty()) {
       
@@ -347,17 +356,20 @@ namespace internal {
       if (node->left != 0)
         q.push(node->left);
 
-      if (node->leaf())
-        points.push_back(node->key);
+      if (node->leaf() && node->key_y != point(-INF,-INF) && node->key_y != point(INF,INF)) {
+        points.push_back(node->key_y);
+      }
 
       delete node;
 
     }
 
-    root = new node();
+    if (points.size() > 0) {
+      root = new node();
 
-    construct_sorted(points);
-
+      construct_sorted(points);
+    }
+    
     epoch_begin_point_count = size;
     operation_count = 0;
 
@@ -365,6 +377,55 @@ namespace internal {
   
   void dynamic_pst::construct_sorted(std::vector<point> points) {
 
+    if (points.size() == 1) {
+      root->key = points[0];
+      root->key_y = points[0];
+      return;
+    }
+
+    if (points.size() == 2) {
+
+      point p;
+      p = points[1];
+      
+      root->key_y = points[0];
+      root->key = points[0];
+      root->placeholder = false;
+      
+      node *left_child = new dynamic_pst::node();
+      node *right_child = new dynamic_pst::node();
+      left_child->parent = root;
+      right_child->parent = root;
+      
+      if (p < root->key) {
+        left_child->key = p;
+        left_child->key_y = p;
+        right_child->key = root->key;
+        right_child->key_y = root->key;
+      } else {
+        left_child->key = root->key;
+        left_child->key_y = root->key;
+        right_child->key = p;
+        right_child->key_y = p;
+        root->key = p;
+      }
+
+      if (comp_y(root->key_y,p))
+        root->key_y = p;
+
+      if (root->key_y == left_child->key)
+        left_child->placeholder = true;
+      else
+        right_child->placeholder = true;
+      
+      root->left = left_child;
+      root->right = right_child;
+
+      //root->parent = root;
+      
+      return;
+    }
+    
     std::vector<std::pair<dynamic_pst::node*,point> > layer_i_plus_1, layer_i;
 
     for (size_t i = 0; i < points.size() / 2; i++) {
@@ -464,7 +525,7 @@ namespace internal {
     root->right = leaf_right;
     leaf_left->parent = root;
     leaf_right->parent = root;
-    
+
     promote(root);
   }
 
