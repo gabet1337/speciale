@@ -767,10 +767,10 @@ In every internal node $v$ visited we spend $\mathcal{O}(1+K_v/B)$ I/O's. There 
 
 \chapter{External Memory Buffered Priority Search Tree}
 \label{chp:epst}
-In this chapter we present an external memory data structure described by Brodal~\cite{DBLP:journals/corr/Brodal15}. The structure supports updates in amortized $\mathcal{O}\left(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N\right)$, three sided range queries in $\mathcal{O}\left(\frac{1}{\epsilon}\log_B N + \nicefrac{K}{B}\right)$ for $0 \leq \epsilon \leq \frac{1}{2}$, and can be constructed on $N$ points in the sorting bound. $\epsilon$ is a parameter that determines the size of the fanout and in turn the size of a bootstrapped substructure for storing $\mathcal{O}(B^{1+\epsilon})$ points, $0 \leq \epsilon \leq \frac{1}{2}$.
-The substructure is very similar to that of Arge et al.~\cite[Section~3.1]{arge_vitter_2003} for handling $\Theta(B^2)$ points with the main difference being that we reduce the capacity to allow an amortized constant number of I/O's per update. The bootstrapped structure is in~\cite{arge_vitter_2003} used to store the top $\Theta(B^2)$ points w.r.t. the $y$ value for the subtree rooted at the given node of the substructure. This structure uses it in a slightly different way to store the top $\mathcal{O}(B^{1+\epsilon})$ points of the children of the given  node. This bootstrapped structure is described further in Section~\ref{sec:child_structure} and in the following it will be refered to as the child structure.
+In this chapter we present an external memory data structure described by Brodal~\cite{DBLP:journals/corr/Brodal15}. The structure supports updates in amortized $\mathcal{O}\left(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N\right)$ I/O's, three sided range queries in $\mathcal{O}\left(\frac{1}{\epsilon}\log_B N + \nicefrac{K}{B}\right)$ I/O's for $0 \leq \epsilon \leq \frac{1}{2}$, and can be constructed on $N$ sorted points in $\mathcal{O}(\nicefrac{N}{B})$ I/O's. The parameter $\epsilon$ determines the size of the fanout and in turn the size of a bootstrapped substructure for storing $\mathcal{O}(B^{1+\epsilon})$ points.
+The substructure is very similar to that of Arge et al.~\cite[Section~3.1]{arge_vitter_2003} for handling $\Theta(B^2)$ points with the main difference being that we reduce the capacity to allow an amortized constant number of I/O's per update. The bootstrapped structure is in~\cite{arge_vitter_2003} used to store the top $\Theta(B^2)$ points w.r.t. the $y$ value for the subtree rooted at the given node of the substructure. This structure uses it in a slightly different way to store the top $\mathcal{O}(B^{1+\epsilon})$ points of the children of the given  node. The bootstrapped structure is described further in Section~\ref{sec:child_structure} and will be referred to as the \textit{child structure} in the rest of the chapter.
 
-The external memory buffered priority search tree is a combination of the external memory priority search tree of Arge et al. described in Chapter~\ref{chp:arge_pst}, and the buffered updates of the buffer tree also thanks to Arge~\cite{Arge:1995:BTN:645930.672850}. The data structure is described in Section~\ref{sec:main_data_structure}.
+The external memory buffered priority search tree is a combination of the external memory priority search tree of Arge et al.~\cite{arge_samoladas_vitter_1999} described in Chapter~\ref{chp:arge_pst}, and the buffered updates of the Buffer tree also thanks to Arge~\cite{Arge:1995:BTN:645930.672850} described in Section~\ref{sec:prelim_buffer_tree}. The main data structure is described in Section~\ref{sec:main_data_structure}.
 
 \begin{figure}
 	\centering
@@ -794,16 +794,16 @@ An external memory data structure exists supporting insertion and deletion of po
 \end{theorem}
 \todo{Kasper: Skal $\epsilon$ vaere en konstant. I saafald kan man vel bare slette $\frac{1}{\epsilon}$ ledet?}
 
-The structure is a slightly modified version of the B-tree. Each internal node, except for the root, has a degree between $\frac{\Delta}{2}$ and $\Delta$, with $\Delta = \lceil B^\epsilon \rceil$. The root has degree between $2$ and $\Delta$.
+The structure is a slightly modified version of the B-tree. Each internal node, except for the root, has a node degree between $\nicefrac{\Delta}{2}$ and $\Delta$, with $\Delta = \lceil B^\epsilon \rceil$. The root has node degree between $2$ and $\Delta$.
 
-Each node $v$ stores three buffers containing $\mathcal{O}(B)$ points each. A point buffer $P_v$, an insertion buffer $I_v$, and a deletion buffer $D_v$.
+Each node $v$ stores three buffers containing $\mathcal{O}(B)$ points each, namely a point buffer $P_v$, an insertion buffer $I_v$, and a deletion buffer $D_v$ which purpose will be described shortly.
 
 The subtree at node $v$ contains points in the range spanned by the points in the point buffer $P_v$, i.e. the structure is a search tree on the points in $P_v$ w.r.t. to the normal lexicographical ordering of points.
 
-As in the internal priority search tree the points with highest $y$-value resides in the top of the tree, i.e. we have a heap ordering among the nodes of the tree on the $y$-value. This means that for a node $v$, no child $c$ of $v$ stores an element in $P_c$ with a larger $y$-value than the minimum $y$-value in $P_v$.
-$I_v$ and $D_v$ stores buffered insertions and deletions on their way down to a point buffer of a descendent and are handled recursively whenever a buffer overflows.
+As in the internal priority search tree of McCreight~\cite{DBLP:journals/siamcomp/McCreight85} described in Chapter~\ref{chp:internal_pst}, the points with highest $y$-value resides in the top of the tree, i.e. we have a heap ordering among the nodes of the tree on the $y$-value. This means that for a node $v$, no child $c$ of $v$ stores an element in $P_c$ with a larger $y$-value than the minimum $y$-value in $P_v$.
+The buffers $I_v$ and $D_v$ stores delayed insertions and deletions on their way down to a point buffer of a descendent. Using the basic ideas of the buffer tree of Arge~\cite{Arge:1995:BTN:645930.672850} described in Section~\ref{sec:prelim_buffer_tree}, buffers are handled recursively whenever an overflow occurs.
 
-For each internal node, $v$, we also store an instance of the child structure, $C_v$, containing the elements $P_c$ for every child $c$ of $v$.
+For each internal node, $v$, we also store an instance of the child structure, $C_v$, containing the elements $P_c$ for every child $c$ of $v$. See Figure~\ref{fig:gerth_tree}.
 
 Finally, for each internal node, $v$, we store, in $\mathcal{O}(1)$ blocks, information about the minimum $y$-value of the points of each of $v$'s children or $\infty$ if the child does not store any points.
 
@@ -822,20 +822,19 @@ For a node $v$ in the main data structure the following invariants must be true:
 
 \subsection{Updates}
 \label{subsec:gerth_updates}
-We update the structure by adding points to either the insertion or deletion buffer of the root while maintaining the above invariants.
-To be able to maintain the above invariants we must be very careful whenever we update the data structure. During an update the insertion or deletion buffers might overflow. This is handled in the following five steps:
+We update the structure with inserts and deletions by adding points to either the insertion or deletion buffer respectively of the root, while maintaining the above invariants.
+During an update the insertion or deletion buffers might overflow, i.e get size larger than $B$ or $B/4$ respectively. This is handled in the following five steps:
 \begin{inlinelist}
 	\item handle overflowing deletion buffers
 	\item handle overflowing insertion buffers
 	\item split leaves with overflowing point buffers
 	\item split nodes of degree $\Delta+1$
-	\item fill underflowing point buffers
-\end{inlinelist}
+	\item fill underflowing point buffers.
 
 We will in the following look at each step individually and argue their complexity.
 
 \begin{enumerate}[label=(\roman*)]
-	\item\label{update:del} A deletion buffer at node $v$ overflows when $\vert D_v \vert > B/4$. Since the structure is a B-tree on the lexicographically ordering of points we must by the pigeon-hole principle have that there exist a child $c$ such that we can push $U \subseteq D_v$ of $\lceil \vert D_v \vert / \Delta \rceil$ deletions to $c$. This is illustrated in Figure~\ref{fig:pigeon_hole}. Points in $U$ are removed from $D_v$, $I_c$, $D_c$, $P_c$, and $C_v$. Any point $p$ in $U$ lexicographically larger than the minimum point in $P_c$ (w.r.t. $y$) is removed from $U$ as the deletion cannot cancel any updates further down in the tree.
+	\item\label{update:del} A deletion buffer at node $v$ overflows when $\vert D_v \vert > B/4$. Since the structure is a B-tree on the lexicographically ordering of points, by the pigeon-hole principle, there must exist a child $c$ such that we can push $U \subseteq D_v$ of $\lceil \vert D_v \vert / \Delta \rceil$ deletions to $c$. This is illustrated in Figure~\ref{fig:pigeon_hole}. Points in $U$ are removed from $D_v$, $I_c$, $D_c$, $P_c$, and $C_v$. Any point $p$ in $U$ lexicographically larger than the minimum point in $P_c$ (w.r.t. $y$) is removed from $U$ as the deletion cannot cancel any updates further down in the tree.
 	
 	\begin{figure}[htp!]
 		\centering
