@@ -665,7 +665,7 @@ Let $L$ be the points stored in $\mathcal{L}$ and let $\ell = \lceil \nicefrac{\
 
 A catalog structure stores in $\mathcal{O}(1)$ disk blocks a reference to each of the $2\ell-1$ blocks. For block $b_i$ we store the minimum and maximum $x$-values for the points contained in the block. For a merged block $b_{i,j}$ we store the interval $\left[ i,j\right]$ and the minimum $y$-value of the points in the block. Note, this minimum $y$-value is also the point where the sweep line created the block $b_{i,j}$.
 
-%TODO maybe argue that L uses \mathcal{O}(B^{1+\epsilon}) blocks
+%TODO maybe argue that L uses \mathcal{O}(B^{1+\epsilon}) blocks. Edit: I believe L uses B^epsilon blocks, right?
 
 %%%%%%%%%%%%%
 % UPDATES %%%
@@ -690,6 +690,8 @@ We know from construction that the blocks intersected contains $B$ points on or 
 The $t$ relevant blocks are scanned and the points contained in the query are reported. The total number of I/O's required becomes $\mathcal{O}(1+t) = \mathcal{O}(1+\nicefrac{K}{B})$ as $t \leq 2\frac{K}{B}-2$ from the previous observation.
 
 We have now showed that we are able to construct a dynamic data structure with the bounds stated in Theorem~\ref{thm:child_structure}.
+
+\todo{Consider moving no-splitting lemma from implementation considerations to here.}
 
 \section{Main structure}
 \label{sec:arge_structure}
@@ -732,7 +734,7 @@ Inserting a point in the structure involves two steps. The first is to insert th
 	\label{fig:arge_split_2}
 \end{figure}
 
-After inserting in the base tree and appropriate reorganization we need to insert the point in the correct query data structure. The search starts in the root. The child responsible for the $x$-range which the points belongs to is found and its $Y$-set is found by a degenerate query to the query data structure of the root. If the number of points is $\geq B/2$ and the point is below all of them the point is recursively inserted into the found child. Otherwise the point joins the query data structure of the root. If the $Y$-set of the found child is now too large we recursively insert the lowest of these points into the child's query data structure.
+After inserting in the base tree and appropriate reorganization we need to insert the point in the correct query data structure. The search starts in the root. The child $w$ responsible for the $x$-range which the points belongs to is found and its Y-set is found by a degenerate query on the form  $\left[ x\text{-range of }w \right] \times \left[ - \infty, \infty \right]$ to the query data structure of the root. If the number of points is $\geq B/2$ and the point is below all of them the point is recursively inserted into the found child. Otherwise the point joins the query data structure of the root. If the $Y$-set of the found child is now too large we recursively insert the lowest of these points into the child's query data structure.
 If we reach a leaf we simply insert the point into the query data structure of the leaf.
 
 \subsection{Deletion}
