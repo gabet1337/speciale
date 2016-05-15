@@ -251,7 +251,7 @@ namespace internal {
     if (util::file_exists(output_file))
       error(1, ECANCELED, "Output file exists. Aborting.");
 
-    io::buffered_stream<point> result(buffer_size);
+    io::buffered_stream<point> result(STREAM_BUFFER_SIZE);
     result.open(output_file);
 
     if (x2 < x1) {

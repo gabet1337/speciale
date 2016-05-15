@@ -913,7 +913,7 @@ namespace ext {
     
     // tests ranges are correct w.r.t to points in point buffer
     for (auto it = ranges.begin(); it != ranges.end(); it++) {
-      io::buffered_stream<point> bs(4096);
+      io::buffered_stream<point> bs(STREAM_BUFFER_SIZE);
       bs.open(get_point_buffer_file_name(it->node_id));
       while (!bs.eof()) {
         point p = bs.read();
@@ -1406,7 +1406,6 @@ namespace ext {
             clear_cache();
             handle_point_buffer_overflow_of_leaf_root();
             test::GERTH_NUM_POINT_BUFFER_OVERFLOW++;
-            test::GERTH_NUM_NODE_DEGREE_OVERFLOW++;
           } else if ( node->is_root() ) {
             clear_cache();
             handle_point_buffer_overflow_in_root(node);
@@ -1422,7 +1421,7 @@ namespace ext {
 
             clear_cache();
             split_leaf(node, parent);
-            test::GERTH_NUM_NODE_DEGREE_OVERFLOW++;
+            test::GERTH_NUM_POINT_BUFFER_OVERFLOW++;
             
           } else if ( node->is_virtual_leaf() ) {
             load_data_in_node(node, DATA::ranges);
@@ -2899,7 +2898,7 @@ namespace ext {
     if (util::file_exists(output_file))
       error(1, ECANCELED, "Output file exists. Aborting.");
 
-    io::buffered_stream<point> result(buffer_size);
+    io::buffered_stream<point> result(STREAM_BUFFER_SIZE);
     result.open(output_file);
 
     if (x2 < x1) {
@@ -3051,7 +3050,7 @@ namespace ext {
 
     state = STATE::construct;
     
-    io::buffered_stream<point> points(buffer_size);
+    io::buffered_stream<point> points(STREAM_BUFFER_SIZE);
     points.open(file_name);
     DEBUG_MSG("File contains " << points.size() << " points.");
 

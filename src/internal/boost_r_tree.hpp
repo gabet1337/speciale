@@ -59,7 +59,7 @@ namespace internal {
   }
 
   void boost_r_tree::report(int x1, int x2, int y, const std::string &output_file) {
-    io::buffered_stream<point> output(buffer_size);
+    io::buffered_stream<point> output(STREAM_BUFFER_SIZE);
     output.open(output_file);
     rtree.query(bgi::satisfies([&](pt const& v) {
           int xp = v.get<0>();
