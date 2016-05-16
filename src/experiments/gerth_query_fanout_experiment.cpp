@@ -28,6 +28,16 @@ class gerth_query_fanout_experiment : public base_experiment {
         std::cout << "inserted " << data_read/(1024*1024) << "Mb" << std::endl;
       }
       if (data_read % interval == 0) {
+	pst->report(107374182, 214748364, 0, "query_result1");
+	pst->report(472446402, 837518622, 429496729, "query_result2");
+	pst->report(1009317314, 1245540515, 1288490188, "query_result3");
+	pst->report(1460288879, 1760936590, 858993458, "query_result4");
+	pst->report(1868310772, 2040109464, 1717986917, "query_result5");
+	util::remove_directory("query_result1");
+	util::remove_directory("query_result2");
+	util::remove_directory("query_result3");
+	util::remove_directory("query_result4");
+	util::remove_directory("query_result5");
         restart_timers();
         for (int i = 0; i < 10; i++) {
           pst->report(107374182, 214748364, 0, "query_result1");
@@ -60,11 +70,11 @@ class gerth_query_fanout_experiment : public base_experiment {
 int main() {
 
   gerth_query_fanout_experiment gfe("gerth_query_fanout_experiment");
-  gfe.add(1, "fanout2", common::PST_VARIANT::GERTH, 1024*1024, log(2.5)/log(1024.0*1024.0));
+  //gfe.add(1, "fanout2", common::PST_VARIANT::GERTH, 1024*1024, log(2.5)/log(1024.0*1024.0));
   gfe.add(2, "fanout4", common::PST_VARIANT::GERTH, 1024*1024, log(4.5)/log(1024.0*1024.0));
-  gfe.add(3, "fanout8", common::PST_VARIANT::GERTH, 1024*1024, log(8.5)/log(1024.0*1024.0));
-  gfe.add(4, "fanout16", common::PST_VARIANT::GERTH, 1024*1024, log(16.5)/log(1024.0*1024.0));
-  gfe.add(5, "fanout32", common::PST_VARIANT::GERTH, 1024*1024, log(32.5)/log(1024.0*1024.0));
+  //gfe.add(3, "fanout8", common::PST_VARIANT::GERTH, 1024*1024, log(8.5)/log(1024.0*1024.0));
+  //gfe.add(4, "fanout16", common::PST_VARIANT::GERTH, 1024*1024, log(16.5)/log(1024.0*1024.0));
+  //gfe.add(5, "fanout32", common::PST_VARIANT::GERTH, 1024*1024, log(32.5)/log(1024.0*1024.0));
   gfe.run();
   gfe.plot();
 
