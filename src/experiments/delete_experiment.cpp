@@ -17,7 +17,7 @@ class delete_experiment : public base_experiment {
     ull print_interval = 1024 * 1024;
     test::clock ins_time;
     ins_time.start();
-    long long one_day = 10; // 60*60*24;
+    long long one_day = 180; // 60*60*24;
     restart_timers();
     while (!data.eof()) {
       point p = data.read();
@@ -43,6 +43,7 @@ class delete_experiment : public base_experiment {
       if (data_deleted % interval == 0) {
         measure_everything(instance.id, (data_read - data_deleted)/(1024*1024));
         save_results(instance);
+        restart_timers();
       }
       if (data_deleted % print_interval == 0) {
 	std::cout << (data_read - data_deleted)/(1024*1024) << "MB LEFT" << std::endl;
@@ -64,11 +65,11 @@ int main() {
 
   delete_experiment de("delete_experiment");
   de.add(1, "Gerth", common::PST_VARIANT::GERTH, GERTH_BUFFER_SIZE, GERTH_EPSILON); 
-  de.add(3, "Internal", common::PST_VARIANT::INTERNAL, INTERNAL_BUFFER_SIZE, INTERNAL_EPSILON);
-  de.add(4, "Boost R-tree", common::PST_VARIANT::RTREE, RTREE_BUFFER_SIZE, RTREE_EPSILON);
-  de.add(6, "libspatial", common::PST_VARIANT::SPATIAL, SPATIAL_BUFFER_SIZE, SPATIAL_EPSILON);
-  de.add(2, "Arge", common::PST_VARIANT::ARGE, ARGE_BUFFER_SIZE, ARGE_EPSILON);
-  de.add(5, "MySQL", common::PST_VARIANT::MYSQL, MYSQL_BUFFER_SIZE, MYSQL_EPSILON);
+  //de.add(3, "Internal", common::PST_VARIANT::INTERNAL, INTERNAL_BUFFER_SIZE, INTERNAL_EPSILON);
+  //de.add(4, "Boost R-tree", common::PST_VARIANT::RTREE, RTREE_BUFFER_SIZE, RTREE_EPSILON);
+  //de.add(6, "libspatial", common::PST_VARIANT::SPATIAL, SPATIAL_BUFFER_SIZE, SPATIAL_EPSILON);
+  //de.add(2, "Arge", common::PST_VARIANT::ARGE, ARGE_BUFFER_SIZE, ARGE_EPSILON);
+  //de.add(5, "MySQL", common::PST_VARIANT::MYSQL, MYSQL_BUFFER_SIZE, MYSQL_EPSILON);
   de.run();
   de.plot();
 
