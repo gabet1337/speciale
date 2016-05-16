@@ -17,7 +17,7 @@ set style line 8 lc rgb '#87ceeb' pt 8 ps 1 lt 1 lw 2 # --- skyblue
 set key top left
 set xlabel 'N (input size in Mb)'
 set ylabel 'Time (ms)'
-#set xrange [0:0]
+set xrange [0:3500]
 #set yrange [0:0]
 plot 'insert_experiment_results/2016-05-06.14_11_08/gerth_Gerth' u 1:5 t 'Gerth' w lp ls 2, \
 'insert_experiment_results/2016-05-06.14_11_08/arge_Arge' u 1:5 t 'Arge' w lp ls 1, \
