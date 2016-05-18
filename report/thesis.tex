@@ -195,7 +195,7 @@
 % Disk were faster than CPU in 60
 % http://read.cs.ucla.edu/111/2006fall/notes/lec15#incommensurate-scaling
 
-In the early days of electronic computers disks were faster than processors. Since then processor technology has advanced at an incredible rate achieving annual speedups of 40 to 60 percent~\cite{ruemmler_wilkes_1994}. Although this is also true for disk capacity an entirely different story can be told for the speedup of disk performance. The disparity between processor, internal memory, and external memory speeds have grown larger for each year and the gap is widening as seen in figure~\ref{fig:cpu_vs_disk}. A back on the envelope analysis shows that a job that was 5 \% disk bound in 1999 is more than 70 \% disk bound on an average CPU in 2014. This disparity presents serious problems when designing algorithms on large data sets, and with more and more applications of Big Data in social media, banking, etc., these problems become increasingly relevant.
+In the early days of electronic computers disks were faster than processors. Since then processor technology has advanced at an incredible rate achieving annual speedups of 40 to 60 percent~\cite{ruemmler_wilkes_1994}. Although this is also true for disk capacity an entirely different story can be told for the speedup of disk performance. The disparity between processor, internal memory, and external memory speeds have grown larger for each year and the gap is widening as seen in Figure~\ref{fig:cpu_vs_disk}. A back on the envelope analysis shows that a job that was 5 \% disk bound in 1999 is more than 70 \% disk bound on an average CPU in 2014. This disparity presents serious problems when designing algorithms on large data sets, and with more and more applications of Big Data in social media, banking, etc., these problems become increasingly relevant.
 
 \begin{figure}[h]
 	\centering
@@ -232,13 +232,15 @@ The different solutions will be analyzed in the I/O model which encapsulates per
 \section{Outline of thesis}
 This thesis is structured as follows:
 
-In Chapter~\ref{chp:iomodel} we investigate a model that encapsulates performance of the I/O bottleneck.
+In Chapter~\ref{chp:iomodel} we investigate a model of computation that encapsulates performance of the I/O bottleneck.
 
 In Chapter~\ref{chp:prelims} we give a preliminary overview of some of the techniques used in developing external memory efficient data structures.
 
 Much work has been done on the three sided range queries and more general range queries. Some of the main ideas leading up to the main focus of this thesis is presented in Chapter~\ref{chp:related_work}.
 
 Chapter~\ref{chp:internal_pst} gives a detailed description and analysis of the priority search tree for internal memory by McCreight~\cite{DBLP:journals/siamcomp/McCreight85}.
+
+Chapter~\ref{chp:arge_pst} presents a result by Arge et al~\cite{arge_samoladas_vitter_1999}
 
 The main focus of this thesis, the external memory buffered priority search tree of Brodal~\cite{DBLP:journals/corr/Brodal15} is presented in Chapter~\ref{chp:epst}.
 
