@@ -240,37 +240,39 @@ Much work has been done on the three sided range queries and more general range 
 
 Chapter~\ref{chp:internal_pst} gives a detailed description and analysis of the priority search tree for internal memory by McCreight~\cite{DBLP:journals/siamcomp/McCreight85}.
 
-Chapter~\ref{chp:arge_pst} presents a result by Arge et al~\cite{arge_samoladas_vitter_1999}
+Chapter~\ref{chp:arge_pst} presents a result by Arge et al~\cite{arge_samoladas_vitter_1999} with optimal query bounds.
 
 The main focus of this thesis, the external memory buffered priority search tree of Brodal~\cite{DBLP:journals/corr/Brodal15} is presented in Chapter~\ref{chp:epst}.
+
+Leading up to our experimental Chapter~\ref{chp:experimental_results} we present the other structures included in our experiments in Chapter~\ref{chp:other_structures} and our experimental setup in Chapter~\ref{chp:experimental_setup}.
 
 \todo{add more sections!}
 
 \chapter{Model of computation}
 \label{chp:iomodel}
 We will argue the results of this thesis in terms of the external memory model of Aggarwal and Vitter~\cite{Aggarwal:1988/ICS/48529.48535}.
-The external memory model (or I/O model) measures the efficiency of an algorithm by counting the total number of reads and writes performed. In detail the model consists of two levels of memory; a bounded internal memory of size $M$ and an unbounded external memory. For a total of $N$ records we define an \textit{I/O} operation to the process of transferring $B$ consecutive records between the two levels of memory as depicted in figure~\ref{fig:io_model}. We restrict all computations on records to be done in internal memory. Throughout the thesis we will let $K$ denote the total number of records in the output.
+The external memory model (or I/O model) measures the efficiency of an algorithm by counting the total number of reads and writes to and from disk. In detail the model consists of two levels of memory; a bounded internal memory of size $M$ and an unbounded external memory. For a total of $N$ records we define an I/O operation to be the process of transferring $B$ consecutive records between the two levels of memory as depicted in Figure~\ref{fig:io_model}. We restrict all computations on records to be done in internal memory. Throughout the thesis we will let $K$ denote the total number of records in the output.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=1\textwidth]{../figures/block_io}
-	\caption{The I/O Model. Only reads/writes between internal and external memory are charged.}
+	\caption{The I/O Model. Only reads and writes between internal and external memory are charged.}
 	\label{fig:io_model}
 \end{figure}
 
-The fundamental bounds in the external memory model is that scanning can be done in $\mathcal{O}(\text{Scan}) = \mathcal{O}(\nicefrac{N}{B})$, sorting in $\mathcal{O}(\text{Sort}) = \mathcal{O}(\nicefrac{N}{B} \log_{\nicefrac{M}{B}}\nicefrac{N}{B})$ and searching in $\mathcal{O}(\log_B N)$. We denote $\mathcal{O}(\nicefrac{N}{B})$ as being linear in terms of I/Os. Note that the $B$ factor is very important as $\nicefrac{N}{B} < \mathcal{O}(\nicefrac{N}{B} \log_{\nicefrac{M}{B}}\nicefrac{N}{B}) \ll N$.
+The fundamental bounds in the external memory model is that scanning $N$ records can be done in $\mathcal{O}(\text{Scan}) = \mathcal{O}(\nicefrac{N}{B})$, sorting $N$ records in $\mathcal{O}(\text{Sort}) = \mathcal{O}(\nicefrac{N}{B} \log_{\nicefrac{M}{B}}\nicefrac{N}{B})$ and searching for a single records between $N$ records in $\mathcal{O}(\log_B N)$. We denote $\mathcal{O}(\nicefrac{N}{B})$ as being linear in terms of I/Os. Note that the $B$ factor is very important as $\nicefrac{N}{B} < \mathcal{O}(\nicefrac{N}{B} \log_{\nicefrac{M}{B}}\nicefrac{N}{B}) \ll N$.
 
 For convenience we will assume $M > B^2$. This assumption is known as the \textit{tall-cache assumption} in the cache-oblivious model and basically states that the number of blocks \nicefrac{M}{B} is larger than the size of each block $B$~\cite{Prokop99cache-obliviousalgorithms}.
 
 \chapter{Preliminaries}
 \label{chp:prelims}
-This section aims to give an overview of some of the techniques used throughout this thesis. Some of the techniques are very rudimental and may be skipped or revisited when encountered in later sections.
+This chapter aims to give an overview of some of the techniques used throughout this thesis. Some of the techniques are very rudimentary and may be skipped or revisited when encountered in later chapters.
 
 \section{Amortization}
 Amortization is an important algorithmic tool to argue about average performance of an operation in the worst case.
 In an amortized analysis, we average the time of a sequence of data structure operations. We can then show that, even though a single operation in the sequence is expensive, the average cost of an operation is small~\cite[p.~451-452]{clrs}.
 
-The term was coined by Tarjan~\cite{Tarjan85} and describes two views of amortization. The first view is the banker's view where we assume that a computer is running on coins. We can insert a coin and the computer will run for fixed constant amount of time. An operation will pay a certain amounts of coins and the goal of the analysis is then to show that all operations can be performed with the amount paid. We assume that we start without any coins, we are allowed to borrow coins, and coins can be carried over to later operations. Paying coins amounts to averaging forward over time and borrowing is the opposite.
+The term was coined by Tarjan~\cite{Tarjan85} and describes two views of amortization. The first view is the banker's view where we assume that a computer is running on coins. We can insert a coin and the computer will run for a fixed constant amount of time. An operation will pay a certain amount of coins and the goal of the analysis is then to show that all operations can be performed with the amount paid. We assume that we start without any coins, we are allowed to borrow coins, and coins can be carried over to later operations. Paying coins amounts to averaging forward over time and borrowing is the opposite.
 
 Another view of amortization is that of the physicist. Instead of representing prepaid work as coins the physicist represent work as potential energy which can be released later to pay for future operations.
 
@@ -286,7 +288,7 @@ If we can show that $\Phi(D_i) \geq \Phi(D_0)$ for all $i$ then we know that we 
 
 \section{Global rebuilding}
 \label{sec:prelim_global_rebuilding}
-The term \textit{global rebuilding} refers to the standard technique of making a (typically small) static data structure dynamic. We simply store all updates in a \textit{update block} and once a certain threshold has been collected we rebuild the data structure~\cite{ionote}. For data structures that does not allow the space for deleted records to be reoccupied we \textit{mark} (or \textit{weak delete}) the elements. Whenever $\alpha N$ elements have been marked, for some constant $\alpha > 0$, the entire data structure is rebuilt from scratch with only the non-marked elements. The cost of rebuilding is at most a constant factor higher than the cost of inserting $\alpha N$ elements and so the amortized cost of global rebuilding can be charged to the insertions of the deleted elements~\cite{Meyer:2003/AMH/1744652}.
+The term \textit{global rebuilding} refers to the standard technique of making a (typically small) static data structure dynamic. We simply store all updates in a \textit{update block} and once a certain threshold has been collected we rebuild the data structure~\cite{ionote}. For data structures that does not allow the space for deleted records to be reoccupied we \textit{mark} (or \textit{weak delete}) the elements. Whenever $\alpha N$ elements have been marked, for some constant $\alpha > 0$, the entire data structure is rebuilt from scratch with only the non-marked elements. The cost of rebuilding is at most a constant factor higher than the cost of inserting $\alpha N$ elements and so the amortized cost of global rebuilding is paid in advance when elements are inserted, i.e. elements are charged double such that they later can pay for being removed from the structure during a global rebuild.~\cite{Meyer:2003/AMH/1744652}.
 
 \section{Filtering}
 \label{sec:filtering}
@@ -1020,7 +1022,7 @@ In total we need to handle $\mathcal{O}(N_{del} + \frac{N_{ins}}{\Delta B})$ hol
 All this adds up to $\mathcal{O}(\frac{N_{ins}+N_{del}}{B/\Delta} \frac{1}{\epsilon} \log_B N) = \mathcal{O}(\frac{N_{ins}+N_{del}}{\epsilon B^{1-\epsilon}} \log_B N)$  I/O's for handling updates. This matches the amortized bounds of the structure.
 
 \chapter{Other structures}
-
+\label{chp:other_structures}
 \section{R-tree}
 
 \todo{$\log_B N$ I/Os for updates. N/B + K I/Os for query.}
@@ -1123,6 +1125,7 @@ We measured the running time using the \texttt{high\_resolution\_clock} in the \
 In order to obtain a deeper understanding of the results we chose to measure the number of page faults generated by running the algorithms. This was done using \texttt{perf} - a performance analysis tool for Linux. We also measured the number of I/O's required by our program by extending our custom stream with a counter on calls to \texttt{read} and \texttt{write}.
 
 \chapter{Our results}
+\label{chp:experimental_results}
 Many experiments were conducted to evaluate the performance of the structures against each other. We will in this chapter present the results of these experiments and discuss the results.
 Some of the experiments will only be run for 24 hours and not up to a specific amount of data. This was a necessary restriction on the experiments as we otherwise would never have finished or had been able to run many of the experiments we had planned. Some of the data structures become extremely slow when not run in internal memory. This will become very apparent in many of the results shown below.
 
