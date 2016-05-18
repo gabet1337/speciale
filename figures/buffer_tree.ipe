@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70107" creator="Ipe 7.2.2">
-<info created="D:20160518121350" modified="D:20160518151513"/>
+<info created="D:20160518121350" modified="D:20160518152238"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -281,7 +281,7 @@ h
 320 788 l
 h
 </path>
-<path matrix="0.878129 0 0 0.849445 -61.3277 66.9649" stroke="black" fill="white">
+<path matrix="0.878129 0 0 0.849445 -57.3277 66.9649" stroke="black" fill="white">
 296 788 m
 296 776 l
 320 776 l
@@ -318,7 +318,7 @@ h
 280 616 m
 37.9473 0 0 37.9473 244 604 208.469 617.324 a
 </path>
-<text matrix="0.878129 0 0 0.849445 72.1478 101.545" transformations="translations" pos="208 784" stroke="black" type="label" width="23.236" height="7.473" depth="2.49" valign="baseline">$M/B$</text>
+<text matrix="0.878129 0 0 0.849445 68.1478 109.545" transformations="translations" pos="208 784" stroke="black" type="label" width="23.236" height="7.473" depth="2.49" valign="baseline">$M/B$</text>
 <path matrix="2.38349 0 0 0.849445 -565.123 111.738" stroke="black" dash="dashed">
 428 728 m
 400 704 l
@@ -583,7 +583,7 @@ h
 16 720 l
 </path>
 <text matrix="0.0224955 0.999747 -0.999747 0.0224955 850.157 643.276" pos="36 804" stroke="black" type="label" width="58.79" height="8.687" depth="4.18" valign="baseline">$\mathcal{O}(\log_{M/B} \frac{N}{B})$</text>
-<path matrix="1 0 0 0.777724 28 165.817" stroke="black" arrow="normal/normal">
+<path matrix="1 0 0 0.666605 28 254.712" stroke="black" arrow="normal/normal">
 16 764 m
 16 800 l
 </path>
