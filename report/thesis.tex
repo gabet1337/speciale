@@ -326,8 +326,15 @@ It follows from the definition that if $b=\Theta(B)$ then a B-tree will have hei
 
 \textbf{Searching} in a B-tree is very much similar to searching in a binary search tree. Instead of making a binary decision at each node we instead have to make a multiway branching decision. If the element we are searching for is not contained in the current node, we find the smallest $i$ such that the key we are searching for is less than $x.key_i$. We then recursively search for the key in child $c_i$. This will in the worst case require $\mathcal{O}(\log_B N)$ I/O to search for an element residing in a leaf.
 
-\textbf{Inserting} in a B-tree is not as simple as inserting into a binary search tree. Similarly to binary trees we search for the leaf node to insert the key, but we cannot simply create a new node for the key. Instead we insert the key into the found leaf node and if the leaf now contains too many elements we split the leaf into two leaves each containing half the elements of the original leaf. Splitting a leaf might cause its parent to have too many children which causes the parent to similarly split.
+\textbf{Inserting} in a B-tree is not as simple as inserting into a binary search tree. Similarly to binary trees we search for the leaf node to insert the key, but we cannot simply create a new node for the key. Instead we insert the key into the found leaf node and if the leaf now contains too many elements we split the leaf into two leaves each containing half the elements of the original leaf. See Figure~\ref{fig:b_tree_split}. Splitting a leaf might cause its parent to have too many children which causes the parent to similarly split.
 Searching for the leaf node to insert into takes $\mathcal{O}(\log_B N)$ and so does recursively splitting nodes from a leaf to root path as a split operation requires $\mathcal{O}(1)$ I/O's.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\textwidth]{../figures/b_tree_split}
+	\caption{Splitting a degree $b+1$ node $v$ (or leaf with $b+1$ elements) into nodes $v'$ and $v''$}
+	\label{fig:b_tree_split}
+\end{figure}
 
 \textbf{Deleting} in a B-tree introduces an opposite to splitting, fusing. To delete a key from the tree we search the tree for the key, which now can reside in an internal node. We then delete the key from the node $x$, which might cause $x$ to have too few elements. To remedy this situation we will have to potentially fuse $x$ with a neighbouring node. If $x$ together with either its predecessor or successor contains less than $b$ elements we can fuse the two nodes. If this is not the case then we know that we are able to steal an element from a neighbouring node in order to satisfy the properties of the B-tree. As in the case of insertion, fusing nodes might recursively cause the parent to fuse with one of its neighbours.
 Fusing two nodes require $\mathcal{O}(1)$ I/O's but a fuse can cascade from a leaf to root path causing $\mathcal{O}(\log_B N)$ I/O's.
