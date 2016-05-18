@@ -120,7 +120,7 @@ Writing this thesis has been been a long and often frustrating process with many
 \end{center}
 After having spent some time reading through many articles we had a better picture of what we were up against. The coding challenge was very daunting. We initially estimated that we would need about 80\% of the total time just to implement the structures. We were not much off that estimate. We have tried to summarize the main milestones throughout the project in Figure~\ref{fig:git_history}, and we think that it shows a clear picture of how much we have put into coding. In the end of the project we had a total of \todo{insert lines of code here} lines of \texttt{C++} code.
 
-Even though the project has not been a walk in the park we still managed to have a lot of fun throughout. As we were approaching the phase of the project where we were going to start experimenting, the summer was also nearing and the temperatures came close to the boiling point in our small office. With five machines working overtime to finish experiments it is safe to say that our indoor environment would not live up to human rights regulations but as a computer scientist it was cozy and it was our home for the time being. We put \twonotes~Nelly with Getting hot in here  on the stereo and embraced the situation.
+Even though the project has not been a walk in the park we still managed to have a lot of fun throughout. As we were approaching the phase of the project where we were going to start experimenting, the summer was also nearing and the temperatures came close to the boiling point in our small office. With five machines working overtime to finish experiments it is safe to say that our indoor environment would not live up to human rights regulations but as a computer scientist it was cozy and it was our home for the time being. We put \twonotes~Nelly with Hot in here  on the stereo and embraced the situation.
 
 The experiments often ran for more than a week at a time and in order for us to know exactly when an experiment had finished, such that a new experiment could be started, we had the clever idea that we would use the beep function of the motherboard to alert us. As a simple beep would simply be too boring we spent some time writing a small piece of code which, by controlling the frequency and duration of the beep sound, would play the Star Wars song: The Imperial March\footnote{You know, the song that comes on when Darth Vader is there.}. All was good and it worked perfectly until one weekend where we did not come in early. As we walked down the corridors approaching our office the sound of Darth Vader became increasingly din. The sound was really annoying and we really hoped that all the other tenants in the building would be home during the weekend. As we walked down the corridor towards our office we looked through the small window next to the door to see if they were noticeably annoyed but it did not seem to bother them. Just before our office we finally glanced into the office just next to ours and in there sat a very displeased lady with large headphones clearly very annoyed by the deafening sound of The Imperial March. We are truly sorry about this.
 
@@ -540,7 +540,7 @@ The first is essentially just the result proved by the above adversary argument 
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{../figures/lower_bound_summary}
-\caption{A summary of the results of Brodal and Fagerberg~\cite{Brodal:2003:LBE:644108.644201}. It depicts the trade-off between insert and search/query. On one end we can achieve really fast insert operations but pay the price with slow queries. In the other end we have the B-tree which query bound matches the optimal but has suboptimal insertions. No results exists for the gaps.\todo{colours and size}}
+\caption{A summary of the results of Brodal and Fagerberg~\cite{Brodal:2003:LBE:644108.644201}. It depicts the trade-off between insert and search/query. On one end we can achieve really fast insert operations but pay the price with slow queries. In the other end we have the B-tree which query bound matches the optimal but has suboptimal insertions. No results exists for the gaps.}
 \label{fig:lower_bound_summary}
 \end{figure}
 
@@ -1235,6 +1235,12 @@ It is also worth noting that since the experimental results are very much in lin
 \includegraphics[width=\textwidth]{../src/experiments/insert_experiment_results/2016-05-06.14_11_08/time}
 \caption{Actual running time when inserting into the tested structures. The figure shows the running time per insert.}
 \label{fig:actual_insert_time}
+\end{figure}
+
+\begin{figure}[htp!]
+\includegraphics[width=\textwidth]{../src/experiments/insert_experiment_results/2016-05-06.14_11_08/time_zoom}
+\caption{Actual running time when inserting into the tested structures. The figure shows the running time per insert zoomed in on the first hundred Mb.}
+\label{fig:actual_insert_time_zoomed}
 \end{figure}
 
 Figure~\ref{fig:theory_insert_complexity} shows the theoretical complexities of inserting an element into the different structures for different $N$. We expect the actual running times to be very similar to these. The experiment will consist of inserting uniformly random data for 24 hours. If the non-I/O efficient data structures fill out the internal memory we expect to see a significant increase in running time at that point.
