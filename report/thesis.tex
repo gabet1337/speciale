@@ -594,7 +594,7 @@ When answering a query of the form $[x_1,x_2] \times [y,\infty]$ we begin at the
 The search operation follows two root to leaf paths each of length $\mathcal{O}(\log N)$. Using the search path and heap property of the tree we are guaranteed to only visit nodes that is actually reported when querying. This gives a total running time of $\mathcal{O}(\log N + K)$.
 
 \section{Dynamic Priority Search Tree}
-The key difference between the static solution presented by McCreight and a dynamic solution is that we always ensure that each point is placed in exactly one leaf and the order of the leaves from left to right corresponds to the order of the $x$-coordinate of the points. The internal nodes of the tree store the point with greatest $y$-coordinate represented by a leaf in the subtree of the node which is not already stored by an ancestor of this interior node. It is clear we have $N$ leaf nodes and $N-1$ internal nodes in the data structure.
+The key difference between the static solution presented by McCreight and a dynamic solution is that we always ensure that each point is placed in exactly one leaf and the order of the leafs from left to right corresponds to the order of the $x$-coordinate of the points. The internal nodes of the tree store the point with greatest $y$-coordinate represented by a leaf in the subtree of the node which is not already stored by an ancestor of this interior node. It is clear we have $N$ leaf nodes and $N-1$ internal nodes in the data structure.
 Whenever we store a point in an interior node, then the leaf node which corresponds to this point is considered a \textit{placeholder} for this point. A total of $N - 1$ nodes are left as placeholders. Please refer to Figure~\ref{fig:dynamic_pst} for an illustration of a dynamic priority search tree over the points $P = \{A, B, C, D, E, F, G \}$.
 
 \begin{figure}[h]
@@ -855,7 +855,7 @@ During an update the insertion or deletion buffers might overflow, i.e get size 
 \begin{inlinelist}
 	\item handle overflowing deletion buffers
 	\item handle overflowing insertion buffers
-	\item split leaves with overflowing point buffers
+	\item split leafs with overflowing point buffers
 	\item split nodes of degree $\Delta+1$
 	\item fill underflowing point buffers.
 \end{inlinelist}
@@ -922,7 +922,7 @@ We will in the following look at each step individually and argue their complexi
 \end{enumerate}
 
 \subsubsection*{Analysis}
-The tree grows in height during insertions by splitting leaves and internal nodes. We stay balanced during these insertions since we only increase in height whenever the root splits which causes every path from root to leaf to increase by one. In the B-tree we handle rebalancing using fusion of nodes. We do not apply this method here but instead apply global rebuilding when a linear number of updates have been performed. By~\ref{update:pbo} it follows that the total number of leaves created during $N$ insertions can be at most $\mathcal{O}(N/B)$ implying that at most $\mathcal{O}(\frac{N}{\Delta B})$ internal nodes can be created by splitting internal nodes. From this it follows that the tree has height $\mathcal{O}(\log_\Delta \frac{N}{B}) = \mathcal{O}(\frac{1}{\epsilon} \log_B N)$.
+The tree grows in height during insertions by splitting leafs and internal nodes. We stay balanced during these insertions since we only increase in height whenever the root splits which causes every path from root to leaf to increase by one. In the B-tree we handle rebalancing using fusion of nodes. We do not apply this method here but instead apply global rebuilding when a linear number of updates have been performed. By~\ref{update:pbo} it follows that the total number of leafs created during $N$ insertions can be at most $\mathcal{O}(N/B)$ implying that at most $\mathcal{O}(\frac{N}{\Delta B})$ internal nodes can be created by splitting internal nodes. From this it follows that the tree has height $\mathcal{O}(\log_\Delta \frac{N}{B}) = \mathcal{O}(\frac{1}{\epsilon} \log_B N)$.
 
 We can now argue that every update in~\ref{update:del} and~\ref{update:ins} requires amortized $\mathcal{O}(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N)$ I/O's. As every $\Theta (B/\Delta)$ update require $\mathcal{O}(1)$ I/O's on every layer of the tree we get the correct amortized bound:
 \begin{align*}
@@ -931,7 +931,7 @@ We can now argue that every update in~\ref{update:del} and~\ref{update:ins} requ
 &= \frac{1}{\epsilon B^{1-\epsilon}} \log_B N
 \end{align*}
 
-In~\ref{update:pbo}, we know that at most $\mathcal{O}(N/B)$ leaves are created each requiring $\mathcal{O}(1)$ I/O's giving amortized $\mathcal{O}(1/B)$ I/O's per update.
+In~\ref{update:pbo}, we know that at most $\mathcal{O}(N/B)$ leafs are created each requiring $\mathcal{O}(1)$ I/O's giving amortized $\mathcal{O}(1/B)$ I/O's per update.
 
 In~\ref{update:deg}, we know that at most $\mathcal{O}(\frac{N}{B\Delta})$ internal nodes are created. The creation of such a node costs $\mathcal{O}(\Delta)$ giving an amortized cost of $\mathcal{O}(1/B)$ I/O's per update.
 
@@ -1021,7 +1021,7 @@ This construction algorithm could also have been used for global rebuilding givi
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{../figures/gerth_construction}
-	\caption{A B-tree with each internal node having a degree of $\Delta/2$. Each leaf stores $B/2$ points with the exception of the rightmost. The bold points are the top $B/2$ points that is pulled up from the leaves into the layer above.}
+	\caption{A B-tree with each internal node having a degree of $\Delta/2$. Each leaf stores $B/2$ points with the exception of the rightmost. The bold points are the top $B/2$ points that is pulled up from the leafs into the layer above.}
 	\label{fig:gerth_construction}
 \end{figure}
 
@@ -1034,7 +1034,7 @@ Another aspect we have to look at is what happens to the amortized analysis when
 
 In order to argue this we consider a sequence of operations containing $N_{ins}$ insertions and $N_{del}$ deletions and a newly constructed tree of $N$ points.
 
-Let us first consider the cost of creating new nodes in the tree. Each leaf has initially at most $B/2$ points and it follows that we can at most create $2N_{ins}/B$ new leaves. Each new leaf is created in $\mathcal{O}(1)$ I/O's and it thus cost at most $\mathcal{O}(N_{ins}/B)$ I/O's to create new leaves during $N_{ins}$ insertions.
+Let us first consider the cost of creating new nodes in the tree. Each leaf has initially at most $B/2$ points and it follows that we can at most create $2N_{ins}/B$ new leafs. Each new leaf is created in $\mathcal{O}(1)$ I/O's and it thus cost at most $\mathcal{O}(N_{ins}/B)$ I/O's to create new leafs during $N_{ins}$ insertions.
 By a similar argument it follows that at most $\mathcal{O}(\frac{N_{ins}}{\Delta B})$ new internal nodes can be created since each internal node initially has a degree of $\leq \Delta/2$. Each new internal node is created in $\mathcal{O}(\Delta)$ I/O's and it thus costs $\mathcal{O}(N_{ins}/B)$ I/O's to create new internal nodes without the cost of refilling point buffers which we will account for in the following.
 
 An insertion has to be moved at most the height of the tree levels down before it is cancelled or moved into a point buffer. Since the height of the tree is $\mathcal{O}(\frac{1}{\epsilon} \log_B N)$ it follows that the cost of handling overflowing insertions buffers during the course of $N_{ins}$ insertions becomes $\mathcal{O}(\frac{N_{ins}}{B/\Delta}\frac{1}{\epsilon}\log_B N)$ I/O's.
@@ -1114,12 +1114,12 @@ The same goes for querying the database as we once again have to go through ever
 
 \chapter{Experimental setup}
 \label{chp:experimental_setup}
-Running experiments on I/O algorithms is extremely time consuming. In order to compare I/O efficient algorithms against internal memory algorithms we need input sizes that force the internal memory algorithms to store and load data to and from the disk (swapping). The input size to the algorithms can be severely minimized if run on machines with a small amount of internal memory.
+Running experiments on I/O algorithms is extremely time consuming. In order to compare I/O efficient algorithms against internal memory algorithms we need input sizes that force the internal memory algorithms to store and load data to and from the disk (swapping). The input size to the algorithms can be severely minimized if run on machines with a small amount of internal memory which in turn decrease the running time severely as well.
 
 It is important to mention some considerations when it comes to choice of persistent storage media. In recent years solid state drives have grown increasingly more desirably in terms of price per gigabyte and storage size, but there is still a significant gap in price between SSD's and HDD's. Disregarding this gap in price, solid state drives clearly outperforms the hard disk in every notable aspect. Solid state drives allow random access to blocks and diminish the seek time which is considered to be the culprit of the mechanical disks due to the rotational latency.
-The rotational latency makes it very important to store data on the disk in consecutive blocks as scattering data across the disk would be detrimental to the performance as each block would have to be wait for the rotational latency. As long as the mechanical disk is still as widespread as it is, these culprits of the mechanical disk have to be taken in consideration when designing I/O efficient algorithms.
+The rotational latency makes it very important to store data on the disk in consecutive blocks as scattering data across the disk would be detrimental to the performance as each block would have to wait for the rotational latency. As long as the mechanical disk is still as widespread as it is, these culprits of the mechanical disk have to be taken in consideration when designing I/O efficient algorithms.
 
-With these considerations in mind we acquired two very old Dell machines with the following specifications:
+With these considerations in mind we acquired two very old Dell machines with the specifications outlined in Figure~\ref{fig:pc_specs}.
 
 \begin{figure}[h]
 \centering
@@ -1142,11 +1142,16 @@ Kernel version & 4.2.0-27-generic \\
 Compiler & gcc 4.8.4 with optimization level 2
 \end{tabular}
 \caption{Specifications of the two Dell machines used for running experiments}
+\label{fig:pc_specs}
 \end{figure}
 
 We measured the running time using the \texttt{high\_resolution\_clock} in the \texttt{chrono} library. It was measured in seconds as more precision was not needed in order to distinguish the algorithms as will become apparent in the presented results.
 
-In order to obtain a deeper understanding of the results we chose to measure the number of page faults generated by running the algorithms. This was done using \texttt{perf} - a performance analysis tool for Linux. We also measured the number of I/O's required by our program by extending our custom stream with a counter on calls to \texttt{read} and \texttt{write}.
+In order to obtain a deeper understanding of the results we chose to measure the number of page faults generated by running the algorithms. This was done using \texttt{perf} - a performance analysis tool for Linux. We also measured the number of I/O's required by our programs by extending our custom stream with a counter on calls to \texttt{read} and \texttt{write}.
+
+As the machines run on 32 bit operating systems it is very important to define \texttt{\_FILE\_OFFSET\_BITS=64}. This forces the system to use 64 bit pointers when seeking in files allowing us to handle data sets larger than $2^{32}$ on the machines.
+
+\todo{MORAK!}
 
 \chapter{Our results}
 \label{chp:experimental_results}
@@ -1363,7 +1368,7 @@ We charge $\mathcal{O}(1)$ I/O's for accessing the \texttt{catalog structure} an
 \label{sec:impl_main_data_structure}
 This section will present the implementation specific design choices for the main data structure presented in section~\ref{sec:main_data_structure}. \\
 
-In section~\ref{sec:main_data_structure} we argued how the operations \texttt{Insert}, \texttt{Delete} and \texttt{Report} are supported using subroutines for handling overflowing deletion buffers, overflowing insertion buffers, split leaves with overflowing point buffers, split nodes of degree $\Delta+1$ and fill underflowing point buffers.
+In section~\ref{sec:main_data_structure} we argued how the operations \texttt{Insert}, \texttt{Delete} and \texttt{Report} are supported using subroutines for handling overflowing deletion buffers, overflowing insertion buffers, split leafs with overflowing point buffers, split nodes of degree $\Delta+1$ and fill underflowing point buffers.
 
 The implementation we present uses the same idea of introducing a delegated subroutine which is responsible for maintaining one event only.
 
@@ -1430,7 +1435,7 @@ Drawing from the experiences gained while implementing the main data structure o
 
 The elements of the base B-tree is a simple type containing a point, a reference to a child, and a bool telling us whether the point has been deleted. The elements are stored in nodes which is just a collection of the simple point types, a reference to a query data structure, and some booleans used in loading and flushing mechanisms. The collection used for the simple point types is a Red-Black tree (\texttt{std::set}). This collection allows us to find the child responsible for a point in logarithmic time using binary search and naturally keeps the points in sorted order w.r.t the $x$-values.
 
-The article uses a different query data structure for leaves in the B-tree. The query data structure used the article is a simple linked list sorted on $y$-values. The linked list however matches the cost of the query data structure used in internal nodes, namely $\mathcal{O}(1 + K/B)$, and we decided the code would be simpler if we used the query data structure in the leaves as well.
+The article uses a different query data structure for leafs in the B-tree. The query data structure used the article is a simple linked list sorted on $y$-values. The linked list however matches the cost of the query data structure used in internal nodes, namely $\mathcal{O}(1 + K/B)$, and we decided the code would be simpler if we used the query data structure in the leafs as well.
 
 Updates and reporting are done as described in Section~\ref{sec:arge_updates} and~\ref{sec:arge_query} with no remarkably deviations.
 
