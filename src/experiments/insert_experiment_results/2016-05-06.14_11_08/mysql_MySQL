@@ -1,4 +1,5 @@
-#input	time	ios	pfs	timems	pbo	dbo	ibo	pbu	ndo	
+#input	time	ios	pfs	timems	pbo	dbo	ibo	pbu	ndo
+0	1	1	1	1	1	1	1	1	1	
 10	8	980	0	8320	0	0	0	0	0	
 20	16	1960	0	16664	0	0	0	0	0	
 30	24	2941	0	24980	0	0	0	0	0	
