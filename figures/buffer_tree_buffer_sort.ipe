@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70107" creator="Ipe 7.2.2">
-<info created="D:20160518121350" modified="D:20160518154930"/>
+<info created="D:20160518121350" modified="D:20160518155612"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -299,7 +299,7 @@ h
 304 552 l
 304 552 l
 </path>
-<text matrix="1 0 0 1 0 -4" transformations="translations" pos="316 544" stroke="black" type="label" width="55.244" height="7.473" depth="2.49" valign="baseline">(a) $\mathcal{O}(M/B)$</text>
+<text matrix="1 0 0 1 0 -4" transformations="translations" pos="316 544" stroke="black" type="label" width="12.73" height="7.473" depth="2.49" valign="baseline">(a)</text>
 <path matrix="1 0 0 1 0 -64" stroke="black" fill="white">
 208 592 m
 208 560 l
@@ -319,7 +319,7 @@ h
 304 552 l
 304 552 l
 </path>
-<text matrix="1 0 0 1 0 -68" transformations="translations" pos="316 544" stroke="black" type="label" width="55.797" height="7.473" depth="2.49" valign="baseline">(b) $\mathcal{O}(M/B)$</text>
+<text matrix="1 0 0 1 0 -68" transformations="translations" pos="316 544" stroke="black" type="label" width="13.284" height="7.473" depth="2.49" valign="baseline">(b)</text>
 <path matrix="1 0 0 1 0 -128" stroke="black" fill="white">
 208 592 m
 208 560 l
