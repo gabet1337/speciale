@@ -266,13 +266,13 @@ For convenience we will assume $M > B^2$. This assumption is known as the \texti
 
 \chapter{Preliminaries}
 \label{chp:prelims}
-This section aims to give an overview of some of the techniques used throughout this thesis. Some of the techniques are very rudimentary and may be skipped or revisited when encountered in later sections.
+This chapter aims to give an overview of some of the techniques used throughout this thesis. Some of the techniques are very rudimentary and may be skipped or revisited when encountered in later chapters.
 
 \section{Amortization}
 Amortization is an important algorithmic tool to argue about average performance of an operation in the worst case.
 In an amortized analysis, we average the time of a sequence of data structure operations. We can then show that, even though a single operation in the sequence is expensive, the average cost of an operation is small~\cite[p.~451-452]{clrs}.
 
-The term was coined by Tarjan~\cite{Tarjan85} and describes two views of amortization. The first view is the banker's view where we assume that a computer is running on coins. We can insert a coin and the computer will run for fixed constant amount of time. An operation will pay a certain amounts of coins and the goal of the analysis is then to show that all operations can be performed with the amount paid. We assume that we start without any coins, we are allowed to borrow coins, and coins can be carried over to later operations. Paying coins amounts to averaging forward over time and borrowing is the opposite.
+The term was coined by Tarjan~\cite{Tarjan85} and describes two views of amortization. The first view is the banker's view where we assume that a computer is running on coins. We can insert a coin and the computer will run for a fixed constant amount of time. An operation will pay a certain amount of coins and the goal of the analysis is then to show that all operations can be performed with the amount paid. We assume that we start without any coins, we are allowed to borrow coins, and coins can be carried over to later operations. Paying coins amounts to averaging forward over time and borrowing is the opposite.
 
 Another view of amortization is that of the physicist. Instead of representing prepaid work as coins the physicist represent work as potential energy which can be released later to pay for future operations.
 
@@ -288,7 +288,7 @@ If we can show that $\Phi(D_i) \geq \Phi(D_0)$ for all $i$ then we know that we 
 
 \section{Global rebuilding}
 \label{sec:prelim_global_rebuilding}
-The term \textit{global rebuilding} refers to the standard technique of making a (typically small) static data structure dynamic. We simply store all updates in a \textit{update block} and once a certain threshold has been collected we rebuild the data structure~\cite{ionote}. For data structures that does not allow the space for deleted records to be reoccupied we \textit{mark} (or \textit{weak delete}) the elements. Whenever $\alpha N$ elements have been marked, for some constant $\alpha > 0$, the entire data structure is rebuilt from scratch with only the non-marked elements. The cost of rebuilding is at most a constant factor higher than the cost of inserting $\alpha N$ elements and so the amortized cost of global rebuilding can be charged to the insertions of the deleted elements~\cite{Meyer:2003/AMH/1744652}.
+The term \textit{global rebuilding} refers to the standard technique of making a (typically small) static data structure dynamic. We simply store all updates in a \textit{update block} and once a certain threshold has been collected we rebuild the data structure~\cite{ionote}. For data structures that does not allow the space for deleted records to be reoccupied we \textit{mark} (or \textit{weak delete}) the elements. Whenever $\alpha N$ elements have been marked, for some constant $\alpha > 0$, the entire data structure is rebuilt from scratch with only the non-marked elements. The cost of rebuilding is at most a constant factor higher than the cost of inserting $\alpha N$ elements and so the amortized cost of global rebuilding is paid in advance when elements are inserted, i.e. elements are charged double such that they later can pay for being removed from the structure during a global rebuild.~\cite{Meyer:2003/AMH/1744652}.
 
 \section{Filtering}
 \label{sec:filtering}
