@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70107" creator="Ipe 7.2.2">
-<info created="D:20160518121350" modified="D:20160518154520"/>
+<info created="D:20160518121350" modified="D:20160518154930"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -254,57 +254,79 @@ h
 <page>
 <layer name="alpha"/>
 <view layers="alpha" active="alpha"/>
-<path layer="alpha" matrix="1 0 0 1 -16 204" stroke="black" fill="white">
+<path layer="alpha" stroke="black" fill="white" dash="dashed">
+128 576 m
+64 528 l
+64 528 l
+</path>
+<path stroke="black" fill="white" dash="dashed">
+128 576 m
+192 528 l
+192 528 l
+</path>
+<path stroke="black" fill="white" dash="dashed">
+128 576 m
+104 528 l
+104 528 l
+</path>
+<path stroke="black" fill="white" dash="dashed">
+128 576 m
+152 528 l
+</path>
+<path stroke="black" fill="white">
 208 592 m
 208 560 l
 400 560 l
 400 592 l
 h
 </path>
-<path matrix="1 0 0 1 -16 204" stroke="black" fill="white">
+<path stroke="black" fill="white">
 304 592 m
 304 560 l
 304 560 l
 </path>
-<text matrix="1 0 0 1 4 200" transformations="translations" pos="320 576" stroke="black" type="label" width="26.65" height="6.918" depth="0" valign="baseline">sorted</text>
-<text matrix="1 0 0 1 -96 200" transformations="translations" pos="320 576" stroke="black" type="label" width="37.72" height="6.918" depth="0" valign="baseline">unsorted</text>
-<text matrix="0.169162 -0.698647 3.69273 -0.00676523 -2326.09 873.517" pos="92 684" stroke="black" type="label" width="12.394" height="18.587" depth="6.2" valign="baseline" size="Huge">\{</text>
-<text matrix="0.169162 -0.698647 3.69273 -0.00676523 -2230.09 873.517" pos="92 684" stroke="black" type="label" width="12.394" height="18.587" depth="6.2" valign="baseline" size="Huge">\{</text>
-<text matrix="1 0 0 1 -24 196" transformations="translations" pos="252 612" stroke="black" type="label" width="21.267" height="6.812" depth="1.35" valign="baseline">$\leq M$</text>
-<text matrix="1 0 0 1 72 196" transformations="translations" pos="252 612" stroke="black" type="label" width="21.267" height="6.812" depth="1.35" valign="baseline">$\leq M$</text>
-<path matrix="1 0 0 1.33333 -16 20" stroke="black" fill="white" rarrow="normal/normal">
+<text matrix="1 0 0 1 20 -4" transformations="translations" pos="320 576" stroke="black" type="label" width="26.65" height="6.918" depth="0" valign="baseline">sorted</text>
+<text matrix="1 0 0 1 -80 -4" transformations="translations" pos="320 576" stroke="black" type="label" width="37.72" height="6.918" depth="0" valign="baseline">unsorted</text>
+<path stroke="black" fill="white">
+20 0 0 20 128 576 e
+</path>
+<text matrix="0.169162 -0.698647 3.69273 -0.00676523 -2310.09 669.517" pos="92 684" stroke="black" type="label" width="12.394" height="18.587" depth="6.2" valign="baseline" size="Huge">\{</text>
+<text matrix="0.169162 -0.698647 3.69273 -0.00676523 -2214.09 669.517" pos="92 684" stroke="black" type="label" width="12.394" height="18.587" depth="6.2" valign="baseline" size="Huge">\{</text>
+<text matrix="1 0 0 1 -8 -8" transformations="translations" pos="252 612" stroke="black" type="label" width="21.267" height="6.812" depth="1.35" valign="baseline">$\leq M$</text>
+<text matrix="1 0 0 1 88 -8" transformations="translations" pos="252 612" stroke="black" type="label" width="21.267" height="6.812" depth="1.35" valign="baseline">$\leq M$</text>
+<path matrix="1 0 0 1.33333 0 -184" stroke="black" fill="white" rarrow="normal/normal">
 304 540 m
 304 552 l
 304 552 l
 </path>
-<text matrix="1 0 0 1 -16 200" transformations="translations" pos="316 544" stroke="black" type="label" width="55.244" height="7.473" depth="2.49" valign="baseline">(a) $\mathcal{O}(M/B)$</text>
-<path matrix="1 0 0 1 -16 140" stroke="black" fill="white">
+<text matrix="1 0 0 1 0 -4" transformations="translations" pos="316 544" stroke="black" type="label" width="55.244" height="7.473" depth="2.49" valign="baseline">(a) $\mathcal{O}(M/B)$</text>
+<path matrix="1 0 0 1 0 -64" stroke="black" fill="white">
 208 592 m
 208 560 l
 400 560 l
 400 592 l
 h
 </path>
-<path matrix="1 0 0 1 -16 140" stroke="black" fill="white">
+<path matrix="1 0 0 1 0 -64" stroke="black" fill="white">
 304 592 m
 304 560 l
 304 560 l
 </path>
-<text matrix="1 0 0 1 4 136" transformations="translations" pos="320 576" stroke="black" type="label" width="26.65" height="6.918" depth="0" valign="baseline">sorted</text>
-<text matrix="1 0 0 1 -88 136" transformations="translations" pos="320 576" stroke="black" type="label" width="26.65" height="6.918" depth="0" valign="baseline">sorted</text>
-<path matrix="1 0 0 1.33333 -16 -44" stroke="black" fill="white" rarrow="normal/normal">
+<text matrix="1 0 0 1 20 -68" transformations="translations" pos="320 576" stroke="black" type="label" width="26.65" height="6.918" depth="0" valign="baseline">sorted</text>
+<text matrix="1 0 0 1 -72 -68" transformations="translations" pos="320 576" stroke="black" type="label" width="26.65" height="6.918" depth="0" valign="baseline">sorted</text>
+<path matrix="1 0 0 1.33333 0 -248" stroke="black" fill="white" rarrow="normal/normal">
 304 540 m
 304 552 l
 304 552 l
 </path>
-<text matrix="1 0 0 1 -16 136" transformations="translations" pos="316 544" stroke="black" type="label" width="55.797" height="7.473" depth="2.49" valign="baseline">(b) $\mathcal{O}(M/B)$</text>
-<path matrix="1 0 0 1 -16 76" stroke="black" fill="white">
+<text matrix="1 0 0 1 0 -68" transformations="translations" pos="316 544" stroke="black" type="label" width="55.797" height="7.473" depth="2.49" valign="baseline">(b) $\mathcal{O}(M/B)$</text>
+<path matrix="1 0 0 1 0 -128" stroke="black" fill="white">
 208 592 m
 208 560 l
 400 560 l
 400 592 l
 h
 </path>
-<text matrix="1 0 0 1 -44 72" transformations="translations" pos="320 576" stroke="black" type="label" width="26.65" height="6.918" depth="0" valign="baseline">sorted</text>
+<text matrix="1 0 0 1 -28 -132" transformations="translations" pos="320 576" stroke="black" type="label" width="26.65" height="6.918" depth="0" valign="baseline">sorted</text>
 </page>
 </ipe>
