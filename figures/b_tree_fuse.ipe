@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70107" creator="Ipe 7.2.2">
-<info created="D:20160518121350" modified="D:20160518132819"/>
+<info created="D:20160518121350" modified="D:20160518135807"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -297,7 +297,7 @@ h
 <path matrix="1 0 0 1 176 -48" stroke="black" fill="1">
 11.3137 0 0 11.3137 176 752 e
 </path>
-<text matrix="1 0 0 1 212 4" transformations="translations" pos="120 640" stroke="black" type="label" width="37.921" height="6.425" depth="1.35" valign="baseline">$\geq 2a - 1$</text>
+<text matrix="1 0 0 1 220 4" transformations="translations" pos="120 640" stroke="black" type="label" width="21.433" height="6.919" depth="0.83" valign="baseline">$b-1$</text>
 <path matrix="1 0 0 1 -16 0" stroke="black">
 176 752 m
 128 704 l
@@ -316,38 +316,38 @@ h
 <use matrix="1 0 0 1 8 0" name="mark/disk(sx)" pos="216 704" size="tiny" stroke="black"/>
 <use matrix="1 0 0 1 16 0" name="mark/disk(sx)" pos="216 704" size="tiny" stroke="black"/>
 <use matrix="1 0 0 1 24 0" name="mark/disk(sx)" pos="216 704" size="tiny" stroke="black"/>
-<path matrix="1 0 0 1 48 0" stroke="black" fill="white">
+<path matrix="1 0 0 1 -16 0" stroke="black" fill="white">
 128 704 m
 96 656 l
 96 656 l
 </path>
-<path matrix="1 0 0 1 48 0" stroke="black" fill="white">
+<path matrix="1 0 0 1 -16 0" stroke="black" fill="white">
 128 704 m
 112 656 l
 112 656 l
 </path>
-<path matrix="1 0 0 1 48 0" stroke="black" fill="white">
+<path matrix="1 0 0 1 -16 0" stroke="black" fill="white">
 128 704 m
 144 656 l
 144 656 l
 </path>
-<text matrix="1 0 0 1 -20 4" transformations="translations" pos="120 640" stroke="black" type="label" width="22.424" height="6.421" depth="0.83" valign="baseline">$a-1$</text>
-<path matrix="1 0 0 1 -144 0" stroke="black" fill="white">
+<text matrix="1 0 0 1 -28 4" transformations="translations" pos="120 640" stroke="black" type="label" width="39.145" height="7.473" depth="2.49" valign="baseline">$(b/2)-1$</text>
+<path matrix="1 0 0 1 -208 0" stroke="black" fill="white">
 320 704 m
 352 656 l
 352 656 l
 </path>
-<path matrix="1 0 0 1 -256 0" stroke="black" fill="white">
+<path matrix="1 0 0 1 -192 0" stroke="black" fill="white">
 368 704 m
 368 656 l
 368 656 l
 </path>
-<path matrix="1 0 0 1 -256 0" stroke="black" fill="white">
+<path matrix="1 0 0 1 -192 0" stroke="black" fill="white">
 368 704 m
 384 656 l
 384 656 l
 </path>
-<path matrix="1 0 0 1 -256 0" stroke="black" fill="white">
+<path matrix="1 0 0 1 -192 0" stroke="black" fill="white">
 368 704 m
 352 656 l
 352 656 l
@@ -400,5 +400,6 @@ h
 11.3137 0 0 11.3137 176 752 e
 </path>
 <text matrix="1 0 0 1 52 8" transformations="translations" pos="108 704" stroke="black" type="label" width="7.982" height="7.49" depth="0" valign="baseline">$v&apos;$</text>
+<text matrix="1 0 0 1 48 4" transformations="translations" pos="120 640" stroke="black" type="label" width="14.238" height="7.473" depth="2.49" valign="baseline">$b/2$</text>
 </page>
 </ipe>
