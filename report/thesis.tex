@@ -364,9 +364,9 @@ A B-tree on $N$ elements are stored in $\mathcal{O}(\nicefrac{N}{B})$ blocks and
 
 \section{Buffer tree}
 \label{sec:prelim_buffer_tree}
-The Buffer Tree of Arge~\cite{Arge:1995:BTN:645930.672850} combines the basic B-Tree with a \textit{buffer-technique} that will be introduced shortly. The result is an external data structure supporting batched operations I/O efficiently. The ideas introduced by Arge has proven especially useful when generalizing well-known internal-memory algorithms into efficient I/O algorithms. The main idea of the buffer-technique is to introduce \textit{laziness} in the update algorithms and utilizing main memory to process a large number of updates simultaneously. For example, when inserting a point we do not search all the way down the tree to find the leaf. Instead, the point is inserted into a buffer of the root. Whenever the size of a buffer exceeds a certain threshold we push elements from the buffer one level down to buffers on the next level of the tree. This process of emptying full buffers is repeated recursively down the tree.
+The Buffer Tree of Arge~\cite{Arge:1995:BTN:645930.672850} combines the basic B-Tree described in Section~\ref{sec:prelim_b_tree} with a \textit{buffer-technique} that will be introduced shortly. The result is an external data structure supporting batched operations I/O efficiently. The ideas introduced by Arge has proven especially useful when generalizing well-known internal-memory algorithms into efficient I/O algorithms. The main idea of the buffer-technique is to introduce \textit{laziness} in the update algorithms and utilizing main memory to process a large number of updates simultaneously. For example, when inserting a point we do not search all the way down the tree to find the leaf. Instead, the point is inserted into a buffer of the root. Whenever the size of a buffer exceeds a certain threshold we push elements from the buffer one level down to buffers on the next level of the tree. This process of emptying full buffers is repeated recursively down the tree.
 
-Formally the basic Buffer tree is defined as follows:
+Formally the basic Buffer tree is defined according to Definition~\ref{def:buffer_tree}. Refer to Figure~\ref{fig:buffer_tree} for an illustration of a Buffer tree.
 
 \begin{definition}
 \label{def:buffer_tree}
@@ -377,10 +377,24 @@ A basic buffer tree $\mathcal{T}$ is
 \end{itemize}
 \end{definition}
 
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\textwidth]{../figures/buffer_tree}
+	\caption{Buffer tree.}
+	\label{fig:buffer_tree}
+\end{figure}
+
 \textbf{Updates} are handled handled by augmenting the element in question with information on whether we are inserting or deleting. Since an element can be represented in multiple buffers, we also augment elements with a time stamp.
 Whenever we have collected $B$ elements we insert all of them into the root buffer of size $M$. Whenever the buffer overflows, i.e. have more than $M$ points, we initiate a buffer-emptying process that distributes all elements in the buffers to the children.
 
-For an \textit{internal} node that do not have leaves as children this process is done as follows. First, we load the $M$ unsorted elements into main memory and sort them. Then we scan through the sorted list while removing matching inserts and deletes with respect to the time stamps of each element. Now we simply scan distribute the remaining elements one level down. We make sure to distribute the elements in sorted order, since this will guarantee that we leave no buffer of a child with more than $M$ unsorted elements followed by list of sorted elements. Thus, we are able to sort the resulting buffer in a linear number of I/O's.
+For an \textit{internal} node that do not have leaves as children this process is done as follows. First, we load the $M$ unsorted elements into main memory and sort them. Then we scan through the sorted list while removing matching inserts and deletes with respect to the time stamps of each element. Now we simply scan distribute the remaining elements one level down. We make sure to distribute the elements in sorted order, since this will guarantee that we leave no buffer of a child with more than $M$ unsorted elements followed by list of sorted elements. Thus, we are able to sort the resulting buffer in a linear number of I/O's as depicted in Figure~\ref{fig:buffer_tree_buffer_sort}.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\textwidth]{../figures/buffer_tree_buffer_sort}
+	\caption{(a) First the $\leq M$ points are loaded into the main memory in $\mathcal{O}(M/B)$ and sorted (b) Then the two lists of sorted points are merged in $\mathcal{O}(M/B)$.}
+	\label{fig:buffer_tree_buffer_sort}
+\end{figure}
 
 We then recursively empty full child buffers provided the children are internal nodes that do not have leaves as children. Only when we have emptied buffers of all overflowing internal nodes which does not have leaves as children, we proceed and process the buffer-emptying process to leave nodes. The reason is that a buffer-emptying process on a leaf node may result in the need for rebalancing. By only emptying leaf nodes after all internal node buffer-emptying processes have been performed we prevent rebalancing and buffer-emptying processes from interfering with each other.
 
