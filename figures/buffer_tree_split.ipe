@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70107" creator="Ipe 7.2.2">
-<info created="D:20160518121350" modified="D:20160518164149"/>
+<info created="D:20160518121350" modified="D:20160519151808"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -294,7 +294,7 @@ h
 160 656 l
 160 656 l
 </path>
-<text matrix="1 0 0 1 -20 -52" transformations="translations" pos="120 640" stroke="black" type="label" width="21.433" height="6.919" depth="0.83" valign="baseline">$b+1$</text>
+<text matrix="1 0 0 1 -20 -52" transformations="translations" pos="120 640" stroke="black" type="label" width="25.214" height="6.808" depth="0.83" valign="baseline">$B+1$</text>
 <path matrix="1.5 0 0 1 -104 0" stroke="black">
 176 752 m
 208 704 l
@@ -449,7 +449,7 @@ h
 144 656 l
 144 656 l
 </path>
-<text matrix="1 0 0 1 252 -52" transformations="translations" pos="120 640" stroke="black" type="label" width="48.001" height="7.473" depth="2.49" valign="baseline">$\lceil (b+1)/2 \rceil$</text>
+<text matrix="1 0 0 1 252 -52" transformations="translations" pos="120 640" stroke="black" type="label" width="51.781" height="7.473" depth="2.49" valign="baseline">$\lceil (B+1)/2 \rceil$</text>
 <path matrix="1 0 0 1 76 -56" stroke="black" fill="white">
 320 704 m
 352 656 l
@@ -494,7 +494,7 @@ h
 352 656 l
 352 656 l
 </path>
-<text matrix="1 0 0 1 316 -52" transformations="translations" pos="120 640" stroke="black" type="label" width="48.001" height="7.473" depth="2.49" valign="baseline">$\lfloor (b+1)/2 \rfloor$</text>
+<text matrix="1 0 0 1 316 -52" transformations="translations" pos="120 640" stroke="black" type="label" width="51.781" height="7.473" depth="2.49" valign="baseline">$\lfloor (B+1)/2 \rfloor$</text>
 <path matrix="1 0 0 1 284 -104" stroke="black" fill="1">
 11.3137 0 0 11.3137 176 752 e
 </path>
