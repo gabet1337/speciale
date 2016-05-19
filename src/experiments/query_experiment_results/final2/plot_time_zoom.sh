@@ -1,6 +1,6 @@
 #!/usr/bin/gnuplot
 set terminal postscript eps enhanced color font 'Verdana,11'
-set output 'query_experiment_results/final2/ibo.eps'
+set output 'query_experiment_results/final2/time_zoom.eps'
 set style line 11 lc rgb '#808080' lt 1
 set border 3 back ls 11
 set tics nomirror
@@ -14,9 +14,14 @@ set style line 5 lc rgb '#000000' pt 4 ps 1 lt 1 lw 2 # --- black
 set style line 6 lc rgb '#00ced1' pt 5 ps 1 lt 1 lw 2 # --- darkturquoise
 set style line 7 lc rgb '#ff00ff' pt 7 ps 1 lt 1 lw 2 # --- magenta
 set style line 8 lc rgb '#87ceeb' pt 8 ps 1 lt 1 lw 2 # --- skyblue
-set key top left
+set key top right
 set xlabel 'N (input size in Mb)'
-set ylabel 'insert buffer overflows'
+set ylabel 'Time (s)'
 set xrange [0:1030]
-set yrange [0:7]
-plot 'query_experiment_results/final2/gerth_Gerth' u 1:8 t 'Brodal\_fanout2' w lp ls 2
+set yrange [0:300]
+plot 'query_experiment_results/final2/gerth_Gerth' u 1:($2/4) t 'Brodal\_fanout2' w lp ls 2, \
+'query_experiment_results/final2/internal_Internal' u 1:2 t 'Internal' w lp ls 5, \
+'query_experiment_results/final2/rtree_Boost R-tree' u 1:2 t 'Boost R-tree' w lp ls 3, \
+'query_experiment_results/final2/arge_Arge' u 1:2 t 'Arge' w lp ls 1, \
+'query_experiment_results/final2/spatial_libspatial' u 1:2 t 'libspatial' w lp ls 6, \
+'query_experiment_results/final2/mysql_MySQL' u 1:2 t 'MySQL' w lp ls 4
