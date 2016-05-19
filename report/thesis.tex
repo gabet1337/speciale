@@ -398,9 +398,32 @@ For an \textit{internal} node that do not have leaves as children this process i
 
 We then recursively empty full child buffers provided the children are internal nodes that do not have leaves as children. Only when we have emptied buffers of all overflowing internal nodes which does not have leaves as children, we proceed and process the buffer-emptying process to leave nodes. The reason is that a buffer-emptying process on a leaf node may result in the need for rebalancing. By only emptying leaf nodes after all internal node buffer-emptying processes have been performed we prevent rebalancing and buffer-emptying processes from interfering with each other.
 
-We empty all relevant leaf nodes buffers one-by-one while maintaining the \textit{leaf-emptying invariant} that all buffers of nodes on the path from root of $\mathcal{T}$ to a leaf node with full buffer are empty. Since we handle all internal nodes before emptying the leaf nodes this invariant is true when we handle the buffer-emptying of the first leaf. To empty a node $u$ with $K$ elements in the leaves, we start by sorting the buffer and remove matching inserts and deletes. Then, we merge the buffer elements with the $K$ leaves below, again removing matching inserts and deletes. The resulting set of $K'$ sorted elements now needs to replace the $K$ original leaves along with new routing elements of $u$ reflecting the changes. If we end up with a resulting set of size $K' < K$, i.e. we do not have enough elements to fill the $K$ leaves, we introduce $K-K'$ dummy elements and insert those in the remaining leaves. If we have $K' \geq K'$ we place $K$ elements in the leaves. The remaining (if any) are finally placed one-by-one and rebalance the B-tree when necessary. We can rebalance as normally using splits as depicted in figure \todo{reference to figure that should be placed in B-tree section}, since the leaf emptying invariant insures that all nodes from $u$ to the root of $\mathcal{T}$ have empty buffers.
+We empty all relevant leaf nodes buffers one-by-one while maintaining the \textit{leaf-emptying invariant} that all buffers of nodes on the path from root of $\mathcal{T}$ to a leaf node with full buffer are empty. Since we handle all internal nodes before emptying the leaf nodes this invariant is true when we handle the buffer-emptying of the first leaf. To empty a node $u$ with $K$ elements in the leaves, we start by sorting the buffer and remove matching inserts and deletes. Then, we merge the buffer elements with the $K$ leaves below, again removing matching inserts and deletes. The resulting set of $K'$ sorted elements now needs to replace the $K$ original leaves along with new routing elements of $u$ reflecting the changes. If we end up with a resulting set of size $K' < K$, i.e. we do not have enough elements to fill the $K$ leaves, we introduce $K-K'$ dummy elements and insert those in the remaining leaves. If we have $K' \geq K'$ we place $K$ elements in the leaves. The remaining (if any) are finally placed one-by-one and rebalance the B-tree when necessary. See Figure~\ref{fig:buffer_tree_buffer_empty}.
 
-After we have emptied all leaf-node buffers we remove the placeholder-elements one-by-one. The leaf-emptying invariant ensures that a node $v$ on the path from $u$ to the root has an empty buffer, but $v's$ siblings may not have empty buffers. Therefore we can not fuse in a normal B-tree manner. Instead, we perform a buffer-emptying process on $v's$ immediate sibling(s) before performing the actual fuse. Note that we empty the buffers of both immediate siblings of $v$ because insert rebalancing may result in one of them having the same parent as $v$. This happens if the parent of $v$ splits.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth]{../figures/buffer_tree_buffer_empty}
+	\caption{Missing}
+	\label{fig:buffer_tree_buffer_empty}
+\end{figure}
+
+We can rebalance as in a normal B-tree using splits as depicted in, since the leaf emptying invariant insures that all nodes from $u$ to the root of $\mathcal{T}$ have empty buffers. See Figure~\ref{fig:buffer_tree_split}.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth]{../figures/buffer_tree_split}
+	\caption{Split in a buffer tree. The \textit{leaf-emptying invariant} guarantees there are empty buffers on the root to leaf path ensuring splits can be done as in a normal B-tree.}
+	\label{fig:buffer_tree_split}
+\end{figure}
+
+After we have emptied all leaf-node buffers we remove the placeholder-elements one-by-one. The leaf-emptying invariant ensures that a node $v$ on the path from $u$ to the root has an empty buffer, but $v's$ sibling may not have an empty buffer. Therefore we can not fuse in a normal B-tree manner. Instead, we perform a buffer-emptying process on $v's$ immediate sibling before performing the actual fuse. See Figure~\ref{fig:buffer_tree_fuse}.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.4\textwidth]{../figures/buffer_tree_fuse}
+	\caption{Missing}
+	\label{fig:buffer_tree_fuse}
+\end{figure}
 
 The emptying of the buffer of a sibling node $v'$ can result in buffers running full. We empty all such full non-leaf buffers before performing the actual fuse on $v$. The place-holder elements ensures we are always only in the process of handling a rebalancing caused by a single delete.
 
