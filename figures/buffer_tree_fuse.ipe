@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70107" creator="Ipe 7.2.2">
-<info created="D:20160518121350" modified="D:20160519131935"/>
+<info created="D:20160518121350" modified="D:20160519153858"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -428,34 +428,11 @@ h
 248 576 l
 h
 </path>
-<path matrix="0.75 0 0 1 0 -8" stroke="black" fill="white">
-128 704 m
-96 656 l
-96 656 l
-</path>
-<path matrix="0.5 0 0 1 32 -8" stroke="black" fill="white">
-128 704 m
-112 656 l
-112 656 l
-</path>
-<path matrix="0.5 0 0 1 32 -8" stroke="black" fill="white">
-128 704 m
-144 656 l
-144 656 l
-</path>
-<path matrix="0.75 0 0 1 -144 -8" stroke="black" fill="white">
-320 704 m
-352 656 l
-352 656 l
-</path>
 <text matrix="1 0 0 1 -28 0" transformations="translations" pos="108 704" stroke="black" type="label" width="5.187" height="4.289" depth="0" valign="baseline">$v$</text>
 <path matrix="1 0 0 1 -280 48" stroke="black" fill="white">
 400 700 m
 376 648 l
 376 648 l
-</path>
-<path matrix="1 0 0 1 -80 -56" stroke="black" fill="1">
-11.3137 0 0 11.3137 176 752 e
 </path>
 <path matrix="2.5 0 0 1 -220 48" stroke="black" fill="white">
 136 700 m
@@ -591,26 +568,6 @@ h
 248 576 l
 h
 </path>
-<path matrix="0.75 0 0 1 0 -216" stroke="black" fill="white">
-128 704 m
-96 656 l
-96 656 l
-</path>
-<path matrix="0.5 0 0 1 32 -216" stroke="black" fill="white">
-128 704 m
-112 656 l
-112 656 l
-</path>
-<path matrix="0.5 0 0 1 32 -216" stroke="black" fill="white">
-128 704 m
-144 656 l
-144 656 l
-</path>
-<path matrix="0.75 0 0 1 -144 -216" stroke="black" fill="white">
-320 704 m
-352 656 l
-352 656 l
-</path>
 <path matrix="0.75 0 0 1 64 -216" stroke="black" fill="white">
 128 704 m
 96 656 l
@@ -631,9 +588,6 @@ h
 352 656 l
 352 656 l
 </path>
-<path matrix="1 0 0 1 -80 -264" stroke="black" fill="1">
-11.3137 0 0 11.3137 176 752 e
-</path>
 <path matrix="1 0 0 1 -16 -264" stroke="black" fill="1">
 11.3137 0 0 11.3137 176 752 e
 </path>
@@ -649,5 +603,41 @@ h
 </path>
 <text matrix="1 0 0 1 -8 -4" transformations="translations" pos="160 624" stroke="black" type="label" width="12.73" height="7.473" depth="2.49" valign="baseline">(a)</text>
 <text matrix="1 0 0 1 -8 -216" transformations="translations" pos="160 624" stroke="black" type="label" width="13.284" height="7.473" depth="2.49" valign="baseline">(b)</text>
+<path matrix="1 0 0 1 -272 -8" stroke="black" fill="white">
+368 704 m
+368 656 l
+368 656 l
+</path>
+<path matrix="1 0 0 1 -272 -8" stroke="black" fill="white">
+368 704 m
+384 656 l
+384 656 l
+</path>
+<path matrix="1 0 0 1 -272 -8" stroke="black" fill="white">
+368 704 m
+352 656 l
+352 656 l
+</path>
+<path matrix="1 0 0 1 -80 -56" stroke="black" fill="1">
+11.3137 0 0 11.3137 176 752 e
+</path>
+<path matrix="1 0 0 1 -272 -216" stroke="black" fill="white">
+368 704 m
+368 656 l
+368 656 l
+</path>
+<path matrix="1 0 0 1 -272 -216" stroke="black" fill="white">
+368 704 m
+384 656 l
+384 656 l
+</path>
+<path matrix="1 0 0 1 -272 -216" stroke="black" fill="white">
+368 704 m
+352 656 l
+352 656 l
+</path>
+<path matrix="1 0 0 1 -80 -264" stroke="black" fill="1">
+11.3137 0 0 11.3137 176 752 e
+</path>
 </page>
 </ipe>
