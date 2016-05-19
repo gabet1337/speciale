@@ -283,7 +283,7 @@ namespace test {
     memset(&pe_attr_page_faults, 0, sizeof(pe_attr_page_faults));
     pe_attr_page_faults.size = sizeof(pe_attr_page_faults);
     pe_attr_page_faults.type = PERF_TYPE_SOFTWARE;
-    pe_attr_page_faults.config = PERF_COUNT_SW_PAGE_FAULTS;
+    pe_attr_page_faults.config = PERF_COUNT_SW_PAGE_FAULTS_MAJ;
     pe_attr_page_faults.disabled = 1;
     pe_attr_page_faults.exclude_kernel = 1;
     
