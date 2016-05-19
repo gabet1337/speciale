@@ -336,7 +336,7 @@ $\mathcal{T}$ is a B-tree with branching parameter $b$ if
 	\label{fig:b-tree}
 \end{figure}
 
-It follows from the definition that if $b=\Theta(B)$ then a B-tree will have height $\mathcal{O}(\log_B N)$.
+It follows from the definition that if $b=\Theta(B)$ then a B-tree will have height $\mathcal{O}(\log_B N)$. Note that the B-tree is a special case of the $(a,b)$-trees where the number of elements in leafs is a uniquely defined parameter.
 
 \textbf{Searching} in a B-tree is very much similar to searching in a binary search tree. Instead of making a binary decision at each node we instead have to make a multiway branching decision. If the element we are searching for is not contained in the current node, we find the smallest $i$ such that the key we are searching for is less than $x.key_i$. We then recursively search for the key in child $c_i$. This will in the worst case require $\mathcal{O}(\log_B N)$ I/O's to search for an element residing in a leaf.
 
