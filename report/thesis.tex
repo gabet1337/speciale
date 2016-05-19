@@ -250,6 +250,7 @@ In Chapter~\ref{chp:prelims} we give a preliminary overview of some of the techn
 
 Much work has been done on the three sided range queries and more general range queries. Some of the main ideas leading up to the main focus of this thesis is presented in Chapter~\ref{chp:related_work}.
 
+
 Chapter~\ref{chp:internal_pst} gives a detailed description and analysis of the priority search tree for internal memory by McCreight~\cite{DBLP:journals/siamcomp/McCreight85}.
 
 Chapter~\ref{chp:arge_pst} presents a result by Arge et al~\cite{arge_samoladas_vitter_1999} with optimal query bounds.
@@ -259,7 +260,6 @@ The main focus of this thesis, the external memory buffered priority search tree
 Leading up to our experimental Chapter~\ref{chp:experimental_results} we present the other structures included in our experiments in Chapter~\ref{chp:other_structures} and our experimental setup in Chapter~\ref{chp:experimental_setup}.
 
 \todo{add more sections!}
-
 \chapter{Model of computation}
 \label{chp:iomodel}
 We will argue the results of this thesis in terms of the external memory model of Aggarwal and Vitter~\cite{Aggarwal:1988/ICS/48529.48535}.
@@ -1264,6 +1264,10 @@ It is also worth noting that since the experimental results are very much in lin
 \todo{We need a single experiment where we test different buffer sizes with Arge's structure for good measure}
 
 \section{Insertion}
+The goal of this experiment is to ascertain how our different structures compare against each other when it comes to pure insertions. The experiment will consist of inserting as much data as possible in 24 hours with an upper limit of 10Gb. The data is uniformly random in the positive integer range.
+
+Figure~\ref{fig:theory_insert_complexity} shows the theoretical complexities of inserting an element into the different structures for different $N$. We expect the actual running times to be very similar to these. If the non-I/O efficient data structures fill out the internal memory we expect to see a significant increase in running time at that point as the structures will be forced to use the virtual memory to swap out memory.
+
 \begin{figure}[htp!]
 \includegraphics[width=\textwidth]{../plots/insert_complexities/insert_complexity}
 \caption{Theoretical insert time for all tested structures.}
@@ -1280,13 +1284,12 @@ It is also worth noting that since the experimental results are very much in lin
 \label{fig:actual_insert_time_zoomed}
 \end{figure}
 
-Figure~\ref{fig:theory_insert_complexity} shows the theoretical complexities of inserting an element into the different structures for different $N$. We expect the actual running times to be very similar to these. The experiment will consist of inserting uniformly random data for 24 hours. If the non-I/O efficient data structures fill out the internal memory we expect to see a significant increase in running time at that point.
-
 Figure~\ref{fig:actual_insert_time} shows the actual running time of inserting an element into the different structures for different input sizes. 
 The figure is cropped at 3500Mb but it goes all the way to 10000Mb. It was however only MySQL that was able to insert this much data in 24 hours.
 The results are very much in line with our expectations with some exceptions. We see significant increases in running time whenever the internal structures run out of memory which is after just a few hundred Mb's of inserts. The internal R-tree from the Boost library was the most efficient of the internal data structures. We suspect this is due to an efficient memory layout allowing the structure to perform efficiently up to the point of memory limit.
 
-The results of MySQL and the external memory buffered priority search tree by Brodal align very well with the theoretical bounds, but this is clearly not the case for the structure of Arge et al. We suspect the bad performance of Arge et al is mainly due to the following reason. Every insert requires that we load every node on a path from the root to a leaf. Every node stores $B$ points and the tree has height $\mathcal{O}(\log_B N)$. It follows that every insert must load $\mathcal{O}(B\cdot \log_B N)$ points. For a buffer size of 4Kb and with 1Mb inserted we must load and flush $4Kb \cdot \log_{4Kb} 1Mb \approx 7Kb$. To insert 1Mb points after 1Mb points has already been inserted we must therefore approximately load and flush $7Kb \cdot 1Mb \text{points} = 875Mb$. On top of this comes the cost of inserting into the query data structure and the cost of splitting nodes.
+The results of MySQL and the external memory buffered priority search tree by Brodal align very well with the theoretical bounds, but this is clearly not the case for the structure of Arge et al. We suspect the bad performance of Arge et al is mainly due to the following reason. Every insert requires that we load every node on a path from the root to a leaf. Every node stores $B$ points and the tree has height $\mathcal{O}(\log_B N)$. It follows that every insert must load $\mathcal{O}(B\cdot \log_B N)$ points. For a buffer size of 4Kb and with 1Mb inserted we must load and flush $4Kb \cdot \log_{4Kb} 1Mb \approx 7Kb$. To insert 1Mb after 1Mb has already been inserted we must therefore approximately load and flush $7Kb \cdot 1Mb = 7Gb$. On top of this comes the cost of inserting into the query data structure which should be asymptotically similar but requires more internal work. If we compare this to the amount of data that has to be read and written in the case of the structure by Brodal with a similar buffer size we get that we need to load and store:
+$$B \frac{1}{\epsilon} \log_B N = 4Kb \cdot \frac{1}{0.0833} \log_{4Kb} 1Mb \approx 
 
 \todo{Maybe show the I/O plot that confirms the huge amount of I/O's for Arge}
 
