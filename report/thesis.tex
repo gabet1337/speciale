@@ -320,9 +320,9 @@ This gives the following definition of a B-tree:
 \label{def:btree}
 $\mathcal{T}$ is a B-tree with branching parameter $b$ if
 \begin{itemize}
-	\item All leaves have the same depth
+	\item All leafs have the same depth
 	\item All nodes store at most $b-1$ elements.
-	\item All nodes and leaves except for the root have degree between $\frac{1}{2}b$ and $b$.
+	\item All nodes and leafs except for the root have degree between $\frac{1}{2}b$ and $b$.
 	\item The root has degree between $2$ and $b$.
 	\item Elements are stored in non-decreasing order in the nodes.
 	\item The keys of node $x$, $x.key_i$, separate the children's elements into ranges such that if $k_i$ is a key stored in child $c_i$ then $k_1 \leq x.key_1 \leq k_2 \leq x.key_2 \leq \cdots$
@@ -336,35 +336,37 @@ $\mathcal{T}$ is a B-tree with branching parameter $b$ if
 	\label{fig:b-tree}
 \end{figure}
 
-It follows from the definition that if $b=\Theta(B)$ then a B-tree will have height $\mathcal{O}(\log_B N)$. Note that the B-tree is a special case of the $(a,b)$-trees where the number of elements in leafs is a uniquely defined parameter.
+It follows from the definition that if $b=\Theta(B)$ then a B-tree will have height $\mathcal{O}(\log_B N)$. Note that the B-tree is a special case of the $(a,b)$-trees in which the number of elements in leafs is a uniquely defined parameter.
 
 \textbf{Searching} in a B-tree is very much similar to searching in a binary search tree. Instead of making a binary decision at each node we instead have to make a multiway branching decision. If the element we are searching for is not contained in the current node, we find the smallest $i$ such that the key we are searching for is less than $x.key_i$. We then recursively search for the key in child $c_i$. This will in the worst case require $\mathcal{O}(\log_B N)$ I/O's to search for an element residing in a leaf.
 
-\textbf{Inserting} in a B-tree is not as simple as inserting into a binary search tree. Similarly to binary trees we search for the leaf node to insert the key, but we cannot simply create a new node for the key. Instead we insert the key into the found leaf node and if the leaf now contains too many elements we split the leaf into two leaves each containing half the elements of the original leaf. See Figure~\ref{fig:b_tree_split}. Splitting a leaf might cause its parent to have too many children which causes the parent to similarly split.
+\textbf{Inserting} in a B-tree is not as simple as inserting into a binary search tree. Similarly to binary trees we search for the leaf node to insert the key, but we cannot simply create a new node for the key. Instead we insert the key into the found leaf node and if the leaf now contains too many elements we split the leaf into two leafs each containing half the elements of the original leaf. See Figure~\ref{fig:b_tree_split}. Splitting a leaf might cause its parent to have too many children which causes the parent to similarly split.
 Searching for the leaf node to insert into takes $\mathcal{O}(\log_B N)$ and so does recursively splitting nodes from a leaf to root path as a split operation requires $\mathcal{O}(1)$ I/O's.
 
-\begin{figure}[h]
+\begin{figure}[H]
 	\centering
-	\includegraphics[width=0.8\textwidth]{../figures/b_tree_split}
+	\includegraphics[width=0.7\textwidth]{../figures/b_tree_split}
 	\caption{Splitting a degree $b+1$ node $v$ (or leaf with $b+1$ elements) into nodes (or leafs) $v'$ and $v''$.}
 	\label{fig:b_tree_split}
 \end{figure}
 
-\textbf{Deleting} in a B-tree introduces an opposite to splitting, fusing. To delete a key from the tree we search the tree for the key, which now can reside in an internal node. We then delete the key from the node $x$, which might cause $x$ to have too few elements. To remedy this situation we will have to potentially fuse $x$ with a neighbouring node. If $x$ together with either its predecessor or successor contains less than $b$ elements we can fuse the two nodes. See Figure~\ref{fig:b_tree_fuse}. If this is not the case then we know that we are able to steal an element from a neighbouring node in order to satisfy the properties of the B-tree. As in the case of insertion, fusing nodes might recursively cause the parent to fuse with one of its neighbours.
-Fusing two nodes require $\mathcal{O}(1)$ I/O's but a fuse can cascade from a leaf to root path causing $\mathcal{O}(\log_B N)$ I/O's.
+\textbf{Deleting} in a B-tree introduces an opposite to splitting, fusing. To delete a key from the tree we search the tree for the key, which now can reside in an internal node. We then delete the key from the node $x$, which might cause $x$ to have too few elements. To remedy this situation we will have to potentially fuse $x$ with a neighbouring node. If $x$ together with either its predecessor or successor contains less than $b$ elements we can fuse the two nodes. See Figure~\ref{fig:b_tree_fuse}.
 
-\begin{figure}[h]
+\begin{figure}[H]
 	\centering
-	\includegraphics[width=0.8\textwidth]{../figures/b_tree_fuse}
-	\caption{Fusing a degree $a-1$ node $v$ (or leaf with $a-1$ elements) with sibling $v'$.}
+	\includegraphics[width=0.7\textwidth]{../figures/b_tree_fuse}
+	\caption{Fusing a degree $(b/2)-1$ node $v$ (or leaf with $(b/2)-1$ elements) with sibling $v'$.}
 	\label{fig:b_tree_fuse}
 \end{figure}
 
-A B-tree on $N$ elements are stored in $\mathcal{O}(\nicefrac{N}{B})$ blocks and can be constructed in the sorting bound by building the level level-by-level bottom-up.
+If this is not the case then we know that we are able to steal an element from a neighbouring node in order to satisfy the properties of the B-tree. As in the case of insertion, fusing nodes might recursively cause the parent to fuse with one of its neighbours.
+Fusing two nodes require $\mathcal{O}(1)$ I/O's but a fuse can cascade from a leaf to root path causing $\mathcal{O}(\log_B N)$ I/O's.
+
+A B-tree on $N$ elements are stored in $\mathcal{O}(\nicefrac{N}{B})$ blocks and can be constructed in the sorting bound by building the tree level-by-level bottom-up.
 
 \section{Buffer tree}
 \label{sec:prelim_buffer_tree}
-The Buffer Tree of Arge~\cite{Arge:1995:BTN:645930.672850} combines the basic B-Tree described in Section~\ref{sec:prelim_b_tree} with a \textit{buffer-technique} that will be introduced shortly. The result is an external data structure supporting batched operations I/O efficiently. The ideas introduced by Arge has proven especially useful when generalizing well-known internal-memory algorithms into efficient I/O algorithms. The main idea of the buffer-technique is to introduce \textit{laziness} in the update algorithms and utilizing main memory to process a large number of updates simultaneously. For example, when inserting a point we do not search all the way down the tree to find the leaf. Instead, the point is inserted into a buffer of the root. Whenever the size of a buffer exceeds a certain threshold we push elements from the buffer one level down to buffers on the next level of the tree. This process of emptying full buffers is repeated recursively down the tree.
+The Buffer Tree of Arge~\cite{Arge:1995:BTN:645930.672850} combines the basic B-Tree described in Section~\ref{sec:prelim_b_tree} with a \textit{buffer-technique} that will be introduced shortly. The result is an external data structure supporting batched operations I/O efficiently. The ideas introduced by Arge has proven especially useful when generalizing well-known internal-memory algorithms into efficient I/O algorithms~\cite{Arge:1995:BTN:645930.672850}. The main idea of the buffer-technique is to introduce \textit{laziness} in the update algorithms and utilizing main memory to process a large number of updates simultaneously. For example, when inserting a point we do not search all the way down the tree to find the leaf. Instead, the point is inserted into a buffer of the root. Whenever the size of a buffer exceeds a certain threshold we push elements from the buffer one level down to buffers on the next level of the tree. This process of emptying full buffers is repeated recursively down the tree.
 
 Formally the basic Buffer tree is defined according to Definition~\ref{def:buffer_tree}. Refer to Figure~\ref{fig:buffer_tree} for an illustration of a Buffer tree.
 
@@ -372,8 +374,10 @@ Formally the basic Buffer tree is defined according to Definition~\ref{def:buffe
 \label{def:buffer_tree}
 A basic buffer tree $\mathcal{T}$ is
 \begin{itemize}
-	\item A B-tree with branching parameter $\nicefrac{M}{B}$ and leaf parameter $B$
-	\item Each internal node has a buffer of size $M$
+	\item A B-tree with leaf parameter $B$.
+	\item All internal nodes, except for the root, have degree between $\frac{1}{4}$ $\nicefrac{M}{B}$ and $\nicefrac{M}{B}$.
+	\item The root have degree between 2 and $\nicefrac{M}{B}$.
+	\item Each internal node have a buffer of size $M$.
 \end{itemize}
 \end{definition}
 
@@ -387,23 +391,23 @@ A basic buffer tree $\mathcal{T}$ is
 \textbf{Updates} are handled handled by augmenting the element in question with information on whether we are inserting or deleting. Since an element can be represented in multiple buffers, we also augment elements with a time stamp.
 Whenever we have collected $B$ elements we insert all of them into the root buffer of size $M$. Whenever the buffer overflows, i.e. have more than $M$ points, we initiate a buffer-emptying process that distributes all elements in the buffers to the children.
 
-For an \textit{internal} node that do not have leaves as children this process is done as follows. First, we load the $M$ unsorted elements into main memory and sort them. Then we scan through the sorted list while removing matching inserts and deletes with respect to the time stamps of each element. Now we simply scan distribute the remaining elements one level down. We make sure to distribute the elements in sorted order, since this will guarantee that we leave no buffer of a child with more than $M$ unsorted elements followed by list of sorted elements. Thus, we are able to sort the resulting buffer in a linear number of I/O's as depicted in Figure~\ref{fig:buffer_tree_buffer_sort}.
+For an \textit{internal} node that do not have leafs as children this process is done as follows. First, we load the $M$ unsorted elements into main memory and sort them. Then we scan through the sorted list while removing matching inserts and deletes with respect to the time stamps of each element. Now we simply scan distribute the remaining elements one level down. We make sure to distribute the elements in sorted order, since this will guarantee that we leave no buffer of a child with more than $M$ unsorted elements followed by list of sorted elements. Thus, we are able to sort the resulting buffer in a linear number of I/O's as depicted in Figure~\ref{fig:buffer_tree_buffer_sort}.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.8\textwidth]{../figures/buffer_tree_buffer_sort}
-	\caption{(a) First the $\leq M$ points are loaded into the main memory in $\mathcal{O}(M/B)$ and sorted (b) Then the two lists of sorted points are merged in $\mathcal{O}(M/B)$.}
+	\caption{(a) First, the $\leq M$ unsorted points are loaded into the main memory in $\mathcal{O}(M/B)$ I/O's and is then sorted in internal memory (b) Then, the two lists of sorted points are merged in $\mathcal{O}(M/B)$ I/O's.}
 	\label{fig:buffer_tree_buffer_sort}
 \end{figure}
 
-We then recursively empty full child buffers provided the children are internal nodes that do not have leaves as children. Only when we have emptied buffers of all overflowing internal nodes which does not have leaves as children, we proceed and process the buffer-emptying process to leave nodes. The reason is that a buffer-emptying process on a leaf node may result in the need for rebalancing. By only emptying leaf nodes after all internal node buffer-emptying processes have been performed we prevent rebalancing and buffer-emptying processes from interfering with each other.
+We then recursively empty full child buffers provided the children are internal nodes that do not have leafs as children. Only when we have emptied buffers of all overflowing internal nodes which does not have leafs as children, we proceed and process the buffer-emptying process to leaf nodes. The reason is that a buffer-emptying process on a leaf node may result in the need for rebalancing. By only emptying leaf nodes after all internal node buffer-emptying processes have been performed we prevent rebalancing and buffer-emptying processes from interfering with each other.
 
-We empty all relevant leaf nodes buffers one-by-one while maintaining the \textit{leaf-emptying invariant} that all buffers of nodes on the path from root of $\mathcal{T}$ to a leaf node with full buffer are empty. Since we handle all internal nodes before emptying the leaf nodes this invariant is true when we handle the buffer-emptying of the first leaf. To empty a node $u$ with $K$ elements in the leaves, we start by sorting the buffer and remove matching inserts and deletes. Then, we merge the buffer elements with the $K$ leaves below, again removing matching inserts and deletes. The resulting set of $K'$ sorted elements now needs to replace the $K$ original leaves along with new routing elements of $u$ reflecting the changes. If we end up with a resulting set of size $K' < K$, i.e. we do not have enough elements to fill the $K$ leaves, we introduce $K-K'$ dummy elements and insert those in the remaining leaves. If we have $K' \geq K'$ we place $K$ elements in the leaves. The remaining (if any) are finally placed one-by-one and rebalance the B-tree when necessary. See Figure~\ref{fig:buffer_tree_buffer_empty}.
+We empty all relevant leaf nodes buffers one-by-one while maintaining the \textit{leaf-emptying invariant} that all buffers of nodes on the path from root of $\mathcal{T}$ to a leaf node with full buffer are empty. Since we handle all internal nodes before emptying the leaf nodes this invariant is true when we handle the buffer-emptying of the first leaf. To empty a node $u$ with $K$ elements in the leafs, we start by sorting the buffer and remove matching inserts and deletes. Then, we merge the buffer elements with the $K$ leafs below, again removing matching inserts and deletes. The resulting set of $K'$ sorted elements now needs to replace the $K$ original leafs along with new routing elements of $u$ reflecting the changes. If we end up with a resulting set of size $K' < K$, i.e. we do not have enough elements to fill the $K$ leafs, we introduce $K-K'$ dummy elements and insert those in the remaining leafs. If we have $K' \geq K'$ we place $K$ elements in the leafs. The remaining (if any) are finally placed one-by-one and rebalance the B-tree when necessary. See Figure~\ref{fig:buffer_tree_buffer_empty}.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=\textwidth]{../figures/buffer_tree_buffer_empty}
-	\caption{Missing}
+	\includegraphics[width=0.75\textwidth]{../figures/buffer_tree_buffer_empty}
+	\caption{Buffer emptying process. First the $K$ original leafs and the buffer are merged, and matching inserts and delete are removed. This gives a set of size $K'$. If $K = K'$ the original leafs are replaced with the $K'$ new ones. If $K' < K$ we add \textit{dummy elements}, here represented as circles, to the set such that we replace all of the original $K$ leafs with elements from the new set. If $K' > K$, we use a subset of size $K$ to replace the original leafs, and the rest of the points are then insert one by one.}
 	\label{fig:buffer_tree_buffer_empty}
 \end{figure}
 
@@ -411,7 +415,7 @@ We can rebalance as in a normal B-tree using splits as depicted in, since the le
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=\textwidth]{../figures/buffer_tree_split}
+	\includegraphics[width=0.75\textwidth]{../figures/buffer_tree_split}
 	\caption{Split in a buffer tree. The \textit{leaf-emptying invariant} guarantees there are empty buffers on the root to leaf path ensuring splits can be done as in a normal B-tree.}
 	\label{fig:buffer_tree_split}
 \end{figure}
@@ -421,7 +425,7 @@ After we have emptied all leaf-node buffers we remove the placeholder-elements o
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.4\textwidth]{../figures/buffer_tree_fuse}
-	\caption{Missing}
+	\caption{Buffer tree fusing. (a) node $v$ already have an empty buffer guaranteed by the \textit{leaf-emptying invariant}, but no such guarantee is given for the sibling node $v'$, so we have to start a buffer-emptying process on $v'$ (b) The buffer emptying of $v'$ might cause a leaf-node split which is handled before we fuse $v$ and $v'$ (c) After the buffer-emptying process of $v'$ and rebalancing has finished we perform the actual fuse of nodes. This is done as in a normal B-tree.}
 	\label{fig:buffer_tree_fuse}
 \end{figure}
 
@@ -684,7 +688,7 @@ The first step of the insertion algorithm is a binary search traversal on the $x
 When dynamically deleting a point we must locate the interior node (if any) representing the point we wish to delete. After we have removed the point from the interior of the dynamic search tree, we must replay a portion of the tournament among the points below this interior node in order to replace it. Finally we must delete the leaf which is the placeholder for the point.
 
 \subsection*{Analysis}
-Locating the interior node representing the point to be deleted can be done in $\mathcal{O}(\log N)$ using the binary search property maintained by the priority search tree. Once we have located the interior node we can remove this point in $\mathcal{O}(1)$. The deletion of the point of an interior node leaves a hole in the tree that we fill by playing tournaments following a node to leaf path of length $\mathcal{O}(\log N)$. We conclude the deletion algorithm requires $\mathcal{O}(\log N)$ per deletion.
+Locating the interior node representing the point to be deleted can be done in $\mathcal{O}(\log N)$ using the binary search property maintained by the priority search tree. Once we have located the interior node we can remove this point in $\mathcal{O}(1)$. The deletion of the point of an interior node leafs a hole in the tree that we fill by playing tournaments following a node to leaf path of length $\mathcal{O}(\log N)$. We conclude the deletion algorithm requires $\mathcal{O}(\log N)$ per deletion.
 
 
 \section{Rebalancing}
@@ -1020,7 +1024,7 @@ We identify the nodes to visit in a breadth first manner.
 Starting from the root we identify, from the query's $x$-range, the children that are relevant to the query and push all insertions and deletions in the root to the identified children without handling possible overflows. After having done this we know that the point buffers of the children do not change further and we can thus report all points in the query range from the child structure and the point buffer of the root. The children worth visiting are added to the back of the breadth first search queue. We can decide whether a child is worth visiting without reading the node by comparing $y$ with the minimum $y$-value of that child's point buffer. This value is stored in the parent.
 All nodes except for the root do not need to report from their point buffers as the parent of the node has already reported the relevant points from the child structure.
 
-After all points have been reported we might have some buffers that have temporarily overflowed. This is now handled in a bottom up fashion using the update operations described in Subsection~\ref{subsec:gerth_updates}. We will handle a single subtree at a time and make sure that the entire subtree has no broken invariants, i.e. buffers that overflow or underflow or any nodes with a too high node degree. We do this by the update operations~\ref{update:del}-\ref{update:deg} and at the same time we disallow that any recursion leaves the subtree, i.e. no splits may recursively split nodes outside of the subtree. When the entire subtree has no overflows or underflows we can remedy a potential underflowed point buffer using update operation~\ref{update:pbu} and continue to the next subtree one level higher in the tree. See Figure~\ref{fig:gerth_fixup}.
+After all points have been reported we might have some buffers that have temporarily overflowed. This is now handled in a bottom up fashion using the update operations described in Subsection~\ref{subsec:gerth_updates}. We will handle a single subtree at a time and make sure that the entire subtree has no broken invariants, i.e. buffers that overflow or underflow or any nodes with a too high node degree. We do this by the update operations~\ref{update:del}-\ref{update:deg} and at the same time we disallow that any recursion leafs the subtree, i.e. no splits may recursively split nodes outside of the subtree. When the entire subtree has no overflows or underflows we can remedy a potential underflowed point buffer using update operation~\ref{update:pbu} and continue to the next subtree one level higher in the tree. See Figure~\ref{fig:gerth_fixup}.
 
 %REMOVED This process could also be described recursively. The base case of the recursion is the leaf $l$ which is handled by moving points from $I_l$ into $P_l$ and potentially splitting. At a layer above $l$ at node $v$ we might have many children which are all leafs and handled according to the base case. Node $v$ is now handled as described before and we have thus taken a step in the recursion. This process continues up to the root of the tree leaving the tree in a state with no overflows or underflows.
 
@@ -1077,7 +1081,7 @@ By a similar argument it follows that at most $\mathcal{O}(\frac{N_{ins}}{\Delta
 An insertion has to be moved at most the height of the tree levels down before it is cancelled or moved into a point buffer. Since the height of the tree is $\mathcal{O}(\frac{1}{\epsilon} \log_B N)$ it follows that the cost of handling overflowing insertions buffers during the course of $N_{ins}$ insertions becomes $\mathcal{O}(\frac{N_{ins}}{B/\Delta}\frac{1}{\epsilon}\log_B N)$ I/O's.
 A similar argument can be given for the case of deletions.
 
-Each deletion leaves behind a hole which needs to be filled. This hole is filled by recursively pulling up points which effectively moves down the hole. Each split of internal nodes also potentially creates up to $B$ holes.
+Each deletion leafs behind a hole which needs to be filled. This hole is filled by recursively pulling up points which effectively moves down the hole. Each split of internal nodes also potentially creates up to $B$ holes.
 In total we need to handle $\mathcal{O}(N_{del} + \frac{N_{ins}}{\Delta B})$ holes. We can move up $B/2$ points using $\mathcal{O}(\Delta)$ I/O's and they at most need to be moved to the top of the tree, i.e. they need to be at most moved the height of the tree levels up. This gives a total cost of $\mathcal{O}((N_{del} + \frac{N_{ins}}{\Delta B})\frac{\Delta}{B}\frac{1}{\epsilon} \log_B N)$ I/O's.
 
 All this adds up to $\mathcal{O}(\frac{N_{ins}+N_{del}}{B/\Delta} \frac{1}{\epsilon} \log_B N) = \mathcal{O}(\frac{N_{ins}+N_{del}}{\epsilon B^{1-\epsilon}} \log_B N)$  I/O's for handling updates. This matches the amortized bounds of the structure.
