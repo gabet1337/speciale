@@ -18,5 +18,5 @@ set key top left
 set xlabel 'N (input size in Mb)'
 set ylabel 'insert buffer overflows'
 set xrange [0:1030]
-set yrange [0:7]
+set yrange [0:30]
 plot 'query_experiment_results/final2/gerth_Gerth' u 1:8 t 'Brodal\_fanout2' w lp ls 2

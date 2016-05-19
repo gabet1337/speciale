@@ -17,11 +17,6 @@ set style line 8 lc rgb '#87ceeb' pt 8 ps 1 lt 1 lw 2 # --- skyblue
 set key top left
 set xlabel 'N (input size in Mb)'
 set ylabel 'point buffer underflows'
-#set xrange [0:0]
-#set yrange [0:0]
-plot 'query_experiment_results/final2/gerth_Gerth' u 1:9 t 'Gerth' w lp ls 2, \
-'query_experiment_results/final2/internal_Internal' u 1:9 t 'Internal' w lp ls 5, \
-'query_experiment_results/final2/rtree_Boost R-tree' u 1:9 t 'Boost R-tree' w lp ls 3, \
-'query_experiment_results/final2/arge_Arge' u 1:9 t 'Arge' w lp ls 1, \
-'query_experiment_results/final2/spatial_libspatial' u 1:9 t 'libspatial' w lp ls 6, \
-'query_experiment_results/final2/mysql_MySQL' u 1:9 t 'MySQL' w lp ls 4
+set xrange [0:1030]
+set yrange [0:30]
+plot 'query_experiment_results/final2/gerth_Gerth' u 1:9 t 'Brodal\_fanout2' w lp ls 2
