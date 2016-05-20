@@ -24,18 +24,18 @@ B = 1024*1024
 epsilon(fanout) = log(fanout)/log(B)
 f(x,eps) = (1/(eps*B**(1-eps))) * (log(x)/log(B))
 set output 'insert_experiment_results/2016-05-06.14_11_08/time_divided_with_asymptotic_brodal.eps'
-plot 'insert_experiment_results/2016-05-06.14_11_08/gerth_Gerth' u 1:($2/(($1*1024*1024)*f(($1*1024*1024),epsilon(2)))) t 'Brodal' w lp ls 2
+plot 'insert_experiment_results/2016-05-06.14_11_08/gerth_Gerth' u 1:($2/(($1*1024*1024)*f(($1*1024*1024),epsilon(2)))) notitle '' w lp ls 2
 set output 'insert_experiment_results/2016-05-06.14_11_08/ios_divided_with_asymptotic_brodal.eps'
-plot 'insert_experiment_results/2016-05-06.14_11_08/gerth_Gerth' u 1:($3/(($1*1024*1024)*f(($1*1024*1024),epsilon(2)))) t 'Brodal' w lp ls 2
+plot 'insert_experiment_results/2016-05-06.14_11_08/gerth_Gerth' u 1:($3/(($1*1024*1024)*f(($1*1024*1024),epsilon(2)))) notitle w lp ls 2
 set output 'insert_experiment_results/2016-05-06.14_11_08/time_divided_with_asymptotic_arge.eps'
-plot 'insert_experiment_results/2016-05-06.14_11_08/arge_Arge' u 1:($2/(($1*1024*1024)*(log($1*1024*1024)/log(4*1024)))) t 'Arge' w lp ls 1
+plot 'insert_experiment_results/2016-05-06.14_11_08/arge_Arge' u 1:($2/(($1*1024*1024)*(log($1*1024*1024)/log(4*1024)))) notitle w lp ls 1
 set output 'insert_experiment_results/2016-05-06.14_11_08/ios_divided_with_asymptotic_arge.eps'
-plot 'insert_experiment_results/2016-05-06.14_11_08/arge_Arge' u 1:($3/(($1*1024*1024)*(log($1*1024*1024)/log(4*1024)))) t 'Arge' w lp ls 1
+plot 'insert_experiment_results/2016-05-06.14_11_08/arge_Arge' u 1:($3/(($1*1024*1024)*(log($1*1024*1024)/log(4*1024)))) notitle w lp ls 1
 set output 'insert_experiment_results/2016-05-06.14_11_08/time_divided_with_asymptotic_internal.eps'
-plot 'insert_experiment_results/2016-05-06.14_11_08/internal_Internal' u 1:($2/(($1*1024*1024)*(log($1*1024*1024)/log(2)))) t 'Internal' w lp ls 5
+plot 'insert_experiment_results/2016-05-06.14_11_08/internal_Internal' u 1:($2/(($1*1024*1024)*(log($1*1024*1024)/log(2)))) notitle w lp ls 5
 set output 'insert_experiment_results/2016-05-06.14_11_08/time_divided_with_asymptotic_boost.eps'
-plot 'insert_experiment_results/2016-05-06.14_11_08/rtree_Boost R-tree' u 1:($2/($1*1024*1024*($1*1024*1024))) t 'Boost R-tree' w lp ls 3
+plot 'insert_experiment_results/2016-05-06.14_11_08/rtree_Boost R-tree' u 1:($2/($1*1024*1024*($1*1024*1024))) notitle w lp ls 3
 set output 'insert_experiment_results/2016-05-06.14_11_08/time_divided_with_asymptotic_libspatial.eps'
-plot 'insert_experiment_results/2016-05-06.14_11_08/spatial_libspatial' u 1:($2/($1*1024*1024*($1*1024*1024))) t 'libspatial' w lp ls 6
+plot 'insert_experiment_results/2016-05-06.14_11_08/spatial_libspatial' u 1:($2/($1*1024*1024*($1*1024*1024))) notitle w lp ls 6
 set output 'insert_experiment_results/2016-05-06.14_11_08/time_divided_with_asymptotic_mysql.eps'
-plot 'insert_experiment_results/2016-05-06.14_11_08/mysql_MySQL' u 1:($2/($1*1024*1024)) t 'MySQL' w lp ls 4
+plot 'insert_experiment_results/2016-05-06.14_11_08/mysql_MySQL' u 1:($2/($1*1024*1024)) notitle w lp ls 4
