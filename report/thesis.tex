@@ -24,6 +24,9 @@
 \usepackage{algorithmic}
 \usepackage{multirow}
 
+% better epsilon
+\def \epsilon {\varepsilon}
+
 % Inline list
 \usepackage[inline]{enumitem}
 \newlist{inlinelist}{enumerate*}{1}
@@ -1292,8 +1295,14 @@ Figure~\ref{fig:actual_insert_time} shows the actual running time of inserting a
 The figure is cropped at 3500Mb but it goes all the way to 10000Mb. It was however only MySQL that was able to insert this much data in 24 hours.
 The results are very much in line with our expectations with some exceptions. We see significant increases in running time whenever the internal structures run out of memory which is after just a few hundred Mb's of inserts. The internal R-tree from the Boost library was the most efficient of the internal data structures. We suspect this is due to an efficient memory layout allowing the structure to perform efficiently up to the point of memory limit.
 
-The results of MySQL and the external memory buffered priority search tree by Brodal align very well with the theoretical bounds, but this is clearly not the case for the structure of Arge et al. We suspect the bad performance of Arge et al is mainly due to the following reason. Every insert requires that we load every node on a path from the root to a leaf. Every node stores $B$ points and the tree has height $\mathcal{O}(\log_B N)$. It follows that every insert must load $\mathcal{O}(B\cdot \log_B N)$ points. For a buffer size of 4Kb and with 1Mb inserted we must load and flush $4Kb \cdot \log_{4Kb} 1Mb \approx 7Kb$. To insert 1Mb after 1Mb has already been inserted we must therefore approximately load and flush $7Kb \cdot 1Mb = 7Gb$. On top of this comes the cost of inserting into the query data structure which should be asymptotically similar but requires more internal work. If we compare this to the amount of data that has to be read and written in the case of the structure by Brodal with a similar buffer size we get that we need to load and store:
-%$$B \frac{1}{\epsilon} \log_B N = 4Kb \cdot \frac{1}{0.0833} \log_{4Kb} 1Mb \approx 
+The results of MySQL and the external memory buffered priority search tree by Brodal align very well with the theoretical bounds, but this is clearly not the case for the structure of Arge et al. 
+
+We suspect the bad performance of Arge et al is mainly due to the following reason. A single insert requires $\mathcal{O}(\log_B N)$ I/O's. Each data point is 8 bytes, 4 bytes of each coordinate. This means that in order to insert 50Mb data or equivalently 6553600 points in an initially empty structure with a buffer size of $4Kb$ we need roughly $$\sum\limits_{i=0}^{6553600} \log_{4096}(i) \approx 11.5 \cdot 10^6~\text{I/O's}$$
+If we compare this against the structure of Brodal with the same buffer size and a fanout of size 2, i.e. $\epsilon = \log(2)/\log(4096) = 0.083..$, we get that Brodal's requires roughly:
+$$\sum\limits_{i=0}^{6553600} \frac{1}{\epsilon \cdot 4096^{1-\epsilon}} \log_{4096}(i) = 67.8\cdot 10^3~\text{I/O's}$$
+The calculations shows that in order to insert 50Mb of data, we would need to load/store $11.5 \cdot 10^6 \cdot 4096 = 47.1Gb$ in the case of Arge, and $67.8\cdot 10^3 \cdot 4096 = 0.278Gb$ in the case of Brodal.
+To collaborate these findings we conducted a single experiment measuring the I/O's and a replicated scenario of the above described. The results can be found in Figure~\ref{fig:arge_brodal_ios}.
+
 
 \todo{Maybe show the I/O plot that confirms the huge amount of I/O's for Arge}
 
