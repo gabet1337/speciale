@@ -391,7 +391,7 @@ A basic buffer tree $\mathcal{T}$ is
 \textbf{Updates} are handled by augmenting the element in question with information on whether we are inserting or deleting. Since an element can be represented in multiple buffers, we also augment elements with a time stamp.
 Whenever we have collected $B$ elements we insert all of them into the root buffer of size $M$. Whenever the buffer overflows, i.e. have more than $M$ points, we initiate a buffer-emptying process that distributes all elements in the buffers to the children.
 
-For an \textit{internal} node that do not have leafs as children this process is done as follows. First, we load the $M$ unsorted elements into main memory and sort them. Then we scan through the sorted list while removing matching inserts and deletes with respect to the time stamps of each element. Now we simply scan distribute\todo{scan distribute?} the remaining elements one level down. We make sure to distribute the elements in sorted order, since this will guarantee that we leave no buffer of a child with more than $M$ unsorted elements followed by list of sorted elements. Thus, we are able to sort the resulting buffer in a linear number of I/O's as depicted in Figure~\ref{fig:buffer_tree_buffer_sort}.
+For an \textit{internal} node that do not have leafs as children this process is done as follows. First, we load the $M$ unsorted elements into main memory and sort them. Then we scan through the sorted list while removing matching inserts and deletes with respect to the time stamps of each element. Now we simply distribute remaining elements one level down using a single scan. We make sure to distribute the elements in sorted order, since this will guarantee that we leave no buffer of a child with more than $M$ unsorted elements followed by list of sorted elements. Thus, we are able to sort the resulting buffer in a linear number of I/O's as depicted in Figure~\ref{fig:buffer_tree_buffer_sort}.
 
 \begin{figure}[h]
 	\centering
@@ -402,7 +402,7 @@ For an \textit{internal} node that do not have leafs as children this process is
 
 We then recursively empty full child buffers provided that the children are internal nodes that do not have leafs as children. Only when we have emptied buffers of all overflowing internal nodes which does not have leafs as children, we proceed and process the buffer-emptying process to leaf nodes. The reason is that a buffer-emptying process on a leaf node may result in the need for rebalancing. By only emptying leaf nodes after all internal node buffer-emptying processes have been performed we prevent rebalancing and buffer-emptying processes from interfering with each other.
 
-We empty all relevant leaf nodes buffers one-by-one while maintaining the \textit{leaf-emptying invariant} that all buffers of nodes on the path from root of $\mathcal{T}$ to a leaf node with full buffer are empty. Since we handle all internal nodes before emptying the leaf nodes this invariant is true when we handle the buffer-emptying of the first leaf. To empty a node $u$ with $K$ elements in the leafs, we start by sorting the buffer and remove matching inserts and deletes. Then, we merge the buffer elements with the $K$ leafs below, again removing matching inserts and deletes. The resulting set of $K'$ sorted elements now needs to replace the $K$ original leafs along with new routing elements of $u$ reflecting the changes. If we end up with a resulting set of size $K' < K$, i.e. we do not have enough elements to fill the $K$ leafs, we introduce $K-K'$ dummy elements and insert those in the remaining leafs. If we have $K' \geq K$ we place $K$ elements in the leafs. The remaining (if any) are finally placed one-by-one and rebalance the B-tree when necessary.\todo{this sentence needs some work} See Figure~\ref{fig:buffer_tree_buffer_empty}.
+We empty all relevant leaf nodes buffers one-by-one while maintaining the \textit{leaf-emptying invariant} that all buffers of nodes on the path from root of $\mathcal{T}$ to a leaf node with full buffer are empty. Since we handle all internal nodes before emptying the leaf nodes this invariant is true when we handle the buffer-emptying of the first leaf. To empty a node $u$ with $K$ elements in the leafs, we start by sorting the buffer and remove matching inserts and deletes. Then, we merge the buffer elements with the $K$ leafs below, again removing matching inserts and deletes. The resulting set of $K'$ sorted elements now needs to replace the $K$ original leafs along with new routing elements of $u$ reflecting the changes. If we end up with a resulting set of size $K' < K$, i.e. we do not have enough elements to fill the $K$ leafs, we introduce $K-K'$ dummy elements and insert those in the remaining leafs. If we have $K' \geq K$ we place $K$ elements in the leafs. The remaining elements (if any) are finally placed one-by-one issuing rebalancing of the B-tree when necessary. See Figure~\ref{fig:buffer_tree_buffer_empty}.
 
 \begin{figure}[H]
 	\centering
@@ -1338,8 +1338,32 @@ The expected query bounds for searching is depicted in Figure~\ref{fig:theory_qu
 The result of the experiment on the \textbf{search} part of the algorithms is depicted in Figure~\ref{fig:result_query_search_complexity}. Arges structure is limited by the ???
 
 \begin{figure}[htp!]
-\includegraphics[width=\textwidth]{../src/experiments/query_experiment_results/2016-05-05.21_00_12/time}
-\caption{Theoretical query time for all tested structures.}
+\includegraphics[width=\textwidth]{../src/experiments/query_experiment_results/final2/time}
+\caption{Actual query time for all tested structures.}
+\label{fig:result_query_search_complexity}
+\end{figure}
+
+\begin{figure}[htp!]
+\includegraphics[width=\textwidth]{../src/experiments/query_experiment_results/final2/time_zoom}
+\caption{Actual query time for all tested structures.}
+\label{fig:result_query_search_complexity}
+\end{figure}
+
+\begin{figure}[htp!]
+\includegraphics[width=\textwidth]{../src/experiments/query_experiment_results/final2/ibo}
+\caption{Actual query time for all tested structures.}
+\label{fig:result_query_search_complexity}
+\end{figure}
+
+\begin{figure}[htp!]
+\includegraphics[width=\textwidth]{../src/experiments/query_experiment_results/final2/ndo}
+\caption{Actual query time for all tested structures.}
+\label{fig:result_query_search_complexity}
+\end{figure}
+
+\begin{figure}[htp!]
+\includegraphics[width=\textwidth]{../src/experiments/query_experiment_results/final2/pbu}
+\caption{Actual query time for all tested structures.}
 \label{fig:result_query_search_complexity}
 \end{figure}
 

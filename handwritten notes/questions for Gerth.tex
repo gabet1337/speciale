@@ -1,6 +1,6 @@
 \documentclass[a4paper,11pt,agenda,chair]{meetingmins}
 
-\setcommittee{Thesis on External Range Reporting}
+\setcommittee{Questions for Brodal}
 
 \setmembers{
   \chair{G.~Brodal},
@@ -8,14 +8,14 @@
   C.~Hansen
 }
 
-\setdate{May 11., 2016}
+\setdate{May 20., 2016}
 
 \begin{document}
 \maketitle
 
 \section{Questions}
 \begin{items}
-\item Vi navngiver din struktur: External Memory Buffered Priority Search Tree. Cool?
+\item Vi navngiver din struktur: External Memory Buffered Priority Search Tree. OK?
 
 \item Hvis $\epsilon$ blot er en konstant s\aa ~vil vi vel i query bounded $\frac{1}{\epsilon} \log_B N + K/B$ kunne udelukke ledet med $\epsilon$ fuldst\ae ndigt?
 
@@ -28,5 +28,16 @@
 \item Hvorfor overflower en delete buffer allerede ved $B/4$?
 
 \item Beh\o ver man at s\o ge hele vejen ned til $x_1$ og $x_2$? Vi har jo heap orden og det g\ae lder ogs\aa ~for s\o gestierne.
+
+\item Hvordan kan min\_y bruges til at stoppe rekursionen ved \textsc{Report}? Vi kan kun f\aa~max\_y til at give mening.
+
+\item Deletions might cause node to remain underflowed after siftup.
+
+\item Spelling mistake of construction in 5. Global rebuilding
+
+\item Weird sentence: To be able to filter out deleted points etc., we maintain the buffer Pv, Iv and Dv in lexicographically sorted. Section 5.
+
+\item Point buffer of children can go empty during underflowing point buffer handling. Child should be refilled before continuing.
+
 \end{items}
 \end{document}
