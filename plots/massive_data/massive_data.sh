@@ -9,6 +9,8 @@ unset ytics
   #set xlabel "Time"
 
   set style line 5 lc rgb '#000000' pt 1 ps 1 lt 1 lw 2 # --- black
+  set style line 3 lc rgb '#000000' pt 1 ps 1 lt 1 lw 1 # --- black
+
   set multiplot
 
   set border 2+1+4 back 
@@ -21,7 +23,8 @@ unset ytics
   plot 'massive_data' using 2:3:xticlabels(1) with lines ls 5 notitle
 
   #set arrow from 0, graph -200 to -200, graph 1 nohead
-  set arrow from -200,graph(0,0) to -200,graph(1,1) nohead lt 9
+
+  set arrow from -200,graph(0,0) to -200,graph(1,1) nohead ls 3
   
   set border 1+4 back
   set origin 0.15,0.0
@@ -34,7 +37,7 @@ unset ytics
   set ylabel ""
   plot 'massive_data' using 2:3:xticlabels(1) with lines ls 5 notitle
 
-  set arrow from 1940,graph(0,0) to 1940,graph(1,1) nohead lt 9
+  set arrow from 1940,graph(0,0) to 1940,graph(1,1) nohead ls 3
     
   set border 1+4+8 back 
   set origin 0.425,0.0
