@@ -103,6 +103,9 @@
 \chapter*{Acknowledgements}
 \addcontentsline{toc}{chapter}{Acknowledgements}
 
+Kasper, Gerth, A(man)duh
+whoever might have suffered in the process. maybe move this section to after preface such that we can relate the suffering to the poor lady next door?
+
 \todo{\dots}
 
 \vspace{2ex}
@@ -1308,11 +1311,68 @@ The results of MySQL and the external memory buffered priority search tree by Br
 We suspect the bad performance of Arge et al is mainly due to the following reason. A single insert requires $\mathcal{O}(\log_B N)$ I/O's. Each data point is 8 bytes, 4 bytes of each coordinate. This means that in order to insert 50Mb data or equivalently 6553600 points in an initially empty structure with a buffer size of $4Kb$ we need roughly $$\sum\limits_{i=0}^{6553600} \log_{4096}(i) \approx 11.5 \cdot 10^6~\text{I/O's}$$
 If we compare this against the structure of Brodal with the same buffer size and a fanout of size 2, i.e. $\epsilon = \log(2)/\log(4096) = 0.083..$, we get that Brodal's requires roughly:
 $$\sum\limits_{i=0}^{6553600} \frac{1}{\epsilon \cdot 4096^{1-\epsilon}} \log_{4096}(i) = 67.8\cdot 10^3~\text{I/O's}$$
-The calculations shows that in order to insert 50Mb of data, we would need to load/store $11.5 \cdot 10^6 \cdot 4096 = 47.1Gb$ in the case of Arge, and $67.8\cdot 10^3 \cdot 4096 = 0.278Gb$ in the case of Brodal.
-To collaborate these findings we conducted a single experiment measuring the I/O's and a replicated scenario of the above described. The results can be found in Figure~\ref{fig:arge_brodal_ios}.
+The calculations shows that in order to insert 50Mb of data, we would need to load/store $11.5 \cdot 10^6 \cdot 4096 = 47.1Gb$ in the case of Arge, and $67.8\cdot 10^3 \cdot 4096 = 0.278Gb$ in the case of Brodal. This gives a relatively difference of $\approx 170$ times fewer I/O's performed in Brodal's over Arge's.
+To collaborate these findings we conducted a single experiment measuring the I/O's and a replicated scenario of the above described. The results can be found in Figure~\ref{fig:arge_brodal_ios}. The results clearly shows that the amount of I/O's performed is substantially larger for Arge's than for Brodal's. The results show that in order to insert 50Mb we must perform I/O's equal to $\approx 2Tb$ and $\approx 13Gb$ in Arge's and Brodal's respectively. This is a relative difference of $\approx 145$ times fewer I/O's in Brodal's than Arge's. This result is close to what we would suspect from our theoretical reasoning above, however with a large constant factor between theory and reality.
 
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{../src/experiments/insert_experiment_results/2016-05-20.10_31_38/ios}
+\caption{Missing}
+\label{fig:arge_brodal_ios}
+\end{figure}
 
-\todo{Maybe show the I/O plot that confirms the huge amount of I/O's for Arge}
+\begin{figure}
+\centering
+\begin{minipage}{0.48\columnwidth}
+  \centering
+  \includegraphics[width=\linewidth]{../src/experiments/insert_experiment_results/2016-05-06.14_11_08/time_divided_with_asymptotic_brodal}%
+  \caption{Time per insert divided by $\frac{1}{\epsilon B^{1-\epsilon}}\log_B(N)$ for the structure of Brodal.}
+  \label{fig:time_divided_with_asymptotic_brodal}
+\end{minipage}%
+\hfill
+\begin{minipage}{0.48\columnwidth}
+  \centering
+  \includegraphics[width=\linewidth]{../src/experiments/insert_experiment_results/2016-05-06.14_11_08/time_divided_with_asymptotic_arge}%
+  \caption{Time per insert divided by $\log_B(N)$ for the structure of Arge et al.}
+  \label{fig:time_divided_with_asymptotic_arge}
+\end{minipage}
+
+\begin{minipage}{0.48\columnwidth}
+  \centering
+  \includegraphics[width=\linewidth]{../src/experiments/insert_experiment_results/2016-05-06.14_11_08/time_divided_with_asymptotic_internal}%
+  \caption{Time per insert divided by $\log_2(N)$ for the internal priority search tree of McCreight.}
+  \label{fig:time_divided_with_asymptotic_internal}
+\end{minipage}%
+\hfill
+\begin{minipage}{0.48\columnwidth}
+  \centering
+  \includegraphics[width=\linewidth]{../src/experiments/insert_experiment_results/2016-05-06.14_11_08/time_divided_with_asymptotic_boost}%
+  \caption{Time per insert divided by $N$ for the boost R tree.}
+  \label{fig:time_divided_with_asymptotic_boost}
+\end{minipage}
+
+\begin{minipage}{0.48\columnwidth}
+  \centering
+  \includegraphics[width=\linewidth]{../src/experiments/insert_experiment_results/2016-05-06.14_11_08/time_divided_with_asymptotic_libspatial}%
+  \caption{Time per insert divided by $N$ for the libspatial external R tree.}
+  \label{fig:time_divided_with_asymptotic_libspatial}
+\end{minipage}%
+\hfill
+\begin{minipage}{0.48\columnwidth}
+  \centering
+  \includegraphics[width=\linewidth]{../src/experiments/insert_experiment_results/2016-05-06.14_11_08/time_divided_with_asymptotic_mysql}%
+  \caption{Time per insert divided by $1$ for MySQL.}
+  \label{fig:time_divided_with_asymptotic_mysql}
+\end{minipage}
+\end{figure}
+
+Figure~\ref{fig:time_divided_with_asymptotic_brodal}-\ref{fig:time_divided_with_asymptotic_mysql} shows the time per insert divided by the theoretical asymptotic bound of each of our tested structures. We would have liked to see that each of the lines were straight horizontal lines as this would mean that the actual running time would match the theoretical bounds. For the case of the internal structures, we see that in Figure~\ref{fig:time_divided_with_asymptotic_internal} and \ref{fig:time_divided_with_asymptotic_boost} that the bounds match very well theory. We have almost perfectly straight horizontal lines up until a point where the lines suddenly deviated from the straight horizontal line. We could read from our data that this was the point where the structures ran out of internal memory and started causing many major pagefaults, i.e. started swapping out internal memory to disk.
+
+The libspatial external R-tree depicted in Figure~\ref{fig:time_divided_with_asymptotic_libspatial} seems to suffer from the same problems as the internal algorithms. It stays within a reasonably distance to a straight horizontal line before suddenly deviating to a large increase just as in the case of the internal algorithms. We determined that it was out of the scope of this thesis to determine the cause of this.
+
+Just as suspected we saw that MySQL performs inserts in constant time with a large constant factor. This can be seen by the straight line in Figure~\ref{fig:time_divided_with_asymptotic_mysql}.
+
+Figure~\ref{fig:time_divided_with_asymptotic_brodal}
 
 \section{Deletion}
 \begin{figure}[htp!]
