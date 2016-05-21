@@ -9,7 +9,7 @@ unset ytics
   #set xlabel "Time"
 
   set style line 5 lc rgb '#000000' pt 1 ps 1 lt 1 lw 2 # --- black
-  set style line 3 lc rgb '#000000' pt 1 ps 1 lt 1 lw 1 # --- black
+  set style line 3 lc rgb '#a9a9a9' pt 1 ps 1 lt 1 lw 1 # --- black
 
   set multiplot
 
@@ -26,7 +26,7 @@ unset ytics
 
   set arrow from -200,graph(0,0) to -200,graph(1,1) nohead ls 3
   
-  set border 1+4 back
+  set border 1+4 front
   set origin 0.15,0.0
   set size 0.275,1
   set format y ""
@@ -39,7 +39,7 @@ unset ytics
 
   set arrow from 1940,graph(0,0) to 1940,graph(1,1) nohead ls 3
     
-  set border 1+4+8 back 
+  set border 1+4+8 front
   set origin 0.425,0.0
   set size 0.55,1
   set format y ""
