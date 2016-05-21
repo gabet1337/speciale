@@ -15,6 +15,7 @@
 \usepackage{epstopdf}
 \usepackage{textcomp}
 \usepackage{wasysym}
+\usepackage{epigraph}
 
 % This font looks so good.
 \usepackage[sc]{mathpazo}
@@ -224,19 +225,35 @@ In the early days of electronic computers disks were faster than processors. Sin
 \end{figure}
 
 With the advent of \textit{Big Data} many industries has come to realise that adapting classic and well founded internal memory algorithms on large datasets is undesirable. 
-They simply prove to perform much slower than the asymptotic bounds suggests. The algorithms community has found the reason to be the very same that ensured the success of the computer industry. The paradox derives from the standard RAM-model of computation, where we assume an infinite memory and uniform access cost. See Figure ???.
+They simply prove to perform much slower than the asymptotic bounds suggests. The algorithms community has found the reason to be the very same that ensured the success of the computer industry. The paradox derives from the standard RAM-model of computation, where we assume an infinite memory and uniform access cost. See Figure~\ref{fig:ram_model}.
 
-The RAM-model is as powerful as it is simple, but it ignores the more complicated memory hierarchy on modern computers. See Figure ???. As we move away from the CPU the access time gets bigger. CPU registers can be accessed in a few nanoseconds. Cache memories take a small multiple of CPU registers. Main memory access are typically a few tens of nanoseconds. Now comes a big gap, as disk access times are typically measured in milliseconds, i.e. more than $10^6$ times slower than main memory access. Also, the storage capacity increases. CPU registers are good for bytes of data, caches for a few Megabytes, main memory for Gigabytes, and disks are good for Terabytes of data.
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=0.4\textwidth]{../figures/ram_model}
+	\caption{Missing}
+	\label{fig:ram_model}
+\end{figure}
 
-Disk systems try to amortize the large access time by transferring large contiguous blocks of data and many modern operation systems utilizes sophisticated paging and prefetching strategies to move blocks as needed. This is the main reason we still have many worst-case optimal internal memory algorithms performing well on large datasets. If the algorithms, however, relies on scattered access across data, even good operating systems cannot take advantage of block access and we start to see severe scalability problems. It is these observations that gives rise to the external memory model, where we only charge the algorithm for accessing and storing blocks of data.
+The RAM-model is as powerful as it is simple, but it ignores the more complicated memory hierarchy on modern computers. See Figure~\ref{fig:real_computer}. 
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=0.7\textwidth]{../figures/real_computer}
+	\caption{Missing}
+	\label{fig:real_computer}
+\end{figure}
+
+As we move away from the CPU the access time gets bigger. CPU registers can be accessed in a few nanoseconds. Cache memories take a small multiple of CPU registers. Main memory access are typically a few tens of nanoseconds. Now comes a big gap, as disk access times are typically measured in milliseconds, i.e. more than $10^6$ times slower than main memory access. Also, the storage capacity increases. CPU registers are good for bytes of data, caches for a few Megabytes, main memory for Gigabytes, and disks are good for Terabytes of data.
+
+Disk systems try to amortize the large access time by transferring large contiguous blocks of data and many modern operation systems utilizes sophisticated paging and pre-fetching strategies to move blocks as needed. This is the main reason we still have many worst-case optimal internal memory algorithms performing well on large datasets. If the algorithms, however, relies on scattered access across data, even good operating systems cannot take advantage of block access and we start to see severe scalability problems. It is these observations that gives rise to the external memory model, which encapsulates performance as number of disk accesses as opposed to RAM accesses.
 
 In some industries, disk-based systems presents too large of an obstacle, and in an attempt to close the gap they have moved towards developing internal memory big data processing algorithms. This move has been enabled by growing main memory capacities but it comes with the price of issues such as fault-tolerance and consistency which are inherently more challenging to handle in volatile memory~\cite{Zhang2015}.
 
 Another price of this move to internal memory is the actual cost of running server farms and the cost of internal memory compared to external memory. The extra costs and increased complexity suggests that external memory data structures have some well defined advantages.
 
-Along with pervasive use of computers and sensors, increased ability to acquire and store data, and the society being increasingly \textit{data driven}, it seems that data is collected everywhere today. It is claimed in ??? that the amount of generated data on a world-wide scale grew from 150 Billion Gigabytes to 1200 Billion Gigabytes from the year ??? to ???. This suggest that we, today, generate as much data in a single day as the entire mankind did until 2003.
+Along with pervasive use of computers and sensors, increased ability to acquire and store data, and the society being increasingly \textit{data driven}, it seems that data is collected everywhere today. It is claimed in ??? that the amount of generated data on a world-wide scale grew from 150 Billion Gigabytes to 1200 Billion Gigabytes from the year 2005 to 2010. This suggest that we, today, generate as much data in a single day as the entire mankind did until 2003.
 
-An industry that has benefit severely from the continues improvement of technology is that of processing geographic data. Such systems is also known as geographical informations systems (GIS). In the year ???? the LiDAR project sat out to map Europe and North America in a 30-meter dataset. Denmark alone consists of more than 46 million data points and is stored using Gigabytes of data that can easily fit in a modern computers main memory. Today, the dataset has improved to a $\nicefrac{1}{2}$-meter model of more than 168 billion data points. This amounts to Terabytes of data that is unlikely to fit into main memory of a standard personal computer in the coming years. Most GIS applications of today uses results from the field of computational geometry, and it is in this field we will focus our studies.
+An industry that has benefit severely from the continues improvement of technology is that of processing geographic data. Such systems is also known as geographical informations systems (GIS). In the year 2000 the Shuttle Radar Topography mission sat out to map Europe and North America in a 30-meter dataset. Denmark alone consists of more than 46 million data points and is stored using Gigabytes of data that can easily fit in a modern computers main memory. Today, the dataset has improved to a $\nicefrac{1}{2}$-meter model of more than 168 billion data points. This amounts to Terabytes of data that is unlikely to fit into main memory of a standard personal computer in the coming years. Most GIS applications of today uses results from the field of computational geometry, and it is in this field we will focus our studies.
 
 An integral problem of computational geometry is that of range searching. Besides in GIS applications, the problem arises in many different applications with huge data sets such as spatial databases and computer graphics. The problem can be formally described as follows. Let $\mathcal{S}$ be a set of $N$ points in $\mathbb{R}^d$, and let $\mathcal{R}$ be a family of subsets of $\mathbb{R}^d$. Our objective is to preprocess $\mathcal{S}$ such that for a query range $r \in \mathcal{R}$, the points in $\mathcal{S} \cap r$ can be reported or counted efficiently~\cite{Agarwal99geometricrange}. The ranges can be anything from rectangles and halfspaces to balls.
 
@@ -252,8 +269,6 @@ In this thesis we consider the problem of maintaining a dynamic set, $\mathcal{S
 The thesis will present several solutions to this problem, implement, and experimentally compare solutions.
 
 Some of the solutions will not be optimized for usage in external memory and they must pay a hefty price for accessing data not readily available in main memory. This thesis will show the power of the I/O efficient data structures for large data sets and demonstrate what happens when internal memory data structure have to work overtime along with the virtual memory system.
-
-The different solutions will be analyzed in the I/O model which encapsulates performance as number of disk accesses as opposed to RAM accesses. Further details on the I/O model is described in Chapter~\ref{chp:iomodel}.
 
 \section{Outline of thesis}
 This thesis is structured as follows:
@@ -274,6 +289,11 @@ The main focus of this thesis, the external memory buffered priority search tree
 Leading up to our experimental Chapter~\ref{chp:experimental_results} we present the other structures included in our experiments in Chapter~\ref{chp:other_structures} and our experimental setup in Chapter~\ref{chp:experimental_setup}.
 
 \todo{add more sections!}
+
+\epigraph{\textit{The difference in speed between modern CPU and disk technologies is  analogous to the difference in speed in sharpening a pencil using a sharpener on one's desk or by taking an airplane to the other side of the world and using a sharpener on someone else's desk.}
+}{D. Comer}
+
+
 \chapter{Model of computation}
 \label{chp:iomodel}
 We will argue the results of this thesis in terms of the external memory model of Aggarwal and Vitter~\cite{Aggarwal:1988/ICS/48529.48535}.
