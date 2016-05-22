@@ -19,4 +19,5 @@ set xlabel 'N (input size in Mb)'
 set ylabel 'I/Os'
 #set xrange [0:0]
 #set yrange [0:0]
-plot 'insert_experiment_results/2016-05-21.14_06_50/arge_Arge' u 1:3 t 'Arge' w lp ls 1
+plot 'insert_experiment_results/2016-05-21.14_06_50/arge_Arge' u 1:3 t 'Arge' w lp ls 1,\
+'insert_experiment_results/2016-05-21.14_06_50/gerth_Gerth' u 1:3 t 'Brodal' w lp ls 2

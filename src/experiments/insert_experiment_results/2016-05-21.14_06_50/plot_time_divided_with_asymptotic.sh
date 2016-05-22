@@ -19,7 +19,7 @@ set xlabel 'N (input size in Mb)'
 #set ylabel 'Time (s) / N (input size in Mb)'
 #set xrange [0:3500]
 #set yrange [0:4000]
-#unset ytics
+unset ytics
 B = 4*1024
 epsilon(fanout) = log(fanout)/log(B)
 f(x,eps) = (1/(eps*B**(1-eps))) * (log(x)/log(B))
