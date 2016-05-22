@@ -220,7 +220,7 @@ In the early days of electronic computers disks were faster than processors. Sin
 	\centering
 		\includegraphics[width=0.9\textwidth]{../plots/scaling_discrepancy_hdd_cpu/scaling_discrepancy_hdd_cpu}
 	\caption{Growth of CPU and HD speed ratio over time.}
-	\tiny{Data found at~\protect\url{https://en.wikipedia.org/wiki/Instructions_per_second}}
+	\tiny{Data from~\protect\url{https://en.wikipedia.org/wiki/Instructions_per_second}.}
 	\label{fig:cpu_vs_disk}
 \end{figure}
 
@@ -230,7 +230,7 @@ They simply prove to perform much slower than the asymptotic bounds suggests. Th
 \begin{figure}[h]
 	\centering
 		\includegraphics[width=0.4\textwidth]{../figures/ram_model}
-	\caption{Missing}
+	\caption{RAM-model. The standard model of computation. We assume an infinite memory with uniform access cost.}
 	\label{fig:ram_model}
 \end{figure}
 
@@ -239,19 +239,27 @@ The RAM-model is as powerful as it is simple, but it ignores the more complicate
 \begin{figure}[h]
 	\centering
 		\includegraphics[width=0.7\textwidth]{../figures/real_computer}
-	\caption{Missing}
+	\caption{Hierarchical memory. Modern machines have complicated memory hierarchy consisting of registers in the CPU, multi-tier caches (here denoted L1 and L2), volatile main memory and typically a mechanical or solid state disk as external memory.}
 	\label{fig:real_computer}
 \end{figure}
 
-As we move away from the CPU the access time gets bigger. CPU registers can be accessed in a few nanoseconds. Cache memories take a small multiple of CPU registers. Main memory access are typically a few tens of nanoseconds. Now comes a big gap, as disk access times are typically measured in milliseconds, i.e. more than $10^6$ times slower than main memory access. Also, the storage capacity increases. CPU registers are good for bytes of data, caches for a few Megabytes, main memory for Gigabytes, and disks are good for Terabytes of data.
+As we move away from the CPU the access time gets bigger. CPU registers can be accessed in a few nanoseconds. Cache memories take a small multiple of CPU registers. Main memory access are typically a few tens of nanoseconds. Now comes a big gap, as disk access times are typically measured in milliseconds, i.e. more than $10^6$ times slower than main memory access. Also, the storage capacity increases. CPU registers are good for bytes of data, caches for a few Megabytes, main memory for Gigabytes, and disks are good for Terabytes of data~\cite{Tanenbaum:1998:SCO:552473}.
 
-Disk systems try to amortize the large access time by transferring large contiguous blocks of data and many modern operation systems utilizes sophisticated paging and pre-fetching strategies to move blocks as needed. This is the main reason we still have many worst-case optimal internal memory algorithms performing well on large datasets. If the algorithms, however, relies on scattered access across data, even good operating systems cannot take advantage of block access and we start to see severe scalability problems. It is these observations that gives rise to the external memory model, which encapsulates performance as number of disk accesses as opposed to RAM accesses.
+Disk systems try to amortize the large access time by transferring large continuous blocks of data and many modern operation systems utilizes sophisticated paging and pre-fetching strategies to move blocks as needed~\cite{Tanenbaum:2007:MOS:1410217}. This is the main reason we still have many worst-case optimal internal memory algorithms performing well on large datasets. If the algorithms, however, relies on scattered access across data, even good operating systems cannot take advantage of block access and we start to see severe scalability problems. It is these observations that gives rise to the external memory model, which encapsulates performance as number of disk accesses as opposed to RAM accesses.
 
 In some industries, disk-based systems presents too large of an obstacle, and in an attempt to close the gap they have moved towards developing internal memory big data processing algorithms. This move has been enabled by growing main memory capacities but it comes with the price of issues such as fault-tolerance and consistency which are inherently more challenging to handle in volatile memory~\cite{Zhang2015}.
 
-Another price of this move to internal memory is the actual cost of running server farms and the cost of internal memory compared to external memory. The extra costs and increased complexity suggests that external memory data structures have some well defined advantages.
+Another price of the move to internal memory is the actual cost of running server farms and the cost of internal memory compared to external memory. The extra costs and increased complexity suggests that external memory data structures have some well defined advantages.
 
-Along with pervasive use of computers and sensors, increased ability to acquire and store data, and the society being increasingly \textit{data driven}, it seems that data is collected everywhere today. It is claimed in ??? that the amount of generated data on a world-wide scale grew from 150 Billion Gigabytes to 1200 Billion Gigabytes from the year 2005 to 2010. This suggest that we, today, generate as much data in a single day as the entire mankind did until 2003.
+Along with pervasive use of computers and sensors, increased ability to acquire and store data, and the society being increasingly \textit{data driven}, it seems that data is collected everywhere today. It is claimed in~\cite{economist:0210} that the amount of generated data on a world-wide scale grew from 150 Billion Gigabytes to 1200 Billion Gigabytes from the year 2005 to 2010. This suggest that we, today, generate as much data in a single day as the entire mankind did until 2003.
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=0.9\textwidth]{../plots/massive_data/massive_data}
+	\caption{Total amount of data generated by Man over time.}
+	\tiny{Data from UC Berkely.}
+	\label{fig:massive_data}
+\end{figure}
 
 An industry that has benefit severely from the continues improvement of technology is that of processing geographic data. Such systems is also known as geographical informations systems (GIS). In the year 2000 the Shuttle Radar Topography mission sat out to map Europe and North America in a 30-meter dataset. Denmark alone consists of more than 46 million data points and is stored using Gigabytes of data that can easily fit in a modern computers main memory. Today, the dataset has improved to a $\nicefrac{1}{2}$-meter model of more than 168 billion data points. This amounts to Terabytes of data that is unlikely to fit into main memory of a standard personal computer in the coming years. Most GIS applications of today uses results from the field of computational geometry, and it is in this field we will focus our studies.
 
