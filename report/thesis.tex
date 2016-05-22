@@ -1340,11 +1340,11 @@ We suspect the bad performance of Arge et al is mainly due to the following reas
 If we compare this against the structure of Brodal with the same buffer size and a fanout of size 2, i.e. $\epsilon = \log(2)/\log(4096) = 0.083..$, we get that Brodal's requires roughly:
 $$\sum\limits_{i=0}^{6553600} \frac{1}{\epsilon \cdot 4096^{1-\epsilon}} \log_{4096}(i) = 67.8\cdot 10^3~\text{I/O's}$$
 The calculations shows that in order to insert 50Mb of data, we would need to load/store $11.5 \cdot 10^6 \cdot 4096 = 47.1Gb$ in the case of Arge, and $67.8\cdot 10^3 \cdot 4096 = 0.278Gb$ in the case of Brodal. This gives a relatively difference of $\approx 170$ times fewer I/O's performed in Brodal's over Arge's.
-To collaborate these findings we conducted a single experiment measuring the I/O's and a replicated scenario of the above described. The results can be found in Figure~\ref{fig:arge_brodal_ios}. The results clearly shows that the amount of I/O's performed is substantially larger for Arge's than for Brodal's. The results show that in order to insert 50Mb we must perform I/O's equal to $\approx 2Tb$ and $\approx 13Gb$ in Arge's and Brodal's respectively. This is a relative difference of $\approx 145$ times fewer I/O's in Brodal's than Arge's. This result is close to what we would suspect from our theoretical reasoning above, however with a large constant factor between theory and reality.
+To collaborate these findings we conducted a single experiment measuring the I/O's and a replicated scenario of the above described. The results can be found in Figure~\ref{fig:arge_brodal_ios}. The results clearly shows that the amount of I/O's performed is substantially larger for Arge's than for Brodal's. The results show that in order to insert 50Mb we must perform I/O's equal to $\approx 1Tb$ and $\approx 13Gb$ in Arge's and Brodal's respectively. This is a relative difference of $\approx 81$ times fewer I/O's in Brodal's than Arge's. This result is close to what we would suspect from our theoretical reasoning above, however with a large constant factor between theory and reality.
 
 \begin{figure}
 \centering
-\includegraphics[width=\textwidth]{../src/experiments/insert_experiment_results/2016-05-20.10_31_38/ios}
+\includegraphics[width=\textwidth]{../src/experiments/insert_experiment_results/2016-05-21.14_06_50/ios}
 \caption{Missing}
 \label{fig:arge_brodal_ios}
 \end{figure}
@@ -1360,7 +1360,7 @@ To collaborate these findings we conducted a single experiment measuring the I/O
 \hfill
 \begin{minipage}{0.48\columnwidth}
   \centering
-  \includegraphics[width=\linewidth]{../src/experiments/insert_experiment_results/2016-05-06.14_11_08/time_divided_with_asymptotic_arge}%
+  \includegraphics[width=\linewidth]{../src/experiments/insert_experiment_results/2016-05-21.14_06_50/time_divided_with_asymptotic_arge}%
   \caption{Time per insert divided by $\log_B(N)$ for the structure of Arge et al.}
   \label{fig:time_divided_with_asymptotic_arge}
 \end{minipage}
@@ -1400,7 +1400,9 @@ The libspatial external R-tree depicted in Figure~\ref{fig:time_divided_with_asy
 
 Just as suspected we saw that MySQL performs inserts in constant time with a large constant factor. This can be seen by the straight line in Figure~\ref{fig:time_divided_with_asymptotic_mysql}.
 
-Figure~\ref{fig:time_divided_with_asymptotic_brodal} shows that as $N$ increases we get closer and closer to a straight horizontal line. This would suggest that for small $N$ the structure is not I/O bound as there must be a lot of work besides the I/O's that affect the running time. As the structure
+Figure~\ref{fig:time_divided_with_asymptotic_brodal} shows that as $N$ increases we get closer and closer to a straight horizontal line. This would suggest that for small $N$ the structure is not I/O bound as there must be a lot of work besides the I/O's that affect the running time. \todo{run for longer}
+
+Figure~\ref{fig:time_divided_with_asymptotic_arge} follows the theoretical bound very well up to a certain point. We examined this point closer and saw that this was the point that the structure went from having two layers to three. \todo{run on larger input to see if it flattens again.}
 
 \section{Deletion}
 \begin{figure}[htp!]
