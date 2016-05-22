@@ -1324,7 +1324,7 @@ Figure~\ref{fig:theory_insert_complexity} shows the theoretical complexities of 
 
 Figure~\ref{fig:actual_insert_time} shows the actual running time of inserting an element into the different structures for different input sizes. 
 The figure is cropped at 3500Mb but it goes all the way to 10000Mb. It was however only MySQL that was able to insert this much data in 24 hours.
-The results are very much in line with our expectations with some exceptions. We see significant increases in running time whenever the internal structures run out of memory which is after just a few hundred Mb's of inserts. The internal R-tree from the Boost library was the most efficient of the internal data structures. We suspect this is due to an efficient memory layout allowing the structure to perform efficiently up to the point of memory limit.
+The results are very much in line with our expectations with some exceptions. We see significant increases in running time whenever the internal structures run out of memory which is after just a few hundred Mb's of insertions. The internal R-tree from the Boost library was the most efficient of the internal data structures. We suspect this is due to an efficient memory usage allowing the structure to run for longer while still fitting entirely in main memory.
 
 The results of MySQL and the external memory buffered priority search tree by Brodal align very well with the theoretical bounds, but this is clearly not the case for the structure of Arge et al. 
 
@@ -1392,7 +1392,7 @@ The libspatial external R-tree depicted in Figure~\ref{fig:time_divided_with_asy
 
 Just as suspected we saw that MySQL performs inserts in constant time with a large constant factor. This can be seen by the straight line in Figure~\ref{fig:time_divided_with_asymptotic_mysql}.
 
-Figure~\ref{fig:time_divided_with_asymptotic_brodal}
+Figure~\ref{fig:time_divided_with_asymptotic_brodal} shows that as $N$ increases we get closer and closer to a straight horizontal line. This would suggest that for small $N$ the structure is not I/O bound as there must be a lot of work besides the I/O's that affect the running time. As the structure
 
 \section{Deletion}
 \begin{figure}[htp!]
