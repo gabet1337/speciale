@@ -1234,7 +1234,7 @@ In order to obtain a deeper understanding of the results we chose to measure the
 
 As the machines run on 32 bit operating systems it is very important to define \texttt{\_FILE\_OFFSET\_BITS=64}. This forces the system to use 64 bit pointers when seeking in files allowing us to handle data sets larger than $2^{32}$ on the machines.
 
-\todo{MORAK!}
+\todo{Add stuff about debugging, optimizations, and code in general. See other thesis for reference.}
 
 \chapter{Our results}
 \label{chp:experimental_results}
@@ -1402,7 +1402,7 @@ Just as suspected we saw that MySQL performs inserts in constant time with a lar
 
 Figure~\ref{fig:time_divided_with_asymptotic_brodal} shows that as $N$ increases we get closer and closer to a straight horizontal line. This would suggest that for small $N$ the structure is not I/O bound as there must be a lot of work besides the I/O's that affect the running time. \todo{run for longer}
 
-Figure~\ref{fig:time_divided_with_asymptotic_arge} follows the theoretical bound very well up to a certain point. We examined this point closer and saw that this was the point that the structure went from having two layers to three. \todo{run on larger input to see if it flattens again.}
+Figure~\ref{fig:time_divided_with_asymptotic_arge} follows the theoretical bound very well up to a certain point. We examined this point closer and saw that this was the point that the structure went from having two layers to three. Continuing inserts showed that the plot  would flatten once again now with a larger constant. \todo{run on larger input to see if it flattens again.}
 
 \section{Deletion}
 \begin{figure}[htp!]
