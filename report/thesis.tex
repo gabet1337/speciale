@@ -220,7 +220,7 @@ In the early days of electronic computers disks were faster than processors. Sin
 	\centering
 		\includegraphics[width=0.9\textwidth]{../plots/scaling_discrepancy_hdd_cpu/scaling_discrepancy_hdd_cpu}
 	\caption{Growth of CPU and HD speed ratio over time.}
-	\tiny{Data found at~\protect\url{https://en.wikipedia.org/wiki/Instructions_per_second}}
+	\tiny{Data from~\protect\url{https://en.wikipedia.org/wiki/Instructions_per_second}.}
 	\label{fig:cpu_vs_disk}
 \end{figure}
 
@@ -230,7 +230,7 @@ They simply prove to perform much slower than the asymptotic bounds suggests. Th
 \begin{figure}[h]
 	\centering
 		\includegraphics[width=0.4\textwidth]{../figures/ram_model}
-	\caption{Missing}
+	\caption{RAM-model. The standard model of computation. We assume an infinite memory with uniform access cost.}
 	\label{fig:ram_model}
 \end{figure}
 
@@ -239,19 +239,27 @@ The RAM-model is as powerful as it is simple, but it ignores the more complicate
 \begin{figure}[h]
 	\centering
 		\includegraphics[width=0.7\textwidth]{../figures/real_computer}
-	\caption{Missing}
+	\caption{Hierarchical memory. Modern machines have complicated memory hierarchy consisting of registers in the CPU, multi-tier caches (here denoted L1 and L2), volatile main memory and typically a mechanical or solid state disk as external memory.}
 	\label{fig:real_computer}
 \end{figure}
 
-As we move away from the CPU the access time gets bigger. CPU registers can be accessed in a few nanoseconds. Cache memories take a small multiple of CPU registers. Main memory access are typically a few tens of nanoseconds. Now comes a big gap, as disk access times are typically measured in milliseconds, i.e. more than $10^6$ times slower than main memory access. Also, the storage capacity increases. CPU registers are good for bytes of data, caches for a few Megabytes, main memory for Gigabytes, and disks are good for Terabytes of data.
+As we move away from the CPU the access time gets bigger. CPU registers can be accessed in a few nanoseconds. Cache memories take a small multiple of CPU registers. Main memory access are typically a few tens of nanoseconds. Now comes a big gap, as disk access times are typically measured in milliseconds, i.e. more than $10^6$ times slower than main memory access. Also, the storage capacity increases. CPU registers are good for bytes of data, caches for a few Megabytes, main memory for Gigabytes, and disks are good for Terabytes of data~\cite{Tanenbaum:1998:SCO:552473}.
 
-Disk systems try to amortize the large access time by transferring large contiguous blocks of data and many modern operation systems utilizes sophisticated paging and pre-fetching strategies to move blocks as needed. This is the main reason we still have many worst-case optimal internal memory algorithms performing well on large datasets. If the algorithms, however, relies on scattered access across data, even good operating systems cannot take advantage of block access and we start to see severe scalability problems. It is these observations that gives rise to the external memory model, which encapsulates performance as number of disk accesses as opposed to RAM accesses.
+Disk systems try to amortize the large access time by transferring large continuous blocks of data and many modern operation systems utilizes sophisticated paging and pre-fetching strategies to move blocks as needed~\cite{Tanenbaum:2007:MOS:1410217}. This is the main reason we still have many worst-case optimal internal memory algorithms performing well on large datasets. If the algorithms, however, relies on scattered access across data, even good operating systems cannot take advantage of block access and we start to see severe scalability problems. It is these observations that gives rise to the external memory model, which encapsulates performance as number of disk accesses as opposed to RAM accesses.
 
 In some industries, disk-based systems presents too large of an obstacle, and in an attempt to close the gap they have moved towards developing internal memory big data processing algorithms. This move has been enabled by growing main memory capacities but it comes with the price of issues such as fault-tolerance and consistency which are inherently more challenging to handle in volatile memory~\cite{Zhang2015}.
 
-Another price of this move to internal memory is the actual cost of running server farms and the cost of internal memory compared to external memory. The extra costs and increased complexity suggests that external memory data structures have some well defined advantages.
+Another price of the move to internal memory is the actual cost of running server farms and the cost of internal memory compared to external memory. The extra costs and increased complexity suggests that external memory data structures have some well defined advantages.
 
-Along with pervasive use of computers and sensors, increased ability to acquire and store data, and the society being increasingly \textit{data driven}, it seems that data is collected everywhere today. It is claimed in ??? that the amount of generated data on a world-wide scale grew from 150 Billion Gigabytes to 1200 Billion Gigabytes from the year 2005 to 2010. This suggest that we, today, generate as much data in a single day as the entire mankind did until 2003.
+Along with pervasive use of computers and sensors, increased ability to acquire and store data, and the society being increasingly \textit{data driven}, it seems that data is collected everywhere today. It is claimed in~\cite{economist:0210} that the amount of generated data on a world-wide scale grew from 150 Billion Gigabytes to 1200 Billion Gigabytes from the year 2005 to 2010. This suggest that we, today, generate as much data in a single day as the entire mankind did until 2003.
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=0.9\textwidth]{../plots/massive_data/massive_data}
+	\caption{Total amount of data generated by Man over time.}
+	\tiny{Data from UC Berkely.}
+	\label{fig:massive_data}
+\end{figure}
 
 An industry that has benefit severely from the continues improvement of technology is that of processing geographic data. Such systems is also known as geographical informations systems (GIS). In the year 2000 the Shuttle Radar Topography mission sat out to map Europe and North America in a 30-meter dataset. Denmark alone consists of more than 46 million data points and is stored using Gigabytes of data that can easily fit in a modern computers main memory. Today, the dataset has improved to a $\nicefrac{1}{2}$-meter model of more than 168 billion data points. This amounts to Terabytes of data that is unlikely to fit into main memory of a standard personal computer in the coming years. Most GIS applications of today uses results from the field of computational geometry, and it is in this field we will focus our studies.
 
@@ -1226,7 +1234,7 @@ In order to obtain a deeper understanding of the results we chose to measure the
 
 As the machines run on 32 bit operating systems it is very important to define \texttt{\_FILE\_OFFSET\_BITS=64}. This forces the system to use 64 bit pointers when seeking in files allowing us to handle data sets larger than $2^{32}$ on the machines.
 
-\todo{MORAK!}
+\todo{Add stuff about debugging, optimizations, and code in general. See other thesis for reference.}
 
 \chapter{Our results}
 \label{chp:experimental_results}
@@ -1324,7 +1332,7 @@ Figure~\ref{fig:theory_insert_complexity} shows the theoretical complexities of 
 
 Figure~\ref{fig:actual_insert_time} shows the actual running time of inserting an element into the different structures for different input sizes. 
 The figure is cropped at 3500Mb but it goes all the way to 10000Mb. It was however only MySQL that was able to insert this much data in 24 hours.
-The results are very much in line with our expectations with some exceptions. We see significant increases in running time whenever the internal structures run out of memory which is after just a few hundred Mb's of inserts. The internal R-tree from the Boost library was the most efficient of the internal data structures. We suspect this is due to an efficient memory layout allowing the structure to perform efficiently up to the point of memory limit.
+The results are very much in line with our expectations with some exceptions. We see significant increases in running time whenever the internal structures run out of memory which is after just a few hundred Mb's of insertions. The internal R-tree from the Boost library was the most efficient of the internal data structures. We suspect this is due to an efficient memory usage allowing the structure to run for longer while still fitting entirely in main memory.
 
 The results of MySQL and the external memory buffered priority search tree by Brodal align very well with the theoretical bounds, but this is clearly not the case for the structure of Arge et al. 
 
@@ -1332,11 +1340,11 @@ We suspect the bad performance of Arge et al is mainly due to the following reas
 If we compare this against the structure of Brodal with the same buffer size and a fanout of size 2, i.e. $\epsilon = \log(2)/\log(4096) = 0.083..$, we get that Brodal's requires roughly:
 $$\sum\limits_{i=0}^{6553600} \frac{1}{\epsilon \cdot 4096^{1-\epsilon}} \log_{4096}(i) = 67.8\cdot 10^3~\text{I/O's}$$
 The calculations shows that in order to insert 50Mb of data, we would need to load/store $11.5 \cdot 10^6 \cdot 4096 = 47.1Gb$ in the case of Arge, and $67.8\cdot 10^3 \cdot 4096 = 0.278Gb$ in the case of Brodal. This gives a relatively difference of $\approx 170$ times fewer I/O's performed in Brodal's over Arge's.
-To collaborate these findings we conducted a single experiment measuring the I/O's and a replicated scenario of the above described. The results can be found in Figure~\ref{fig:arge_brodal_ios}. The results clearly shows that the amount of I/O's performed is substantially larger for Arge's than for Brodal's. The results show that in order to insert 50Mb we must perform I/O's equal to $\approx 2Tb$ and $\approx 13Gb$ in Arge's and Brodal's respectively. This is a relative difference of $\approx 145$ times fewer I/O's in Brodal's than Arge's. This result is close to what we would suspect from our theoretical reasoning above, however with a large constant factor between theory and reality.
+To collaborate these findings we conducted a single experiment measuring the I/O's and a replicated scenario of the above described. The results can be found in Figure~\ref{fig:arge_brodal_ios}. The results clearly shows that the amount of I/O's performed is substantially larger for Arge's than for Brodal's. The results show that in order to insert 50Mb we must perform I/O's equal to $\approx 1Tb$ and $\approx 13Gb$ in Arge's and Brodal's respectively. This is a relative difference of $\approx 81$ times fewer I/O's in Brodal's than Arge's. This result is close to what we would suspect from our theoretical reasoning above, however with a large constant factor between theory and reality.
 
 \begin{figure}
 \centering
-\includegraphics[width=\textwidth]{../src/experiments/insert_experiment_results/2016-05-20.10_31_38/ios}
+\includegraphics[width=\textwidth]{../src/experiments/insert_experiment_results/2016-05-21.14_06_50/ios}
 \caption{Missing}
 \label{fig:arge_brodal_ios}
 \end{figure}
@@ -1352,7 +1360,7 @@ To collaborate these findings we conducted a single experiment measuring the I/O
 \hfill
 \begin{minipage}{0.48\columnwidth}
   \centering
-  \includegraphics[width=\linewidth]{../src/experiments/insert_experiment_results/2016-05-06.14_11_08/time_divided_with_asymptotic_arge}%
+  \includegraphics[width=\linewidth]{../src/experiments/insert_experiment_results/2016-05-21.14_06_50/time_divided_with_asymptotic_arge}%
   \caption{Time per insert divided by $\log_B(N)$ for the structure of Arge et al.}
   \label{fig:time_divided_with_asymptotic_arge}
 \end{minipage}
@@ -1392,7 +1400,9 @@ The libspatial external R-tree depicted in Figure~\ref{fig:time_divided_with_asy
 
 Just as suspected we saw that MySQL performs inserts in constant time with a large constant factor. This can be seen by the straight line in Figure~\ref{fig:time_divided_with_asymptotic_mysql}.
 
-Figure~\ref{fig:time_divided_with_asymptotic_brodal}
+Figure~\ref{fig:time_divided_with_asymptotic_brodal} shows that as $N$ increases we get closer and closer to a straight horizontal line. This would suggest that for small $N$ the structure is not I/O bound as there must be a lot of work besides the I/O's that affect the running time. \todo{run for longer}
+
+Figure~\ref{fig:time_divided_with_asymptotic_arge} follows the theoretical bound very well up to a certain point. We examined this point closer and saw that this was the point that the structure went from having two layers to three. Continuing inserts showed that the plot  would flatten once again now with a larger constant. \todo{run on larger input to see if it flattens again.}
 
 \section{Deletion}
 \begin{figure}[htp!]
