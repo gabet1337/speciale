@@ -16,6 +16,17 @@
 \usepackage{textcomp}
 \usepackage{wasysym}
 \usepackage{epigraph}
+\usepackage{wrapfig}
+
+% chapter headings
+\usepackage{quotchap}
+\makeatletter
+\renewcommand*{\sectfont}{\bfseries}
+\renewcommand*{\chapnumfont}{%
+  \usefont{T1}{\@defaultcnfont}{b}{n}\fontsize{50}{70}\selectfont% Default: 100/130
+  \color{chaptergrey}%
+}
+\makeatother
 
 % This font looks so good.
 \usepackage[sc]{mathpazo}
@@ -205,8 +216,13 @@ Another perk of The Imperial March was the ability to scare the crap out of Chri
 \pagenumbering{arabic}
 \setcounter{secnumdepth}{2}
 
+\begin{savequote}[0.7\textwidth]
+--- The difference in speed between modern CPU and disk technologies is  analogous to the difference in speed in sharpening a pencil using a sharpener on one's desk or by taking an airplane to the other side of the world and using a sharpener on someone else's desk.
+\qauthor{Comer, D.}
+\end{savequote}
 \chapter{Introduction}
 \label{chp:introduction}
+
 % words: big data, banking, data larger than memory, database community, slow disks, disparity between growth of CPU speeds and transfer speeds between internal and external memory (widening gap)
 % fault tolerance and consistency are more challenging to handle in-memory (In-Memory Big Data Management and Processing: A survey)
 % storage prices
@@ -214,7 +230,7 @@ Another perk of The Imperial March was the ability to scare the crap out of Chri
 % Disk were faster than CPU in 60
 % http://read.cs.ucla.edu/111/2006fall/notes/lec15#incommensurate-scaling
 
-In the early days of electronic computers disks were faster than processors. Since then processor technology has advanced at an incredible rate achieving annual speedups of 40 to 60 percent~\cite{ruemmler_wilkes_1994}. Although this is also true for disk capacity an entirely different story can be told for the speed-up of disk performance. The disparity between processor, internal memory, and external memory speeds have grown larger for each year and the gap is widening as seen in Figure~\ref{fig:cpu_vs_disk}. A back on the envelope analysis shows that a job that was 5 \% disk bound in 1999 is more than 70 \% disk bound on an average CPU in 2014. While the database community has always been involved in the development of practically efficient external memory data structures, most algorithms research has focused on worst-case efficient internal memory data structures~\cite{ionote}. 
+In the early days of electronic computers disks were faster than processors. Since then processor technology has advanced at an incredible rate achieving annual speedups of 40 to 60 percent~\cite{ruemmler_wilkes_1994}. Although this is also true for disk capacity an entirely different story can be told for the speed-up of disk performance. The disparity between processor, internal memory, and external memory speeds have grown larger for each year and the gap is widening as seen in Figure~\ref{fig:cpu_vs_disk}. A back on the envelope analysis shows that a job that was 5\% disk bound in 1999 is more than 70\% disk bound on an average CPU in 2014. While the database community has always been involved in the development of practically efficient external memory data structures, most algorithms research has focused on worst-case efficient internal memory data structures~\cite{ionote}. 
 
 \begin{figure}[h]
 	\centering
@@ -227,43 +243,43 @@ In the early days of electronic computers disks were faster than processors. Sin
 With the advent of \textit{Big Data} many industries has come to realise that adapting classic and well founded internal memory algorithms on large datasets is undesirable. 
 They simply prove to perform much slower than the asymptotic bounds suggests. The algorithms community has found the reason to be the very same that ensured the success of the computer industry. The paradox derives from the standard RAM-model of computation, where we assume an infinite memory and uniform access cost. See Figure~\ref{fig:ram_model}.
 
-\begin{figure}[h]
+\begin{wrapfigure}{O}{0.5\textwidth}
 	\centering
 		\includegraphics[width=0.4\textwidth]{../figures/ram_model}
 	\caption{RAM-model. The standard model of computation. We assume an infinite memory with uniform access cost.}
 	\label{fig:ram_model}
-\end{figure}
+\end{wrapfigure}
 
 The RAM-model is as powerful as it is simple, but it ignores the more complicated memory hierarchy on modern computers. See Figure~\ref{fig:real_computer}. 
 
-\begin{figure}[h]
+\begin{figure}
 	\centering
 		\includegraphics[width=0.7\textwidth]{../figures/real_computer}
 	\caption{Hierarchical memory. Modern machines have complicated memory hierarchy consisting of registers in the CPU, multi-tier caches (here denoted L1 and L2), volatile main memory and typically a mechanical or solid state disk as external memory.}
 	\label{fig:real_computer}
 \end{figure}
 
-As we move away from the CPU the access time gets bigger. CPU registers can be accessed in a few nanoseconds. Cache memories take a small multiple of CPU registers. Main memory access are typically a few tens of nanoseconds. Now comes a big gap, as disk access times are typically measured in milliseconds, i.e. more than $10^6$ times slower than main memory access. Also, the storage capacity increases. CPU registers are good for bytes of data, caches for a few Megabytes, main memory for Gigabytes, and disks are good for Terabytes of data~\cite{Tanenbaum:1998:SCO:552473}.
+As we move away from the CPU the access time gets bigger. CPU registers can be accessed in a few nanoseconds. Accessing CPU caches adds a small multiple to that time. Main memory access are typically a few tens of nanoseconds. Now comes a big gap, as the time to access disks are typically measured in milliseconds, i.e. more than $10^6$ times slower than main memory access. Also, the storage capacity increases. CPU registers are good for bytes of data, caches for a few megabytes, main memory for gigabytes, and disks are good for terabytes of data~\cite{Tanenbaum:1998:SCO:552473}.
 
-Disk systems try to amortize the large access time by transferring large continuous blocks of data and many modern operation systems utilizes sophisticated paging and pre-fetching strategies to move blocks as needed~\cite{Tanenbaum:2007:MOS:1410217}. This is the main reason we still have many worst-case optimal internal memory algorithms performing well on large datasets. If the algorithms, however, relies on scattered access across data, even good operating systems cannot take advantage of block access and we start to see severe scalability problems. It is these observations that gives rise to the external memory model, which encapsulates performance as number of disk accesses as opposed to RAM accesses.
+Disk systems try to amortize the large access time by transferring large contiguous blocks of data and many modern operation systems utilizes sophisticated paging and pre-fetching strategies to move blocks as needed~\cite{Tanenbaum:2007:MOS:1410217}. This is the main reason we still have many worst-case optimal internal memory algorithms performing well on large datasets. If the algorithms, however, relies on scattered access across data, even good operating systems cannot take advantage of block access and we start to see severe scalability problems. It is these observations that gives rise to the external memory model The model encapsulates performance as number of disk accesses as opposed to RAM accesses.
 
 In some industries, disk-based systems presents too large of an obstacle, and in an attempt to close the gap they have moved towards developing internal memory big data processing algorithms. This move has been enabled by growing main memory capacities but it comes with the price of issues such as fault-tolerance and consistency which are inherently more challenging to handle in volatile memory~\cite{Zhang2015}.
 
 Another price of the move to internal memory is the actual cost of running server farms and the cost of internal memory compared to external memory. The extra costs and increased complexity suggests that external memory data structures have some well defined advantages.
 
-Along with pervasive use of computers and sensors, increased ability to acquire and store data, and the society being increasingly \textit{data driven}, it seems that data is collected everywhere today. It is claimed in~\cite{economist:0210} that the amount of generated data on a world-wide scale grew from 150 Billion Gigabytes to 1200 Billion Gigabytes from the year 2005 to 2010. This suggest that we, today, generate as much data in a single day as the entire mankind did until 2003.
+Along with pervasive use of computers and sensors, increased ability to acquire and store data, and the society being increasingly \textit{data driven}, it seems that data is collected everywhere today. It is claimed in~\cite{economist:0210} that the amount of generated data on a world-wide scale grew from 150 billion gigabytes to 1200 billion gigabytes from the year 2005 to 2010. This suggest that we, today, generate as much data in a single day as the entire mankind did until 2003.
 
 \begin{figure}[h]
 	\centering
 		\includegraphics[width=0.9\textwidth]{../plots/massive_data/massive_data}
 	\caption{Total amount of data generated by Man over time.}
-	\tiny{Data from UC Berkely.}
+	\tiny{Data from UC Berkeley.}
 	\label{fig:massive_data}
 \end{figure}
 
-An industry that has benefit severely from the continues improvement of technology is that of processing geographic data. Such systems is also known as geographical informations systems (GIS). In the year 2000 the Shuttle Radar Topography mission sat out to map Europe and North America in a 30-meter dataset. Denmark alone consists of more than 46 million data points and is stored using Gigabytes of data that can easily fit in a modern computers main memory. Today, the dataset has improved to a $\nicefrac{1}{2}$-meter model of more than 168 billion data points. This amounts to Terabytes of data that is unlikely to fit into main memory of a standard personal computer in the coming years. Most GIS applications of today uses results from the field of computational geometry, and it is in this field we will focus our studies.
+An industry that has benefit severely from the continuous improvement of technology is that of processing geographic data. Such systems is also known as geographical informations systems (GIS). In the year 2000 the Shuttle Radar Topography mission sat out to map Europe and North America in a 30-meter dataset. Denmark alone consists of more than 46 million data points and is stored using gigabytes of data that can easily fit in a modern computers main memory. Today, the dataset has improved to a $\nicefrac{1}{2}$-meter model of more than 168 billion data points. This amounts to terabytes of data that is unlikely to fit into main memory of a standard personal computer in the coming years. Most GIS applications today use results from the field of computational geometry, and it is in this field we will focus our studies.
 
-An integral problem of computational geometry is that of range searching. Besides in GIS applications, the problem arises in many different applications with huge data sets such as spatial databases and computer graphics. The problem can be formally described as follows. Let $\mathcal{S}$ be a set of $N$ points in $\mathbb{R}^d$, and let $\mathcal{R}$ be a family of subsets of $\mathbb{R}^d$. Our objective is to preprocess $\mathcal{S}$ such that for a query range $r \in \mathcal{R}$, the points in $\mathcal{S} \cap r$ can be reported or counted efficiently~\cite{Agarwal99geometricrange}. The ranges can be anything from rectangles and halfspaces to balls.
+An integral problem of computational geometry is that of range searching. In addition to GIS applications, the problem arises in many different applications with huge data sets such as spatial databases and computer graphics. The problem can be formally described as follows. Let $\mathcal{S}$ be a set of $N$ points in $\mathbb{R}^d$, and let $\mathcal{R}$ be a family of subsets of $\mathbb{R}^d$. Our objective is to preprocess $\mathcal{S}$ such that for a query range $r \in \mathcal{R}$, the points in $\mathcal{S} \cap r$ can be reported or counted efficiently~\cite{Agarwal99geometricrange}. The ranges can be anything from rectangles and halfspaces to balls.
 
 In this thesis we consider the problem of maintaining a dynamic set, $\mathcal{S}$, of $N$ points in $\mathbb{R}^2$ in external memory. The set of points can be updated by insertion and deletion. The set will be processed such that we are able to report three-sided range queries, i.e. given a range of the type $[x_1,x_2] \times [y,\infty]$, we report points in $\mathcal{S} \cap [x_1,x_2] \times [y,\infty]$.
 
@@ -276,7 +292,7 @@ In this thesis we consider the problem of maintaining a dynamic set, $\mathcal{S
  
 The thesis will present several solutions to this problem, implement, and experimentally compare solutions.
 
-Some of the solutions will not be optimized for usage in external memory and they must pay a hefty price for accessing data not readily available in main memory. This thesis will show the power of the I/O efficient data structures for large data sets and demonstrate what happens when internal memory data structure have to work overtime along with the virtual memory system.
+Some of the solutions will not be optimized for usage in external memory and they must pay a hefty price for accessing data not readily available in main memory. This thesis will show the power of the I/O efficient data structures for large data sets and demonstrate what happens when internal memory data structures have to work overtime along with the virtual memory system.
 
 \section{Outline of thesis}
 This thesis is structured as follows:
@@ -298,8 +314,7 @@ Leading up to our experimental Chapter~\ref{chp:experimental_results} we present
 
 \todo{add more sections!}
 
-\epigraph{\textit{The difference in speed between modern CPU and disk technologies is  analogous to the difference in speed in sharpening a pencil using a sharpener on one's desk or by taking an airplane to the other side of the world and using a sharpener on someone else's desk.}
-}{D. Comer}
+
 
 
 \chapter{Model of computation}
@@ -1195,6 +1210,153 @@ Deleting points is however very expensive due to the missing index on the data a
 
 The same goes for querying the database as we once again have to go through every single point in the database to test if it is in the query range. This also gives an $\mathcal{O}(N/B)$ I/O's bound.
 
+\chapter{Implementation}
+\label{chp:implementation}
+%TODO We use a POSIX file-system on a Linux distribution.
+
+\section{Stream}
+The implementation we present makes use of the concept of \textit{streams}. A stream gives access to reading and writing from/to disk to/from memory. A stream typically manages an internal buffer which is a mirror of a small portion of the disk allowing for fast interaction with that small piece. Although the C++ standard library provides several streams that allow for the internal buffer to be managed we introduce an implementation of our own. We denote this stream \texttt{buffered\_stream}. This design choice was made because of the nature of our experiments in which it is of extreme importance that we are able to argue about the exact number of I/O's being used. By introducing a stream of our own we avoid that any undefined behaviour in the standard library implementations gives rise to a potential I/O overhead and we will be able to exactly count the I/O's. Such an overhead would be reflected directly in the overall running time of our implementation.
+
+The stream we introduce makes use of the \texttt{read} and \texttt{write} system calls and is equipped with a buffer of size $B$ in internal memory that is maintained on all operations.
+
+There are many different ways to construct a stream. In order to substantiate our choice of using buffering on top of the \texttt{read} and \texttt{write} system calls we conducted some experiments with some different types of streams:
+
+\begin{itemize}
+	\item Direct invocation of the operating system call \texttt{read} and \texttt{write} that reads/writes one item using no buffering mechanism.
+	\item The standard library streams \texttt{fread} and \texttt{fwrite} that uses a built-in buffering mechanism that we do not manage.
+	\item Direct invocation of the operating system call \texttt{mmap} and \texttt{munmap} that makes use of the operating systems virtual memory mechanism through demand paging.
+\end{itemize}
+
+It is clear that direct invocation of the \texttt{read} and \texttt{write} system calls cannot be better than adding buffering on top, which early experiments without doubt showed. The results were so slow that we had to exclude them.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{../src/experiments/stream_input_speed_experiment_results/2016-04-23.16_00_16/timems}
+  \caption{Reading 5Gb of data using \texttt{mmap} and \texttt{munmap}, \texttt{fread} and \texttt{fwrite}, and buffered \texttt{read} and \texttt{write}}
+  \label{fig:stream_input_speed}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{../src/experiments/stream_output_speed_experiment_results/2016-04-23.16_07_40/timems}
+  \caption{Writing 5Gb of data using \texttt{mmap} and \texttt{munmap}, \texttt{fread} and \texttt{fwrite}, and buffered \texttt{read} and \texttt{write}}
+  \label{fig:stream_output_speed}
+\end{figure}
+
+The results of Figure~\ref{fig:stream_input_speed} and~\ref{fig:stream_output_speed} shows that the \texttt{buffered\_stream} performs similarly to using \texttt{mmap} when reading 5Gb of data.
+
+\todo{talk about results on SSD disks and newer computers}
+
+\todo{comments on the results}
+
+\todo{this is not the case when we have queries in the child structure which relies on seek.}
+
+\todo{Redo experiments and comment on those.}
+
+\section{Child structure}
+This section will present the implementation specific design choices made for the child structure presented in section~\ref{sec:child_structure}. \\
+
+\textbf{The initial splitting} of points into blocks of size $B$ is done in a single scan of the x-sorted points. During the scan we make sure to keep track of the minimum and maximum x-value in the range of each block.
+
+\textbf{The catalog data structure} is updated with an entry for each block with information about the minimum and maximum x-value and the indices into a vector $L$ containing all points.
+
+\textbf{Sweeping} of the y-axis is done from bottom to top using a priority queue from the C++ standard library. Initially we put all points in the priority queue keyed on the y-value and with an auxiliary information about the block it initially belonged to. When popping an element we make sure to maintain a counter on the most recent block holding the element. This allows us to collapse adjacent blocks.
+
+\textbf{Maintainance of blocks} is done using a Red-Black search tree $\mathcal{T}$ on block id. When partitioning the $\vert L \vert$ points into $\ell = \lceil\lvert L \lvert / B\rceil$ blocks we initially construct $T$ on data points $1, 2, \dots, \ell$. As each point carries information about the block id it initially belonged to, we are able to find adjacent blocks using a \texttt{successor} and \texttt{predecessor} query on block id in $\mathcal{T}$. Whenever the sweepline reaches a point in a block where the block together with an adjacent block contains exactly $B$ points on or above the sweepline, we either fusion with the block on the left, with the block on the right, or with both the block on left and the block on right. When fusing with the left block we simply delete the block id for the current block in $\mathcal{T}$. When fusing with a right block we delete the successor of the current block id. When fusing with both a left and right block we delete both the current block id and the successor of the current block id. This idea is inspired by the concept of interval trees presented in ?????. %TODO Inds�t reference
+Every time a fusion of blocks is caused we create a copy of all points belonging to the new block to the back of $L$. For the newly created block we update the \texttt{catalog structure} with information about the minimum y-value, the block id of the initial left-most and right-most block being covered and indices into $L$.
+It is clear we always create at least one less block whenever we fusion. This gives a total of $\mathcal{O}(\ell) = \mathcal{O}(B^{\epsilon})$ blocks.
+
+\textbf{Updates} are delayed by storing them in the $\mathcal{I}$ or $\mathcal{D}$ buffers, respectively. Whenever $\mathcal{I}$ or $\mathcal{D}$ have more than $B$ points, we simply extract the points $L$ in $\mathcal{L}$ in increasing x-order from the blocks $b_1, \dots, b_{\ell}$ in $\mathcal{O}(\ell)$ I/O's and apply the $\mathcal{O}(B)$ updates. In order to rebuild the data structure we perform the construction exactly as described above initially splitting the points into $b_1, \dots, b_{\ell'}$ blocks. The fusion of blocks takes $\mathcal{O}(1)$ I/O per block implying reconstruction takes worst-case $\mathcal{O}(\ell')$ I/O's. Since $\lvert L \lvert = \mathcal{O}(B^{1+\epsilon})$ and the reconstruction of $\mathcal{L}$ whenever a buffer overflows requires $\mathcal{O}(\lvert L \lvert / B) = \mathcal{O}(B^{\epsilon})$ I/O's, the amortized cost of reconstructing $\mathcal{L}$ is $\mathcal{O}(1/B^{1-\epsilon})$ I/O's per buffered update.
+
+\textbf{Queries} are answered by scanning the \texttt{catalog structure} from right to left. During the scan we maintain a bit-vector of size $\ell = \lceil\lvert L \lvert / B\rceil$ that marks the blocks covered by a catalog entry overlapping the x-range of the query interval. We do not consider catalog entries if their starting block id is marked, as this implies the entire block is already spanned by a marked block. This follows directly from the fact we always expand the range of the block introduced by collapsing. 
+
+\begin{lemma}
+\label{lma:no_splits}
+When visiting blocks from most recent collapsed block to least recent collapsed block, it is always sufficient to test whether the start or end index of a block is marked to check if the entire block has been covered.
+\end{lemma}
+
+Proof of Lemma~\ref{lma:no_splits}. Assume for contradiction a block $b_{ij}$ has marked[$i$] = marked[$j$] = 1 and marked[$k$] = 0 for  $i < k < j$. The assumption basically states we have chosen a block $b_{ij}$ with a marked start-index and end-index and with part of the block being unmarked. Then we must have split a block before arriving at the block in question. This contradicts the fact that we always collapse (and thus never splits) blocks. $\square$ \\
+
+If the catalog item considered is non-marked and if the minimum-y value is strictly below the y-value from the query, then we report all points in the query-range from the block. As we scan the \texttt{catalog structure} from right to left we are ensured to mark and report from the blocks being intersected by the query-y. \\
+
+\textbf{The reporting} is done using the point indices stored in the \texttt{catalog structure}. If the point set $L$ has been read into main memory then we report the points directly from $L$, if not, we make sure to \texttt{seek} to the start-index in the file containing $L$ such that we only read in the $\leq B$ consecutive points that are candidates for being reported.
+We charge $\mathcal{O}(1)$ I/O's for accessing the \texttt{catalog structure} and $\mathcal{O}(K/B)$ I/O's for reporting points from the query range. This gives a total of  $\mathcal{O}(1+K/B)$ I/O's for querying.
+
+\section{Main data structure}
+\label{sec:impl_main_data_structure}
+This section will present the implementation specific design choices for the main data structure presented in section~\ref{sec:main_data_structure}. \\
+
+In section~\ref{sec:main_data_structure} we argued how the operations \texttt{Insert}, \texttt{Delete} and \texttt{Report} are supported using subroutines for handling overflowing deletion buffers, overflowing insertion buffers, split leafs with overflowing point buffers, split nodes of degree $\Delta+1$ and fill underflowing point buffers.
+
+The implementation we present uses the same idea of introducing a delegated subroutine which is responsible for maintaining one event only.
+
+% introduce dependency mechanism (partly load/flush node).
+We decided to implement a \textbf{dependency mechanism} on each node that allows for the node to be partly flushed and loaded. This allows us to optimize the number of I/O's being made as we can restrict the load and flush to be done only on needed data. The data for each node naturally groups into a separate stream for the insert buffer, delete buffer, point buffer, meta data on children and meta data for the node itself. %TODO We will argue in section ?? exactly why the grouping is done as described here.
+
+% introduce event loop
+As described in section~\ref{sec:main_data_structure} we have to enable a mechanism that allows for subroutines to call each other, as one event can cause other events to be risen. If we simply let each subroutine call using a na\"{\i}ve call stack we would have to manage that a subroutine can be both caller and callee and so it is responsible for loading and flushing data with respect to the recursion path we are currently on. This would require a logical complex mechanism that does nothing but manage the control flow of the recursion and handling data load and flushing. In order to overcome this we have introduced an \textbf{event loop mechanism} that uses a stack of events to control flush, load and calling  proper subroutines. Using this mechanism we are able to predict exactly what data is needed. Furthermore it becomes an easy task to flush all required data before taking further steps in the recursion ensuring optimal use of available main memory.
+
+% introduce all events
+As explained in section~\ref{sec:main_data_structure} we have to make sure that no node in the subtree of a node has a underflowing point buffers before we are allowed to pull up points in the node itself. In order to fully exploit our event loop mechanism we add an extra event for handling the actual pull up of points from the children such that we can distinguish whether we are returning from an underflowing point buffer event or not. Summarising we need mechanisms to handle the following events:
+
+\begin{inlinelist}
+	\item handle overflowing deletion buffers
+	\item handle overflowing insertion buffers
+	\item split nodes of degree $\Delta+1$
+	\item fill underflowing point buffers in node
+	\item handle point buffer overflow
+	\item fill underflowing point buffers in subtree
+\end{inlinelist}
+
+% cache abstraction
+As it is not uncommon to see consequent events for the same node we have added a \textbf{caching mechanism} that makes sure not to flush data on any nodes used in the previous event if the same nodes and data is required in the current event. This idea of using a simple caching scheme dramatically reduces the number of I/O's required compared against the na\"{\i}ve solution where we load and flush a node completely between each event. \todo{Consider introducing a "cache-hit matrix" with a count of loads/flushes we save on each event or maybe just introduce an example or two?}
+
+% introduce meta info_file
+In order to reduce the number of I/O's required we make sure to store a detailed \textit{view} of the state of each node in a separate \textbf{info file} that is maintained on each subroutine. This makes us able to test whether a node is internal or leaf and if it has any broken invariants we should fix using only a single I/O. \todo{Concider introducing an example where we save I/O's.}
+
+% introduce states
+As both event loop and buffer over-/underflow thresholds depends on whether we are currently global rebuilding, linear constructing, reporting or handling updates, we introduce a \textbf{state switch} that is used throughout our implementation to decide which path the recursion should take.
+
+% Introduce cascading matrix
+As described in section~\ref{sec:main_data_structure} it is clear that handling an event in a node can cause the state in the parent (if any), the node itself and in the children (if any) to change, so we will get cascading events that needs to be handled. We define the subset of nodes that potentially could change state directly caused by handling an event as the \textit{neighborhood} of the node under an event. It is these cascading events on neighbourhoods that ultimately defines the recursion path. It highly depends on the current state of a node what event(s) we need to check in the neighbourhood. Please refer to table~\ref{table:dependency_matrix} for the dependency graph of cascading events depicted as an adjacency matrix. In the matrix we define an internal node with an empty subtree as a \textit{virtual leaf}. Note that this graph is only valid when we are handling insertions an deletions. When handling linear construction, global rebuild and reporting we have to handle a different subset of cascading events.
+
+%TODO Check correctness of this table when not tired!
+\begin{table}[]
+\centering
+\caption{The table depicts which events causes other events to be made in a given node while handling inserts and deletions}
+\label{table:dependency_matrix}
+\begin{tabular}{lcccc}
+\hline
+event & root & leaf & virtual leaf & node \\ \hline
+(i) & {\color[HTML]{333333} (i), (ii), (vi)} & - & - & (i), (ii), (vi) \\
+(ii)  & (ii), (v) & (v), (vi) & (v), (vi) & (ii), (v) \\
+(iii)  & \multicolumn{1}{l}{(i), (ii), (iii), (v)} & \multicolumn{1}{l}{(i), (ii), (iii), (v)} & \multicolumn{1}{l}{(i), (ii), (iii), (v)} & \multicolumn{1}{l}{(i), (ii), (iii), (v)} \\
+(iv) & (i), (ii) & (i), (ii) & (i), (ii) & (i), (ii) \\
+(v)  & (ii) & (ii) & (v) & - \\
+(vi)  & (vi) & - & (i), (ii), (vi) & (i), (ii), (vi)
+\end{tabular}
+\end{table}
+
+\textbf{Updates} are done as described in~\cite{DBLP:journals/corr/Brodal15}[section 4] except for minor divergences. As previously mentioned we denote the state of a node having an empty subtree as the node being a virtual leaf. We distinguish a leaf and a virtual leaf such that we can reuse the empty subtree of a virtual leaf when handling a point buffer overflow. In the case of a point buffer overflow of a virtual leaf we simply pass down $\lceil \nicefrac{B}{B^{\epsilon}} \rceil$ points to an empty child instead of splitting the leaf. In retrospect we could have chosen to delete a node from the data structure when it becomes a virtual leaf which would let the splitting of leafs rebalance the tree. It is clear that a virtual leaf becomes an internal node after handling a point buffer overflow. In order to avoid the node to be point buffer underflowed we define a virtual to become overflown when it has more than $B$ elements. We believe the design choice makes no important impact on the overall performance of the data structure. \todo{Ask Gerth about this}. When inserting and deleting points we ensure to pull up as many points as possible whenever a node point buffer underflows. This means that we pull-up points until one of the following criteria is met: (i) the point buffer of the node has exactly $B$ points (ii) we have emptied a child completely. The second criteria ensures the heap order between point buffers. Please note that even though we have modified the threshold we always pull-up at least $\lceil \nicefrac{B}{B^{\epsilon}} \rceil$ because of the pigeon-hole principle and the fact we underflow a buffer when having less than $\nicefrac{B}{2}$ points. The idea behind this to distribute as many points as close to the root as possible using the same amount of I/O's. \todo{Ask Gerth about this}. As a corner case we handle the initial splitting of the root when having exactly $B+1$ points even though it is technically a leaf and should have been split when the buffer had $\nicefrac{B}{2}$ points. If we had treated the root as a leaf then we would underflow the root immediately after a split causing a looping point buffer underflow event followed by a point buffer overflow event.
+
+\textbf{Reporting} is done using the same ideas as presented in ~\cite{DBLP:journals/corr/Brodal15}[section 6]. In detail this means we report using a breadth-first traversal within the search path of the $x$-axis. We push down points from buffers to children while reporting instead of using two separate sweeps as suggested in ~\cite{DBLP:journals/corr/Brodal15}[section 6]. Whenever we identify a child having a lower minimum $y$-point than the query, we avoid recursing on the child. After having reported points we have a main data structure that is most likely very unbalanced because of the flushing of buffers along the search path. We fix this in a bottom-up manner visiting all nodes on the search path. For a given node we fix events in the following order (i) delete buffer overflow , (ii) insert buffer overflow, (iii) node degree overflow, (iv) point buffer overflow. We disallow the recursion to travel above the current node in question. This means we always maintain the invariant of having a consistent tree below the current node handled. The recursion path it controlled having the \textbf{state switch} set to a fix\_up state.
+
+%%%%%%% General conciderations about the tree.
+The \textbf{general representation} of buffers makes use of binary Red-Black search trees (\texttt{set<point>} from the C++ standard library) on totally ordered points. This design choice allows us to retrieve the minimum and maximum element in each buffer in constant time using \texttt{iterator} pointers. Furthermore we are able to traverse each buffer in sorted order in linear time which is needed when computing a subset of points to handle on a buffer overflow and underflow. We are aware that using a search tree comes with the price of space blow-up, as each node needs a pointer for children and parent, giving a total of $32 \cdot N$ bytes extra compared to a \texttt{std::vector<point>} representation. We maintain the point buffer as two separate search trees totally ordered on the $x$-value and $y$-value respectively. This is needed as we frequently need access to the minimum $y$-value when deciding whether we should insert a point into the point buffer or insert buffer. The \textbf{catalog structure} containing information about the children of each node is also represented as a Red-Black search tree on interval-start of the children. In detail each catalog item stores information about the minimum point, minimum $y$-point, maximum $y$-point and node id for each child. In the \textbf{info file} of each node we maintain a bit on whether the node is a leaf, a virtual leaf or an internal node, whether the node currently has an overflowing or underflowing point buffer, overflowing point buffer, insert buffer, delete buffer and whether the node is currently node degree overflowed. This allow the event loop to identify whether we should fix any broken invariants caused by events in the neighbourhood, using only 1 I/O.
+
+As an overall strategy we make sure to pass arguments by reference in order to avoid copying objects to the call stack.
+
+\todo{Explain the overall idea in each event - postponed until we are done with the final implementation}.
+
+\section{External priority search tree of Arge et al.}
+Drawing from the experiences gained while implementing the main data structure of Section~\ref{sec:impl_main_data_structure} we decided to once again make use of the event loop to handle our recursion allowing for full control of load and flush. This choice also allowed for simple adaptation of the caching mechanism previously described.
+
+The elements of the base B-tree is a simple type containing a point, a reference to a child, and a bool telling us whether the point has been deleted. The elements are stored in nodes which is just a collection of the simple point types, a reference to a query data structure, and some booleans used in loading and flushing mechanisms. The collection used for the simple point types is a Red-Black tree (\texttt{std::set}). This collection allows us to find the child responsible for a point in logarithmic time using binary search and naturally keeps the points in sorted order w.r.t the $x$-values.
+
+The article uses a different query data structure for leafs in the B-tree. The query data structure used the article is a simple linked list sorted on $y$-values. The linked list however matches the cost of the query data structure used in internal nodes, namely $\mathcal{O}(1 + K/B)$, and we decided the code would be simpler if we used the query data structure in the leafs as well.
+
+Updates and reporting are done as described in Section~\ref{sec:arge_updates} and~\ref{sec:arge_query} with no remarkably deviations.
+
 \chapter{Experimental setup}
 \label{chp:experimental_setup}
 Running experiments on I/O algorithms is extremely time consuming. In order to compare I/O efficient algorithms against internal memory algorithms we need input sizes that force the internal memory algorithms to store and load data to and from the disk (swapping). The input size to the algorithms can be severely minimized if run on machines with a small amount of internal memory which in turn decrease the running time severely as well.
@@ -1474,151 +1636,10 @@ The result of the experiment on the \textbf{search} part of the algorithms is de
 \label{fig:result_query_search_complexity}
 \end{figure}
 
-\chapter{Implementation considerations}
-%TODO We use a POSIX file-system on a Linux distribution.
+\chapter{Conclusion}
+\label{chp:conclusion}
 
-\section{Stream}
-The implementation we present makes use of the concept of \textit{streams}. A stream gives access to reading and writing from/to disk to/from memory. A stream typically manages an internal buffer which is a mirror a small portion of the disk allowing for fast interaction with that small piece. Although the C++ standard library provides several streams that allow for the internal buffer to be managed we introduce an implementation of our own. We denote this stream \texttt{buffered\_stream}. This design choice was made because of the nature of our experiments in which it is of extreme importance that we are able to argue about the exact number of I/O's being used. By introducing a stream of our own we avoid that any undefined behaviour in the standard library implementations gives rise to a potential I/O overhead. Such an overhead would be reflected directly in the overall running time of our implementation.
-
-The stream we introduce makes use of the \texttt{read} and \texttt{write} system calls and is equipped with a buffer of size $B$ in internal memory that is maintained on all operations.
-
-There are many different ways to construct a stream. In order to substantiate our choice of using buffering on top of the \texttt{read} and \texttt{write} system calls we conducted some experiments with some different types of streams:
-
-\begin{itemize}
-	\item Direct invocation of the operating system call \texttt{read} and \texttt{write} that reads/writes one item using no buffering mechanism.
-	\item The standard library streams \texttt{fread} and \texttt{fwrite} that uses a built-in buffering mechanism that we do not manage.
-	\item Direct invocation of the operating system call \texttt{mmap} and \texttt{munmap} that makes use of the operating systems virtual memory mechanism through demand paging.
-\end{itemize}
-
-It is clear that direct invocation of the \texttt{read} and \texttt{write} system calls cannot be better than adding buffering on top, which early experiments without doubt showed. The results were so slow that we had to exclude them.
-
-\begin{figure}
-  \centering
-  \includegraphics[width=\linewidth]{../src/experiments/stream_input_speed_experiment_results/2016-04-23.16_00_16/timems}
-  \caption{Reading 5Gb of data using \texttt{mmap} and \texttt{munmap}, \texttt{fread} and \texttt{fwrite}, and buffered \texttt{read} and \texttt{write}}
-  \label{fig:stream_input_speed}
-\end{figure}
-
-\begin{figure}
-  \centering
-  \includegraphics[width=\linewidth]{../src/experiments/stream_output_speed_experiment_results/2016-04-23.16_07_40/timems}
-  \caption{Writing 5Gb of data using \texttt{mmap} and \texttt{munmap}, \texttt{fread} and \texttt{fwrite}, and buffered \texttt{read} and \texttt{write}}
-  \label{fig:stream_output_speed}
-\end{figure}
-
-The results of Figure~\ref{fig:stream_input_speed} and~\ref{fig:stream_output_speed} shows that the \texttt{buffered\_stream} performs similarly to using \texttt{mmap} when reading 5Gb of data.
-
-\todo{talk about results on SSD disks and newer computers}
-
-\todo{comments on the results}
-
-\todo{this is not the case when we have queries in the child structure which relies on seek.}
-
-\todo{Redo experiments and comment on those.}
-
-\section{Child structure}
-This section will present the implementation specific design choices made for the child structure presented in section~\ref{sec:child_structure}. \\
-
-\textbf{The initial splitting} of points into blocks of size $B$ is done in a single scan of the x-sorted points. During the scan we make sure to keep track of the minimum and maximum x-value in the range of each block.
-
-\textbf{The catalog data structure} is updated with an entry for each block with information about the minimum and maximum x-value and the indices into a vector $L$ containing all points.
-
-\textbf{Sweeping} of the y-axis is done from bottom to top using a priority queue from the C++ standard library. Initially we put all points in the priority queue keyed on the y-value and with an auxiliary information about the block it initially belonged to. When popping an element we make sure to maintain a counter on the most recent block holding the element. This allows us to collapse adjacent blocks.
-
-\textbf{Maintainance of blocks} is done using a Red-Black search tree $\mathcal{T}$ on block id. When partitioning the $\vert L \vert$ points into $\ell = \lceil\lvert L \lvert / B\rceil$ blocks we initially construct $T$ on data points $1, 2, \dots, \ell$. As each point carries information about the block id it initially belonged to, we are able to find adjacent blocks using a \texttt{successor} and \texttt{predecessor} query on block id in $\mathcal{T}$. Whenever the sweepline reaches a point in a block where the block together with an adjacent block contains exactly $B$ points on or above the sweepline, we either fusion with the block on the left, with the block on the right, or with both the block on left and the block on right. When fusing with the left block we simply delete the block id for the current block in $\mathcal{T}$. When fusing with a right block we delete the successor of the current block id. When fusing with both a left and right block we delete both the current block id and the successor of the current block id. This idea is inspired by the concept of interval trees presented in ?????. %TODO Inds�t reference
-Every time a fusion of blocks is caused we create a copy of all points belonging to the new block to the back of $L$. For the newly created block we update the \texttt{catalog structure} with information about the minimum y-value, the block id of the initial left-most and right-most block being covered and indices into $L$.
-It is clear we always create at least one less block whenever we fusion. This gives a total of $\mathcal{O}(\ell) = \mathcal{O}(B^{\epsilon})$ blocks.
-
-\textbf{Updates} are delayed by storing them in the $\mathcal{I}$ or $\mathcal{D}$ buffers, respectively. Whenever $\mathcal{I}$ or $\mathcal{D}$ have more than $B$ points, we simply extract the points $L$ in $\mathcal{L}$ in increasing x-order from the blocks $b_1, \dots, b_{\ell}$ in $\mathcal{O}(\ell)$ I/O's and apply the $\mathcal{O}(B)$ updates. In order to rebuild the data structure we perform the construction exactly as described above initially splitting the points into $b_1, \dots, b_{\ell'}$ blocks. The fusion of blocks takes $\mathcal{O}(1)$ I/O per block implying reconstruction takes worst-case $\mathcal{O}(\ell')$ I/O's. Since $\lvert L \lvert = \mathcal{O}(B^{1+\epsilon})$ and the reconstruction of $\mathcal{L}$ whenever a buffer overflows requires $\mathcal{O}(\lvert L \lvert / B) = \mathcal{O}(B^{\epsilon})$ I/O's, the amortized cost of reconstructing $\mathcal{L}$ is $\mathcal{O}(1/B^{1-\epsilon})$ I/O's per buffered update.
-
-\textbf{Queries} are answered by scanning the \texttt{catalog structure} from right to left. During the scan we maintain a bit-vector of size $\ell = \lceil\lvert L \lvert / B\rceil$ that marks the blocks covered by a catalog entry overlapping the x-range of the query interval. We do not consider catalog entries if their starting block id is marked, as this implies the entire block is already spanned by a marked block. This follows directly from the fact we always expand the range of the block introduced by collapsing. 
-
-\begin{lemma}
-\label{lma:no_splits}
-When visiting blocks from most recent collapsed block to least recent collapsed block, it is always sufficient to test whether the start or end index of a block is marked to check if the entire block has been covered.
-\end{lemma}
-
-Proof of Lemma~\ref{lma:no_splits}. Assume for contradiction a block $b_{ij}$ has marked[$i$] = marked[$j$] = 1 and marked[$k$] = 0 for  $i < k < j$. The assumption basically states we have chosen a block $b_{ij}$ with a marked start-index and end-index and with part of the block being unmarked. Then we must have split a block before arriving at the block in question. This contradicts the fact that we always collapse (and thus never splits) blocks. $\square$ \\
-
-If the catalog item considered is non-marked and if the minimum-y value is strictly below the y-value from the query, then we report all points in the query-range from the block. As we scan the \texttt{catalog structure} from right to left we are ensured to mark and report from the blocks being intersected by the query-y. \\
-
-\textbf{The reporting} is done using the point indices stored in the \texttt{catalog structure}. If the point set $L$ has been read into main memory then we report the points directly from $L$, if not, we make sure to \texttt{seek} to the start-index in the file containing $L$ such that we only read in the $\leq B$ consecutive points that are candidates for being reported.
-We charge $\mathcal{O}(1)$ I/O's for accessing the \texttt{catalog structure} and $\mathcal{O}(K/B)$ I/O's for reporting points from the query range. This gives a total of  $\mathcal{O}(1+K/B)$ I/O's for querying.
-
-\section{Main data structure}
-\label{sec:impl_main_data_structure}
-This section will present the implementation specific design choices for the main data structure presented in section~\ref{sec:main_data_structure}. \\
-
-In section~\ref{sec:main_data_structure} we argued how the operations \texttt{Insert}, \texttt{Delete} and \texttt{Report} are supported using subroutines for handling overflowing deletion buffers, overflowing insertion buffers, split leafs with overflowing point buffers, split nodes of degree $\Delta+1$ and fill underflowing point buffers.
-
-The implementation we present uses the same idea of introducing a delegated subroutine which is responsible for maintaining one event only.
-
-% introduce dependency mechanism (partly load/flush node).
-We decided to implement a \textbf{dependency mechanism} on each node that allows for the node to be partly flushed and loaded. This allows us to optimize the number of I/O's being made as we can restrict the load and flush to be done only on needed data. The data for each node naturally groups into a separate stream for the insert buffer, delete buffer, point buffer, meta data on children and meta data for the node itself. %TODO We will argue in section ?? exactly why the grouping is done as described here.
-
-% introduce event loop
-As described in section~\ref{sec:main_data_structure} we have to enable a mechanism that allows for subroutines to call each other, as one event can cause other events to be risen. If we simply let each subroutine call using a na\"{\i}ve call stack we would have to manage that a subroutine can be both caller and callee and so it is responsible for loading and flushing data with respect to the recursion path we are currently on. This would require a logical complex mechanism that does nothing but manage the control flow of the recursion and handling data load and flushing. In order to overcome this we have introduced an \textbf{event loop mechanism} that uses a stack of events to control flush, load and calling  proper subroutines. Using this mechanism we are able to predict exactly what data is needed. Furthermore it becomes an easy task to flush all required data before taking further steps in the recursion ensuring optimal use of available main memory.
-
-% introduce all events
-As explained in section~\ref{sec:main_data_structure} we have to make sure that no node in the subtree of a node has a underflowing point buffers before we are allowed to pull up points in the node itself. In order to fully exploit our event loop mechanism we add an extra event for handling the actual pull up of points from the children such that we can distinguish whether we are returning from an underflowing point buffer event or not. Summarising we need mechanisms to handle the following events:
-
-\begin{inlinelist}
-	\item handle overflowing deletion buffers
-	\item handle overflowing insertion buffers
-	\item split nodes of degree $\Delta+1$
-	\item fill underflowing point buffers in node
-	\item handle point buffer overflow
-	\item fill underflowing point buffers in subtree
-\end{inlinelist}
-
-% cache abstraction
-As it is not uncommon to see consequent events for the same node we have added a \textbf{caching mechanism} that makes sure not to flush data on any nodes used in the previous event if the same nodes and data is required in the current event. This idea of using a simple caching scheme dramatically reduces the number of I/O's required compared against the na\"{\i}ve solution where we load and flush a node completely between each event. \todo{Consider introducing a "cache-hit matrix" with a count of loads/flushes we save on each event or maybe just introduce an example or two?}
-
-% introduce meta info_file
-In order to reduce the number of I/O's required we make sure to store a detailed \textit{view} of the state of each node in a separate \textbf{info file} that is maintained on each subroutine. This makes us able to test whether a node is internal or leaf and if it has any broken invariants we should fix using only a single I/O. \todo{Concider introducing an example where we save I/O's.}
-
-% introduce states
-As both event loop and buffer over-/underflow thresholds depends on whether we are currently global rebuilding, linear constructing, reporting or handling updates, we introduce a \textbf{state switch} that is used throughout our implementation to decide which path the recursion should take.
-
-% Introduce cascading matrix
-As described in section~\ref{sec:main_data_structure} it is clear that handling an event in a node can cause the state in the parent (if any), the node itself and in the children (if any) to change, so we will get cascading events that needs to be handled. We define the subset of nodes that potentially could change state directly caused by handling an event as the \textit{neighborhood} of the node under an event. It is these cascading events on neighbourhoods that ultimately defines the recursion path. It highly depends on the current state of a node what event(s) we need to check in the neighbourhood. Please refer to table~\ref{table:dependency_matrix} for the dependency graph of cascading events depicted as an adjacency matrix. In the matrix we define an internal node with an empty subtree as a \textit{virtual leaf}. Note that this graph is only valid when we are handling insertions an deletions. When handling linear construction, global rebuild and reporting we have to handle a different subset of cascading events.
-
-%TODO Check correctness of this table when not tired!
-\begin{table}[]
-\centering
-\caption{The table depicts which events causes other events to be made in a given node while handling inserts and deletions}
-\label{table:dependency_matrix}
-\begin{tabular}{lcccc}
-\hline
-event & root & leaf & virtual leaf & node \\ \hline
-(i) & {\color[HTML]{333333} (i), (ii), (vi)} & - & - & (i), (ii), (vi) \\
-(ii)  & (ii), (v) & (v), (vi) & (v), (vi) & (ii), (v) \\
-(iii)  & \multicolumn{1}{l}{(i), (ii), (iii), (v)} & \multicolumn{1}{l}{(i), (ii), (iii), (v)} & \multicolumn{1}{l}{(i), (ii), (iii), (v)} & \multicolumn{1}{l}{(i), (ii), (iii), (v)} \\
-(iv) & (i), (ii) & (i), (ii) & (i), (ii) & (i), (ii) \\
-(v)  & (ii) & (ii) & (v) & - \\
-(vi)  & (vi) & - & (i), (ii), (vi) & (i), (ii), (vi)
-\end{tabular}
-\end{table}
-
-\textbf{Updates} are done as described in~\cite{DBLP:journals/corr/Brodal15}[section 4] except for minor divergences. As previously mentioned we denote the state of a node having an empty subtree as the node being a virtual leaf. We distinguish a leaf and a virtual leaf such that we can reuse the empty subtree of a virtual leaf when handling a point buffer overflow. In the case of a point buffer overflow of a virtual leaf we simply pass down $\lceil \nicefrac{B}{B^{\epsilon}} \rceil$ points to an empty child instead of splitting the leaf. In retrospect we could have chosen to delete a node from the data structure when it becomes a virtual leaf which would let the splitting of leafs rebalance the tree. It is clear that a virtual leaf becomes an internal node after handling a point buffer overflow. In order to avoid the node to be point buffer underflowed we define a virtual to become overflown when it has more than $B$ elements. We believe the design choice makes no important impact on the overall performance of the data structure. \todo{Ask Gerth about this}. When inserting and deleting points we ensure to pull up as many points as possible whenever a node point buffer underflows. This means that we pull-up points until one of the following criteria is met: (i) the point buffer of the node has exactly $B$ points (ii) we have emptied a child completely. The second criteria ensures the heap order between point buffers. Please note that even though we have modified the threshold we always pull-up at least $\lceil \nicefrac{B}{B^{\epsilon}} \rceil$ because of the pigeon-hole principle and the fact we underflow a buffer when having less than $\nicefrac{B}{2}$ points. The idea behind this to distribute as many points as close to the root as possible using the same amount of I/O's. \todo{Ask Gerth about this}. As a corner case we handle the initial splitting of the root when having exactly $B+1$ points even though it is technically a leaf and should have been split when the buffer had $\nicefrac{B}{2}$ points. If we had treated the root as a leaf then we would underflow the root immediately after a split causing a looping point buffer underflow event followed by a point buffer overflow event.
-
-\textbf{Reporting} is done using the same ideas as presented in ~\cite{DBLP:journals/corr/Brodal15}[section 6]. In detail this means we report using a breadth-first traversal within the search path of the $x$-axis. We push down points from buffers to children while reporting instead of using two separate sweeps as suggested in ~\cite{DBLP:journals/corr/Brodal15}[section 6]. Whenever we identify a child having a lower minimum $y$-point than the query, we avoid recursing on the child. After having reported points we have a main data structure that is most likely very unbalanced because of the flushing of buffers along the search path. We fix this in a bottom-up manner visiting all nodes on the search path. For a given node we fix events in the following order (i) delete buffer overflow , (ii) insert buffer overflow, (iii) node degree overflow, (iv) point buffer overflow. We disallow the recursion to travel above the current node in question. This means we always maintain the invariant of having a consistent tree below the current node handled. The recursion path it controlled having the \textbf{state switch} set to a fix\_up state.
-
-%%%%%%% General conciderations about the tree.
-The \textbf{general representation} of buffers makes use of binary Red-Black search trees (\texttt{set<point>} from the C++ standard library) on totally ordered points. This design choice allows us to retrieve the minimum and maximum element in each buffer in constant time using \texttt{iterator} pointers. Furthermore we are able to traverse each buffer in sorted order in linear time which is needed when computing a subset of points to handle on a buffer overflow and underflow. We are aware that using a search tree comes with the price of space blow-up, as each node needs a pointer for children and parent, giving a total of $32 \cdot N$ bytes extra compared to a \texttt{std::vector<point>} representation. We maintain the point buffer as two separate search trees totally ordered on the $x$-value and $y$-value respectively. This is needed as we frequently need access to the minimum $y$-value when deciding whether we should insert a point into the point buffer or insert buffer. The \textbf{catalog structure} containing information about the children of each node is also represented as a Red-Black search tree on interval-start of the children. In detail each catalog item stores information about the minimum point, minimum $y$-point, maximum $y$-point and node id for each child. In the \textbf{info file} of each node we maintain a bit on whether the node is a leaf, a virtual leaf or an internal node, whether the node currently has an overflowing or underflowing point buffer, overflowing point buffer, insert buffer, delete buffer and whether the node is currently node degree overflowed. This allow the event loop to identify whether we should fix any broken invariants caused by events in the neighbourhood, using only 1 I/O.
-
-As an overall strategy we make sure to pass arguments by reference in order to avoid copying objects to the call stack.
-
-\todo{Explain the overall idea in each event - postponed until we are done with the final implementation}.
-
-\section{External priority search tree of Arge et al.}
-Drawing from the experiences gained while implementing the main data structure of Section~\ref{sec:impl_main_data_structure} we decided to once again make use of the event loop to handle our recursion allowing for full control of load and flush. This choice also allowed for simple adaptation of the caching mechanism previously described.
-
-The elements of the base B-tree is a simple type containing a point, a reference to a child, and a bool telling us whether the point has been deleted. The elements are stored in nodes which is just a collection of the simple point types, a reference to a query data structure, and some booleans used in loading and flushing mechanisms. The collection used for the simple point types is a Red-Black tree (\texttt{std::set}). This collection allows us to find the child responsible for a point in logarithmic time using binary search and naturally keeps the points in sorted order w.r.t the $x$-values.
-
-The article uses a different query data structure for leafs in the B-tree. The query data structure used the article is a simple linked list sorted on $y$-values. The linked list however matches the cost of the query data structure used in internal nodes, namely $\mathcal{O}(1 + K/B)$, and we decided the code would be simpler if we used the query data structure in the leafs as well.
-
-Updates and reporting are done as described in Section~\ref{sec:arge_updates} and~\ref{sec:arge_query} with no remarkably deviations.
+\todo{Conclude this shit!}
 
 \clearpage
 \addcontentsline{toc}{chapter}{Bibliography}
