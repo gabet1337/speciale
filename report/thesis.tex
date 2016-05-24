@@ -1219,20 +1219,15 @@ It is a little harder to argue about the complexity of a three sided query. A B-
 In this chapter we present important considerations noted throughout our implementation phase.
 
 \section{General}
-Everything we implemented was unit tested and large parts of the project was implemented using test driven development.
+Almost all code was developed using pair programming and we strongly believe that this process, though slow and cumbersome, eliminates many mistakes that would otherwise slow us down later on.
+Everything we implemented was unit tested and large parts of the project was implemented using test driven development. We made sure to make sound design choices to enable easy extension and reuse of our code. Stubs and mocks were used to ease the integration of substructures into larger pieces.
+We also wrote checkers to automatically check validity of a tree. In the case of the external memory buffered priority search tree we wrote a checker that would iterate the entire tree and check that no invariants were broken. We added a method to print the trees in a dot format allowing us to visualize every step of the algorithm. This really made debugging easier as it supplied us with a quick overview of the structure.
 
-\todo{automated testing}
+In order to properly test that there were no errors in our implementation we wrote a random test that would insert thousands of points and test validity of the tree for every insert. We would then repeat this test for several thousand iterations over several days while continuing on other parts of the code.
+
+Using all these methods and tools we feel more safe that our code works as intended.
+
 \todo{predicate testing}
-\todo{print of tree}
-\todo{sound design choices (patterns)}
-\todo{random test}
-\todo{checker (tree invariants)}
-\todo{pair programming}
-\todo{rubber duck programming}
-\todo{integrated test}
-\todo{stubs}
-
-%TODO We use a POSIX file-system on a Linux distribution.
 
 \section{Stream}
 The implementation we present makes use of the concept of \textit{streams}. A stream gives access to reading and writing from/to disk to/from memory. A stream typically manages an internal buffer which is a mirror of a small portion of the disk allowing for fast interaction with that small piece. Although the C++ standard library provides several streams that allow for the internal buffer to be managed we introduce an implementation of our own. We denote this stream \texttt{buffered\_stream}. This design choice was made because of the nature of our experiments in which it is of extreme importance that we are able to argue about the exact number of I/O's being used. By introducing a stream of our own we avoid that any undefined behaviour in the standard library implementations gives rise to a potential I/O overhead and we will be able to exactly count the I/O's. Such an overhead would be reflected directly in the overall running time of our implementation.
