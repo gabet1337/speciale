@@ -1313,6 +1313,9 @@ Updates and reporting are done as described in Section~\ref{sec:arge_updates} an
 \section{Other structures}
 We also implemented wrappers around MySQL, Boost R-Tree, and libspatial external R*-tree such that we could use these structures as a priority search tree. These structures are described further in Chapter~\ref{chp:other_structures}.
 
+\section{Test framework}
+\todo{describe the test framework}
+
 \chapter{Experimental setup}
 \label{chp:experimental_setup}
 Running experiments on I/O algorithms is extremely time consuming. In order to compare I/O efficient algorithms against internal memory algorithms we need input sizes that force the internal memory algorithms to store and load data to and from the disk (swapping). The input size to the algorithms can be severely minimized if run on machines with a small amount of internal memory which in turn decrease the running time severely as well.
@@ -1352,7 +1355,7 @@ In order to obtain a deeper understanding of the results we chose to measure the
 
 As the machines run on 32 bit operating systems it is very important to define \texttt{\_FILE\_OFFSET\_BITS=64}. This forces the system to use 64 bit pointers when seeking in files allowing us to handle data sets larger than $2^{32}$ on the machines.
 
-\todo{Add stuff about debugging, optimizations, and code in general. See other thesis for reference.}
+\todo{MORAK!}
 
 \chapter{Our results}
 \label{chp:experimental_results}
