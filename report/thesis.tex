@@ -670,6 +670,10 @@ For any $\max\left\lbrace \log\log N, \log_M N \right\rbrace \leq \lambda \leq B
 
 This means that in one end of the trade-off they can for $\lambda = B^\epsilon$ obtain an update time of $\mathcal{O}(1/B^{1-\epsilon})$ and query time of $\mathcal{O}(\log_B N)$. This matches the bounds of the buffer tree of Arge. In the other end of the trade-off where they are able to achieve fast updates very close to the optimal disk transfer rate of $1/B$ namely they obtain: $t_u^{\min} = \mathcal{O}(\frac{1}{B} \cdot \max\left\lbrace \log\log N, \log_M N \right\rbrace)$.
 
+\begin{savequote}[0.5\textwidth]
+--- An algorithm must be seen to be believed.
+\qauthor{Knuth, Donald}
+\end{savequote}
 \chapter{Internal Priority Search Tree}
 \label{chp:internal_pst}
 In this section we present an internal memory data structure for the range reporting problem. The data structure was originally presented by McCreight~\cite{DBLP:journals/siamcomp/McCreight85} and is denoted a priority search tree. The priority search tree is basically a combination of a binary search tree on the $x$-coordinate and a heap on the $y$-coordinate. A formal definition of a priority search tree for a set of $N$ points, $P$, is as follows. We assume that all points have distinct coordinates, though this assumption can be removed by using the normal lexicographical ordering of points.
@@ -774,6 +778,10 @@ If we use the operations for dynamic updates as stated above without any measure
 \section{Bounds in the I/O model}
 The above bounds translate directly to the I/O model as we cannot guarentee that nodes on the search path are perfectly placed in blocks, which in the worst case means that each visit to a node will equal 1 I/O.
 
+\begin{savequote}[0.5\textwidth]
+--- The plot thickens, as they say. Why, by the way? Is it a soup metaphor?
+\qauthor{Gustave, M (The Grand Budapest Hotel)}
+\end{savequote}
 \chapter{External Memory Priority Search Tree}
 \label{chp:arge_pst}
 In this chapter we present an older result on dynamic three-sided range queries due to Arge et al.~\cite{arge_samoladas_vitter_1999}.
