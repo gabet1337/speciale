@@ -19,7 +19,8 @@ set xlabel 'N (input size in Mb)'
 set ylabel 'I/Os'
 #set xrange [0:0]
 #set yrange [0:0]
-plot 'gerth_query_fanout_experiment_results/2016-05-19.19_04_49/gerth_fanout2' u 1:3 t 'fanout2' w lp ls 2, \
+plot 'gerth_query_fanout_experiment_results/2016-05-19.19_04_49/gerth_fanout2' u 1:3 t 'fanout2' w lp ls 1, \
+'gerth_query_fanout_experiment_results/2016-05-19.19_04_49/gerth_fanout4' u 1:3 t 'fanout4' w lp ls 2, \
 'gerth_query_fanout_experiment_results/2016-05-19.19_04_49/gerth_fanout8' u 1:3 t 'fanout8' w lp ls 3, \
 'gerth_query_fanout_experiment_results/2016-05-19.19_04_49/gerth_fanout16' u 1:3 t 'fanout16' w lp ls 4, \
 'gerth_query_fanout_experiment_results/2016-05-19.19_04_49/gerth_fanout32' u 1:3 t 'fanout32' w lp ls 5
