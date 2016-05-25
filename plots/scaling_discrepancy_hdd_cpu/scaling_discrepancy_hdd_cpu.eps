@@ -1,7 +1,7 @@
 %!PS-Adobe-2.0 EPSF-2.0
 %%Title: scaling_discrepancy_hdd_cpu.eps
-%%Creator: gnuplot 4.6 patchlevel 4
-%%CreationDate: Sun Apr 24 16:56:15 2016
+%%Creator: gnuplot 5.0 patchlevel 3
+%%CreationDate: Wed May 25 16:10:37 2016
 %%DocumentFonts: (atend)
 %%BoundingBox: 50 50 410 302
 %%EndComments
@@ -18,6 +18,7 @@ gnudict begin
 /Dashlength 1 def
 /Landscape false def
 /Level1 false def
+/Level3 false def
 /Rounded false def
 /ClipToBoundingBox false def
 /SuppressPDFMark false def
@@ -27,13 +28,13 @@ gnudict begin
 /Gamma 1.0 def
 /BackgroundColor {-1.000 -1.000 -1.000} def
 %
-/vshift -36 def
+/vshift -40 def
 /dl1 {
-  10.0 Dashlength mul mul
+  10.0 Dashlength userlinewidth gnulinewidth div mul mul mul
   Rounded { currentlinewidth 0.75 mul sub dup 0 le { pop 0.01 } if } if
 } def
 /dl2 {
-  10.0 Dashlength mul mul
+  10.0 Dashlength userlinewidth gnulinewidth div mul mul mul
   Rounded { currentlinewidth 0.75 mul add } if
 } def
 /hpt_ 31.5 def
@@ -47,7 +48,7 @@ gnudict begin
   } if
 } def
 %
-% Gnuplot Prolog Version 4.6 (September 2012)
+% Gnuplot Prolog Version 5.1 (Oct 2015)
 %
 %/SuppressPDFMark true def
 %
@@ -64,11 +65,11 @@ gnudict begin
 /vpt2 vpt 2 mul def
 /hpt2 hpt 2 mul def
 /Lshow {currentpoint stroke M 0 vshift R 
-	Blacktext {gsave 0 setgray show grestore} {show} ifelse} def
+	Blacktext {gsave 0 setgray textshow grestore} {textshow} ifelse} def
 /Rshow {currentpoint stroke M dup stringwidth pop neg vshift R
-	Blacktext {gsave 0 setgray show grestore} {show} ifelse} def
+	Blacktext {gsave 0 setgray textshow grestore} {textshow} ifelse} def
 /Cshow {currentpoint stroke M dup stringwidth pop -2 div vshift R 
-	Blacktext {gsave 0 setgray show grestore} {show} ifelse} def
+	Blacktext {gsave 0 setgray textshow grestore} {textshow} ifelse} def
 /UP {dup vpt_ mul /vpt exch def hpt_ mul /hpt exch def
   /hpt2 hpt 2 mul def /vpt2 vpt 2 mul def} def
 /DL {Color {setrgbcolor Solid {pop []} if 0 setdash}
@@ -82,7 +83,7 @@ gnudict begin
 /PL {stroke userlinewidth setlinewidth
 	Rounded {1 setlinejoin 1 setlinecap} if} def
 3.8 setmiterlimit
-% Default Line colors
+% Classic Line colors (version 5.0)
 /LCw {1 1 1} def
 /LCb {0 0 0} def
 /LCa {0 0 0} def
@@ -95,19 +96,21 @@ gnudict begin
 /LC6 {0 0 0} def
 /LC7 {1 0.3 0} def
 /LC8 {0.5 0.5 0.5} def
-% Default Line Types
+% Default dash patterns (version 5.0)
+/LTB {BL [] LCb DL} def
 /LTw {PL [] 1 setgray} def
-/LTb {BL [] LCb DL} def
+/LTb {PL [] LCb DL} def
 /LTa {AL [1 udl mul 2 udl mul] 0 setdash LCa setrgbcolor} def
 /LT0 {PL [] LC0 DL} def
-/LT1 {PL [4 dl1 2 dl2] LC1 DL} def
-/LT2 {PL [2 dl1 3 dl2] LC2 DL} def
-/LT3 {PL [1 dl1 1.5 dl2] LC3 DL} def
-/LT4 {PL [6 dl1 2 dl2 1 dl1 2 dl2] LC4 DL} def
-/LT5 {PL [3 dl1 3 dl2 1 dl1 3 dl2] LC5 DL} def
-/LT6 {PL [2 dl1 2 dl2 2 dl1 6 dl2] LC6 DL} def
-/LT7 {PL [1 dl1 2 dl2 6 dl1 2 dl2 1 dl1 2 dl2] LC7 DL} def
-/LT8 {PL [2 dl1 2 dl2 2 dl1 2 dl2 2 dl1 2 dl2 2 dl1 4 dl2] LC8 DL} def
+/LT1 {PL [2 dl1 3 dl2] LC1 DL} def
+/LT2 {PL [1 dl1 1.5 dl2] LC2 DL} def
+/LT3 {PL [6 dl1 2 dl2 1 dl1 2 dl2] LC3 DL} def
+/LT4 {PL [1 dl1 2 dl2 6 dl1 2 dl2 1 dl1 2 dl2] LC4 DL} def
+/LT5 {PL [4 dl1 2 dl2] LC5 DL} def
+/LT6 {PL [1.5 dl1 1.5 dl2 1.5 dl1 1.5 dl2 1.5 dl1 6 dl2] LC6 DL} def
+/LT7 {PL [3 dl1 3 dl2 1 dl1 3 dl2] LC7 DL} def
+/LT8 {PL [2 dl1 2 dl2 2 dl1 6 dl2] LC8 DL} def
+/SL {[] 0 setdash} def
 /Pnt {stroke [] 0 setdash gsave 1 setlinecap M 0 0 V stroke grestore} def
 /Dia {stroke [] 0 setdash 2 copy vpt add M
   hpt neg vpt neg V hpt vpt neg V
@@ -329,9 +332,14 @@ gnudict begin
 %
 /languagelevel where
  {pop languagelevel} {1} ifelse
- 2 lt
-	{/InterpretLevel1 true def}
-	{/InterpretLevel1 Level1 def}
+dup 2 lt
+	{/InterpretLevel1 true def
+	 /InterpretLevel3 false def}
+	{/InterpretLevel1 Level1 def
+	 2 gt
+	    {/InterpretLevel3 Level3 def}
+	    {/InterpretLevel3 false def}
+	 ifelse }
  ifelse
 %
 % PostScript level 2 pattern fill definitions
@@ -420,16 +428,17 @@ Level1 {Level1PatternFill} {Level2PatternFill} ifelse
 /Symbol-Oblique /Symbol findfont [1 0 .167 1 0 0] makefont
 dup length dict begin {1 index /FID eq {pop pop} {def} ifelse} forall
 currentdict end definefont pop
+%
 /MFshow {
    { dup 5 get 3 ge
      { 5 get 3 eq {gsave} {grestore} ifelse }
      {dup dup 0 get findfont exch 1 get scalefont setfont
      [ currentpoint ] exch dup 2 get 0 exch R dup 5 get 2 ne {dup dup 6
-     get exch 4 get {Gshow} {stringwidth pop 0 R} ifelse }if dup 5 get 0 eq
+     get exch 4 get {textshow} {stringwidth pop 0 R} ifelse }if dup 5 get 0 eq
      {dup 3 get {2 get neg 0 exch R pop} {pop aload pop M} ifelse} {dup 5
      get 1 eq {dup 2 get exch dup 3 get exch 6 get stringwidth pop -2 div
      dup 0 R} {dup 6 get stringwidth pop -2 div 0 R 6 get
-     show 2 index {aload pop M neg 3 -1 roll neg R pop pop} {pop pop pop
+     textshow 2 index {aload pop M neg 3 -1 roll neg R pop pop} {pop pop pop
      pop aload pop M} ifelse }ifelse }ifelse }
      ifelse }
    forall} def
@@ -457,14 +466,42 @@ systemdict /pdfmark known not {
 SDict begin [
   /Title (scaling_discrepancy_hdd_cpu.eps)
   /Subject (gnuplot plot)
-  /Creator (gnuplot 4.6 patchlevel 4)
+  /Creator (gnuplot 5.0 patchlevel 3)
   /Author (peter)
 %  /Producer (gnuplot)
 %  /Keywords ()
-  /CreationDate (Sun Apr 24 16:56:15 2016)
+  /CreationDate (Wed May 25 16:10:37 2016)
   /DOCINFO pdfmark
 end
 } ifelse
+%
+% Support for boxed text - Ethan A Merritt May 2005
+%
+/InitTextBox { userdict /TBy2 3 -1 roll put userdict /TBx2 3 -1 roll put
+           userdict /TBy1 3 -1 roll put userdict /TBx1 3 -1 roll put
+	   /Boxing true def } def
+/ExtendTextBox { Boxing
+    { gsave dup false charpath pathbbox
+      dup TBy2 gt {userdict /TBy2 3 -1 roll put} {pop} ifelse
+      dup TBx2 gt {userdict /TBx2 3 -1 roll put} {pop} ifelse
+      dup TBy1 lt {userdict /TBy1 3 -1 roll put} {pop} ifelse
+      dup TBx1 lt {userdict /TBx1 3 -1 roll put} {pop} ifelse
+      grestore } if } def
+/PopTextBox { newpath TBx1 TBxmargin sub TBy1 TBymargin sub M
+               TBx1 TBxmargin sub TBy2 TBymargin add L
+	       TBx2 TBxmargin add TBy2 TBymargin add L
+	       TBx2 TBxmargin add TBy1 TBymargin sub L closepath } def
+/DrawTextBox { PopTextBox stroke /Boxing false def} def
+/FillTextBox { gsave PopTextBox 1 1 1 setrgbcolor fill grestore /Boxing false def} def
+0 0 0 0 InitTextBox
+/TBxmargin 20 def
+/TBymargin 20 def
+/Boxing false def
+/textshow { ExtendTextBox Gshow } def
+%
+% redundant definitions for compatibility with prologue.ps older than 5.0.2
+/LTB {BL [] LCb DL} def
+/LTb {PL [] LCb DL} def
 end
 %%EndProlog
 %%Page: 1 1
@@ -475,433 +512,439 @@ doclip
 0.050 0.050 scale
 0 setgray
 newpath
-(Verdana) findfont 110 scalefont setfont
+(Verdana) findfont 120 scalefont setfont
 BackgroundColor 0 lt 3 1 roll 0 lt exch 0 lt or or not {BackgroundColor C 1.000 0 0 7200.00 5040.00 BoxColFill} if
 1.000 UL
-LT0
-0.50 0.50 0.50 C 1.000 UL
+LTb
+0.00 0.00 0.00 C 1.000 UL
 LTa
-0.50 0.50 0.50 C 671 352 M
-6330 0 V
+0.00 0.00 0.00 C 732 384 M
+6251 0 V
 stroke
-LT0
-0.50 0.50 0.50 C 671 352 M
+LTb
+0.00 0.00 0.00 C 732 384 M
 63 0 V
 stroke
-605 352 M
-[ [(Verdana) 110.0 0.0 true true 0 ( 0)]
-] -36.7 MRshow
+660 384 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 0)]
+] -40.0 MRshow
 1.000 UL
-LT0
-0.50 0.50 0.50 C 1.000 UL
+LTb
+0.00 0.00 0.00 C 1.000 UL
 LTa
-0.50 0.50 0.50 C 671 1111 M
-6330 0 V
+0.00 0.00 0.00 C 732 1136 M
+6251 0 V
 stroke
-LT0
-0.50 0.50 0.50 C 671 1111 M
+LTb
+0.00 0.00 0.00 C 732 1136 M
 63 0 V
 stroke
-605 1111 M
-[ [(Verdana) 110.0 0.0 true true 0 ( 10000)]
-] -36.7 MRshow
+660 1136 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 10000)]
+] -40.0 MRshow
 1.000 UL
-LT0
-0.50 0.50 0.50 C 1.000 UL
+LTb
+0.00 0.00 0.00 C 1.000 UL
 LTa
-0.50 0.50 0.50 C 671 1870 M
-6330 0 V
+0.00 0.00 0.00 C 732 1888 M
+6251 0 V
 stroke
-LT0
-0.50 0.50 0.50 C 671 1870 M
+LTb
+0.00 0.00 0.00 C 732 1888 M
 63 0 V
 stroke
-605 1870 M
-[ [(Verdana) 110.0 0.0 true true 0 ( 20000)]
-] -36.7 MRshow
+660 1888 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 20000)]
+] -40.0 MRshow
 1.000 UL
-LT0
-0.50 0.50 0.50 C 1.000 UL
+LTb
+0.00 0.00 0.00 C 1.000 UL
 LTa
-0.50 0.50 0.50 C 671 2630 M
-6330 0 V
+0.00 0.00 0.00 C 732 2640 M
+6251 0 V
 stroke
-LT0
-0.50 0.50 0.50 C 671 2630 M
+LTb
+0.00 0.00 0.00 C 732 2640 M
 63 0 V
 stroke
-605 2630 M
-[ [(Verdana) 110.0 0.0 true true 0 ( 30000)]
-] -36.7 MRshow
+660 2640 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 30000)]
+] -40.0 MRshow
 1.000 UL
-LT0
-0.50 0.50 0.50 C 1.000 UL
+LTb
+0.00 0.00 0.00 C 1.000 UL
 LTa
-0.50 0.50 0.50 C 671 3389 M
-6330 0 V
+0.00 0.00 0.00 C 732 3391 M
+6251 0 V
 stroke
-LT0
-0.50 0.50 0.50 C 671 3389 M
+LTb
+0.00 0.00 0.00 C 732 3391 M
 63 0 V
 stroke
-605 3389 M
-[ [(Verdana) 110.0 0.0 true true 0 ( 40000)]
-] -36.7 MRshow
+660 3391 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 40000)]
+] -40.0 MRshow
 1.000 UL
-LT0
-0.50 0.50 0.50 C 1.000 UL
+LTb
+0.00 0.00 0.00 C 1.000 UL
 LTa
-0.50 0.50 0.50 C 671 4148 M
-6330 0 V
+0.00 0.00 0.00 C 732 4143 M
+6251 0 V
 stroke
-LT0
-0.50 0.50 0.50 C 671 4148 M
+LTb
+0.00 0.00 0.00 C 732 4143 M
 63 0 V
 stroke
-605 4148 M
-[ [(Verdana) 110.0 0.0 true true 0 ( 50000)]
-] -36.7 MRshow
+660 4143 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 50000)]
+] -40.0 MRshow
 1.000 UL
-LT0
-0.50 0.50 0.50 C 1.000 UL
+LTb
+0.00 0.00 0.00 C 1.000 UL
 LTa
-0.50 0.50 0.50 C 671 4907 M
-6330 0 V
+0.00 0.00 0.00 C 732 4895 M
+6251 0 V
 stroke
-LT0
-0.50 0.50 0.50 C 671 4907 M
+LTb
+0.00 0.00 0.00 C 732 4895 M
 63 0 V
 stroke
-605 4907 M
-[ [(Verdana) 110.0 0.0 true true 0 ( 60000)]
-] -36.7 MRshow
+660 4895 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 60000)]
+] -40.0 MRshow
 1.000 UL
-LT0
-0.50 0.50 0.50 C 1.000 UL
+LTb
+0.00 0.00 0.00 C 1.000 UL
 LTa
-0.50 0.50 0.50 C 671 352 M
-0 4555 V
+0.00 0.00 0.00 C 732 384 M
+0 4511 V
 stroke
-LT0
-0.50 0.50 0.50 C 671 352 M
+LTb
+0.00 0.00 0.00 C 732 384 M
 0 63 V
 stroke
-671 242 M
-[ [(Verdana) 110.0 0.0 true true 0 ( 1994)]
-] -36.7 MCshow
+732 264 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 1994)]
+] -40.0 MCshow
 1.000 UL
-LT0
-0.50 0.50 0.50 C 1.000 UL
+LTb
+0.00 0.00 0.00 C 1.000 UL
 LTa
-0.50 0.50 0.50 C 1304 352 M
-0 4272 V
-0 220 R
+0.00 0.00 0.00 C 1357 384 M
+0 4208 V
+0 240 R
 0 63 V
 stroke
-LT0
-0.50 0.50 0.50 C 1304 352 M
+LTb
+0.00 0.00 0.00 C 1357 384 M
 0 63 V
 stroke
-1304 242 M
-[ [(Verdana) 110.0 0.0 true true 0 ( 1996)]
-] -36.7 MCshow
+1357 264 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 1996)]
+] -40.0 MCshow
 1.000 UL
-LT0
-0.50 0.50 0.50 C 1.000 UL
+LTb
+0.00 0.00 0.00 C 1.000 UL
 LTa
-0.50 0.50 0.50 C 1937 352 M
-0 4272 V
-0 220 R
+0.00 0.00 0.00 C 1982 384 M
+0 4208 V
+0 240 R
 0 63 V
 stroke
-LT0
-0.50 0.50 0.50 C 1937 352 M
+LTb
+0.00 0.00 0.00 C 1982 384 M
 0 63 V
 stroke
-1937 242 M
-[ [(Verdana) 110.0 0.0 true true 0 ( 1998)]
-] -36.7 MCshow
+1982 264 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 1998)]
+] -40.0 MCshow
 1.000 UL
-LT0
-0.50 0.50 0.50 C 1.000 UL
+LTb
+0.00 0.00 0.00 C 1.000 UL
 LTa
-0.50 0.50 0.50 C 2570 352 M
-0 4272 V
-0 220 R
+0.00 0.00 0.00 C 2607 384 M
+0 4208 V
+0 240 R
 0 63 V
 stroke
-LT0
-0.50 0.50 0.50 C 2570 352 M
+LTb
+0.00 0.00 0.00 C 2607 384 M
 0 63 V
 stroke
-2570 242 M
-[ [(Verdana) 110.0 0.0 true true 0 ( 2000)]
-] -36.7 MCshow
+2607 264 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 2000)]
+] -40.0 MCshow
 1.000 UL
-LT0
-0.50 0.50 0.50 C 1.000 UL
+LTb
+0.00 0.00 0.00 C 1.000 UL
 LTa
-0.50 0.50 0.50 C 3203 352 M
-0 4555 V
-stroke
-LT0
-0.50 0.50 0.50 C 3203 352 M
+0.00 0.00 0.00 C 3232 384 M
+0 4208 V
+0 240 R
 0 63 V
 stroke
-3203 242 M
-[ [(Verdana) 110.0 0.0 true true 0 ( 2002)]
-] -36.7 MCshow
+LTb
+0.00 0.00 0.00 C 3232 384 M
+0 63 V
+stroke
+3232 264 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 2002)]
+] -40.0 MCshow
 1.000 UL
-LT0
-0.50 0.50 0.50 C 1.000 UL
+LTb
+0.00 0.00 0.00 C 1.000 UL
 LTa
-0.50 0.50 0.50 C 3836 352 M
-0 4555 V
+0.00 0.00 0.00 C 3858 384 M
+0 4511 V
 stroke
-LT0
-0.50 0.50 0.50 C 3836 352 M
+LTb
+0.00 0.00 0.00 C 3858 384 M
 0 63 V
 stroke
-3836 242 M
-[ [(Verdana) 110.0 0.0 true true 0 ( 2004)]
-] -36.7 MCshow
+3858 264 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 2004)]
+] -40.0 MCshow
 1.000 UL
-LT0
-0.50 0.50 0.50 C 1.000 UL
+LTb
+0.00 0.00 0.00 C 1.000 UL
 LTa
-0.50 0.50 0.50 C 4469 352 M
-0 4555 V
+0.00 0.00 0.00 C 4483 384 M
+0 4511 V
 stroke
-LT0
-0.50 0.50 0.50 C 4469 352 M
+LTb
+0.00 0.00 0.00 C 4483 384 M
 0 63 V
 stroke
-4469 242 M
-[ [(Verdana) 110.0 0.0 true true 0 ( 2006)]
-] -36.7 MCshow
+4483 264 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 2006)]
+] -40.0 MCshow
 1.000 UL
-LT0
-0.50 0.50 0.50 C 1.000 UL
+LTb
+0.00 0.00 0.00 C 1.000 UL
 LTa
-0.50 0.50 0.50 C 5102 352 M
-0 4555 V
+0.00 0.00 0.00 C 5108 384 M
+0 4511 V
 stroke
-LT0
-0.50 0.50 0.50 C 5102 352 M
+LTb
+0.00 0.00 0.00 C 5108 384 M
 0 63 V
 stroke
-5102 242 M
-[ [(Verdana) 110.0 0.0 true true 0 ( 2008)]
-] -36.7 MCshow
+5108 264 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 2008)]
+] -40.0 MCshow
 1.000 UL
-LT0
-0.50 0.50 0.50 C 1.000 UL
+LTb
+0.00 0.00 0.00 C 1.000 UL
 LTa
-0.50 0.50 0.50 C 5735 352 M
-0 4555 V
+0.00 0.00 0.00 C 5733 384 M
+0 4511 V
 stroke
-LT0
-0.50 0.50 0.50 C 5735 352 M
+LTb
+0.00 0.00 0.00 C 5733 384 M
 0 63 V
 stroke
-5735 242 M
-[ [(Verdana) 110.0 0.0 true true 0 ( 2010)]
-] -36.7 MCshow
+5733 264 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 2010)]
+] -40.0 MCshow
 1.000 UL
-LT0
-0.50 0.50 0.50 C 1.000 UL
+LTb
+0.00 0.00 0.00 C 1.000 UL
 LTa
-0.50 0.50 0.50 C 6368 352 M
-0 4555 V
+0.00 0.00 0.00 C 6358 384 M
+0 4511 V
 stroke
-LT0
-0.50 0.50 0.50 C 6368 352 M
+LTb
+0.00 0.00 0.00 C 6358 384 M
 0 63 V
 stroke
-6368 242 M
-[ [(Verdana) 110.0 0.0 true true 0 ( 2012)]
-] -36.7 MCshow
+6358 264 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 2012)]
+] -40.0 MCshow
 1.000 UL
-LT0
-0.50 0.50 0.50 C 1.000 UL
+LTb
+0.00 0.00 0.00 C 1.000 UL
 LTa
-0.50 0.50 0.50 C 7001 352 M
-0 4555 V
+0.00 0.00 0.00 C 6983 384 M
+0 4511 V
 stroke
-LT0
-0.50 0.50 0.50 C 7001 352 M
+LTb
+0.00 0.00 0.00 C 6983 384 M
 0 63 V
 stroke
-7001 242 M
-[ [(Verdana) 110.0 0.0 true true 0 ( 2014)]
-] -36.7 MCshow
+6983 264 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 2014)]
+] -40.0 MCshow
 1.000 UL
-LT0
-0.50 0.50 0.50 C 1.000 UL
-LT0
-0.50 0.50 0.50 C 671 4907 M
-671 352 L
-6330 0 V
-0 4555 R
--6330 0 R
+LTb
+0.00 0.00 0.00 C 1.000 UL
+LTB
+0.00 0.00 0.00 C 732 4895 M
+732 384 L
+6251 0 V
+0 4511 R
+-6251 0 R
+1.000 UP
 stroke
-LCb setrgbcolor
-88 2629 M
+LTb
+0.00 0.00 0.00 C LCb setrgbcolor
+96 2639 M
 currentpoint gsave translate -270 rotate 0 0 moveto
-[ [(Verdana) 110.0 0.0 true true 0 (CPU MIPS / HDD read 10)]
-[(Verdana) 88.0 55.0 true true 0 (6)]
-[(Verdana) 110.0 0.0 true true 0 ( Integers)]
-] -47.7 MCshow
+[ [(Verdana) 120.0 0.0 true true 0 (CPU MIPS / HDD read 10)]
+[(Verdana) 96.0 60.0 true true 0 (6)]
+[(Verdana) 120.0 0.0 true true 0 ( Integers)]
+] -52.0 MCshow
 grestore
 LTb
 LCb setrgbcolor
-3836 77 M
-[ [(Verdana) 110.0 0.0 true true 0 (Year)]
-] -36.7 MCshow
+3857 84 M
+[ [(Verdana) 120.0 0.0 true true 0 (Year)]
+] -40.0 MCshow
 LTb
-1.000 UP
-1.000 UL
-LT0
-0.50 0.50 0.50 C % Begin plot #1
+% Begin plot #1
 1.000 UP
 2.000 UL
-LT0
+LTb
 0.00 0.00 0.00 C LCb setrgbcolor
-2651 4789 M
-[ [(Verdana) 110.0 0.0 true true 0 (CPU / HDD speed ratio)]
-] -36.7 MRshow
-LT0
-0.00 0.00 0.00 C 2717 4789 M
-327 0 V
-988 367 M
-316 11 V
-317 15 V
-633 26 V
-3520 588 L
-949 719 V
-633 378 V
-633 1057 V
-317 463 V
-949 1007 V
-988 367 Box
-1304 378 Box
-1621 393 Box
-2254 419 Box
-3520 588 Box
-4469 1307 Box
-5102 1685 Box
-5735 2742 Box
-6052 3205 Box
-7001 4212 Box
-2880 4789 Box
+2892 4772 M
+[ [(Verdana) 120.0 0.0 true true 0 (CPU / HDD speed ratio)]
+] -40.0 MRshow
+1.000 UP
+2.000 UL
+LTb
+0.00 0.00 0.00 C 2964 4772 M
+351 0 V
+1045 399 M
+312 11 V
+313 15 V
+625 25 V
+3545 618 L
+938 712 V
+625 374 V
+625 1047 V
+312 459 V
+938 996 V
+1045 399 Box
+1357 410 Box
+1670 425 Box
+2295 450 Box
+3545 618 Box
+4483 1330 Box
+5108 1704 Box
+5733 2751 Box
+6045 3210 Box
+6983 4206 Box
+3139 4772 Box
 % End plot #1
 % Begin plot #2
 2.000 UL
-LT0
+LTb
 0.13 0.37 0.66 C LCb setrgbcolor
-2651 4679 M
-[ [(Verdana) 110.0 0.0 true true 0 (4317.910 e)]
-[(Verdana) 88.0 55.0 true true 0 (\(0.138 x\))]
-[(Verdana) 110.0 0.0 true true 0 ( + -5820.016)]
-] -47.7 MRshow
-LT0
-0.13 0.37 0.66 C 2717 4679 M
-327 0 V
-1673 352 M
-43 8 V
-61 12 V
-61 13 V
-61 12 V
+2892 4652 M
+[ [(Verdana) 120.0 0.0 true true 0 (4317.910 e)]
+[(Verdana) 96.0 60.0 true true 0 (\(0.138 x\))]
+[(Verdana) 120.0 0.0 true true 0 ( + -5820.016)]
+] -52.0 MRshow
+2.000 UL
+LTb
+0.13 0.37 0.66 C 2964 4652 M
+351 0 V
+1722 384 M
+42 8 V
+60 12 V
+60 12 V
+60 13 V
+60 13 V
+60 13 V
 60 14 V
-61 13 V
-61 14 V
-61 14 V
 60 14 V
-61 15 V
-61 16 V
-61 15 V
+60 14 V
+60 15 V
+60 15 V
 60 16 V
-61 17 V
-61 17 V
-61 17 V
+60 16 V
+60 16 V
+60 17 V
+60 17 V
 60 18 V
-61 19 V
-61 19 V
-61 19 V
+60 18 V
+60 19 V
+60 19 V
 60 20 V
-61 20 V
-61 21 V
+60 20 V
+60 21 V
+60 21 V
 60 22 V
-61 22 V
-61 23 V
-61 23 V
+60 23 V
+60 23 V
 60 24 V
-61 25 V
-61 25 V
-61 26 V
+60 24 V
+60 25 V
+60 26 V
+60 26 V
 60 27 V
-61 27 V
-61 28 V
-61 29 V
+60 28 V
+60 29 V
+60 29 V
 60 30 V
-61 30 V
-61 31 V
-61 32 V
-60 33 V
-61 34 V
-61 35 V
-61 36 V
+60 31 V
+60 32 V
+60 32 V
+60 34 V
+60 34 V
 60 36 V
-61 38 V
-61 38 V
-61 40 V
+60 36 V
+60 37 V
+60 38 V
+60 40 V
+60 40 V
 60 41 V
-61 41 V
-61 43 V
-61 44 V
+60 43 V
+60 43 V
+60 45 V
 60 46 V
-61 46 V
-61 48 V
-61 49 V
+60 47 V
+60 49 V
 60 50 V
-61 51 V
-61 53 V
+59 51 V
+60 52 V
+60 54 V
 60 55 V
-61 56 V
-61 57 V
-61 59 V
-60 61 V
-61 62 V
-61 63 V
-61 66 V
-60 67 V
-61 69 V
-61 71 V
-61 73 V
-60 75 V
-61 76 V
-61 79 V
-61 81 V
-60 83 V
-61 85 V
-61 88 V
-61 90 V
-60 92 V
-61 95 V
-61 97 V
-61 100 V
-60 103 V
-61 105 V
-61 108 V
-61 111 V
-60 115 V
-61 117 V
+60 57 V
+60 58 V
+60 60 V
+60 62 V
+60 63 V
+60 65 V
+60 66 V
+60 69 V
+60 70 V
+60 72 V
+60 74 V
+60 76 V
+60 78 V
+60 80 V
+60 82 V
+60 85 V
+60 87 V
+60 89 V
+60 91 V
+60 94 V
+60 96 V
+60 99 V
+60 102 V
+60 104 V
+60 108 V
+60 110 V
+60 113 V
+60 116 V
 % End plot #2
-1.000 UP
 stroke
+LTb
+LCb setrgbcolor
+1.000 UP
 1.000 UL
-LT0
-0.50 0.50 0.50 C stroke
+LTb
+0.00 0.00 0.00 C stroke
 grestore
 end
 showpage

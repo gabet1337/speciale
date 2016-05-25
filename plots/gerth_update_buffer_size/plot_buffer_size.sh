@@ -30,3 +30,4 @@ plot f(x,1024*1024/8) with linespoint title sprintf("1MB") ls 2,\
      f(x,1024*1024) with linespoint title sprintf("8MB") ls 5,\
      f(x,1024*1024*2) with linespoint title sprintf("16MB") ls 6
 
+

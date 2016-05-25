@@ -1,5 +1,5 @@
 #!/usr/bin/env gnuplot
-set terminal postscript eps enhanced color font 'Verdana,11'
+set terminal postscript eps enhanced color font 'Verdana,12'
 set output 'massive_data.eps'
 set xtics nomirror rotate by -45
 set xrange [ -40000 : -200 ]
