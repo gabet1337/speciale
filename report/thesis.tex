@@ -1313,8 +1313,16 @@ Updates and reporting are done as described in Section~\ref{sec:arge_updates} an
 \section{Other structures}
 We also implemented wrappers around MySQL, Boost R-Tree, and libspatial external R*-tree such that we could use these structures as a priority search tree. These structures are described further in Chapter~\ref{chp:other_structures}.
 
-\section{Test framework}
-\todo{describe the test framework}
+\section{Experiment framework}
+We developed an extensive framework for running experiments in order to automate the process as much as possible.
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{../figures/experimental-setup2}
+	\caption{}
+	\label{fig:experimental_setup2}
+\end{figure}
+
+Figure~\ref{fig:experimental_setup2} depicts the flow of an experiment from thought to result. In order to achieve this flow we wrote a framework that would do all the hard work for us such that all we had to do for each experiment was to describe the actual experiment. As an example, to test the time it takes to insert in all the structures all we would have to do was to tell the framework to insert into the priority search tree and measure for each 10 megabytes. The framework would then automatically run the experiment on all the structures one at a time, measure time, I/O's, pagefaults, and other data structure specific statistics (overflows, splits, etc.), plot all the gathered data as a function of the input size, and finally play a small tune to signal that the experiment had finished. To make sure that no experiment leaves any ungathered memory behind we start each experiment in its own thread such that the memory would be automatically recollected upon termination of the thread and all caches are dropped between each experiment.
 
 \chapter{Experimental setup}
 \label{chp:experimental_setup}
