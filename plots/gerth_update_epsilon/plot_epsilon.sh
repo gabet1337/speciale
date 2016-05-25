@@ -1,10 +1,10 @@
 #!/usr/bin/gnuplot
-set terminal postscript eps enhanced color font 'Verdana,11'
+set terminal postscript eps enhanced color font 'Verdana,12'
 set output 'gerth_epsilon.eps'
-set style line 11 lc rgb '#808080' lt 1
+set style line 11 lc rgb '#000000' lt 1
 set border 3 back ls 11
 set tics nomirror
-set style line 12 lc rgb '#808080' lt 0 lw 1
+set style line 12 lc rgb '#000000' lt 0 lw 1
 set grid back ls 12
 set style line 1 lc rgb '#8b1a0e' pi 5 pt 1 ps 1 lt 1 lw 2 # --- red
 set style line 2 lc rgb '#5e9c36' pi 6 pt 6 ps 1 lt 1 lw 2 # --- green
@@ -26,11 +26,11 @@ B = 4
 epsilon(fanout) = log(fanout)/log(B)
 f(x,eps) = (1/(eps*(B**(1-eps)))) * (log(x)/log(B))
 
-plot f(x,epsilon(2.0)) with linespoint title sprintf("fanout 2") ls 2,\
-     f(x,epsilon(3.0)) with linespoint title sprintf("fanout 3") ls 3,\
-     f(x,epsilon(4.0)) with linespoint title sprintf("fanout 4") ls 4,\
-     f(x,epsilon(8.0)) with linespoint title sprintf("fanout 8") ls 5,\
-     f(x,epsilon(16.0)) with linespoint title sprintf("fanout 16") ls 6,\
-     f(x,epsilon(32.0)) with linespoint title sprintf("fanout 32") ls 7,\
-     f(x,epsilon(128.0)) with linespoint title sprintf("fanout 128") ls 8
+plot f(x,epsilon(2.0)) with linespoint title sprintf("2") ls 2,\
+     f(x,epsilon(3.0)) with linespoint title sprintf("3") ls 3,\
+     f(x,epsilon(4.0)) with linespoint title sprintf("4") ls 4,\
+     f(x,epsilon(8.0)) with linespoint title sprintf("8") ls 5,\
+     f(x,epsilon(16.0)) with linespoint title sprintf("16") ls 6,\
+     f(x,epsilon(32.0)) with linespoint title sprintf("32") ls 7,\
+     f(x,epsilon(128.0)) with linespoint title sprintf("128") ls 8
 
