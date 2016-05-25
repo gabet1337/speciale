@@ -24,7 +24,7 @@ unset ytics
 
   #set arrow from 0, graph -200 to -200, graph 1 nohead
 
-  set arrow from -200,graph(0,0) to -200,graph(1,1) nohead ls 3
+  #set arrow from -200,graph(0,0) to -200,graph(1,1) nohead ls 3
   
   set border 1+4 front
   set origin 0.15,0.0
@@ -37,7 +37,7 @@ unset ytics
   set ylabel ""
   plot 'massive_data' using 2:3:xticlabels(1) with lines ls 5 notitle
 
-  set arrow from 1940,graph(0,0) to 1940,graph(1,1) nohead ls 3
+  #set arrow from 1940,graph(0,0) to 1940,graph(1,1) nohead ls 3
     
   set border 1+4+8 front
   set origin 0.425,0.0
