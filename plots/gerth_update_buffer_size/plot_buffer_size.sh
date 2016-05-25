@@ -24,9 +24,10 @@ unset ytics
 epsilon(fanout, B) = log(fanout)/log(B)
 f(x,B) = (1/(epsilon(2,B)*(B**(1-epsilon(2,B))))) * (log(x)/log(B))
 
-plot f(x,1024*1024/8) with linespoint title sprintf("1Mb") ls 2,\
-     f(x,1024*1024/4) with linespoint title sprintf("2Mb") ls 3,\
-     f(x,1024*1024/2) with linespoint title sprintf("4Mb") ls 4,\
-     f(x,1024*1024) with linespoint title sprintf("8Mb") ls 5,\
-     f(x,1024*1024*2) with linespoint title sprintf("16Mb") ls 6
+plot f(x,1024*1024/8) with linespoint title sprintf("1MB") ls 2,\
+     f(x,1024*1024/4) with linespoint title sprintf("2MB") ls 3,\
+     f(x,1024*1024/2) with linespoint title sprintf("4MB") ls 4,\
+     f(x,1024*1024) with linespoint title sprintf("8MB") ls 5,\
+     f(x,1024*1024*2) with linespoint title sprintf("16MB") ls 6
+
 
