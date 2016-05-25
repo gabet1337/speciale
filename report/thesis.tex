@@ -154,6 +154,10 @@ We have really enjoyed working on this thesis and we sincerely hope you enjoy re
 \tikzstyle{every path}=[draw]
 \matrix [column sep={1em,between origins},row sep=\lineskip]
 {
+\commit{52d4e39}{25.May}{Brodal buffer size experiment documented} & \\
+\commit{1da6e4b}{10.May}{Preface added} & \\
+\commit{47b00ae}{29.Apr}{libspatialindex PST added} & \\
+\commit{ed54a60}{21.Apr}{Now plays The Imperial March} & \\
 \commit{4ee8a7a}{19.Apr}{Base experiment class added} & \\
 \commit{e028c0b}{17.Apr}{Merge: MySQL PST done + Internal PST done} & \\
 & & \ghost{branch6} & \commit{f585f41}{14.Apr 2016}{Internal dynamic PST added} \\
@@ -208,6 +212,10 @@ We have really enjoyed working on this thesis and we sincerely hope you enjoy re
 \connect{1132d2e}{branch6};
 \connect{branch6}{e028c0b};
 \connect{e028c0b}{4ee8a7a};
+\connect{4ee8a7a}{ed54a60};
+\connect{ed54a60}{47b00ae};
+\connect{47b00ae}{1da6e4b};
+\connect{1da6e4b}{52d4e39};
 \end{tikzpicture}
 \caption{Excerpt of git history for the entire project}
 \label{fig:git_history}
@@ -529,6 +537,7 @@ From Lemma~\ref{lma:composite_universe_query} is follows that our approach is co
 
 \begin{savequote}[0.5\textwidth]
 --- If at first you don't succeed, call it version 1.0
+\qauthor{Unknown}
 \end{savequote}
 \chapter{Related work}
 \label{chp:related_work}
