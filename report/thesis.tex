@@ -1386,7 +1386,10 @@ The experiments on Brodals consisted of inserting 5 Gb of data, i.e. $5 \cdot 10
 
 In the experiment conducted on the buffer size we fixed the fanout to 2 and varied the buffer size. Theoretically the running time should decrease with ever increasing buffer sizes as shown in Figure~\ref{fig:gerth_buffer_size_theory}. We are however limited by the main memory size and thus have to be careful not to cause swapping out memory to disk as this greatly decreases performance. 
 
-The result plotted as running time per insert is depicted in Figure~\ref{fig:gerth_buffer_size_experiment}. Clearly the actual running time aligns very well with the theoretical running time. This statement is further backed by Figure ??? where we have divided the actual running and expected times, resulting in almost straight lines for all buffer sizes.
+The result plotted as running time per insert is depicted in Figure~\ref{fig:gerth_buffer_size_experiment}. Clearly the actual running time follows the same tendency as the theoretical number of I/O's per insert. We will focus on the number of I/O's to support this claim. In Figure ???
+
+
+This statement is further backed by Figure~\ref{fig:gerth_buffer_size_experiment_ios_per_insert} where we depict the number of I/O's per insert.
 
 We see the effect of the limited amount of internal memory when we reach 16Mb. We would have expected a significant increase in performance compared to 8Mb but instead we see that 8Mb performs just as well as 16Mb. EXPLAIN WITH SWAPPING AND PAGE FAULTS AND ALL THAT JAZZ.
 
@@ -1404,6 +1407,11 @@ INDSAET PLOT HER!
 \includegraphics[width=\textwidth]{../src/experiments/gerth_buffer_size_experiment_results/2016-05-03.13_51_54/time}
 \caption{Running the data structure of Brodal with a maximum fanout of 2 and varying buffer sizes.}
 \label{fig:gerth_buffer_size_experiment}
+\end{figure}
+
+\includegraphics[width=\textwidth]{../src/experiments/gerth_buffer_size_experiment_results/2016-05-03.13_51_54/io_per_insert}
+\caption{Buffer size experiment. I/O's per insert.}
+\label{fig:gerth_buffer_size_experiment_ios_per_insert}
 \end{figure}
 
 In the next 
