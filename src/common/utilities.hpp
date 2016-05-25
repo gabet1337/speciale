@@ -1,6 +1,7 @@
 #ifndef UTILITIES_HPP
 #define UTILITIES_HPP
 #include "../stream/stream.hpp"
+#include "definitions.hpp"
 #include "point.hpp"
 #include <string>
 #include <fstream>

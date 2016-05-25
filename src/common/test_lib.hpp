@@ -28,6 +28,9 @@ namespace test {
   unsigned long long GERTH_NUM_DELETE_BUFFER_OVERFLOW = 0;
   unsigned long long GERTH_NUM_POINT_BUFFER_UNDERFLOW = 0;
 
+  unsigned long long ARGE_NUM_HEIGHT_INCREASE = 0;
+  unsigned long long ARGE_NUM_NODE_DEGREE_OVERFLOW = 0;
+
   class clock {
     typedef std::chrono::high_resolution_clock hsc;
     typedef hsc::time_point tp;
@@ -185,12 +188,11 @@ namespace test {
       ss << "#!/usr/bin/gnuplot" << std::endl;
       ss << "set terminal postscript eps enhanced color font '" << font <<"," << font_size<<"'"<<std::endl;
       ss << "set output '" << output << "'" << std::endl;
-      ss << "set style line 11 lc rgb '#808080' lt 1" << std::endl;
+      ss << "set style line 11 lc rgb '#000000' lt 1" << std::endl;
       ss << "set border 3 back ls 11" << std::endl;
       ss << "set tics nomirror" << std::endl;
-      ss << "set style line 12 lc rgb '#808080' lt 0 lw 1" << std::endl;
+      ss << "set style line 12 lc rgb '#000000' lt 0 lw 1" << std::endl;
       ss << "set grid back ls 12" << std::endl;
-
       ss << "set style line 1 lc rgb '#8b1a0e' pt 1 ps 1 lt 1 lw 2 # --- red" << std::endl;
       ss << "set style line 2 lc rgb '#5e9c36' pt 6 ps 1 lt 1 lw 2 # --- green" << std::endl;
       ss << "set style line 3 lc rgb '#88419d' pt 2 ps 1 lt 1 lw 2 # --- purple" << std::endl;
@@ -199,6 +201,7 @@ namespace test {
       ss << "set style line 6 lc rgb '#00ced1' pt 5 ps 1 lt 1 lw 2 # --- darkturquoise" << std::endl;
       ss << "set style line 7 lc rgb '#ff00ff' pt 7 ps 1 lt 1 lw 2 # --- magenta" << std::endl;
       ss << "set style line 8 lc rgb '#87ceeb' pt 8 ps 1 lt 1 lw 2 # --- skyblue" << std::endl;
+      ss << "set style line 9 lc rgb '#660066' pt 9 ps 1 lt 1 lw 2 # --- dunno" << std::endl;
       ss << "set key " << get_key_pos() << std::endl;
       ss << "set xlabel '" << xlabel << "'" << std::endl;
       ss << "set ylabel '" << ylabel << "'" << std::endl;
@@ -236,9 +239,9 @@ namespace test {
     bool available[256];
     std::string output = "output.eps";
     std::string font = "Verdana";
-    std::string xlabel = "N (input size in MB)";
+    std::string xlabel = "N (input size in Mb)";
     std::string ylabel = "s (running time in seconds)";
-    size_t font_size = 11;
+    size_t font_size = 12;
     long long xlower = 0,xupper = 0,ylower = 0,yupper = 0;
     KEY_POS key_position = KEY_POS::TOP_LEFT;
     std::vector<std::string> plot_lines;
@@ -377,6 +380,8 @@ namespace test {
     size_t start;
   };
 
+
+
   class gerth_num_delete_buffer_overflow {
   public:
     gerth_num_delete_buffer_overflow() { start = 0; }
@@ -414,6 +419,20 @@ namespace test {
     }
     void restart() {
       start = GERTH_NUM_NODE_DEGREE_OVERFLOW;
+    }
+  private:
+    size_t start;
+  };
+
+  class arge_num_height_increase {
+  public:
+    arge_num_height_increase() { start = 0; }
+    ~arge_num_height_increase() {}
+    uint64_t elapsed() {
+      return ARGE_NUM_HEIGHT_INCREASE - start;
+    }
+    void restart() {
+      start = ARGE_NUM_HEIGHT_INCREASE;
     }
   private:
     size_t start;

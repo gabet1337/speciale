@@ -6,7 +6,7 @@
 
 #define INF INT_MAX
 
-#define STREAM_BUFFER_SIZE 512
+#define STREAM_BUFFER_SIZE 1024*4
 
 #define GERTH_BUFFER_SIZE 1024*1024/2
 #define GERTH_FANOUT 2.0
@@ -66,7 +66,8 @@ namespace common {
     gerth_num_insert_buffer_overflow = 8,
     gerth_num_point_buffer_underflow = 9,
     gerth_num_node_degree_overflow = 10,
-    last = 11
+    arge_num_height_increase = 11,
+    last = 12
     //L1 = 5, L2 = 6, L3 = 7, instr_count = 8,
   };
 
@@ -81,6 +82,7 @@ namespace common {
     case MEASURE::gerth_num_delete_buffer_overflow: return "dbo";
     case MEASURE::gerth_num_point_buffer_underflow: return "pbu";
     case MEASURE::gerth_num_node_degree_overflow: return "ndo";
+    case MEASURE::arge_num_height_increase: return "ars";
     // case MEASURE::L1: return "L1";
     // case MEASURE::L2: return "L2";
     // case MEASURE::L3: return "L3";
@@ -115,7 +117,7 @@ namespace common {
     case MEASURE::gerth_num_delete_buffer_overflow: return "delete buffer overflows";
     case MEASURE::gerth_num_point_buffer_underflow: return "point buffer underflows";
     case MEASURE::gerth_num_node_degree_overflow: return "node degree overflows";
-
+    case MEASURE::arge_num_height_increase: return "height";
     // case MEASURE::L1: return "L1 cache accesses";
     // case MEASURE::L2: return "L2 cache accesses";
     // case MEASURE::L3: return "L3 cache accesses";
