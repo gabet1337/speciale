@@ -13,7 +13,7 @@ unset ytics
 
   set multiplot
 
-  set border 2+1+4 back 
+  set border 1+2 back 
   set size 0.15,1
   set origin 0.0,0.0
   set lmargin 10
@@ -26,7 +26,7 @@ unset ytics
 
   #set arrow from -200,graph(0,0) to -200,graph(1,1) nohead ls 3
   
-  set border 1+4 front
+  set border 1 front
   set origin 0.15,0.0
   set size 0.275,1
   set format y ""
@@ -39,7 +39,7 @@ unset ytics
 
   #set arrow from 1940,graph(0,0) to 1940,graph(1,1) nohead ls 3
     
-  set border 1+4+8 front
+  set border 1 front
   set origin 0.425,0.0
   set size 0.55,1
   set format y ""
