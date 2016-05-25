@@ -1,10 +1,10 @@
 #!/usr/bin/gnuplot
-set terminal postscript eps enhanced color font 'Verdana,11'
+set terminal postscript eps enhanced color font 'Verdana,12'
 set output 'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/io_per_insert.eps'
-set style line 11 lc rgb '#808080' lt 1
+set style line 11 lc rgb '#000000' lt 1
 set border 3 back ls 11
 set tics nomirror
-set style line 12 lc rgb '#808080' lt 0 lw 1
+set style line 12 lc rgb '#000000' lt 0 lw 1
 set grid back ls 12
 set style line 1 lc rgb '#8b1a0e' pi 4 pt 1 ps 1 lt 1 lw 2 # --- red
 set style line 2 lc rgb '#5e9c36' pi 4 pt 6 ps 1 lt 1 lw 2 # --- green
@@ -25,8 +25,8 @@ epsilon(fanout,B) = log(fanout)/log(B)
 f(x,eps,B) = (1/(eps*B**(1-eps))) * (log(x)/log(B))
 
 
-plot 'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_buffer1MB' u 1:($3/($1*1024*1024)) t 'buffer1MB' w lp ls 2, \
-'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_buffer2MB' u 1:($3/($1*1024*1024)) t 'buffer2MB' w lp ls 3 , \
-'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_buffer4MB' u 1:(($3-5731724)/($1*1024*1024)) t 'buffer4MB' w lp ls 4 , \
-'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_buffer8MB' u 1:(($3-2733929)/($1*1024*1024)) t 'buffer8MB' w lp ls 5, \
-'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_buffer16MB' u 1:(($3-7156100)/($1*1024*1024)) t 'buffer16MB' w lp ls 6
+plot 'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_buffer1MB' u 1:($3/($1*1024*1024)) t '1MB' w lp ls 2, \
+'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_buffer2MB' u 1:($3/($1*1024*1024)) t '2MB' w lp ls 3 , \
+'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_buffer4MB' u 1:(($3-5731724)/($1*1024*1024)) t '4MB' w lp ls 4 , \
+'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_buffer8MB' u 1:(($3-2733929)/($1*1024*1024)) t '8MB' w lp ls 5, \
+'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_buffer16MB' u 1:(($3-7156100)/($1*1024*1024)) t '16MB' w lp ls 6
