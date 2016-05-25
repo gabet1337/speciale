@@ -88,7 +88,6 @@
 \begin{document}
 
 \pagestyle{empty} 
-\pagenumbering{roman} 
 \vspace*{\fill}\noindent{\rule{\linewidth}{1mm}\\[4ex]
 {\Huge\sf Three-sided Range Reporting}\\[2ex]
 {\huge\sf Peter Gabrielsen, 20114179}\\[2ex]
@@ -102,6 +101,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \pagestyle{plain}
+\pagenumbering{roman} 
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
 
@@ -111,20 +111,6 @@
 \addcontentsline{toc}{chapter}{Resum\'e}
 
 \todo{in Danish\dots}
-
-\chapter*{Acknowledgements}
-\addcontentsline{toc}{chapter}{Acknowledgements}
-
-Kasper, Gerth, A(man)duh
-whoever might have suffered in the process. maybe move this section to after preface such that we can relate the suffering to the poor lady next door?
-
-\todo{\dots}
-
-\vspace{2ex}
-\begin{flushright}
-  \emph{Peter Gabrielsen and Christoffer Holb\ae k Hansen}\\
-  \emph{Aarhus, \today.}
-\end{flushright}
 
 \tableofcontents
 
@@ -145,6 +131,14 @@ The experiments often ran for more than a week at a time and in order for us to 
 Another perk of The Imperial March was the ability to scare the crap out of Christoffer. Peter would be able to sit comfortably at home and randomly start the cacophony which would make Christoffer jump out of his seat and generally become very anxious about when the next sound would come.
 
 \todo{sum it all up}
+
+\todo{insert acknowledgements here at the end of the preface}
+
+\vspace{2ex}
+\begin{flushright}
+  \emph{Peter Gabrielsen and Christoffer Holb\ae k Hansen}\\
+  \emph{Aarhus, \today.}
+\end{flushright}
 
 \begin{figure}
 \centering
@@ -213,6 +207,7 @@ Another perk of The Imperial March was the ability to scare the crap out of Chri
 \label{fig:git_history}
 \end{figure}
 
+\clearpage
 \pagenumbering{arabic}
 \setcounter{secnumdepth}{2}
 
@@ -1223,7 +1218,16 @@ It is a little harder to argue about the complexity of a three sided query. A B-
 \chapter{Implementation}
 \label{chp:implementation}
 
-In this chapter we present important considerations noted throughout our implementation phase.
+Throughout our implementation of the internal priority search tree, external memory priority search tree, and the external memory buffered priority search tree we noted down important considerations.
+In this chapter we present these considerations together with a short presentation of how we wrote wrappers around MySQL, Boost R-tree, and libspatial R*-tree. We end this chapter with a description of the experimental framework we developed to significantly simplify the experimental phase of the project.
+
+All code can be cloned from the following git repository. Instructions on how to compile and run the code can be found in the accompanying \texttt{readme} file.
+
+\begin{center}
+\url{https://github.com/gabet1337/speciale}
+\url{https://github.com/gabet1337/speciale.git}
+\url{git@github.com:gabet1337/speciale.git}
+\end{center}
 
 \section{General}
 Almost all code was developed using pair programming and we strongly believe that this process, though slow and cumbersome, eliminated many mistakes that would otherwise had slowed us down later on.
@@ -1250,7 +1254,7 @@ There are many different ways to construct a stream. In order to substantiate ou
 \end{itemize}
 
 It is clear that direct invocation of the \texttt{read} and \texttt{write} system calls cannot be better than adding buffering on top, which early experiments without doubt showed. The results were so slow that we had to exclude them.
-\begin{figure}
+\begin{figure}[htp]
 \centering
 \begin{minipage}{.5\textwidth}
   \centering
@@ -1318,7 +1322,7 @@ The elements of the base B-tree is a simple type containing a point, a reference
 Updates and reporting are done as described in Section~\ref{sec:arge_updates} and~\ref{sec:arge_query} with no remarkably deviations.
 
 \section{Other structures}
-We also implemented wrappers around MySQL, Boost R-Tree, and libspatial external R*-tree such that we could use these structures as a priority search tree. These structures are described further in Chapter~\ref{chp:other_structures}.
+We also implemented wrappers around MySQL 5.7.12, boost 1.60.0 R-tree using the quadratic method, and libspatialindex 1.8.5 external R*-tree such that we could use these structures as a priority search tree. These structures are described further in Chapter~\ref{chp:other_structures}. We made sure to implement functionality to disallow duplicates in the structures on top of the basic functionality of the structures.
 
 \section{Experiment framework}
 We developed an extensive framework for running experiments in order to automate the process as much as possible.
