@@ -1359,24 +1359,24 @@ As the machines run on 32 bit operating systems it is very important to define \
 
 \chapter{Our results}
 \label{chp:experimental_results}
-Many experiments were conducted to evaluate the performance of the structures against each other. In this chapter we present and discuss the most interesting results of these experiments. Some of the experiments have been time limited such that we only allow the test to run for fixed amount of time. This was a necessary restriction as the internal memory structures are severely limited when data input is greater than the available main memory. This will be very apparent in many of the presented results.
+Many experiments were conducted to evaluate the performance of the structures against each other. In this chapter we present and discuss the most interesting results. Some of the experiments are limited to only run for a fixed amount of time. This was a necessary restriction as the internal memory structures are severely limited when data input is greater than the available main memory. This will be very apparent in many of the presented results.
 
 \section{Parameter tuning}
-Both the original and buffered external memory priority search tree by Arge et al.~(Chapter~\ref{chp:arge_pst}) and Brodal (Chapter~\ref{chp:epst}) respectively, are parametrised with fanout and buffer size. These parameters are highly machine dependent as larger main memory allows for larger buffer sizes. Therefore we conducted an experiment for finding the optimal parameters on our test farm.
+Both the original and buffered external memory priority search tree by Arge et al.~(Chapter~\ref{chp:arge_pst}) and Brodal (Chapter~\ref{chp:epst}) respectively are parametrised with fanout and buffer size. These parameters are of a very machine dependent nature as larger main memory allows for larger buffer sizes. It is our goal to utilize as much main memory as available in the machine running the data structure. We decided to focus the parameter tuning sorely on the \textsc{insert} operation, since this would allow us to construct data structures with a large amount of data, which again would give rise to interesting experiments for the remaining operations. Put in other words; it is of no interest to achieve a data structure that queries \textit{really} fast if we are unable to construct it with a decent amount of data within a decent amount of time.
 
 In Subsection~\ref{subsec:tuning_gerth} we present our tuning parameters for the structure by Brodal, and in Subsection~\ref{subsec:tuning_arge} we present our findings for the structure by Arge et al.
 
 \subsection{External memory buffered priority search tree}
 \label{subsec:tuning_gerth}
 
-We decided to focus the parameter tuning sorely on the \textsc{insert} operation, since this would allow us to construct data structures with a large amount of data, which again would give rise to interesting experiments for the remaining operations. Put in other words; it is of no interest to achieve a data structure that queries \textit{really} fast if we are unable to construct it with a decent amount of data within a decent amount of time.
+WHAT SHOULD BE PUT IN HERE?
 
 \subsubsection{Test input}
 The experiments on Brodals consisted of inserting 5 Gb of data, i.e. $5 \cdot 1024 \cdot 1024 \cdot 1024 / 8 = 640$ Mb datapoints. The coordinates of the data points was uniformly distributed among the positive integers. 
 
 \subsubsection*{Buffer size}
 
-In the experiment conducted on the buffer size we fixed the fanout to 2 and varied the buffer size. Theoretically the running time should decrease with ever increasing buffer sizes as shown in Figure~\ref{fig:gerth_buffer_size_theory}. We are however limited by the main memory size and thus have to be careful not to cause swapping out memory to disk as this greatly decreases performance. This is the reason behind the parameter being of a very machine dependent nature; we want to utilize as much main memory as available in the machine running the data structure.
+In the experiment conducted on the buffer size we fixed the fanout to 2 and varied the buffer size. Theoretically the running time should decrease with ever increasing buffer sizes as shown in Figure~\ref{fig:gerth_buffer_size_theory}. We are however limited by the main memory size and thus have to be careful not to cause swapping out memory to disk as this greatly decreases performance. 
 
 The result plotted as running time per insert is depicted in Figure~\ref{fig:gerth_buffer_size_experiment}. Clearly the actual running time aligns very well with the theoretical running time. This statement is further backed by Figure ??? where we have divided the actual running and expected times, resulting in almost straight lines for all buffer sizes.
 
