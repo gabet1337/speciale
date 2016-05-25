@@ -15,6 +15,7 @@ set style line 6 lc rgb '#00ced1' pt 5 ps 1 lt 1 lw 2 # --- darkturquoise
 set style line 7 lc rgb '#ff00ff' pt 7 ps 1 lt 1 lw 2 # --- magenta
 set style line 8 lc rgb '#87ceeb' pt 8 ps 1 lt 1 lw 2 # --- skyblue
 set key top left
+set key spacing 3
 set xlabel 'Year'
 set ylabel 'CPU MIPS / HDD read 10^6 Integers'
 #set xrange [0:0]
