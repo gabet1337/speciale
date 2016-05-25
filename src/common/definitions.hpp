@@ -43,11 +43,11 @@ namespace common {
   std::string PST_VARIANT_to_string(PST_VARIANT type) {
     switch (type) {
     case PST_VARIANT::ARGE: return "Arge";
-    case PST_VARIANT::GERTH: return "Gerth";
+    case PST_VARIANT::GERTH: return "Brodal";
     case PST_VARIANT::MYSQL: return "MySQL";
-    case PST_VARIANT::RTREE: return "RTree";
-    case PST_VARIANT::INTERNAL: return "Internal";
-    case PST_VARIANT::SPATIAL: return "libspatial r*tree";
+    case PST_VARIANT::RTREE: return "Boost RTree";
+    case PST_VARIANT::INTERNAL: return "Internal PST";
+    case PST_VARIANT::SPATIAL: return "libspatial R*Tree";
     case PST_VARIANT::MMAP_STREAM: return "mmap stream";
     case PST_VARIANT::READ_WRITE_STREAM: return "read write stream";
     case PST_VARIANT::FILE_STREAM: return "file stream";
