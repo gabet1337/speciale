@@ -336,6 +336,10 @@ The fundamental bounds in the external memory model is that scanning $N$ records
 
 For convenience we will assume $M > B^2$. This assumption is known as the \textit{tall-cache assumption} in the cache-oblivious model and basically states that the number of blocks \nicefrac{M}{B} is larger than the size of each block $B$~\cite{Prokop99cache-obliviousalgorithms}.
 
+\begin{savequote}[0.5\textwidth]
+--- The way I see it, if you want the rainbow, you gotta put up with the rain.
+\qauthor{Parton, Dolly}
+\end{savequote}
 \chapter{Preliminaries}
 \label{chp:prelims}
 This chapter aims to give an overview of some of the techniques used throughout this thesis. Some of the techniques are very rudimentary and may be skipped or revisited when encountered in later chapters.
@@ -522,6 +526,9 @@ $$ p \in Q \Leftrightarrow \hat{p} \in \hat{Q} $$
 
 From Lemma~\ref{lma:composite_universe_query} is follows that our approach is correct.
 
+\begin{savequote}[0.5\textwidth]
+--- If at first you don't succeed, call it version 1.0
+\end{savequote}
 \chapter{Related work}
 \label{chp:related_work}
 McCreight introduced the priority search tree for internal memory in~\cite{DBLP:journals/siamcomp/McCreight85}. The priority search tree is basically a combination of a binary search tree on the $x$-coordinate and a heap on the $y$-coordinate where the root of every subtree stores the maximum $y$-value in that subtree and points are distributed according to the median $x$-value. This allows updates to be done in $\mathcal{O}(\log N)$ time and three-sided range queries to be done in $\mathcal{O}(\log N + K)$ time, where $K$ is the number of points being reported. The internal priority search tree is explained in greater detail in Chapter~\ref{chp:internal_pst}.
@@ -1219,8 +1226,8 @@ It is a little harder to argue about the complexity of a three sided query. A B-
 In this chapter we present important considerations noted throughout our implementation phase.
 
 \section{General}
-Almost all code was developed using pair programming and we strongly believe that this process, though slow and cumbersome, eliminates many mistakes that would otherwise slow us down later on.
-Everything we implemented was unit tested and large parts of the project was implemented using test driven development. We made sure to make sound design choices to enable easy extension and reuse of our code. Stubs and mocks were used to ease the integration of substructures into larger pieces.
+Almost all code was developed using pair programming and we strongly believe that this process, though slow and cumbersome, eliminated many mistakes that would otherwise had slowed us down later on.
+Everything we implemented were unit tested and large parts of the project were implemented using test driven development. We made sure to make sound design choices to enable easy extension and reuse of our code. Stubs and mocks were used to ease the integration of substructures into larger pieces.
 We also wrote checkers to automatically check validity of a tree. In the case of the external memory buffered priority search tree we wrote a checker that would iterate the entire tree and check that no invariants were broken. We added a method to print the trees in a dot format allowing us to visualize every step of the algorithm. This really made debugging easier as it supplied us with a quick overview of the structure.
 
 In order to properly test that there were no errors in our implementation we wrote a random test that would insert thousands of points and test validity of the tree for every insert. We would then repeat this test for several thousand iterations over several days while continuing on other parts of the code.
@@ -1230,7 +1237,7 @@ Using all these methods and tools we feel more safe that our code works as inten
 \todo{predicate testing}
 
 \section{Stream}
-The implementation we present makes use of the concept of \textit{streams}. A stream gives access to reading and writing from/to disk to/from memory. A stream typically manages an internal buffer which is a mirror of a small portion of the disk allowing for fast interaction with that small piece. Although the C++ standard library provides several streams that allow for the internal buffer to be managed we introduce an implementation of our own. We denote this stream \texttt{buffered\_stream}. This design choice was made because of the nature of our experiments in which it is of extreme importance that we are able to argue about the exact number of I/O's being used. By introducing a stream of our own we avoid that any undefined behaviour in the standard library implementations gives rise to a potential I/O overhead and we will be able to exactly count the I/O's. Such an overhead would be reflected directly in the overall running time of our implementation.
+The implementations we present makes use of the concept of \textit{streams}. A stream gives access to reading and writing from disk to memory and vice versa. A stream typically manages an internal buffer which is a mirror of a small portion of the disk allowing for fast interaction with that small piece. Although the C++ standard library provides several streams that allow for the internal buffer to be managed we introduce an implementation of our own. We denote this stream \texttt{buffered\_stream}. This design choice was made because of the nature of our experiments in which it is of extreme importance that we are able to argue about the exact number of I/O's being used. By introducing a stream of our own we avoid that any undefined behaviour in the standard library implementations gives rise to a potential I/O overhead and we will be able to exactly count the I/O's. Such an overhead would be reflected directly in the overall running time of our implementation.
 
 The stream we introduce makes use of the \texttt{read} and \texttt{write} system calls and is equipped with a buffer of size $B$ in internal memory that is maintained on all operations.
 
@@ -1281,7 +1288,7 @@ The results of Figure~\ref{fig:stream_input_speed} and~\ref{fig:stream_output_sp
 \label{sec:impl_main_data_structure}
 This Section will present important implementation specific design choices for the main data structure of the external memory buffered priority search tree by Brodal presented in Section~\ref{sec:main_data_structure}.
 
-In Section~\ref{sec:main_data_structure} we argued how the operations \texttt{Insert}, \texttt{Delete} and \texttt{Report} are supported using subroutines for handling overflowing deletion buffers, overflowing insertion buffers, split leafs with overflowing point buffers, split nodes of degree $\Delta+1$ and fill underflowing point buffers.
+In Section~\ref{sec:main_data_structure} we argued how the operations \texttt{Insert}, \texttt{Delete} and \texttt{Report} are supported using subroutines for handling overflowing deletion buffers, overflowing insertion buffers, split leafs with overflowing point buffers, split nodes of degree $\Delta+1$, and fill underflowing point buffers.
 
 The implementation we present uses the same idea of introducing a delegated subroutine which is responsible for maintaining one event only.
 
@@ -1318,11 +1325,17 @@ We developed an extensive framework for running experiments in order to automate
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{../figures/experimental-setup2}
-	\caption{}
+	\caption{The life of an experiment}
 	\label{fig:experimental_setup2}
 \end{figure}
 
 Figure~\ref{fig:experimental_setup2} depicts the flow of an experiment from thought to result. In order to achieve this flow we wrote a framework that would do all the hard work for us such that all we had to do for each experiment was to describe the actual experiment. As an example, to test the time it takes to insert in all the structures all we would have to do was to tell the framework to insert into the priority search tree and measure for each 10 megabytes. The framework would then automatically run the experiment on all the structures one at a time, measure time, I/O's, pagefaults, and other data structure specific statistics (overflows, splits, etc.), plot all the gathered data as a function of the input size, and finally play a small tune to signal that the experiment had finished. To make sure that no experiment leaves any ungathered memory behind we start each experiment in its own thread such that the memory would be automatically recollected upon termination of the thread and all caches are dropped between each experiment.
+
+We measured the running time using the \texttt{high\_resolution\_clock} in the \texttt{chrono} library. It was measured in both seconds and milliseconds to make sure we had all the required data. In most cases it suffices to measure in seconds.
+
+In order to obtain a deeper understanding of the results we chose to measure the number of page faults generated by running the algorithms. This was done using \texttt{perf} - a performance analysis tool for Linux. We also measured the number of I/O's required by our programs by extending our custom stream with a counter on calls to \texttt{read} and \texttt{write}.
+
+As the machines run on 32 bit operating systems it is very important to define \texttt{\_FILE\_OFFSET\_BITS=64}. This forces the system to use 64 bit pointers when seeking in files allowing us to handle data sets larger than $2^{32}$ on the machines.
 
 \chapter{Experimental setup}
 \label{chp:experimental_setup}
@@ -1356,14 +1369,6 @@ Compiler & gcc 4.8.4 with optimization level 2
 \caption{Specifications of the two Dell machines used for running experiments}
 \label{fig:pc_specs}
 \end{figure}
-
-We measured the running time using the \texttt{high\_resolution\_clock} in the \texttt{chrono} library. It was measured in seconds as more precision was not needed in order to distinguish the algorithms as will become apparent in the presented results.
-
-In order to obtain a deeper understanding of the results we chose to measure the number of page faults generated by running the algorithms. This was done using \texttt{perf} - a performance analysis tool for Linux. We also measured the number of I/O's required by our programs by extending our custom stream with a counter on calls to \texttt{read} and \texttt{write}.
-
-As the machines run on 32 bit operating systems it is very important to define \texttt{\_FILE\_OFFSET\_BITS=64}. This forces the system to use 64 bit pointers when seeking in files allowing us to handle data sets larger than $2^{32}$ on the machines.
-
-\todo{MORAK!}
 
 \chapter{Our results}
 \label{chp:experimental_results}
