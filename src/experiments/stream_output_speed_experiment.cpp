@@ -44,9 +44,9 @@ class stream_output_speed_experiment : public base_experiment {
 int main() {
 
   stream_output_speed_experiment sose("stream_output_speed_experiment");
-  sose.add(2, "buffered", common::PST_VARIANT::BUFFERED_STREAM, 4096, 1);
-  sose.add(1, "mmap", common::PST_VARIANT::MMAP_STREAM, 4096, 1);
-  sose.add(3, "file", common::PST_VARIANT::FILE_STREAM, 4096, 1);
+  sose.add(2, "buffered", common::PST_VARIANT::BUFFERED_STREAM, 4096*2, 1);
+  sose.add(1, "mmap", common::PST_VARIANT::MMAP_STREAM, 4096*2, 1);
+  sose.add(3, "file", common::PST_VARIANT::FILE_STREAM, 4096*2, 1);
   // sose.add(4, "rw", common::PST_VARIANT::READ_WRITE_STREAM, 4096, 1);
   sose.run();
   sose.plot();
