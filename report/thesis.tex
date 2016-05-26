@@ -1174,6 +1174,11 @@ In total we need to handle $\mathcal{O}(N_{del} + \frac{N_{ins}}{\Delta B})$ hol
 
 All this adds up to $\mathcal{O}(\frac{N_{ins}+N_{del}}{B/\Delta} \frac{1}{\epsilon} \log_B N) = \mathcal{O}(\frac{N_{ins}+N_{del}}{\epsilon B^{1-\epsilon}} \log_B N)$  I/O's for handling updates. This matches the amortized bounds of the structure.
 
+
+\begin{savequote}[0.4\textwidth]
+--- The problem with quotes found on the internet is that they are often not true.
+\qauthor{Lincoln, Abraham}
+\end{savequote}
 \chapter{Other structures}
 \label{chp:other_structures}
 \section{R-tree}
@@ -1241,6 +1246,11 @@ Deleting points is similar to inserting and is also done in $\mathcal{O}(\log_B 
 
 It is a little harder to argue about the complexity of a three sided query. A B-tree can answer normal two sided range queries in $\mathcal{O}(\log_B N + K/B)$. We can however not guarantee that all points in the two sided range should be reported and thus we cannot properly attribute any I/O's to the output, i.e. use filtering. We will have to settle with a complexity of $\mathcal{O}(\log_B N + T/B)$ where $T$ is the size of the output within the $x$ range of the query.
 
+
+\begin{savequote}[0.7\textwidth]
+--- There is nothing more deceptive than an obvious fact.
+\qauthor{Holmes, Sherlock}
+\end{savequote}
 \chapter{Implementation}
 \label{chp:implementation}
 
@@ -1361,6 +1371,10 @@ In order to obtain a deeper understanding of the results we chose to measure the
 
 As the machines run on 32 bit operating systems it is very important to define \texttt{\_FILE\_OFFSET\_BITS=64}. This forces the system to use 64 bit pointers when seeking in files allowing us to handle data sets larger than $2^{32}$ on the machines.
 
+\begin{savequote}[0.4\textwidth]
+--- We made the buttons on the screen look so good you'll want to lick them.
+\qauthor{Jobs, Steve}
+\end{savequote}
 \chapter{Experimental setup}
 \label{chp:experimental_setup}
 Running experiments on I/O algorithms is extremely time consuming. In order to compare I/O efficient algorithms against internal memory algorithms we need input sizes that force the internal memory algorithms to store and load data to and from the disk (swapping). The input size to the algorithms can be severely minimized if run on machines with a small amount of internal memory which in turn decrease the running time severely as well.
@@ -1394,6 +1408,10 @@ Compiler & gcc 4.8.4 with optimization level 2
 \label{fig:pc_specs}
 \end{figure}
 
+\begin{savequote}[0.4\textwidth]
+--- The end justifies the means.
+\qauthor{Machiavelli, Niccol\'{o}}
+\end{savequote}
 \chapter{Our results}
 \label{chp:experimental_results}
 Many experiments were conducted to evaluate the performance of the structures against each other. In this chapter we present and discuss the most interesting results. Some of the experiments are limited to only run for a fixed amount of time. This was a necessary restriction as the internal memory structures are severely limited when data input is greater than the available main memory. This will be very apparent in many of the presented results.
@@ -1637,6 +1655,11 @@ The result of the experiment on the \textbf{search} part of the algorithms is de
 \label{fig:result_query_search_complexity}
 \end{figure}
 
+
+\begin{savequote}[0.4\textwidth]
+--- To succeed, jump as quickly at opportunities as you do at conclusions.
+\qauthor{Franklin, Benjamin}
+\end{savequote}
 \chapter{Conclusion}
 \label{chp:conclusion}
 \todo{Conclude this shit!\dots}
