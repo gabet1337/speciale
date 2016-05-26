@@ -1458,20 +1458,24 @@ The result plotted as running time per insert is depicted in Figure~\ref{fig:ger
 \clearpage
 
 \subsubsection*{Fanout}
-In the experiment conducted on the fanout parameter we fixed the buffer size to 1 Mb and varied the fanout parameter. Now, ones intuition might deceive one into believing that an ever increasing fanout would cause an ever decreasing update time per operation. This was certainly what we had expected since we pass down an ever decreasing $B / B^\epsilon$ fraction, and each such fraction charges an I/O to the total running time. In Figure~\ref{fig:gerth_fanout_experiment} we present the theoretical update time per operation. We see a clear tendency of ever increasing fanouts causing an ever decreasing running time for $B^\epsilon \in \{4, 5, 8, 16, 32, 64 \}$. When zooming in on the graphs for $B^\epsilon \in \{2, 3, 4, 5\}$ we see that no theoretical gain is achieved when decreasing the fanout from 3 to 2. In fact it seems that we achieve the exact same update time per operation for fanout 2 and fanout 4. This is, however, not as surprising as one might think. See Equation~\ref{eq:equal_fanouts_2_4} where it is shown that the theoretical bound is the exact same for fanouts 2 and 4.
+In the experiment conducted on the fanout parameter we fixed the buffer size to 1 Mb and varied the fanout parameter. The readers intuition might deceive him into concluding an ever increasing fanout would cause an ever decreasing update time. This was certainly what we had expected since we pass down an ever decreasing $B / B^\epsilon$ fraction, and each such fraction charges an I/O to the total running time. In Figure~\ref{fig:gerth_fanout_experiment} we present the theoretical update time per operation. We see a clear tendency of ever increasing fanouts causing an ever decreasing running time for $B^\epsilon \in \{4, 5, 8, 16, 32, 64 \}$. When zooming in on the graphs for $B^\epsilon \in \{2, 3, 4, 5\}$ we see that no theoretical gain is achieved when decreasing the fanout from 3 to 2. In fact it seems we achieve the exact same update time per operation for fanout 2 and fanout 4. This is, however, not as surprising as one might think. See Equation~\ref{eq:equal_fanouts_2_4_1} and Equation~\ref{eq:equal_fanouts_2_4_2} where the theoretical bound is shown to be the exact same for these fanouts. \\
 
-\begin{equation} \label{eq:equal_fanouts_2_4}
+Let $B^\epsilon = 2$:
+\begin{equation} \label{eq:equal_fanouts_2_4_1}
 	\begin{split}
-		\frac{1}{\epsilon \cdot B^{1-\epsilon}}\log_B N & = \frac{B^\epsilon}{B}\frac{1}{\epsilon}\log_B N \xRightarrow{B^\epsilon = 2\text{\ \ }} \\
-		\frac{1}{\epsilon \cdot B^{1-\epsilon}}\log_B N & = \frac{2\log_2(B)}{B\log_2(2)}\log_B N \\
-		& = \frac{4\log_2(B)}{2B\log_2(2)}\log_B N \\
-		& = \frac{4\log_2(B)}{B\log_2(2^2)}\log_B N \\
-		& = \frac{4\log_2(B)}{B\log_2(4)}\log_B N \\
-		& \Rightarrow B^\epsilon = 2 = 4
+		\frac{1}{\epsilon \cdot B^{1-\epsilon}}\log_B N = \frac{2\log_2(B)}{B\log_2(2)}\log_B N \\
 	\end{split}
 \end{equation}
 
-What Equation~\ref{eq:equal_fanouts_2_4} states is essential that we expect no performance gain when recursively sending half as many points from root to leaf in a tree of double the height. \todo{NOT SURE!}.
+Let $B^\epsilon = 4$:
+\begin{equation} \label{eq:equal_fanouts_2_4_2}
+	\begin{split}
+		\frac{1}{\epsilon \cdot B^{1-\epsilon}}\log_B N & = \frac{4\log_2(B)}{B\log_2(4)}\log_B N \\
+		& = \frac{2\log_2(B)}{B\log_2(2)}\log_B N
+	\end{split}
+\end{equation}
+
+What Equation~\ref{eq:equal_fanouts_2_4_1} and Equation~\ref{eq:equal_fanouts_2_4_2} essential states is that we expect no performance gain when recursively sending half as many points from root to leaf in a tree of double the height. \todo{NOT SURE!}.
 
 The results showing the update time per insert on varying fanout is depicted in Figure~\ref{fig:gerth_fanout_experiment}. Clearly the actual running time aligns with what the theoretical number of I/O's per update from Figure~\ref{fig:gerth_fanout_experiment} suggests. Being truly I/O bound we expect the theoretical number of I/O's and the actual running time to align with well with the actual number of I/Os per update. We are pleased to see this is in fact the case in Figure~\ref{fig:gerth_fanout_experiment_ios}.
 
@@ -1506,16 +1510,39 @@ If we zoom in on fanouts 2, 3 and 4 (????) we see minor inconsistencies from wha
 \end{figure}
 
 \begin{figure}[h]
+\centering
 \includegraphics[width=\textwidth]{../src/experiments/gerth_fanout_experiment_results/2016-05-06.11_52_24/ios}
 \caption{The number of I/O's per insert as a function of input size when running the structure of Brodal with a fixed buffer size and varying fanouts.}
 \label{fig:gerth_fanout_experiment_ios}
+\begin{minipage}[t]{0.48\columnwidth}
+  \centering
+  \includegraphics[width=\linewidth]{../src/experiments/gerth_fanout_experiment_results/2016-05-06.11_52_24/ios_divided_asymptotic}
+  \caption{Missing}
+  \label{fig:gerth_fanout_experiment_ios_divided_asymptotic}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\columnwidth}
+  \centering
+  \includegraphics[width=\linewidth]{../src/experiments/gerth_fanout_experiment_results/2016-05-06.11_52_24/time_divided_asymptotic}
+  \caption{Missing}
+  \label{fig:gerth_fanout_experiment_time_divided_asymptotic}
+\end{minipage}
 \end{figure}
+
+\begin{figure}[]
+\includegraphics[width=\textwidth]{../src/experiments/gerth_fanout_experiment_results/2016-05-06.11_52_24/pbu}
+\caption{Missing}
+\label{fig:gerth_fanout_experiment_pbu}
+\end{figure}
+
 
 \todo{Add plots of gerth statistics. Maybe just the plot of node degree overflow}
 
+\clearpage
+
 \subsubsection*{Summary}
 
-We conclude from our experiments with different fanouts and buffer sizes that in order to get as fast an update time as possible we need a fanout of between 2-6 and as large a buffer size as internal memory allows.
+We conclude from our experiments with differe nt fanouts and buffer sizes that in order to get as fast an update time as possible we need a fanout of between 2-6 and as large a buffer size as internal memory allows.
 
 It is also worth noting that since the experimental results are very much in line with the theoretical results it can be concluded that the data structure is I/O bound.
 
