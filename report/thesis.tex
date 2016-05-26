@@ -1277,7 +1277,7 @@ There are many different ways to construct a stream. In order to substantiate ou
 \end{itemize}
 
 It is clear that direct invocation of the \texttt{read} and \texttt{write} system calls cannot be better than adding buffering on top, which early experiments without doubt showed. The results were so slow that we had to exclude them.
-\begin{figure}[htp]
+\begin{figure}[]
 \centering
 \begin{minipage}{.5\textwidth}
   \centering
@@ -1293,15 +1293,8 @@ It is clear that direct invocation of the \texttt{read} and \texttt{write} syste
 \end{minipage}
 \end{figure}
 
-The results of Figure~\ref{fig:stream_input_speed} and~\ref{fig:stream_output_speed} shows that the \texttt{buffered\_stream} performs similarly to using \texttt{mmap} when reading 5Gb of data.
-
-\todo{talk about results on SSD disks and newer computers}
-
-\todo{comments on the results}
-
-\todo{this is not the case when we have queries in the child structure which relies on seek.}
-
-\todo{Redo experiments and comment on those.}
+The results of Figure~\ref{fig:stream_input_speed} and~\ref{fig:stream_output_speed} shows that the \texttt{buffered\_stream} performs similarly to using \texttt{mmap} when reading 5Gb of data while using \texttt{fread} and \texttt{fwrite} is significantly slower.
+Figure~\ref{fig:stream_output_speed} surprisingly shows that it is faster to use the virtual memory to write data. Using virtual memory however also means that we lose some control of when and how data is written to disk, and we lose the control to accurately measure disk I/O's as we have no control of how the OS schedules I/O's. We would also have a harder time measuring the number of page faults caused by our structures' internal work as every I/O will cause a page fault which will interfere with our measurements. With this considerations in mind we conclude that it makes most sense to use the \texttt{buffered\_stream}.
 
 %\begin{lemma}
 %\label{lma:no_splits}
