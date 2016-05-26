@@ -1,6 +1,6 @@
 #!/usr/bin/gnuplot
 set terminal postscript eps enhanced color font 'Verdana,12'
-set output 'gerth_epsilon.eps'
+set output 'gerth_epsilon_zoom.eps'
 set style line 11 lc rgb '#000000' lt 1
 set border 3 back ls 11
 set tics nomirror
@@ -20,8 +20,8 @@ set xlabel 'N'
 set ylabel 'Time / N'
 set xrange [1:10]
 set yrange [0:*]
-unset ytics
-unset xtics
+#unset ytics
+#unset xtics
 B = 1024*1024
 #epsilon = 0.5
 epsilon(fanout) = log(fanout)/log(B)
@@ -32,8 +32,8 @@ plot f(x,epsilon(2.0)) with linespoint title sprintf("2") ls 1,\
      f(x,epsilon(4.0)) with linespoint title sprintf("4") ls 3,\
      f(x,epsilon(5.0)) with linespoint title sprintf("5") ls 4,\
      f(x,epsilon(6.0)) with linespoint title sprintf("6") ls 5,\
-     f(x,epsilon(8.0)) with linespoint title sprintf("8") ls 6 ,\
-     f(x,epsilon(16.0)) with linespoint title sprintf("16") ls 7,\
-     f(x,epsilon(32.0)) with linespoint title sprintf("32") ls 8,\
-     f(x,epsilon(64.0)) with linespoint title sprintf("64") ls 9
+     f(x,epsilon(8.0)) with linespoint title sprintf("8") ls 6 #,\
+     #f(x,epsilon(16.0)) with linespoint title sprintf("16") ls 7,\
+     #f(x,epsilon(32.0)) with linespoint title sprintf("32") ls 8,\
+     #f(x,epsilon(64.0)) with linespoint title sprintf("64") ls 9
 
