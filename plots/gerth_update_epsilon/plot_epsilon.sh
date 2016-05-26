@@ -27,13 +27,13 @@ B = 1024*1024
 epsilon(fanout) = log(fanout)/log(B)
 f(x,eps) = (1/(eps*(B**(1-eps)))) * (log(x)/log(B))
 
-plot f(x,epsilon(2.0)) with linespoint title sprintf("2") ls 1,\
-     f(x,epsilon(3.0)) with linespoint title sprintf("3") ls 2,\
-     f(x,epsilon(4.0)) with linespoint title sprintf("4") ls 3,\
-     f(x,epsilon(5.0)) with linespoint title sprintf("5") ls 4,\
-     f(x,epsilon(6.0)) with linespoint title sprintf("6") ls 5,\
-     f(x,epsilon(8.0)) with linespoint title sprintf("8") ls 6 ,\
-     f(x,epsilon(16.0)) with linespoint title sprintf("16") ls 7,\
-     f(x,epsilon(32.0)) with linespoint title sprintf("32") ls 8,\
-     f(x,epsilon(64.0)) with linespoint title sprintf("64") ls 9
+plot f(x,epsilon(2.0)) with linespoint title sprintf("fanout 2") ls 1,\
+     f(x,epsilon(3.0)) with linespoint title sprintf("fanout 3") ls 2,\
+     f(x,epsilon(4.0)) with linespoint title sprintf("fanout 4") ls 3,\
+     f(x,epsilon(5.0)) with linespoint title sprintf("fanout 5") ls 4,\
+     f(x,epsilon(6.0)) with linespoint title sprintf("fanout 6") ls 5,\
+     f(x,epsilon(8.0)) with linespoint title sprintf("fanout 8") ls 6 ,\
+     f(x,epsilon(16.0)) with linespoint title sprintf("fanout 16") ls 7,\
+     f(x,epsilon(32.0)) with linespoint title sprintf("fanout 32") ls 8,\
+     f(x,epsilon(64.0)) with linespoint title sprintf("fanout 64") ls 9
 
