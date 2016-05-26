@@ -42,7 +42,7 @@ namespace experiment {
   }
 
   void buffered_stream_stub::insert(const point &p) {
-    output_stream->write(1337);
+    output_stream->write(p.x);
   }
 
   void buffered_stream_stub::remove(const point &p) {
