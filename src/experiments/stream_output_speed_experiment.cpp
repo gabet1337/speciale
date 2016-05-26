@@ -16,8 +16,9 @@ class stream_output_speed_experiment : public base_experiment {
     ull print_interval = 1024 * 1024 * 50;
     ull stop_at = 1024ULL * 1024ULL * 1024ULL * 5ULL; //5GB!
     restart_timers();
-    point p(0,0);
+    // point p(0,0);
     while (true) {
+      point p(data_written, data_written);
       pst->insert(p);
       data_written += data_size;
 
