@@ -18,8 +18,8 @@ set style line 9 lc rgb '#808080' pi 5 pt 2 ps 1 lt 1 lw 2 # --- darkgray
 set key top left
 set xlabel 'N'
 set ylabel 'Time / N'
-set xrange [1:10]
-set yrange [0:*]
+set xrange [4:10]
+set yrange [4e-06:8e-06]
 unset ytics
 unset xtics
 B = 1024*1024
