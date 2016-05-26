@@ -1424,7 +1424,9 @@ The result plotted as running time per insert is depicted in Figure~\ref{fig:ger
 \end{figure}
 
 \subsubsection*{Fanout}
-In the experiment conducted on the fanout parameter we fixed the buffer size to 1 Mb and varied the fanout parameter. Now, ones might deceive one into believing that an ever increasing fanout would cause an ever decreasing update time per operation. This was certainly what we had expected since we pass down an ever decreasing $B / B^\epsilon$ fraction, and each such fraction charges an I/O to the total running time. In Figure~\ref{fig:gerth_fanout_experiment} we present the theoretical update time per operation. We see a clear tendency of ever increasing fanouts causing an ever decreasing running time for $B^\epsilon \in \{8, 16, 32, 64 \}$.
+In the experiment conducted on the fanout parameter we fixed the buffer size to 1 Mb and varied the fanout parameter. Now, ones intuition might deceive one into believing that an ever increasing fanout would cause an ever decreasing update time per operation. This was certainly what we had expected since we pass down an ever decreasing $B / B^\epsilon$ fraction, and each such fraction charges an I/O to the total running time. In Figure~\ref{fig:gerth_fanout_experiment} we present the theoretical update time per operation. We see a clear tendency of ever increasing fanouts causing an ever decreasing running time for $B^\epsilon \in \{8, 16, 32, 64 \}$. When zooming in on the graphs for $B^\epsilon \in \{2, 3, 4, 5\}$ we achieve no theoretical performance gain when decreasing the fanout from 3 to 2. In fact it seems that we achieve the exact same update time per operation for fanout 2 and fanout 4. This is, however, not as surprising as ??? would suggest. See equation ???.
+
+What equation ??? states is essential that we expect no performance gain when passing half as much ??? in a tree of double the height. This statement aligns perfectly with what we would expect.
 
 
 
@@ -1435,18 +1437,22 @@ Figure~\ref{fig:gerth_fanout_experiment} shows how the time per insert grows as 
 
 We see that the behaviour returns to the expected theoretical bounds for fanouts above 6. The experiment with fanout 64 was terminated before time as it would have taken too long to finish either ways.
 
-\begin{figure}[htp]
+
+\begin{figure}[h]
 \centering
-\includegraphics[width=\textwidth]{../plots/gerth_update_epsilon/gerth_epsilon}
-\caption{Theoretical update time for different fanouts (epsilon). More precisely we have plotted $f(x) = \frac{1}{\epsilon B^{1-\epsilon}} \log_B x$ for epsilon such that the fanout becomes the desired. An $\epsilon$ for a desired fanout can be found by $\epsilon = \log(\text{fanout})/\log(B)$}
-\label{fig:gerth_fanout_theory}
-
-\includegraphics[width=\textwidth]{../src/experiments/gerth_fanout_experiment_results/2016-05-06.11_52_24/time}
-\caption{Running the data structure of Brodal with a fixed buffer size at 8Mb and varying fanouts.}
-\label{fig:gerth_fanout_experiment}
-\end{figure}
-
-\begin{figure}
+\begin{minipage}[t]{0.48\columnwidth}
+  \centering
+  \includegraphics[width=\linewidth]{../plots/gerth_update_epsilon/gerth_epsilon}
+  \caption{Theoretical update time for different fanouts (epsilon). More precisely we have plotted $f(x) = \frac{1}{\epsilon B^{1-\epsilon}} \log_B x$ for epsilon such that the fanout becomes the desired. An $\epsilon$ for a desired fanout can be found by $\epsilon = \log(\text{fanout})/\log(B)$}
+  \label{fig:time_divided_with_asymptotic_arge}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\columnwidth}
+  \centering
+  \includegraphics[width=\linewidth]{../plots/gerth_update_epsilon/gerth_epsilon_zoom}
+  \caption{Missing}
+  \label{}
+\end{minipage}
 \centering
 \includegraphics[width=\textwidth]{../src/experiments/gerth_fanout_experiment_results/2016-05-06.11_52_24/ios}
 \caption{The number of I/O's per insert as a function of input size when running the structure of Brodal with a fixed buffer size and varying fanouts.}
