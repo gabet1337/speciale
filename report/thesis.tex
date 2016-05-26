@@ -10,9 +10,12 @@
 \usepackage{epsfig}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
-\usepackage{color}
+\usepackage[usenames,dvipsnames]{xcolor}
 \usepackage{datetime}
-\usepackage{epstopdf}
+\usepackage{ifpdf}
+\ifpdf
+  \usepackage{epstopdf}
+\fi
 \usepackage{textcomp}
 \usepackage{wasysym}
 \usepackage{epigraph}
@@ -217,7 +220,7 @@ We have really enjoyed working on this thesis and we sincerely hope you enjoy re
 \connect{47b00ae}{1da6e4b};
 \connect{1da6e4b}{52d4e39};
 \end{tikzpicture}
-\caption{Excerpt of the git history for the entire project}
+\caption{Excerpt of the git history for the entire project. The figure is read bottom up.}
 \label{fig:git_history}
 \end{figure}
 
@@ -581,7 +584,7 @@ Finally, each metablock $M$ contains pointers to B blocks that represents the se
 	\label{fig:kanellakis_queries}
 \end{figure}
 
-Ramaswamy and Subramanian presents a suboptimal space data structure that answers queries with an optimal query bound in \cite{Ramaswamy:1994:PCT:182591.182595}. They use the same basic blocked B-tree with pointers to full buckets of data points as introduced by Icking et al.~\cite{Icking1988} and illustrated in Figure~\ref{fig:icking_external_pst}. In addition they introduce the idea of \textit{path caching} that we will explain shortly. It can trivially be seen that by using a B-tree we are able to answer 2-sided queries in $\mathcal{O}(\log N + \nicefrac{K}{B})$ I/O's by classifying points inside the query into four categories as follows:
+Ramaswamy and Subramanian presents a suboptimal space data structure that answers queries with an optimal query bound in \cite{Ramaswamy:1994:PCT:182591.182595}. They use the same basic blocked B-tree with pointers to full buckets of data points as introduced by Icking et al.~\cite{Icking1988} and illustrated in Figure~\ref{fig:icking_external_pst}. In addition they introduce the idea of \textit{path caching} that we will explain shortly. It can trivially be seen that by using a B-tree we are able to answer two-sided queries in $\mathcal{O}(\log N + \nicefrac{K}{B})$ I/O's by classifying points inside the query into four categories as follows:
 
 \begin{itemize}
 	\item \textit{Corner}: this is the node whose region contains the corner of the query.
@@ -600,7 +603,7 @@ Please refer to Figure~\ref{fig:ramaswamy_query} for an illustration of the cate
 	\label{fig:ramaswamy_query}
 \end{figure}
 
-Querying is done by locating the nodes intersecting the left side of the query using the B-tree. Points from the nodes are reported by examining the associated buckets. Next, right siblings of the nodes and their descendants are examined in a top-down fashion until the bottom boundary of the query is crossed. It is crucial to note that the corner, ancestor, and sibling nodes can cause wasteful I/O's. Thus there are $\mathcal{O}(\log N)$ wasteful nodes as every parent of a visited node would have contributed an useful I/O. From this analysis we can conclude that we can answer 2-sided queries in $\mathcal{O}(\log N + \nicefrac{K}{B})$ I/O's. Now, we are able to avoid the wasteful I/O's by caching the data in the ancestor and sibling nodes. By associating two caches with the corner that contain all data in the siblings sorted by $x$-coordinate and $y$-coordinate respectively, we are able to answer queries in $\log_B N + \nicefrac{K}{B}$ I/O's by simply locating the corner in $\mathcal{O}(\log_B N)$ I/O's and report using the cache. The storage use is $\mathcal{O}(\nicefrac{N}{B} \log N)$ disk blocks of size $B$ each. The idea can be extended to handle 3-sided queries by adding additional caches that cover point sets sorted from right to left. This gives a space usage of $\mathcal{O}(\nicefrac{N}{B} \log^2 N)$. 
+Querying is done by locating the nodes intersecting the left side of the query using the B-tree. Points from the nodes are reported by examining the associated buckets. Next, right siblings of the nodes and their descendants are examined in a top-down fashion until the bottom boundary of the query is crossed. It is crucial to note that the corner, ancestor, and sibling nodes can cause wasteful I/O's. Thus there are $\mathcal{O}(\log N)$ wasteful nodes as every parent of a visited node would have contributed an useful I/O. From this analysis we can conclude that we can answer two-sided queries in $\mathcal{O}(\log N + \nicefrac{K}{B})$ I/O's. Now, we are able to avoid the wasteful I/O's by caching the data in the ancestor and sibling nodes. By associating two caches with the corner that contain all data in the siblings sorted by $x$-coordinate and $y$-coordinate respectively, we are able to answer queries in $\log_B N + \nicefrac{K}{B}$ I/O's by simply locating the corner in $\mathcal{O}(\log_B N)$ I/O's and report using the cache. The storage use is $\mathcal{O}(\nicefrac{N}{B} \log N)$ disk blocks of size $B$ each. The idea can be extended to handle three-sided queries by adding additional caches that cover point sets sorted from right to left. This gives a space usage of $\mathcal{O}(\nicefrac{N}{B} \log^2 N)$. 
 
 Ramaswamy and Subramanian continues their work and brings down the space usage in~\cite{Subramanian:1995:PTN:313651.313769}. This is done by building a search tree that divides the points into regions of size $B \log B$ instead of $B$ giving a total of $\nicefrac{N}{B} \log B$ regions. Now a slightly modified caching scheme is used with an additional secondary level structure for each region giving a total space usage of $\mathcal{O}(\nicefrac{N}{B} \log \log B)$. Reusing this idea in a multilevel scheme brings down the data structure to a $\mathcal{O}(\nicefrac{N}{B} \log B \log^* B)$ space solution that answers queries in $\mathcal{O}(\log_B + \nicefrac{K}{B} + \mathcal{IL}^*(B))$, where $\mathcal{IL^*}(x)$ denotes the number of times $\log^*$ must be applied before the result becomes $\leq 2$.
 
@@ -792,7 +795,7 @@ The result is a weight-balanced B-tree where each node is augmented with a boots
 An external memory data structure exists supporting insertion and deletion in amortized $\mathcal{O}(\log_B N/B)$ I/O's and three sided range queries in $\mathcal{O}(\log_B N/B + K/B)$ I/O's, where $N$ is the input size, and $K$ is the size of the output. The structure uses $\mathcal{O}(N/B)$ space.
 \end{theorem}
 
-\section{Dynamic 3-sided queries on $\Theta(B^2)$ points}
+\section{Dynamic three-sided queries on $\Theta(B^2)$ points}
 \label{sec:child_structure}
 In this section we describe a data structure that supports the operations stated in Theorem~\ref{thm:child_structure}.
 \begin{theorem}
@@ -1131,7 +1134,7 @@ This cost of pushing $\Omega(B/\Delta)$ points to a child is however already pai
 
 Handling the overflowing update buffers and underflowing point buffers is also paid by the update operations and thus the analysis in Subsection~\ref{subsec:gerth_updates}.
 
-This all adds up to a total amortized cost of $\mathcal{O}(\frac{1}{\epsilon} \log_B N + K/B)$ I/O's for a 3-sided range query.
+This all adds up to a total amortized cost of $\mathcal{O}(\frac{1}{\epsilon} \log_B N + K/B)$ I/O's for a three-sided range query.
 
 \subsection{Construction}
 The structure can be initialized with an initial set of $N$ points using just $\mathcal{O}(\text{Sort}(N))$ I/O's. If the points are already sorted on $x$ we just need $\mathcal{O}(\text{Scan}(N))$. For the remainder of this Section we assume that the points are initially sorted with regards to $x$.
@@ -1250,6 +1253,7 @@ All code can be cloned from the following git repository. Instructions on how to
 \url{https://github.com/gabet1337/speciale}
 \url{https://github.com/gabet1337/speciale.git}
 \url{git@github.com:gabet1337/speciale.git}
+\todo{insert link to cs.au.dk page}
 \end{center}
 
 \section{General}
@@ -1272,7 +1276,7 @@ There are many different ways to construct a stream. In order to substantiate ou
 
 \begin{itemize}
 	\item Direct invocation of the operating system calls \texttt{read} and \texttt{write} that reads\-/writes one item using no buffering mechanism.
-	\item The standard library streams \texttt{fread} and \texttt{fwrite} that use a built-in buffering mechanism that we do not manage.
+	\item The standard library streams \texttt{fread} and \texttt{fwrite} that use a built\--in buffering mechanism that we do not manage.
 	\item Direct invocation of the operating system calls \texttt{mmap} and \texttt{munmap} that makes use of the operating systems virtual memory mechanism through demand paging.
 \end{itemize}
 
