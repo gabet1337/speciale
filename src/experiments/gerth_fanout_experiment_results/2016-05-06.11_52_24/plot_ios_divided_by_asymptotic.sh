@@ -1,6 +1,6 @@
 #!/usr/bin/gnuplot
 set terminal postscript eps enhanced color font 'Verdana,20'
-set output 'gerth_fanout_experiment_results/2016-05-06.11_52_24/time_divided_asymptotic.eps'
+set output 'gerth_fanout_experiment_results/2016-05-06.11_52_24/ios_divided_asymptotic.eps'
 set style line 11 lc rgb '#000000' lt 1
 set border 3 back ls 11
 set tics nomirror
@@ -29,18 +29,18 @@ set style line 9 lc rgb '#808080' pi 5 pt 2 ps 1 lt 1 lw 2 # --- darkgray
 
 set key bottom right
 set xlabel 'N (input size in Mb)'
-set ylabel 'Time (s) / (N {\267} 1/({/Symbol \145} B^{1-{/Symbol \145}}) log_{B} N)'
+set ylabel 'I/Os / (N {\267} 1/({/Symbol \145} B^{1-{/Symbol \145}}) log_{B} N)'
 #set xrange [0:0]
 #set yrange [0:0]
 B = 1024*1024
 epsilon(fanout) = log(fanout)/log(B)
 f(x,eps) = (1/(eps*B**(1-eps))) * (log(x)/log(B))
-plot 'gerth_fanout_experiment_results/2016-05-06.11_52_24/gerth_fanout2' u 1:(($2/($1*1024*1024))/f(($1*1024*1024),epsilon(2))) t 'fanout 2' w lp ls 1, \
-     'gerth_fanout_experiment_results/2016-05-06.11_52_24/gerth_fanout3' u 1:(($2/($1*1024*1024))/f(($1*1024*1024),epsilon(3))) t 'fanout 3' w lp ls 2, \
-     'gerth_fanout_experiment_results/2016-05-06.11_52_24/gerth_fanout4' u 1:(($2/($1*1024*1024))/f(($1*1024*1024),epsilon(4))) t 'fanout 4' w lp ls 3, \
-     'gerth_fanout_experiment_results/2016-05-06.11_52_24/gerth_fanout5' u 1:(($2/($1*1024*1024))/f(($1*1024*1024),epsilon(5))) t 'fanout 5' w lp ls 4, \
-     'gerth_fanout_experiment_results/2016-05-06.11_52_24/gerth_fanout6' u 1:(($2/($1*1024*1024))/f(($1*1024*1024),epsilon(6))) t 'fanout 6' w lp ls 5,\
-     'gerth_fanout_experiment_results/2016-05-06.11_52_24/gerth_fanout8' u 1:(($2/($1*1024*1024))/f(($1*1024*1024),epsilon(8))) t 'fanout 8' w lp ls 6,\
-     'gerth_fanout_experiment_results/2016-05-06.11_52_24/gerth_fanout16' u 1:(($2/($1*1024*1024))/f(($1*1024*1024),epsilon(16))) t 'fanout 16' w lp ls 7,\
-     'gerth_fanout_experiment_results/2016-05-06.11_52_24/gerth_fanout32' u 1:(($2/($1*1024*1024))/f(($1*1024*1024),epsilon(32))) t 'fanout 32' w lp ls 8,\
-     'gerth_fanout_experiment_results/2016-05-06.11_52_24/gerth_fanout64' u 1:(($2/($1*1024*1024))/f(($1*1024*1024),epsilon(64))) t 'fanout 64' w lp ls 9
+plot 'gerth_fanout_experiment_results/2016-05-06.11_52_24/gerth_fanout2' u 1:(($3/($1*1024*1024))/f(($1*1024*1024),epsilon(2))) t 'fanout 2' w lp ls 1, \
+     'gerth_fanout_experiment_results/2016-05-06.11_52_24/gerth_fanout3' u 1:(($3/($1*1024*1024))/f(($1*1024*1024),epsilon(3))) t 'fanout 3' w lp ls 2, \
+     'gerth_fanout_experiment_results/2016-05-06.11_52_24/gerth_fanout4' u 1:(($3/($1*1024*1024))/f(($1*1024*1024),epsilon(4))) t 'fanout 4' w lp ls 3, \
+     'gerth_fanout_experiment_results/2016-05-06.11_52_24/gerth_fanout5' u 1:(($3/($1*1024*1024))/f(($1*1024*1024),epsilon(5))) t 'fanout 5' w lp ls 4, \
+     'gerth_fanout_experiment_results/2016-05-06.11_52_24/gerth_fanout6' u 1:(($3/($1*1024*1024))/f(($1*1024*1024),epsilon(6))) t 'fanout 6' w lp ls 5,\
+     'gerth_fanout_experiment_results/2016-05-06.11_52_24/gerth_fanout8' u 1:(($3/($1*1024*1024))/f(($1*1024*1024),epsilon(8))) t 'fanout 8' w lp ls 6,\
+     'gerth_fanout_experiment_results/2016-05-06.11_52_24/gerth_fanout16' u 1:(($3/($1*1024*1024))/f(($1*1024*1024),epsilon(16))) t 'fanout 16' w lp ls 7,\
+     'gerth_fanout_experiment_results/2016-05-06.11_52_24/gerth_fanout32' u 1:(($3/($1*1024*1024))/f(($1*1024*1024),epsilon(32))) t 'fanout 32' w lp ls 8,\
+     'gerth_fanout_experiment_results/2016-05-06.11_52_24/gerth_fanout64' u 1:(($3/($1*1024*1024))/f(($1*1024*1024),epsilon(64))) t 'fanout 64' w lp ls 9
