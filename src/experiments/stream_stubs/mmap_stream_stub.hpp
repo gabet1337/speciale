@@ -40,7 +40,7 @@ namespace experiment {
   }
 
   void mmap_stream_stub::insert(const point &p) {
-    output_stream->write_stream(1337);
+    output_stream->write_stream(p.x);
   }
 
   void mmap_stream_stub::remove(const point &p) {

@@ -48,11 +48,11 @@ class gerth_buffer_size_experiment : public base_experiment {
 int main() {
 
   gerth_buffer_size_experiment gfe("gerth_buffer_size_experiment");
-  gfe.add(1, "buffer1MB", common::PST_VARIANT::GERTH, 1024*1024/8, log(2.5)/log(1024.0*1024.0/8.0)); //fanout 2
-  gfe.add(2, "buffer2MB", common::PST_VARIANT::GERTH, 1024*1024/4, log(2.5)/log(1024.0*1024.0/4.0)); //fanout 2
-  gfe.add(3, "buffer4MB", common::PST_VARIANT::GERTH, 1024*1024/2, log(2.5)/log(1024.0*1024.0/2.0)); //fanout 2
-  gfe.add(4, "buffer8MB", common::PST_VARIANT::GERTH, 1024*1024, log(2.5)/log(1024.0*1024.0)); //fanout 2
-  gfe.add(5, "buffer16MB", common::PST_VARIANT::GERTH, 1024*1024*2, log(2.5)/log(1024.0*1024.0*2.0)); //fanout 2
+  // gfe.add(1, "buffer1MB", common::PST_VARIANT::GERTH, 1024*1024/8, log(2.5)/log(1024.0*1024.0/8.0)); //fanout 2
+  // gfe.add(2, "buffer2MB", common::PST_VARIANT::GERTH, 1024*1024/4, log(2.5)/log(1024.0*1024.0/4.0)); //fanout 2
+  // gfe.add(3, "buffer4MB", common::PST_VARIANT::GERTH, 1024*1024/2, log(2.5)/log(1024.0*1024.0/2.0)); //fanout 2
+  gfe.add(4, "8Mb", common::PST_VARIANT::GERTH, 1024*1024, log(2.5)/log(1024.0*1024.0)); //fanout 2
+  gfe.add(5, "16Mb", common::PST_VARIANT::GERTH, 1024*1024*2, log(2.5)/log(1024.0*1024.0*2)); //fanout 2
   gfe.run();
   gfe.plot();
 

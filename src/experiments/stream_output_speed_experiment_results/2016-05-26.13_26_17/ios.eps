@@ -1,0 +1,4623 @@
+%!PS-Adobe-2.0 EPSF-2.0
+%%Title: stream_output_speed_experiment_results/2016-05-26.13_26_17/ios.eps
+%%Creator: gnuplot 4.6 patchlevel 4
+%%CreationDate: Thu May 26 13:32:56 2016
+%%DocumentFonts: (atend)
+%%BoundingBox: 50 50 410 302
+%%EndComments
+%%BeginProlog
+/gnudict 256 dict def
+gnudict begin
+%
+% The following true/false flags may be edited by hand if desired.
+% The unit line width and grayscale image gamma correction may also be changed.
+%
+/Color true def
+/Blacktext false def
+/Solid false def
+/Dashlength 1 def
+/Landscape false def
+/Level1 false def
+/Rounded false def
+/ClipToBoundingBox false def
+/SuppressPDFMark false def
+/TransparentPatterns false def
+/gnulinewidth 5.000 def
+/userlinewidth gnulinewidth def
+/Gamma 1.0 def
+/BackgroundColor {-1.000 -1.000 -1.000} def
+%
+/vshift -40 def
+/dl1 {
+  10.0 Dashlength mul mul
+  Rounded { currentlinewidth 0.75 mul sub dup 0 le { pop 0.01 } if } if
+} def
+/dl2 {
+  10.0 Dashlength mul mul
+  Rounded { currentlinewidth 0.75 mul add } if
+} def
+/hpt_ 31.5 def
+/vpt_ 31.5 def
+/hpt hpt_ def
+/vpt vpt_ def
+/doclip {
+  ClipToBoundingBox {
+    newpath 50 50 moveto 410 50 lineto 410 302 lineto 50 302 lineto closepath
+    clip
+  } if
+} def
+%
+% Gnuplot Prolog Version 4.6 (September 2012)
+%
+%/SuppressPDFMark true def
+%
+/M {moveto} bind def
+/L {lineto} bind def
+/R {rmoveto} bind def
+/V {rlineto} bind def
+/N {newpath moveto} bind def
+/Z {closepath} bind def
+/C {setrgbcolor} bind def
+/f {rlineto fill} bind def
+/g {setgray} bind def
+/Gshow {show} def   % May be redefined later in the file to support UTF-8
+/vpt2 vpt 2 mul def
+/hpt2 hpt 2 mul def
+/Lshow {currentpoint stroke M 0 vshift R 
+	Blacktext {gsave 0 setgray show grestore} {show} ifelse} def
+/Rshow {currentpoint stroke M dup stringwidth pop neg vshift R
+	Blacktext {gsave 0 setgray show grestore} {show} ifelse} def
+/Cshow {currentpoint stroke M dup stringwidth pop -2 div vshift R 
+	Blacktext {gsave 0 setgray show grestore} {show} ifelse} def
+/UP {dup vpt_ mul /vpt exch def hpt_ mul /hpt exch def
+  /hpt2 hpt 2 mul def /vpt2 vpt 2 mul def} def
+/DL {Color {setrgbcolor Solid {pop []} if 0 setdash}
+ {pop pop pop 0 setgray Solid {pop []} if 0 setdash} ifelse} def
+/BL {stroke userlinewidth 2 mul setlinewidth
+	Rounded {1 setlinejoin 1 setlinecap} if} def
+/AL {stroke userlinewidth 2 div setlinewidth
+	Rounded {1 setlinejoin 1 setlinecap} if} def
+/UL {dup gnulinewidth mul /userlinewidth exch def
+	dup 1 lt {pop 1} if 10 mul /udl exch def} def
+/PL {stroke userlinewidth setlinewidth
+	Rounded {1 setlinejoin 1 setlinecap} if} def
+3.8 setmiterlimit
+% Default Line colors
+/LCw {1 1 1} def
+/LCb {0 0 0} def
+/LCa {0 0 0} def
+/LC0 {1 0 0} def
+/LC1 {0 1 0} def
+/LC2 {0 0 1} def
+/LC3 {1 0 1} def
+/LC4 {0 1 1} def
+/LC5 {1 1 0} def
+/LC6 {0 0 0} def
+/LC7 {1 0.3 0} def
+/LC8 {0.5 0.5 0.5} def
+% Default Line Types
+/LTw {PL [] 1 setgray} def
+/LTb {BL [] LCb DL} def
+/LTa {AL [1 udl mul 2 udl mul] 0 setdash LCa setrgbcolor} def
+/LT0 {PL [] LC0 DL} def
+/LT1 {PL [4 dl1 2 dl2] LC1 DL} def
+/LT2 {PL [2 dl1 3 dl2] LC2 DL} def
+/LT3 {PL [1 dl1 1.5 dl2] LC3 DL} def
+/LT4 {PL [6 dl1 2 dl2 1 dl1 2 dl2] LC4 DL} def
+/LT5 {PL [3 dl1 3 dl2 1 dl1 3 dl2] LC5 DL} def
+/LT6 {PL [2 dl1 2 dl2 2 dl1 6 dl2] LC6 DL} def
+/LT7 {PL [1 dl1 2 dl2 6 dl1 2 dl2 1 dl1 2 dl2] LC7 DL} def
+/LT8 {PL [2 dl1 2 dl2 2 dl1 2 dl2 2 dl1 2 dl2 2 dl1 4 dl2] LC8 DL} def
+/Pnt {stroke [] 0 setdash gsave 1 setlinecap M 0 0 V stroke grestore} def
+/Dia {stroke [] 0 setdash 2 copy vpt add M
+  hpt neg vpt neg V hpt vpt neg V
+  hpt vpt V hpt neg vpt V closepath stroke
+  Pnt} def
+/Pls {stroke [] 0 setdash vpt sub M 0 vpt2 V
+  currentpoint stroke M
+  hpt neg vpt neg R hpt2 0 V stroke
+ } def
+/Box {stroke [] 0 setdash 2 copy exch hpt sub exch vpt add M
+  0 vpt2 neg V hpt2 0 V 0 vpt2 V
+  hpt2 neg 0 V closepath stroke
+  Pnt} def
+/Crs {stroke [] 0 setdash exch hpt sub exch vpt add M
+  hpt2 vpt2 neg V currentpoint stroke M
+  hpt2 neg 0 R hpt2 vpt2 V stroke} def
+/TriU {stroke [] 0 setdash 2 copy vpt 1.12 mul add M
+  hpt neg vpt -1.62 mul V
+  hpt 2 mul 0 V
+  hpt neg vpt 1.62 mul V closepath stroke
+  Pnt} def
+/Star {2 copy Pls Crs} def
+/BoxF {stroke [] 0 setdash exch hpt sub exch vpt add M
+  0 vpt2 neg V hpt2 0 V 0 vpt2 V
+  hpt2 neg 0 V closepath fill} def
+/TriUF {stroke [] 0 setdash vpt 1.12 mul add M
+  hpt neg vpt -1.62 mul V
+  hpt 2 mul 0 V
+  hpt neg vpt 1.62 mul V closepath fill} def
+/TriD {stroke [] 0 setdash 2 copy vpt 1.12 mul sub M
+  hpt neg vpt 1.62 mul V
+  hpt 2 mul 0 V
+  hpt neg vpt -1.62 mul V closepath stroke
+  Pnt} def
+/TriDF {stroke [] 0 setdash vpt 1.12 mul sub M
+  hpt neg vpt 1.62 mul V
+  hpt 2 mul 0 V
+  hpt neg vpt -1.62 mul V closepath fill} def
+/DiaF {stroke [] 0 setdash vpt add M
+  hpt neg vpt neg V hpt vpt neg V
+  hpt vpt V hpt neg vpt V closepath fill} def
+/Pent {stroke [] 0 setdash 2 copy gsave
+  translate 0 hpt M 4 {72 rotate 0 hpt L} repeat
+  closepath stroke grestore Pnt} def
+/PentF {stroke [] 0 setdash gsave
+  translate 0 hpt M 4 {72 rotate 0 hpt L} repeat
+  closepath fill grestore} def
+/Circle {stroke [] 0 setdash 2 copy
+  hpt 0 360 arc stroke Pnt} def
+/CircleF {stroke [] 0 setdash hpt 0 360 arc fill} def
+/C0 {BL [] 0 setdash 2 copy moveto vpt 90 450 arc} bind def
+/C1 {BL [] 0 setdash 2 copy moveto
+	2 copy vpt 0 90 arc closepath fill
+	vpt 0 360 arc closepath} bind def
+/C2 {BL [] 0 setdash 2 copy moveto
+	2 copy vpt 90 180 arc closepath fill
+	vpt 0 360 arc closepath} bind def
+/C3 {BL [] 0 setdash 2 copy moveto
+	2 copy vpt 0 180 arc closepath fill
+	vpt 0 360 arc closepath} bind def
+/C4 {BL [] 0 setdash 2 copy moveto
+	2 copy vpt 180 270 arc closepath fill
+	vpt 0 360 arc closepath} bind def
+/C5 {BL [] 0 setdash 2 copy moveto
+	2 copy vpt 0 90 arc
+	2 copy moveto
+	2 copy vpt 180 270 arc closepath fill
+	vpt 0 360 arc} bind def
+/C6 {BL [] 0 setdash 2 copy moveto
+	2 copy vpt 90 270 arc closepath fill
+	vpt 0 360 arc closepath} bind def
+/C7 {BL [] 0 setdash 2 copy moveto
+	2 copy vpt 0 270 arc closepath fill
+	vpt 0 360 arc closepath} bind def
+/C8 {BL [] 0 setdash 2 copy moveto
+	2 copy vpt 270 360 arc closepath fill
+	vpt 0 360 arc closepath} bind def
+/C9 {BL [] 0 setdash 2 copy moveto
+	2 copy vpt 270 450 arc closepath fill
+	vpt 0 360 arc closepath} bind def
+/C10 {BL [] 0 setdash 2 copy 2 copy moveto vpt 270 360 arc closepath fill
+	2 copy moveto
+	2 copy vpt 90 180 arc closepath fill
+	vpt 0 360 arc closepath} bind def
+/C11 {BL [] 0 setdash 2 copy moveto
+	2 copy vpt 0 180 arc closepath fill
+	2 copy moveto
+	2 copy vpt 270 360 arc closepath fill
+	vpt 0 360 arc closepath} bind def
+/C12 {BL [] 0 setdash 2 copy moveto
+	2 copy vpt 180 360 arc closepath fill
+	vpt 0 360 arc closepath} bind def
+/C13 {BL [] 0 setdash 2 copy moveto
+	2 copy vpt 0 90 arc closepath fill
+	2 copy moveto
+	2 copy vpt 180 360 arc closepath fill
+	vpt 0 360 arc closepath} bind def
+/C14 {BL [] 0 setdash 2 copy moveto
+	2 copy vpt 90 360 arc closepath fill
+	vpt 0 360 arc} bind def
+/C15 {BL [] 0 setdash 2 copy vpt 0 360 arc closepath fill
+	vpt 0 360 arc closepath} bind def
+/Rec {newpath 4 2 roll moveto 1 index 0 rlineto 0 exch rlineto
+	neg 0 rlineto closepath} bind def
+/Square {dup Rec} bind def
+/Bsquare {vpt sub exch vpt sub exch vpt2 Square} bind def
+/S0 {BL [] 0 setdash 2 copy moveto 0 vpt rlineto BL Bsquare} bind def
+/S1 {BL [] 0 setdash 2 copy vpt Square fill Bsquare} bind def
+/S2 {BL [] 0 setdash 2 copy exch vpt sub exch vpt Square fill Bsquare} bind def
+/S3 {BL [] 0 setdash 2 copy exch vpt sub exch vpt2 vpt Rec fill Bsquare} bind def
+/S4 {BL [] 0 setdash 2 copy exch vpt sub exch vpt sub vpt Square fill Bsquare} bind def
+/S5 {BL [] 0 setdash 2 copy 2 copy vpt Square fill
+	exch vpt sub exch vpt sub vpt Square fill Bsquare} bind def
+/S6 {BL [] 0 setdash 2 copy exch vpt sub exch vpt sub vpt vpt2 Rec fill Bsquare} bind def
+/S7 {BL [] 0 setdash 2 copy exch vpt sub exch vpt sub vpt vpt2 Rec fill
+	2 copy vpt Square fill Bsquare} bind def
+/S8 {BL [] 0 setdash 2 copy vpt sub vpt Square fill Bsquare} bind def
+/S9 {BL [] 0 setdash 2 copy vpt sub vpt vpt2 Rec fill Bsquare} bind def
+/S10 {BL [] 0 setdash 2 copy vpt sub vpt Square fill 2 copy exch vpt sub exch vpt Square fill
+	Bsquare} bind def
+/S11 {BL [] 0 setdash 2 copy vpt sub vpt Square fill 2 copy exch vpt sub exch vpt2 vpt Rec fill
+	Bsquare} bind def
+/S12 {BL [] 0 setdash 2 copy exch vpt sub exch vpt sub vpt2 vpt Rec fill Bsquare} bind def
+/S13 {BL [] 0 setdash 2 copy exch vpt sub exch vpt sub vpt2 vpt Rec fill
+	2 copy vpt Square fill Bsquare} bind def
+/S14 {BL [] 0 setdash 2 copy exch vpt sub exch vpt sub vpt2 vpt Rec fill
+	2 copy exch vpt sub exch vpt Square fill Bsquare} bind def
+/S15 {BL [] 0 setdash 2 copy Bsquare fill Bsquare} bind def
+/D0 {gsave translate 45 rotate 0 0 S0 stroke grestore} bind def
+/D1 {gsave translate 45 rotate 0 0 S1 stroke grestore} bind def
+/D2 {gsave translate 45 rotate 0 0 S2 stroke grestore} bind def
+/D3 {gsave translate 45 rotate 0 0 S3 stroke grestore} bind def
+/D4 {gsave translate 45 rotate 0 0 S4 stroke grestore} bind def
+/D5 {gsave translate 45 rotate 0 0 S5 stroke grestore} bind def
+/D6 {gsave translate 45 rotate 0 0 S6 stroke grestore} bind def
+/D7 {gsave translate 45 rotate 0 0 S7 stroke grestore} bind def
+/D8 {gsave translate 45 rotate 0 0 S8 stroke grestore} bind def
+/D9 {gsave translate 45 rotate 0 0 S9 stroke grestore} bind def
+/D10 {gsave translate 45 rotate 0 0 S10 stroke grestore} bind def
+/D11 {gsave translate 45 rotate 0 0 S11 stroke grestore} bind def
+/D12 {gsave translate 45 rotate 0 0 S12 stroke grestore} bind def
+/D13 {gsave translate 45 rotate 0 0 S13 stroke grestore} bind def
+/D14 {gsave translate 45 rotate 0 0 S14 stroke grestore} bind def
+/D15 {gsave translate 45 rotate 0 0 S15 stroke grestore} bind def
+/DiaE {stroke [] 0 setdash vpt add M
+  hpt neg vpt neg V hpt vpt neg V
+  hpt vpt V hpt neg vpt V closepath stroke} def
+/BoxE {stroke [] 0 setdash exch hpt sub exch vpt add M
+  0 vpt2 neg V hpt2 0 V 0 vpt2 V
+  hpt2 neg 0 V closepath stroke} def
+/TriUE {stroke [] 0 setdash vpt 1.12 mul add M
+  hpt neg vpt -1.62 mul V
+  hpt 2 mul 0 V
+  hpt neg vpt 1.62 mul V closepath stroke} def
+/TriDE {stroke [] 0 setdash vpt 1.12 mul sub M
+  hpt neg vpt 1.62 mul V
+  hpt 2 mul 0 V
+  hpt neg vpt -1.62 mul V closepath stroke} def
+/PentE {stroke [] 0 setdash gsave
+  translate 0 hpt M 4 {72 rotate 0 hpt L} repeat
+  closepath stroke grestore} def
+/CircE {stroke [] 0 setdash 
+  hpt 0 360 arc stroke} def
+/Opaque {gsave closepath 1 setgray fill grestore 0 setgray closepath} def
+/DiaW {stroke [] 0 setdash vpt add M
+  hpt neg vpt neg V hpt vpt neg V
+  hpt vpt V hpt neg vpt V Opaque stroke} def
+/BoxW {stroke [] 0 setdash exch hpt sub exch vpt add M
+  0 vpt2 neg V hpt2 0 V 0 vpt2 V
+  hpt2 neg 0 V Opaque stroke} def
+/TriUW {stroke [] 0 setdash vpt 1.12 mul add M
+  hpt neg vpt -1.62 mul V
+  hpt 2 mul 0 V
+  hpt neg vpt 1.62 mul V Opaque stroke} def
+/TriDW {stroke [] 0 setdash vpt 1.12 mul sub M
+  hpt neg vpt 1.62 mul V
+  hpt 2 mul 0 V
+  hpt neg vpt -1.62 mul V Opaque stroke} def
+/PentW {stroke [] 0 setdash gsave
+  translate 0 hpt M 4 {72 rotate 0 hpt L} repeat
+  Opaque stroke grestore} def
+/CircW {stroke [] 0 setdash 
+  hpt 0 360 arc Opaque stroke} def
+/BoxFill {gsave Rec 1 setgray fill grestore} def
+/Density {
+  /Fillden exch def
+  currentrgbcolor
+  /ColB exch def /ColG exch def /ColR exch def
+  /ColR ColR Fillden mul Fillden sub 1 add def
+  /ColG ColG Fillden mul Fillden sub 1 add def
+  /ColB ColB Fillden mul Fillden sub 1 add def
+  ColR ColG ColB setrgbcolor} def
+/BoxColFill {gsave Rec PolyFill} def
+/PolyFill {gsave Density fill grestore grestore} def
+/h {rlineto rlineto rlineto gsave closepath fill grestore} bind def
+%
+% PostScript Level 1 Pattern Fill routine for rectangles
+% Usage: x y w h s a XX PatternFill
+%	x,y = lower left corner of box to be filled
+%	w,h = width and height of box
+%	  a = angle in degrees between lines and x-axis
+%	 XX = 0/1 for no/yes cross-hatch
+%
+/PatternFill {gsave /PFa [ 9 2 roll ] def
+  PFa 0 get PFa 2 get 2 div add PFa 1 get PFa 3 get 2 div add translate
+  PFa 2 get -2 div PFa 3 get -2 div PFa 2 get PFa 3 get Rec
+  TransparentPatterns {} {gsave 1 setgray fill grestore} ifelse
+  clip
+  currentlinewidth 0.5 mul setlinewidth
+  /PFs PFa 2 get dup mul PFa 3 get dup mul add sqrt def
+  0 0 M PFa 5 get rotate PFs -2 div dup translate
+  0 1 PFs PFa 4 get div 1 add floor cvi
+	{PFa 4 get mul 0 M 0 PFs V} for
+  0 PFa 6 get ne {
+	0 1 PFs PFa 4 get div 1 add floor cvi
+	{PFa 4 get mul 0 2 1 roll M PFs 0 V} for
+ } if
+  stroke grestore} def
+%
+/languagelevel where
+ {pop languagelevel} {1} ifelse
+ 2 lt
+	{/InterpretLevel1 true def}
+	{/InterpretLevel1 Level1 def}
+ ifelse
+%
+% PostScript level 2 pattern fill definitions
+%
+/Level2PatternFill {
+/Tile8x8 {/PaintType 2 /PatternType 1 /TilingType 1 /BBox [0 0 8 8] /XStep 8 /YStep 8}
+	bind def
+/KeepColor {currentrgbcolor [/Pattern /DeviceRGB] setcolorspace} bind def
+<< Tile8x8
+ /PaintProc {0.5 setlinewidth pop 0 0 M 8 8 L 0 8 M 8 0 L stroke} 
+>> matrix makepattern
+/Pat1 exch def
+<< Tile8x8
+ /PaintProc {0.5 setlinewidth pop 0 0 M 8 8 L 0 8 M 8 0 L stroke
+	0 4 M 4 8 L 8 4 L 4 0 L 0 4 L stroke}
+>> matrix makepattern
+/Pat2 exch def
+<< Tile8x8
+ /PaintProc {0.5 setlinewidth pop 0 0 M 0 8 L
+	8 8 L 8 0 L 0 0 L fill}
+>> matrix makepattern
+/Pat3 exch def
+<< Tile8x8
+ /PaintProc {0.5 setlinewidth pop -4 8 M 8 -4 L
+	0 12 M 12 0 L stroke}
+>> matrix makepattern
+/Pat4 exch def
+<< Tile8x8
+ /PaintProc {0.5 setlinewidth pop -4 0 M 8 12 L
+	0 -4 M 12 8 L stroke}
+>> matrix makepattern
+/Pat5 exch def
+<< Tile8x8
+ /PaintProc {0.5 setlinewidth pop -2 8 M 4 -4 L
+	0 12 M 8 -4 L 4 12 M 10 0 L stroke}
+>> matrix makepattern
+/Pat6 exch def
+<< Tile8x8
+ /PaintProc {0.5 setlinewidth pop -2 0 M 4 12 L
+	0 -4 M 8 12 L 4 -4 M 10 8 L stroke}
+>> matrix makepattern
+/Pat7 exch def
+<< Tile8x8
+ /PaintProc {0.5 setlinewidth pop 8 -2 M -4 4 L
+	12 0 M -4 8 L 12 4 M 0 10 L stroke}
+>> matrix makepattern
+/Pat8 exch def
+<< Tile8x8
+ /PaintProc {0.5 setlinewidth pop 0 -2 M 12 4 L
+	-4 0 M 12 8 L -4 4 M 8 10 L stroke}
+>> matrix makepattern
+/Pat9 exch def
+/Pattern1 {PatternBgnd KeepColor Pat1 setpattern} bind def
+/Pattern2 {PatternBgnd KeepColor Pat2 setpattern} bind def
+/Pattern3 {PatternBgnd KeepColor Pat3 setpattern} bind def
+/Pattern4 {PatternBgnd KeepColor Landscape {Pat5} {Pat4} ifelse setpattern} bind def
+/Pattern5 {PatternBgnd KeepColor Landscape {Pat4} {Pat5} ifelse setpattern} bind def
+/Pattern6 {PatternBgnd KeepColor Landscape {Pat9} {Pat6} ifelse setpattern} bind def
+/Pattern7 {PatternBgnd KeepColor Landscape {Pat8} {Pat7} ifelse setpattern} bind def
+} def
+%
+%
+%End of PostScript Level 2 code
+%
+/PatternBgnd {
+  TransparentPatterns {} {gsave 1 setgray fill grestore} ifelse
+} def
+%
+% Substitute for Level 2 pattern fill codes with
+% grayscale if Level 2 support is not selected.
+%
+/Level1PatternFill {
+/Pattern1 {0.250 Density} bind def
+/Pattern2 {0.500 Density} bind def
+/Pattern3 {0.750 Density} bind def
+/Pattern4 {0.125 Density} bind def
+/Pattern5 {0.375 Density} bind def
+/Pattern6 {0.625 Density} bind def
+/Pattern7 {0.875 Density} bind def
+} def
+%
+% Now test for support of Level 2 code
+%
+Level1 {Level1PatternFill} {Level2PatternFill} ifelse
+%
+/Symbol-Oblique /Symbol findfont [1 0 .167 1 0 0] makefont
+dup length dict begin {1 index /FID eq {pop pop} {def} ifelse} forall
+currentdict end definefont pop
+/MFshow {
+   { dup 5 get 3 ge
+     { 5 get 3 eq {gsave} {grestore} ifelse }
+     {dup dup 0 get findfont exch 1 get scalefont setfont
+     [ currentpoint ] exch dup 2 get 0 exch R dup 5 get 2 ne {dup dup 6
+     get exch 4 get {Gshow} {stringwidth pop 0 R} ifelse }if dup 5 get 0 eq
+     {dup 3 get {2 get neg 0 exch R pop} {pop aload pop M} ifelse} {dup 5
+     get 1 eq {dup 2 get exch dup 3 get exch 6 get stringwidth pop -2 div
+     dup 0 R} {dup 6 get stringwidth pop -2 div 0 R 6 get
+     show 2 index {aload pop M neg 3 -1 roll neg R pop pop} {pop pop pop
+     pop aload pop M} ifelse }ifelse }ifelse }
+     ifelse }
+   forall} def
+/Gswidth {dup type /stringtype eq {stringwidth} {pop (n) stringwidth} ifelse} def
+/MFwidth {0 exch { dup 5 get 3 ge { 5 get 3 eq { 0 } { pop } ifelse }
+ {dup 3 get{dup dup 0 get findfont exch 1 get scalefont setfont
+     6 get Gswidth pop add} {pop} ifelse} ifelse} forall} def
+/MLshow { currentpoint stroke M
+  0 exch R
+  Blacktext {gsave 0 setgray MFshow grestore} {MFshow} ifelse } bind def
+/MRshow { currentpoint stroke M
+  exch dup MFwidth neg 3 -1 roll R
+  Blacktext {gsave 0 setgray MFshow grestore} {MFshow} ifelse } bind def
+/MCshow { currentpoint stroke M
+  exch dup MFwidth -2 div 3 -1 roll R
+  Blacktext {gsave 0 setgray MFshow grestore} {MFshow} ifelse } bind def
+/XYsave    { [( ) 1 2 true false 3 ()] } bind def
+/XYrestore { [( ) 1 2 true false 4 ()] } bind def
+Level1 SuppressPDFMark or 
+{} {
+/SDict 10 dict def
+systemdict /pdfmark known not {
+  userdict /pdfmark systemdict /cleartomark get put
+} if
+SDict begin [
+  /Title (stream_output_speed_experiment_results/2016-05-26.13_26_17/ios.eps)
+  /Subject (gnuplot plot)
+  /Creator (gnuplot 4.6 patchlevel 4)
+  /Author (root)
+%  /Producer (gnuplot)
+%  /Keywords ()
+  /CreationDate (Thu May 26 13:32:56 2016)
+  /DOCINFO pdfmark
+end
+} ifelse
+end
+%%EndProlog
+%%Page: 1 1
+gnudict begin
+gsave
+doclip
+50 50 translate
+0.050 0.050 scale
+0 setgray
+newpath
+(Verdana) findfont 120 scalefont setfont
+BackgroundColor 0 lt 3 1 roll 0 lt exch 0 lt or or not {BackgroundColor C 1.000 0 0 7200.00 5040.00 BoxColFill} if
+1.000 UL
+LT0
+0.00 0.00 0.00 C 1.000 UL
+LTa
+0.00 0.00 0.00 C 804 384 M
+6179 0 V
+stroke
+LT0
+0.00 0.00 0.00 C 804 384 M
+63 0 V
+stroke
+732 384 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 0)]
+] -40.0 MRshow
+1.000 UL
+LT0
+0.00 0.00 0.00 C 1.000 UL
+LTa
+0.00 0.00 0.00 C 804 1028 M
+6179 0 V
+stroke
+LT0
+0.00 0.00 0.00 C 804 1028 M
+63 0 V
+stroke
+732 1028 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 50000)]
+] -40.0 MRshow
+1.000 UL
+LT0
+0.00 0.00 0.00 C 1.000 UL
+LTa
+0.00 0.00 0.00 C 804 1673 M
+6179 0 V
+stroke
+LT0
+0.00 0.00 0.00 C 804 1673 M
+63 0 V
+stroke
+732 1673 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 100000)]
+] -40.0 MRshow
+1.000 UL
+LT0
+0.00 0.00 0.00 C 1.000 UL
+LTa
+0.00 0.00 0.00 C 804 2317 M
+6179 0 V
+stroke
+LT0
+0.00 0.00 0.00 C 804 2317 M
+63 0 V
+stroke
+732 2317 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 150000)]
+] -40.0 MRshow
+1.000 UL
+LT0
+0.00 0.00 0.00 C 1.000 UL
+LTa
+0.00 0.00 0.00 C 804 2962 M
+6179 0 V
+stroke
+LT0
+0.00 0.00 0.00 C 804 2962 M
+63 0 V
+stroke
+732 2962 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 200000)]
+] -40.0 MRshow
+1.000 UL
+LT0
+0.00 0.00 0.00 C 1.000 UL
+LTa
+0.00 0.00 0.00 C 804 3606 M
+6179 0 V
+stroke
+LT0
+0.00 0.00 0.00 C 804 3606 M
+63 0 V
+stroke
+732 3606 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 250000)]
+] -40.0 MRshow
+1.000 UL
+LT0
+0.00 0.00 0.00 C 1.000 UL
+LTa
+0.00 0.00 0.00 C 804 4251 M
+6179 0 V
+stroke
+LT0
+0.00 0.00 0.00 C 804 4251 M
+63 0 V
+stroke
+732 4251 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 300000)]
+] -40.0 MRshow
+1.000 UL
+LT0
+0.00 0.00 0.00 C 1.000 UL
+LTa
+0.00 0.00 0.00 C 804 4895 M
+6179 0 V
+stroke
+LT0
+0.00 0.00 0.00 C 804 4895 M
+63 0 V
+stroke
+732 4895 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 350000)]
+] -40.0 MRshow
+1.000 UL
+LT0
+0.00 0.00 0.00 C 1.000 UL
+LTa
+0.00 0.00 0.00 C 804 384 M
+0 4511 V
+stroke
+LT0
+0.00 0.00 0.00 C 804 384 M
+0 63 V
+stroke
+804 264 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 0)]
+] -40.0 MCshow
+1.000 UL
+LT0
+0.00 0.00 0.00 C 1.000 UL
+LTa
+0.00 0.00 0.00 C 1834 384 M
+0 4088 V
+0 360 R
+0 63 V
+stroke
+LT0
+0.00 0.00 0.00 C 1834 384 M
+0 63 V
+stroke
+1834 264 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 1000)]
+] -40.0 MCshow
+1.000 UL
+LT0
+0.00 0.00 0.00 C 1.000 UL
+LTa
+0.00 0.00 0.00 C 2864 384 M
+0 4511 V
+stroke
+LT0
+0.00 0.00 0.00 C 2864 384 M
+0 63 V
+stroke
+2864 264 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 2000)]
+] -40.0 MCshow
+1.000 UL
+LT0
+0.00 0.00 0.00 C 1.000 UL
+LTa
+0.00 0.00 0.00 C 3894 384 M
+0 4511 V
+stroke
+LT0
+0.00 0.00 0.00 C 3894 384 M
+0 63 V
+stroke
+3894 264 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 3000)]
+] -40.0 MCshow
+1.000 UL
+LT0
+0.00 0.00 0.00 C 1.000 UL
+LTa
+0.00 0.00 0.00 C 4923 384 M
+0 4511 V
+stroke
+LT0
+0.00 0.00 0.00 C 4923 384 M
+0 63 V
+stroke
+4923 264 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 4000)]
+] -40.0 MCshow
+1.000 UL
+LT0
+0.00 0.00 0.00 C 1.000 UL
+LTa
+0.00 0.00 0.00 C 5953 384 M
+0 4511 V
+stroke
+LT0
+0.00 0.00 0.00 C 5953 384 M
+0 63 V
+stroke
+5953 264 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 5000)]
+] -40.0 MCshow
+1.000 UL
+LT0
+0.00 0.00 0.00 C 1.000 UL
+LTa
+0.00 0.00 0.00 C 6983 384 M
+0 4511 V
+stroke
+LT0
+0.00 0.00 0.00 C 6983 384 M
+0 63 V
+stroke
+6983 264 M
+[ [(Verdana) 120.0 0.0 true true 0 ( 6000)]
+] -40.0 MCshow
+1.000 UL
+LT0
+0.00 0.00 0.00 C 1.000 UL
+LT0
+0.00 0.00 0.00 C 804 4895 M
+804 384 L
+6179 0 V
+0 4511 R
+-6179 0 R
+stroke
+LCb setrgbcolor
+96 2639 M
+currentpoint gsave translate -270 rotate 0 0 moveto
+[ [(Verdana) 120.0 0.0 true true 0 (I/Os)]
+] -40.0 MCshow
+grestore
+LTb
+LCb setrgbcolor
+3893 84 M
+[ [(Verdana) 120.0 0.0 true true 0 (N \(input size in Mb\))]
+] -40.0 MCshow
+LTb
+1.000 UP
+1.000 UL
+LT0
+0.00 0.00 0.00 C % Begin plot #1
+1.000 UP
+2.000 UL
+LT0
+0.53 0.81 0.92 C LCb setrgbcolor
+1452 4772 M
+[ [(Verdana) 120.0 0.0 true true 0 (mmap)]
+] -40.0 MRshow
+LT0
+0.53 0.81 0.92 C 1524 4772 M
+351 0 V
+812 384 M
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+stroke 1653 384 M
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+stroke 2509 384 M
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+stroke 3366 384 M
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+stroke 4223 384 M
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+stroke 5080 384 M
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+stroke 5937 384 M
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+812 384 TriU
+820 384 TriU
+829 384 TriU
+837 384 TriU
+845 384 TriU
+853 384 TriU
+862 384 TriU
+870 384 TriU
+878 384 TriU
+886 384 TriU
+895 384 TriU
+903 384 TriU
+911 384 TriU
+919 384 TriU
+928 384 TriU
+936 384 TriU
+944 384 TriU
+952 384 TriU
+961 384 TriU
+969 384 TriU
+977 384 TriU
+985 384 TriU
+993 384 TriU
+1002 384 TriU
+1010 384 TriU
+1018 384 TriU
+1026 384 TriU
+1035 384 TriU
+1043 384 TriU
+1051 384 TriU
+1059 384 TriU
+1068 384 TriU
+1076 384 TriU
+1084 384 TriU
+1092 384 TriU
+1101 384 TriU
+1109 384 TriU
+1117 384 TriU
+1125 384 TriU
+1134 384 TriU
+1142 384 TriU
+1150 384 TriU
+1158 384 TriU
+1167 384 TriU
+1175 384 TriU
+1183 384 TriU
+1191 384 TriU
+1199 384 TriU
+1208 384 TriU
+1216 384 TriU
+1224 384 TriU
+1232 384 TriU
+1241 384 TriU
+1249 384 TriU
+1257 384 TriU
+1265 384 TriU
+1274 384 TriU
+1282 384 TriU
+1290 384 TriU
+1298 384 TriU
+1307 384 TriU
+1315 384 TriU
+1323 384 TriU
+1331 384 TriU
+1340 384 TriU
+1348 384 TriU
+1356 384 TriU
+1364 384 TriU
+1372 384 TriU
+1381 384 TriU
+1389 384 TriU
+1397 384 TriU
+1405 384 TriU
+1414 384 TriU
+1422 384 TriU
+1430 384 TriU
+1438 384 TriU
+1447 384 TriU
+1455 384 TriU
+1463 384 TriU
+1471 384 TriU
+1480 384 TriU
+1488 384 TriU
+1496 384 TriU
+1504 384 TriU
+1513 384 TriU
+1521 384 TriU
+1529 384 TriU
+1537 384 TriU
+1545 384 TriU
+1554 384 TriU
+1562 384 TriU
+1570 384 TriU
+1578 384 TriU
+1587 384 TriU
+1595 384 TriU
+1603 384 TriU
+1611 384 TriU
+1620 384 TriU
+1628 384 TriU
+1636 384 TriU
+1644 384 TriU
+1653 384 TriU
+1661 384 TriU
+1669 384 TriU
+1677 384 TriU
+1686 384 TriU
+1694 384 TriU
+1702 384 TriU
+1710 384 TriU
+1718 384 TriU
+1727 384 TriU
+1735 384 TriU
+1743 384 TriU
+1751 384 TriU
+1760 384 TriU
+1768 384 TriU
+1776 384 TriU
+1784 384 TriU
+1793 384 TriU
+1801 384 TriU
+1809 384 TriU
+1817 384 TriU
+1826 384 TriU
+1834 384 TriU
+1842 384 TriU
+1850 384 TriU
+1859 384 TriU
+1867 384 TriU
+1875 384 TriU
+1883 384 TriU
+1892 384 TriU
+1900 384 TriU
+1908 384 TriU
+1916 384 TriU
+1924 384 TriU
+1933 384 TriU
+1941 384 TriU
+1949 384 TriU
+1957 384 TriU
+1966 384 TriU
+1974 384 TriU
+1982 384 TriU
+1990 384 TriU
+1999 384 TriU
+2007 384 TriU
+2015 384 TriU
+2023 384 TriU
+2032 384 TriU
+2040 384 TriU
+2048 384 TriU
+2056 384 TriU
+2065 384 TriU
+2073 384 TriU
+2081 384 TriU
+2089 384 TriU
+2097 384 TriU
+2106 384 TriU
+2114 384 TriU
+2122 384 TriU
+2130 384 TriU
+2139 384 TriU
+2147 384 TriU
+2155 384 TriU
+2163 384 TriU
+2172 384 TriU
+2180 384 TriU
+2188 384 TriU
+2196 384 TriU
+2205 384 TriU
+2213 384 TriU
+2221 384 TriU
+2229 384 TriU
+2238 384 TriU
+2246 384 TriU
+2254 384 TriU
+2262 384 TriU
+2270 384 TriU
+2279 384 TriU
+2287 384 TriU
+2295 384 TriU
+2303 384 TriU
+2312 384 TriU
+2320 384 TriU
+2328 384 TriU
+2336 384 TriU
+2345 384 TriU
+2353 384 TriU
+2361 384 TriU
+2369 384 TriU
+2378 384 TriU
+2386 384 TriU
+2394 384 TriU
+2402 384 TriU
+2411 384 TriU
+2419 384 TriU
+2427 384 TriU
+2435 384 TriU
+2443 384 TriU
+2452 384 TriU
+2460 384 TriU
+2468 384 TriU
+2476 384 TriU
+2485 384 TriU
+2493 384 TriU
+2501 384 TriU
+2509 384 TriU
+2518 384 TriU
+2526 384 TriU
+2534 384 TriU
+2542 384 TriU
+2551 384 TriU
+2559 384 TriU
+2567 384 TriU
+2575 384 TriU
+2584 384 TriU
+2592 384 TriU
+2600 384 TriU
+2608 384 TriU
+2617 384 TriU
+2625 384 TriU
+2633 384 TriU
+2641 384 TriU
+2649 384 TriU
+2658 384 TriU
+2666 384 TriU
+2674 384 TriU
+2682 384 TriU
+2691 384 TriU
+2699 384 TriU
+2707 384 TriU
+2715 384 TriU
+2724 384 TriU
+2732 384 TriU
+2740 384 TriU
+2748 384 TriU
+2757 384 TriU
+2765 384 TriU
+2773 384 TriU
+2781 384 TriU
+2790 384 TriU
+2798 384 TriU
+2806 384 TriU
+2814 384 TriU
+2822 384 TriU
+2831 384 TriU
+2839 384 TriU
+2847 384 TriU
+2855 384 TriU
+2864 384 TriU
+2872 384 TriU
+2880 384 TriU
+2888 384 TriU
+2897 384 TriU
+2905 384 TriU
+2913 384 TriU
+2921 384 TriU
+2930 384 TriU
+2938 384 TriU
+2946 384 TriU
+2954 384 TriU
+2963 384 TriU
+2971 384 TriU
+2979 384 TriU
+2987 384 TriU
+2995 384 TriU
+3004 384 TriU
+3012 384 TriU
+3020 384 TriU
+3028 384 TriU
+3037 384 TriU
+3045 384 TriU
+3053 384 TriU
+3061 384 TriU
+3070 384 TriU
+3078 384 TriU
+3086 384 TriU
+3094 384 TriU
+3103 384 TriU
+3111 384 TriU
+3119 384 TriU
+3127 384 TriU
+3136 384 TriU
+3144 384 TriU
+3152 384 TriU
+3160 384 TriU
+3168 384 TriU
+3177 384 TriU
+3185 384 TriU
+3193 384 TriU
+3201 384 TriU
+3210 384 TriU
+3218 384 TriU
+3226 384 TriU
+3234 384 TriU
+3243 384 TriU
+3251 384 TriU
+3259 384 TriU
+3267 384 TriU
+3276 384 TriU
+3284 384 TriU
+3292 384 TriU
+3300 384 TriU
+3309 384 TriU
+3317 384 TriU
+3325 384 TriU
+3333 384 TriU
+3342 384 TriU
+3350 384 TriU
+3358 384 TriU
+3366 384 TriU
+3374 384 TriU
+3383 384 TriU
+3391 384 TriU
+3399 384 TriU
+3407 384 TriU
+3416 384 TriU
+3424 384 TriU
+3432 384 TriU
+3440 384 TriU
+3449 384 TriU
+3457 384 TriU
+3465 384 TriU
+3473 384 TriU
+3482 384 TriU
+3490 384 TriU
+3498 384 TriU
+3506 384 TriU
+3515 384 TriU
+3523 384 TriU
+3531 384 TriU
+3539 384 TriU
+3547 384 TriU
+3556 384 TriU
+3564 384 TriU
+3572 384 TriU
+3580 384 TriU
+3589 384 TriU
+3597 384 TriU
+3605 384 TriU
+3613 384 TriU
+3622 384 TriU
+3630 384 TriU
+3638 384 TriU
+3646 384 TriU
+3655 384 TriU
+3663 384 TriU
+3671 384 TriU
+3679 384 TriU
+3688 384 TriU
+3696 384 TriU
+3704 384 TriU
+3712 384 TriU
+3720 384 TriU
+3729 384 TriU
+3737 384 TriU
+3745 384 TriU
+3753 384 TriU
+3762 384 TriU
+3770 384 TriU
+3778 384 TriU
+3786 384 TriU
+3795 384 TriU
+3803 384 TriU
+3811 384 TriU
+3819 384 TriU
+3828 384 TriU
+3836 384 TriU
+3844 384 TriU
+3852 384 TriU
+3861 384 TriU
+3869 384 TriU
+3877 384 TriU
+3885 384 TriU
+3894 384 TriU
+3902 384 TriU
+3910 384 TriU
+3918 384 TriU
+3926 384 TriU
+3935 384 TriU
+3943 384 TriU
+3951 384 TriU
+3959 384 TriU
+3968 384 TriU
+3976 384 TriU
+3984 384 TriU
+3992 384 TriU
+4001 384 TriU
+4009 384 TriU
+4017 384 TriU
+4025 384 TriU
+4034 384 TriU
+4042 384 TriU
+4050 384 TriU
+4058 384 TriU
+4067 384 TriU
+4075 384 TriU
+4083 384 TriU
+4091 384 TriU
+4099 384 TriU
+4108 384 TriU
+4116 384 TriU
+4124 384 TriU
+4132 384 TriU
+4141 384 TriU
+4149 384 TriU
+4157 384 TriU
+4165 384 TriU
+4174 384 TriU
+4182 384 TriU
+4190 384 TriU
+4198 384 TriU
+4207 384 TriU
+4215 384 TriU
+4223 384 TriU
+4231 384 TriU
+4240 384 TriU
+4248 384 TriU
+4256 384 TriU
+4264 384 TriU
+4272 384 TriU
+4281 384 TriU
+4289 384 TriU
+4297 384 TriU
+4305 384 TriU
+4314 384 TriU
+4322 384 TriU
+4330 384 TriU
+4338 384 TriU
+4347 384 TriU
+4355 384 TriU
+4363 384 TriU
+4371 384 TriU
+4380 384 TriU
+4388 384 TriU
+4396 384 TriU
+4404 384 TriU
+4413 384 TriU
+4421 384 TriU
+4429 384 TriU
+4437 384 TriU
+4445 384 TriU
+4454 384 TriU
+4462 384 TriU
+4470 384 TriU
+4478 384 TriU
+4487 384 TriU
+4495 384 TriU
+4503 384 TriU
+4511 384 TriU
+4520 384 TriU
+4528 384 TriU
+4536 384 TriU
+4544 384 TriU
+4553 384 TriU
+4561 384 TriU
+4569 384 TriU
+4577 384 TriU
+4586 384 TriU
+4594 384 TriU
+4602 384 TriU
+4610 384 TriU
+4619 384 TriU
+4627 384 TriU
+4635 384 TriU
+4643 384 TriU
+4651 384 TriU
+4660 384 TriU
+4668 384 TriU
+4676 384 TriU
+4684 384 TriU
+4693 384 TriU
+4701 384 TriU
+4709 384 TriU
+4717 384 TriU
+4726 384 TriU
+4734 384 TriU
+4742 384 TriU
+4750 384 TriU
+4759 384 TriU
+4767 384 TriU
+4775 384 TriU
+4783 384 TriU
+4792 384 TriU
+4800 384 TriU
+4808 384 TriU
+4816 384 TriU
+4824 384 TriU
+4833 384 TriU
+4841 384 TriU
+4849 384 TriU
+4857 384 TriU
+4866 384 TriU
+4874 384 TriU
+4882 384 TriU
+4890 384 TriU
+4899 384 TriU
+4907 384 TriU
+4915 384 TriU
+4923 384 TriU
+4932 384 TriU
+4940 384 TriU
+4948 384 TriU
+4956 384 TriU
+4965 384 TriU
+4973 384 TriU
+4981 384 TriU
+4989 384 TriU
+4997 384 TriU
+5006 384 TriU
+5014 384 TriU
+5022 384 TriU
+5030 384 TriU
+5039 384 TriU
+5047 384 TriU
+5055 384 TriU
+5063 384 TriU
+5072 384 TriU
+5080 384 TriU
+5088 384 TriU
+5096 384 TriU
+5105 384 TriU
+5113 384 TriU
+5121 384 TriU
+5129 384 TriU
+5138 384 TriU
+5146 384 TriU
+5154 384 TriU
+5162 384 TriU
+5170 384 TriU
+5179 384 TriU
+5187 384 TriU
+5195 384 TriU
+5203 384 TriU
+5212 384 TriU
+5220 384 TriU
+5228 384 TriU
+5236 384 TriU
+5245 384 TriU
+5253 384 TriU
+5261 384 TriU
+5269 384 TriU
+5278 384 TriU
+5286 384 TriU
+5294 384 TriU
+5302 384 TriU
+5311 384 TriU
+5319 384 TriU
+5327 384 TriU
+5335 384 TriU
+5344 384 TriU
+5352 384 TriU
+5360 384 TriU
+5368 384 TriU
+5376 384 TriU
+5385 384 TriU
+5393 384 TriU
+5401 384 TriU
+5409 384 TriU
+5418 384 TriU
+5426 384 TriU
+5434 384 TriU
+5442 384 TriU
+5451 384 TriU
+5459 384 TriU
+5467 384 TriU
+5475 384 TriU
+5484 384 TriU
+5492 384 TriU
+5500 384 TriU
+5508 384 TriU
+5517 384 TriU
+5525 384 TriU
+5533 384 TriU
+5541 384 TriU
+5549 384 TriU
+5558 384 TriU
+5566 384 TriU
+5574 384 TriU
+5582 384 TriU
+5591 384 TriU
+5599 384 TriU
+5607 384 TriU
+5615 384 TriU
+5624 384 TriU
+5632 384 TriU
+5640 384 TriU
+5648 384 TriU
+5657 384 TriU
+5665 384 TriU
+5673 384 TriU
+5681 384 TriU
+5690 384 TriU
+5698 384 TriU
+5706 384 TriU
+5714 384 TriU
+5722 384 TriU
+5731 384 TriU
+5739 384 TriU
+5747 384 TriU
+5755 384 TriU
+5764 384 TriU
+5772 384 TriU
+5780 384 TriU
+5788 384 TriU
+5797 384 TriU
+5805 384 TriU
+5813 384 TriU
+5821 384 TriU
+5830 384 TriU
+5838 384 TriU
+5846 384 TriU
+5854 384 TriU
+5863 384 TriU
+5871 384 TriU
+5879 384 TriU
+5887 384 TriU
+5895 384 TriU
+5904 384 TriU
+5912 384 TriU
+5920 384 TriU
+5928 384 TriU
+5937 384 TriU
+5945 384 TriU
+5953 384 TriU
+5961 384 TriU
+5970 384 TriU
+5978 384 TriU
+5986 384 TriU
+5994 384 TriU
+6003 384 TriU
+6011 384 TriU
+6019 384 TriU
+6027 384 TriU
+6036 384 TriU
+6044 384 TriU
+6052 384 TriU
+6060 384 TriU
+6069 384 TriU
+6077 384 TriU
+1699 4772 TriU
+% End plot #1
+% Begin plot #2
+1.000 UP
+2.000 UL
+LT0
+0.40 0.00 0.40 C LCb setrgbcolor
+1452 4652 M
+[ [(Verdana) 120.0 0.0 true true 0 (buffered)]
+] -40.0 MRshow
+LT0
+0.40 0.00 0.40 C 1524 4652 M
+351 0 V
+812 391 M
+8 6 V
+9 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 6 V
+9 7 V
+stroke 1653 1065 M
+8 7 V
+8 6 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 6 V
+8 7 V
+8 7 V
+stroke 2509 1753 M
+9 6 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+stroke 3366 2440 M
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+stroke 4223 3128 M
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+stroke 5080 3816 M
+8 6 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 7 V
+9 6 V
+stroke 5937 4503 M
+8 7 V
+8 6 V
+8 7 V
+9 7 V
+8 6 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+8 6 V
+8 7 V
+9 6 V
+8 7 V
+8 7 V
+8 6 V
+9 7 V
+8 7 V
+812 391 TriUF
+820 397 TriUF
+829 404 TriUF
+837 410 TriUF
+845 417 TriUF
+853 424 TriUF
+862 430 TriUF
+870 437 TriUF
+878 443 TriUF
+886 450 TriUF
+895 457 TriUF
+903 463 TriUF
+911 470 TriUF
+919 477 TriUF
+928 483 TriUF
+936 490 TriUF
+944 496 TriUF
+952 503 TriUF
+961 510 TriUF
+969 516 TriUF
+977 523 TriUF
+985 529 TriUF
+993 536 TriUF
+1002 543 TriUF
+1010 549 TriUF
+1018 556 TriUF
+1026 562 TriUF
+1035 569 TriUF
+1043 576 TriUF
+1051 582 TriUF
+1059 589 TriUF
+1068 596 TriUF
+1076 602 TriUF
+1084 609 TriUF
+1092 615 TriUF
+1101 622 TriUF
+1109 629 TriUF
+1117 635 TriUF
+1125 642 TriUF
+1134 648 TriUF
+1142 655 TriUF
+1150 662 TriUF
+1158 668 TriUF
+1167 675 TriUF
+1175 682 TriUF
+1183 688 TriUF
+1191 695 TriUF
+1199 701 TriUF
+1208 708 TriUF
+1216 715 TriUF
+1224 721 TriUF
+1232 728 TriUF
+1241 734 TriUF
+1249 741 TriUF
+1257 748 TriUF
+1265 754 TriUF
+1274 761 TriUF
+1282 767 TriUF
+1290 774 TriUF
+1298 781 TriUF
+1307 787 TriUF
+1315 794 TriUF
+1323 801 TriUF
+1331 807 TriUF
+1340 814 TriUF
+1348 820 TriUF
+1356 827 TriUF
+1364 834 TriUF
+1372 840 TriUF
+1381 847 TriUF
+1389 853 TriUF
+1397 860 TriUF
+1405 867 TriUF
+1414 873 TriUF
+1422 880 TriUF
+1430 886 TriUF
+1438 893 TriUF
+1447 900 TriUF
+1455 906 TriUF
+1463 913 TriUF
+1471 920 TriUF
+1480 926 TriUF
+1488 933 TriUF
+1496 939 TriUF
+1504 946 TriUF
+1513 953 TriUF
+1521 959 TriUF
+1529 966 TriUF
+1537 972 TriUF
+1545 979 TriUF
+1554 986 TriUF
+1562 992 TriUF
+1570 999 TriUF
+1578 1005 TriUF
+1587 1012 TriUF
+1595 1019 TriUF
+1603 1025 TriUF
+1611 1032 TriUF
+1620 1039 TriUF
+1628 1045 TriUF
+1636 1052 TriUF
+1644 1058 TriUF
+1653 1065 TriUF
+1661 1072 TriUF
+1669 1078 TriUF
+1677 1085 TriUF
+1686 1091 TriUF
+1694 1098 TriUF
+1702 1105 TriUF
+1710 1111 TriUF
+1718 1118 TriUF
+1727 1124 TriUF
+1735 1131 TriUF
+1743 1138 TriUF
+1751 1144 TriUF
+1760 1151 TriUF
+1768 1158 TriUF
+1776 1164 TriUF
+1784 1171 TriUF
+1793 1177 TriUF
+1801 1184 TriUF
+1809 1191 TriUF
+1817 1197 TriUF
+1826 1204 TriUF
+1834 1210 TriUF
+1842 1217 TriUF
+1850 1224 TriUF
+1859 1230 TriUF
+1867 1237 TriUF
+1875 1244 TriUF
+1883 1250 TriUF
+1892 1257 TriUF
+1900 1263 TriUF
+1908 1270 TriUF
+1916 1277 TriUF
+1924 1283 TriUF
+1933 1290 TriUF
+1941 1296 TriUF
+1949 1303 TriUF
+1957 1310 TriUF
+1966 1316 TriUF
+1974 1323 TriUF
+1982 1329 TriUF
+1990 1336 TriUF
+1999 1343 TriUF
+2007 1349 TriUF
+2015 1356 TriUF
+2023 1363 TriUF
+2032 1369 TriUF
+2040 1376 TriUF
+2048 1382 TriUF
+2056 1389 TriUF
+2065 1396 TriUF
+2073 1402 TriUF
+2081 1409 TriUF
+2089 1415 TriUF
+2097 1422 TriUF
+2106 1429 TriUF
+2114 1435 TriUF
+2122 1442 TriUF
+2130 1448 TriUF
+2139 1455 TriUF
+2147 1462 TriUF
+2155 1468 TriUF
+2163 1475 TriUF
+2172 1482 TriUF
+2180 1488 TriUF
+2188 1495 TriUF
+2196 1501 TriUF
+2205 1508 TriUF
+2213 1515 TriUF
+2221 1521 TriUF
+2229 1528 TriUF
+2238 1534 TriUF
+2246 1541 TriUF
+2254 1548 TriUF
+2262 1554 TriUF
+2270 1561 TriUF
+2279 1567 TriUF
+2287 1574 TriUF
+2295 1581 TriUF
+2303 1587 TriUF
+2312 1594 TriUF
+2320 1601 TriUF
+2328 1607 TriUF
+2336 1614 TriUF
+2345 1620 TriUF
+2353 1627 TriUF
+2361 1634 TriUF
+2369 1640 TriUF
+2378 1647 TriUF
+2386 1653 TriUF
+2394 1660 TriUF
+2402 1667 TriUF
+2411 1673 TriUF
+2419 1680 TriUF
+2427 1687 TriUF
+2435 1693 TriUF
+2443 1700 TriUF
+2452 1706 TriUF
+2460 1713 TriUF
+2468 1720 TriUF
+2476 1726 TriUF
+2485 1733 TriUF
+2493 1739 TriUF
+2501 1746 TriUF
+2509 1753 TriUF
+2518 1759 TriUF
+2526 1766 TriUF
+2534 1772 TriUF
+2542 1779 TriUF
+2551 1786 TriUF
+2559 1792 TriUF
+2567 1799 TriUF
+2575 1806 TriUF
+2584 1812 TriUF
+2592 1819 TriUF
+2600 1825 TriUF
+2608 1832 TriUF
+2617 1839 TriUF
+2625 1845 TriUF
+2633 1852 TriUF
+2641 1858 TriUF
+2649 1865 TriUF
+2658 1872 TriUF
+2666 1878 TriUF
+2674 1885 TriUF
+2682 1891 TriUF
+2691 1898 TriUF
+2699 1905 TriUF
+2707 1911 TriUF
+2715 1918 TriUF
+2724 1925 TriUF
+2732 1931 TriUF
+2740 1938 TriUF
+2748 1944 TriUF
+2757 1951 TriUF
+2765 1958 TriUF
+2773 1964 TriUF
+2781 1971 TriUF
+2790 1977 TriUF
+2798 1984 TriUF
+2806 1991 TriUF
+2814 1997 TriUF
+2822 2004 TriUF
+2831 2010 TriUF
+2839 2017 TriUF
+2847 2024 TriUF
+2855 2030 TriUF
+2864 2037 TriUF
+2872 2044 TriUF
+2880 2050 TriUF
+2888 2057 TriUF
+2897 2063 TriUF
+2905 2070 TriUF
+2913 2077 TriUF
+2921 2083 TriUF
+2930 2090 TriUF
+2938 2096 TriUF
+2946 2103 TriUF
+2954 2110 TriUF
+2963 2116 TriUF
+2971 2123 TriUF
+2979 2129 TriUF
+2987 2136 TriUF
+2995 2143 TriUF
+3004 2149 TriUF
+3012 2156 TriUF
+3020 2163 TriUF
+3028 2169 TriUF
+3037 2176 TriUF
+3045 2182 TriUF
+3053 2189 TriUF
+3061 2196 TriUF
+3070 2202 TriUF
+3078 2209 TriUF
+3086 2215 TriUF
+3094 2222 TriUF
+3103 2229 TriUF
+3111 2235 TriUF
+3119 2242 TriUF
+3127 2249 TriUF
+3136 2255 TriUF
+3144 2262 TriUF
+3152 2268 TriUF
+3160 2275 TriUF
+3168 2282 TriUF
+3177 2288 TriUF
+3185 2295 TriUF
+3193 2301 TriUF
+3201 2308 TriUF
+3210 2315 TriUF
+3218 2321 TriUF
+3226 2328 TriUF
+3234 2334 TriUF
+3243 2341 TriUF
+3251 2348 TriUF
+3259 2354 TriUF
+3267 2361 TriUF
+3276 2368 TriUF
+3284 2374 TriUF
+3292 2381 TriUF
+3300 2387 TriUF
+3309 2394 TriUF
+3317 2401 TriUF
+3325 2407 TriUF
+3333 2414 TriUF
+3342 2420 TriUF
+3350 2427 TriUF
+3358 2434 TriUF
+3366 2440 TriUF
+3374 2447 TriUF
+3383 2453 TriUF
+3391 2460 TriUF
+3399 2467 TriUF
+3407 2473 TriUF
+3416 2480 TriUF
+3424 2487 TriUF
+3432 2493 TriUF
+3440 2500 TriUF
+3449 2506 TriUF
+3457 2513 TriUF
+3465 2520 TriUF
+3473 2526 TriUF
+3482 2533 TriUF
+3490 2539 TriUF
+3498 2546 TriUF
+3506 2553 TriUF
+3515 2559 TriUF
+3523 2566 TriUF
+3531 2572 TriUF
+3539 2579 TriUF
+3547 2586 TriUF
+3556 2592 TriUF
+3564 2599 TriUF
+3572 2606 TriUF
+3580 2612 TriUF
+3589 2619 TriUF
+3597 2625 TriUF
+3605 2632 TriUF
+3613 2639 TriUF
+3622 2645 TriUF
+3630 2652 TriUF
+3638 2658 TriUF
+3646 2665 TriUF
+3655 2672 TriUF
+3663 2678 TriUF
+3671 2685 TriUF
+3679 2692 TriUF
+3688 2698 TriUF
+3696 2705 TriUF
+3704 2711 TriUF
+3712 2718 TriUF
+3720 2725 TriUF
+3729 2731 TriUF
+3737 2738 TriUF
+3745 2744 TriUF
+3753 2751 TriUF
+3762 2758 TriUF
+3770 2764 TriUF
+3778 2771 TriUF
+3786 2777 TriUF
+3795 2784 TriUF
+3803 2791 TriUF
+3811 2797 TriUF
+3819 2804 TriUF
+3828 2811 TriUF
+3836 2817 TriUF
+3844 2824 TriUF
+3852 2830 TriUF
+3861 2837 TriUF
+3869 2844 TriUF
+3877 2850 TriUF
+3885 2857 TriUF
+3894 2863 TriUF
+3902 2870 TriUF
+3910 2877 TriUF
+3918 2883 TriUF
+3926 2890 TriUF
+3935 2896 TriUF
+3943 2903 TriUF
+3951 2910 TriUF
+3959 2916 TriUF
+3968 2923 TriUF
+3976 2930 TriUF
+3984 2936 TriUF
+3992 2943 TriUF
+4001 2949 TriUF
+4009 2956 TriUF
+4017 2963 TriUF
+4025 2969 TriUF
+4034 2976 TriUF
+4042 2982 TriUF
+4050 2989 TriUF
+4058 2996 TriUF
+4067 3002 TriUF
+4075 3009 TriUF
+4083 3015 TriUF
+4091 3022 TriUF
+4099 3029 TriUF
+4108 3035 TriUF
+4116 3042 TriUF
+4124 3049 TriUF
+4132 3055 TriUF
+4141 3062 TriUF
+4149 3068 TriUF
+4157 3075 TriUF
+4165 3082 TriUF
+4174 3088 TriUF
+4182 3095 TriUF
+4190 3101 TriUF
+4198 3108 TriUF
+4207 3115 TriUF
+4215 3121 TriUF
+4223 3128 TriUF
+4231 3134 TriUF
+4240 3141 TriUF
+4248 3148 TriUF
+4256 3154 TriUF
+4264 3161 TriUF
+4272 3168 TriUF
+4281 3174 TriUF
+4289 3181 TriUF
+4297 3187 TriUF
+4305 3194 TriUF
+4314 3201 TriUF
+4322 3207 TriUF
+4330 3214 TriUF
+4338 3220 TriUF
+4347 3227 TriUF
+4355 3234 TriUF
+4363 3240 TriUF
+4371 3247 TriUF
+4380 3254 TriUF
+4388 3260 TriUF
+4396 3267 TriUF
+4404 3273 TriUF
+4413 3280 TriUF
+4421 3287 TriUF
+4429 3293 TriUF
+4437 3300 TriUF
+4445 3306 TriUF
+4454 3313 TriUF
+4462 3320 TriUF
+4470 3326 TriUF
+4478 3333 TriUF
+4487 3339 TriUF
+4495 3346 TriUF
+4503 3353 TriUF
+4511 3359 TriUF
+4520 3366 TriUF
+4528 3373 TriUF
+4536 3379 TriUF
+4544 3386 TriUF
+4553 3392 TriUF
+4561 3399 TriUF
+4569 3406 TriUF
+4577 3412 TriUF
+4586 3419 TriUF
+4594 3425 TriUF
+4602 3432 TriUF
+4610 3439 TriUF
+4619 3445 TriUF
+4627 3452 TriUF
+4635 3458 TriUF
+4643 3465 TriUF
+4651 3472 TriUF
+4660 3478 TriUF
+4668 3485 TriUF
+4676 3492 TriUF
+4684 3498 TriUF
+4693 3505 TriUF
+4701 3511 TriUF
+4709 3518 TriUF
+4717 3525 TriUF
+4726 3531 TriUF
+4734 3538 TriUF
+4742 3544 TriUF
+4750 3551 TriUF
+4759 3558 TriUF
+4767 3564 TriUF
+4775 3571 TriUF
+4783 3577 TriUF
+4792 3584 TriUF
+4800 3591 TriUF
+4808 3597 TriUF
+4816 3604 TriUF
+4824 3611 TriUF
+4833 3617 TriUF
+4841 3624 TriUF
+4849 3630 TriUF
+4857 3637 TriUF
+4866 3644 TriUF
+4874 3650 TriUF
+4882 3657 TriUF
+4890 3663 TriUF
+4899 3670 TriUF
+4907 3677 TriUF
+4915 3683 TriUF
+4923 3690 TriUF
+4932 3697 TriUF
+4940 3703 TriUF
+4948 3710 TriUF
+4956 3716 TriUF
+4965 3723 TriUF
+4973 3730 TriUF
+4981 3736 TriUF
+4989 3743 TriUF
+4997 3749 TriUF
+5006 3756 TriUF
+5014 3763 TriUF
+5022 3769 TriUF
+5030 3776 TriUF
+5039 3782 TriUF
+5047 3789 TriUF
+5055 3796 TriUF
+5063 3802 TriUF
+5072 3809 TriUF
+5080 3816 TriUF
+5088 3822 TriUF
+5096 3829 TriUF
+5105 3835 TriUF
+5113 3842 TriUF
+5121 3849 TriUF
+5129 3855 TriUF
+5138 3862 TriUF
+5146 3868 TriUF
+5154 3875 TriUF
+5162 3882 TriUF
+5170 3888 TriUF
+5179 3895 TriUF
+5187 3901 TriUF
+5195 3908 TriUF
+5203 3915 TriUF
+5212 3921 TriUF
+5220 3928 TriUF
+5228 3935 TriUF
+5236 3941 TriUF
+5245 3948 TriUF
+5253 3954 TriUF
+5261 3961 TriUF
+5269 3968 TriUF
+5278 3974 TriUF
+5286 3981 TriUF
+5294 3987 TriUF
+5302 3994 TriUF
+5311 4001 TriUF
+5319 4007 TriUF
+5327 4014 TriUF
+5335 4020 TriUF
+5344 4027 TriUF
+5352 4034 TriUF
+5360 4040 TriUF
+5368 4047 TriUF
+5376 4054 TriUF
+5385 4060 TriUF
+5393 4067 TriUF
+5401 4073 TriUF
+5409 4080 TriUF
+5418 4087 TriUF
+5426 4093 TriUF
+5434 4100 TriUF
+5442 4106 TriUF
+5451 4113 TriUF
+5459 4120 TriUF
+5467 4126 TriUF
+5475 4133 TriUF
+5484 4139 TriUF
+5492 4146 TriUF
+5500 4153 TriUF
+5508 4159 TriUF
+5517 4166 TriUF
+5525 4173 TriUF
+5533 4179 TriUF
+5541 4186 TriUF
+5549 4192 TriUF
+5558 4199 TriUF
+5566 4206 TriUF
+5574 4212 TriUF
+5582 4219 TriUF
+5591 4225 TriUF
+5599 4232 TriUF
+5607 4239 TriUF
+5615 4245 TriUF
+5624 4252 TriUF
+5632 4259 TriUF
+5640 4265 TriUF
+5648 4272 TriUF
+5657 4278 TriUF
+5665 4285 TriUF
+5673 4292 TriUF
+5681 4298 TriUF
+5690 4305 TriUF
+5698 4311 TriUF
+5706 4318 TriUF
+5714 4325 TriUF
+5722 4331 TriUF
+5731 4338 TriUF
+5739 4344 TriUF
+5747 4351 TriUF
+5755 4358 TriUF
+5764 4364 TriUF
+5772 4371 TriUF
+5780 4378 TriUF
+5788 4384 TriUF
+5797 4391 TriUF
+5805 4397 TriUF
+5813 4404 TriUF
+5821 4411 TriUF
+5830 4417 TriUF
+5838 4424 TriUF
+5846 4430 TriUF
+5854 4437 TriUF
+5863 4444 TriUF
+5871 4450 TriUF
+5879 4457 TriUF
+5887 4463 TriUF
+5895 4470 TriUF
+5904 4477 TriUF
+5912 4483 TriUF
+5920 4490 TriUF
+5928 4497 TriUF
+5937 4503 TriUF
+5945 4510 TriUF
+5953 4516 TriUF
+5961 4523 TriUF
+5970 4530 TriUF
+5978 4536 TriUF
+5986 4543 TriUF
+5994 4549 TriUF
+6003 4556 TriUF
+6011 4563 TriUF
+6019 4569 TriUF
+6027 4576 TriUF
+6036 4582 TriUF
+6044 4589 TriUF
+6052 4596 TriUF
+6060 4602 TriUF
+6069 4609 TriUF
+6077 4616 TriUF
+1699 4652 TriUF
+% End plot #2
+% Begin plot #3
+1.000 UP
+1.000 UL
+LT0
+LC0 setrgbcolor
+LCb setrgbcolor
+1452 4532 M
+[ [(Verdana) 120.0 0.0 true true 0 (file)]
+] -40.0 MRshow
+LT0
+1524 4532 M
+351 0 V
+812 384 M
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+stroke 1653 384 M
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+stroke 2509 384 M
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+stroke 3366 384 M
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+stroke 4223 384 M
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+stroke 5080 384 M
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+stroke 5937 384 M
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+8 0 V
+8 0 V
+9 0 V
+8 0 V
+812 384 TriD
+820 384 TriD
+829 384 TriD
+837 384 TriD
+845 384 TriD
+853 384 TriD
+862 384 TriD
+870 384 TriD
+878 384 TriD
+886 384 TriD
+895 384 TriD
+903 384 TriD
+911 384 TriD
+919 384 TriD
+928 384 TriD
+936 384 TriD
+944 384 TriD
+952 384 TriD
+961 384 TriD
+969 384 TriD
+977 384 TriD
+985 384 TriD
+993 384 TriD
+1002 384 TriD
+1010 384 TriD
+1018 384 TriD
+1026 384 TriD
+1035 384 TriD
+1043 384 TriD
+1051 384 TriD
+1059 384 TriD
+1068 384 TriD
+1076 384 TriD
+1084 384 TriD
+1092 384 TriD
+1101 384 TriD
+1109 384 TriD
+1117 384 TriD
+1125 384 TriD
+1134 384 TriD
+1142 384 TriD
+1150 384 TriD
+1158 384 TriD
+1167 384 TriD
+1175 384 TriD
+1183 384 TriD
+1191 384 TriD
+1199 384 TriD
+1208 384 TriD
+1216 384 TriD
+1224 384 TriD
+1232 384 TriD
+1241 384 TriD
+1249 384 TriD
+1257 384 TriD
+1265 384 TriD
+1274 384 TriD
+1282 384 TriD
+1290 384 TriD
+1298 384 TriD
+1307 384 TriD
+1315 384 TriD
+1323 384 TriD
+1331 384 TriD
+1340 384 TriD
+1348 384 TriD
+1356 384 TriD
+1364 384 TriD
+1372 384 TriD
+1381 384 TriD
+1389 384 TriD
+1397 384 TriD
+1405 384 TriD
+1414 384 TriD
+1422 384 TriD
+1430 384 TriD
+1438 384 TriD
+1447 384 TriD
+1455 384 TriD
+1463 384 TriD
+1471 384 TriD
+1480 384 TriD
+1488 384 TriD
+1496 384 TriD
+1504 384 TriD
+1513 384 TriD
+1521 384 TriD
+1529 384 TriD
+1537 384 TriD
+1545 384 TriD
+1554 384 TriD
+1562 384 TriD
+1570 384 TriD
+1578 384 TriD
+1587 384 TriD
+1595 384 TriD
+1603 384 TriD
+1611 384 TriD
+1620 384 TriD
+1628 384 TriD
+1636 384 TriD
+1644 384 TriD
+1653 384 TriD
+1661 384 TriD
+1669 384 TriD
+1677 384 TriD
+1686 384 TriD
+1694 384 TriD
+1702 384 TriD
+1710 384 TriD
+1718 384 TriD
+1727 384 TriD
+1735 384 TriD
+1743 384 TriD
+1751 384 TriD
+1760 384 TriD
+1768 384 TriD
+1776 384 TriD
+1784 384 TriD
+1793 384 TriD
+1801 384 TriD
+1809 384 TriD
+1817 384 TriD
+1826 384 TriD
+1834 384 TriD
+1842 384 TriD
+1850 384 TriD
+1859 384 TriD
+1867 384 TriD
+1875 384 TriD
+1883 384 TriD
+1892 384 TriD
+1900 384 TriD
+1908 384 TriD
+1916 384 TriD
+1924 384 TriD
+1933 384 TriD
+1941 384 TriD
+1949 384 TriD
+1957 384 TriD
+1966 384 TriD
+1974 384 TriD
+1982 384 TriD
+1990 384 TriD
+1999 384 TriD
+2007 384 TriD
+2015 384 TriD
+2023 384 TriD
+2032 384 TriD
+2040 384 TriD
+2048 384 TriD
+2056 384 TriD
+2065 384 TriD
+2073 384 TriD
+2081 384 TriD
+2089 384 TriD
+2097 384 TriD
+2106 384 TriD
+2114 384 TriD
+2122 384 TriD
+2130 384 TriD
+2139 384 TriD
+2147 384 TriD
+2155 384 TriD
+2163 384 TriD
+2172 384 TriD
+2180 384 TriD
+2188 384 TriD
+2196 384 TriD
+2205 384 TriD
+2213 384 TriD
+2221 384 TriD
+2229 384 TriD
+2238 384 TriD
+2246 384 TriD
+2254 384 TriD
+2262 384 TriD
+2270 384 TriD
+2279 384 TriD
+2287 384 TriD
+2295 384 TriD
+2303 384 TriD
+2312 384 TriD
+2320 384 TriD
+2328 384 TriD
+2336 384 TriD
+2345 384 TriD
+2353 384 TriD
+2361 384 TriD
+2369 384 TriD
+2378 384 TriD
+2386 384 TriD
+2394 384 TriD
+2402 384 TriD
+2411 384 TriD
+2419 384 TriD
+2427 384 TriD
+2435 384 TriD
+2443 384 TriD
+2452 384 TriD
+2460 384 TriD
+2468 384 TriD
+2476 384 TriD
+2485 384 TriD
+2493 384 TriD
+2501 384 TriD
+2509 384 TriD
+2518 384 TriD
+2526 384 TriD
+2534 384 TriD
+2542 384 TriD
+2551 384 TriD
+2559 384 TriD
+2567 384 TriD
+2575 384 TriD
+2584 384 TriD
+2592 384 TriD
+2600 384 TriD
+2608 384 TriD
+2617 384 TriD
+2625 384 TriD
+2633 384 TriD
+2641 384 TriD
+2649 384 TriD
+2658 384 TriD
+2666 384 TriD
+2674 384 TriD
+2682 384 TriD
+2691 384 TriD
+2699 384 TriD
+2707 384 TriD
+2715 384 TriD
+2724 384 TriD
+2732 384 TriD
+2740 384 TriD
+2748 384 TriD
+2757 384 TriD
+2765 384 TriD
+2773 384 TriD
+2781 384 TriD
+2790 384 TriD
+2798 384 TriD
+2806 384 TriD
+2814 384 TriD
+2822 384 TriD
+2831 384 TriD
+2839 384 TriD
+2847 384 TriD
+2855 384 TriD
+2864 384 TriD
+2872 384 TriD
+2880 384 TriD
+2888 384 TriD
+2897 384 TriD
+2905 384 TriD
+2913 384 TriD
+2921 384 TriD
+2930 384 TriD
+2938 384 TriD
+2946 384 TriD
+2954 384 TriD
+2963 384 TriD
+2971 384 TriD
+2979 384 TriD
+2987 384 TriD
+2995 384 TriD
+3004 384 TriD
+3012 384 TriD
+3020 384 TriD
+3028 384 TriD
+3037 384 TriD
+3045 384 TriD
+3053 384 TriD
+3061 384 TriD
+3070 384 TriD
+3078 384 TriD
+3086 384 TriD
+3094 384 TriD
+3103 384 TriD
+3111 384 TriD
+3119 384 TriD
+3127 384 TriD
+3136 384 TriD
+3144 384 TriD
+3152 384 TriD
+3160 384 TriD
+3168 384 TriD
+3177 384 TriD
+3185 384 TriD
+3193 384 TriD
+3201 384 TriD
+3210 384 TriD
+3218 384 TriD
+3226 384 TriD
+3234 384 TriD
+3243 384 TriD
+3251 384 TriD
+3259 384 TriD
+3267 384 TriD
+3276 384 TriD
+3284 384 TriD
+3292 384 TriD
+3300 384 TriD
+3309 384 TriD
+3317 384 TriD
+3325 384 TriD
+3333 384 TriD
+3342 384 TriD
+3350 384 TriD
+3358 384 TriD
+3366 384 TriD
+3374 384 TriD
+3383 384 TriD
+3391 384 TriD
+3399 384 TriD
+3407 384 TriD
+3416 384 TriD
+3424 384 TriD
+3432 384 TriD
+3440 384 TriD
+3449 384 TriD
+3457 384 TriD
+3465 384 TriD
+3473 384 TriD
+3482 384 TriD
+3490 384 TriD
+3498 384 TriD
+3506 384 TriD
+3515 384 TriD
+3523 384 TriD
+3531 384 TriD
+3539 384 TriD
+3547 384 TriD
+3556 384 TriD
+3564 384 TriD
+3572 384 TriD
+3580 384 TriD
+3589 384 TriD
+3597 384 TriD
+3605 384 TriD
+3613 384 TriD
+3622 384 TriD
+3630 384 TriD
+3638 384 TriD
+3646 384 TriD
+3655 384 TriD
+3663 384 TriD
+3671 384 TriD
+3679 384 TriD
+3688 384 TriD
+3696 384 TriD
+3704 384 TriD
+3712 384 TriD
+3720 384 TriD
+3729 384 TriD
+3737 384 TriD
+3745 384 TriD
+3753 384 TriD
+3762 384 TriD
+3770 384 TriD
+3778 384 TriD
+3786 384 TriD
+3795 384 TriD
+3803 384 TriD
+3811 384 TriD
+3819 384 TriD
+3828 384 TriD
+3836 384 TriD
+3844 384 TriD
+3852 384 TriD
+3861 384 TriD
+3869 384 TriD
+3877 384 TriD
+3885 384 TriD
+3894 384 TriD
+3902 384 TriD
+3910 384 TriD
+3918 384 TriD
+3926 384 TriD
+3935 384 TriD
+3943 384 TriD
+3951 384 TriD
+3959 384 TriD
+3968 384 TriD
+3976 384 TriD
+3984 384 TriD
+3992 384 TriD
+4001 384 TriD
+4009 384 TriD
+4017 384 TriD
+4025 384 TriD
+4034 384 TriD
+4042 384 TriD
+4050 384 TriD
+4058 384 TriD
+4067 384 TriD
+4075 384 TriD
+4083 384 TriD
+4091 384 TriD
+4099 384 TriD
+4108 384 TriD
+4116 384 TriD
+4124 384 TriD
+4132 384 TriD
+4141 384 TriD
+4149 384 TriD
+4157 384 TriD
+4165 384 TriD
+4174 384 TriD
+4182 384 TriD
+4190 384 TriD
+4198 384 TriD
+4207 384 TriD
+4215 384 TriD
+4223 384 TriD
+4231 384 TriD
+4240 384 TriD
+4248 384 TriD
+4256 384 TriD
+4264 384 TriD
+4272 384 TriD
+4281 384 TriD
+4289 384 TriD
+4297 384 TriD
+4305 384 TriD
+4314 384 TriD
+4322 384 TriD
+4330 384 TriD
+4338 384 TriD
+4347 384 TriD
+4355 384 TriD
+4363 384 TriD
+4371 384 TriD
+4380 384 TriD
+4388 384 TriD
+4396 384 TriD
+4404 384 TriD
+4413 384 TriD
+4421 384 TriD
+4429 384 TriD
+4437 384 TriD
+4445 384 TriD
+4454 384 TriD
+4462 384 TriD
+4470 384 TriD
+4478 384 TriD
+4487 384 TriD
+4495 384 TriD
+4503 384 TriD
+4511 384 TriD
+4520 384 TriD
+4528 384 TriD
+4536 384 TriD
+4544 384 TriD
+4553 384 TriD
+4561 384 TriD
+4569 384 TriD
+4577 384 TriD
+4586 384 TriD
+4594 384 TriD
+4602 384 TriD
+4610 384 TriD
+4619 384 TriD
+4627 384 TriD
+4635 384 TriD
+4643 384 TriD
+4651 384 TriD
+4660 384 TriD
+4668 384 TriD
+4676 384 TriD
+4684 384 TriD
+4693 384 TriD
+4701 384 TriD
+4709 384 TriD
+4717 384 TriD
+4726 384 TriD
+4734 384 TriD
+4742 384 TriD
+4750 384 TriD
+4759 384 TriD
+4767 384 TriD
+4775 384 TriD
+4783 384 TriD
+4792 384 TriD
+4800 384 TriD
+4808 384 TriD
+4816 384 TriD
+4824 384 TriD
+4833 384 TriD
+4841 384 TriD
+4849 384 TriD
+4857 384 TriD
+4866 384 TriD
+4874 384 TriD
+4882 384 TriD
+4890 384 TriD
+4899 384 TriD
+4907 384 TriD
+4915 384 TriD
+4923 384 TriD
+4932 384 TriD
+4940 384 TriD
+4948 384 TriD
+4956 384 TriD
+4965 384 TriD
+4973 384 TriD
+4981 384 TriD
+4989 384 TriD
+4997 384 TriD
+5006 384 TriD
+5014 384 TriD
+5022 384 TriD
+5030 384 TriD
+5039 384 TriD
+5047 384 TriD
+5055 384 TriD
+5063 384 TriD
+5072 384 TriD
+5080 384 TriD
+5088 384 TriD
+5096 384 TriD
+5105 384 TriD
+5113 384 TriD
+5121 384 TriD
+5129 384 TriD
+5138 384 TriD
+5146 384 TriD
+5154 384 TriD
+5162 384 TriD
+5170 384 TriD
+5179 384 TriD
+5187 384 TriD
+5195 384 TriD
+5203 384 TriD
+5212 384 TriD
+5220 384 TriD
+5228 384 TriD
+5236 384 TriD
+5245 384 TriD
+5253 384 TriD
+5261 384 TriD
+5269 384 TriD
+5278 384 TriD
+5286 384 TriD
+5294 384 TriD
+5302 384 TriD
+5311 384 TriD
+5319 384 TriD
+5327 384 TriD
+5335 384 TriD
+5344 384 TriD
+5352 384 TriD
+5360 384 TriD
+5368 384 TriD
+5376 384 TriD
+5385 384 TriD
+5393 384 TriD
+5401 384 TriD
+5409 384 TriD
+5418 384 TriD
+5426 384 TriD
+5434 384 TriD
+5442 384 TriD
+5451 384 TriD
+5459 384 TriD
+5467 384 TriD
+5475 384 TriD
+5484 384 TriD
+5492 384 TriD
+5500 384 TriD
+5508 384 TriD
+5517 384 TriD
+5525 384 TriD
+5533 384 TriD
+5541 384 TriD
+5549 384 TriD
+5558 384 TriD
+5566 384 TriD
+5574 384 TriD
+5582 384 TriD
+5591 384 TriD
+5599 384 TriD
+5607 384 TriD
+5615 384 TriD
+5624 384 TriD
+5632 384 TriD
+5640 384 TriD
+5648 384 TriD
+5657 384 TriD
+5665 384 TriD
+5673 384 TriD
+5681 384 TriD
+5690 384 TriD
+5698 384 TriD
+5706 384 TriD
+5714 384 TriD
+5722 384 TriD
+5731 384 TriD
+5739 384 TriD
+5747 384 TriD
+5755 384 TriD
+5764 384 TriD
+5772 384 TriD
+5780 384 TriD
+5788 384 TriD
+5797 384 TriD
+5805 384 TriD
+5813 384 TriD
+5821 384 TriD
+5830 384 TriD
+5838 384 TriD
+5846 384 TriD
+5854 384 TriD
+5863 384 TriD
+5871 384 TriD
+5879 384 TriD
+5887 384 TriD
+5895 384 TriD
+5904 384 TriD
+5912 384 TriD
+5920 384 TriD
+5928 384 TriD
+5937 384 TriD
+5945 384 TriD
+5953 384 TriD
+5961 384 TriD
+5970 384 TriD
+5978 384 TriD
+5986 384 TriD
+5994 384 TriD
+6003 384 TriD
+6011 384 TriD
+6019 384 TriD
+6027 384 TriD
+6036 384 TriD
+6044 384 TriD
+6052 384 TriD
+6060 384 TriD
+6069 384 TriD
+6077 384 TriD
+1699 4532 TriD
+% End plot #3
+1.000 UP
+1.000 UL
+LT0
+0.00 0.00 0.00 C stroke
+grestore
+end
+showpage
+%%Trailer
+%%DocumentFonts: Verdana

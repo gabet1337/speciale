@@ -19,6 +19,7 @@ namespace experiment {
   private:
     io::buffered_stream<int> *input_stream;
     io::buffered_stream<int> *output_stream;
+    //io::bostream *output_stream;
   };
 
   buffered_stream_stub::buffered_stream_stub() {
@@ -27,6 +28,7 @@ namespace experiment {
   buffered_stream_stub::buffered_stream_stub(size_t buffer_size, double epsilon) {
     input_stream = new io::buffered_stream<int>(buffer_size);
     output_stream = new io::buffered_stream<int>(buffer_size);
+    //output_stream = new io::bostream(buffer_size);
     input_stream->open("../data/insert_experiment");
     output_stream->open("../data/temp_buffered_out");
   }
@@ -40,7 +42,7 @@ namespace experiment {
   }
 
   void buffered_stream_stub::insert(const point &p) {
-    output_stream->write(1337);
+    output_stream->write(p.x);
   }
 
   void buffered_stream_stub::remove(const point &p) {

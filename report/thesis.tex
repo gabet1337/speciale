@@ -154,6 +154,10 @@ We have really enjoyed working on this thesis and we sincerely hope you enjoy re
 \tikzstyle{every path}=[draw]
 \matrix [column sep={1em,between origins},row sep=\lineskip]
 {
+\commit{52d4e39}{25.May}{Brodal buffer size experiment documented} & \\
+\commit{1da6e4b}{10.May}{Preface added} & \\
+\commit{47b00ae}{29.Apr}{libspatialindex PST added} & \\
+\commit{ed54a60}{21.Apr}{Now plays The Imperial March} & \\
 \commit{4ee8a7a}{19.Apr}{Base experiment class added} & \\
 \commit{e028c0b}{17.Apr}{Merge: MySQL PST done + Internal PST done} & \\
 & & \ghost{branch6} & \commit{f585f41}{14.Apr 2016}{Internal dynamic PST added} \\
@@ -208,8 +212,12 @@ We have really enjoyed working on this thesis and we sincerely hope you enjoy re
 \connect{1132d2e}{branch6};
 \connect{branch6}{e028c0b};
 \connect{e028c0b}{4ee8a7a};
+\connect{4ee8a7a}{ed54a60};
+\connect{ed54a60}{47b00ae};
+\connect{47b00ae}{1da6e4b};
+\connect{1da6e4b}{52d4e39};
 \end{tikzpicture}
-\caption{Excerpt of git history for the entire project}
+\caption{Excerpt of the git history for the entire project}
 \label{fig:git_history}
 \end{figure}
 
@@ -529,6 +537,7 @@ From Lemma~\ref{lma:composite_universe_query} is follows that our approach is co
 
 \begin{savequote}[0.5\textwidth]
 --- If at first you don't succeed, call it version 1.0
+\qauthor{Unknown}
 \end{savequote}
 \chapter{Related work}
 \label{chp:related_work}
@@ -661,6 +670,10 @@ For any $\max\left\lbrace \log\log N, \log_M N \right\rbrace \leq \lambda \leq B
 
 This means that in one end of the trade-off they can for $\lambda = B^\epsilon$ obtain an update time of $\mathcal{O}(1/B^{1-\epsilon})$ and query time of $\mathcal{O}(\log_B N)$. This matches the bounds of the buffer tree of Arge. In the other end of the trade-off where they are able to achieve fast updates very close to the optimal disk transfer rate of $1/B$ namely they obtain: $t_u^{\min} = \mathcal{O}(\frac{1}{B} \cdot \max\left\lbrace \log\log N, \log_M N \right\rbrace)$.
 
+\begin{savequote}[0.5\textwidth]
+--- An algorithm must be seen to be believed.
+\qauthor{Knuth, Donald}
+\end{savequote}
 \chapter{Internal Priority Search Tree}
 \label{chp:internal_pst}
 In this section we present an internal memory data structure for the range reporting problem. The data structure was originally presented by McCreight~\cite{DBLP:journals/siamcomp/McCreight85} and is denoted a priority search tree. The priority search tree is basically a combination of a binary search tree on the $x$-coordinate and a heap on the $y$-coordinate. A formal definition of a priority search tree for a set of $N$ points, $P$, is as follows. We assume that all points have distinct coordinates, though this assumption can be removed by using the normal lexicographical ordering of points.
@@ -765,6 +778,10 @@ If we use the operations for dynamic updates as stated above without any measure
 \section{Bounds in the I/O model}
 The above bounds translate directly to the I/O model as we cannot guarentee that nodes on the search path are perfectly placed in blocks, which in the worst case means that each visit to a node will equal 1 I/O.
 
+\begin{savequote}[0.5\textwidth]
+--- The plot thickens, as they say. Why, by the way? Is it a soup metaphor?
+\qauthor{Gustave, M (The Grand Budapest Hotel)}
+\end{savequote}
 \chapter{External Memory Priority Search Tree}
 \label{chp:arge_pst}
 In this chapter we present an older result on dynamic three-sided range queries due to Arge et al.~\cite{arge_samoladas_vitter_1999}.
@@ -850,7 +867,6 @@ Each internal node of the structures stores an instance of the bootstrapped stru
 	\label{fig:arge_child_strucutre}
 \end{figure}
 
-
 The base B-tree uses linear space and since each point is stored only once in a query data structure and the query data structure uses linear space, we can conclude that the structure stores $N$ points in $\mathcal{O}(N/B)$ blocks, i.e. uses linear space.
 
 \section{Updates}
@@ -902,6 +918,11 @@ We report all points in $Q$, since, by the rules, a point in $Q$ cannot be in an
 \subsection{Analysis}
 In every internal node $v$ visited we spend $\mathcal{O}(1+K_v/B)$ I/O's. There are $\mathcal{O}(\log_B N)$ nodes on the search path from root to the leftmost leaf and rightmost leaf and thus the number of I/O's used on these paths is $\mathcal{O}(\log_B N + K/B)$. All other internal nodes visited are visited because all points were reported in the parent. If we do not report all points from a $Y$-set we can charge the $\mathcal{O}(1)$ I/O's of visiting the child to the parent which must have reported $\Theta(B)$ points. As the cost of reporting from the query data structures is $\mathcal{O}(1+K/B)$ the total cost amounts to $\mathcal{O}(\log_B N + K/B)$.
 
+
+\begin{savequote}[0.5\textwidth]
+--- A change is as good as a rest
+\qauthor{King, Stephen}
+\end{savequote}
 \chapter{External Memory Buffered Priority Search Tree}
 \label{chp:epst}
 In this chapter we present an external memory data structure described by Brodal~\cite{DBLP:journals/corr/Brodal15}. The structure supports updates in amortized $\mathcal{O}\left(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N\right)$ I/O's, three sided range queries in $\mathcal{O}\left(\frac{1}{\epsilon}\log_B N + \nicefrac{K}{B}\right)$ I/O's for $0 \leq \epsilon \leq \frac{1}{2}$, and can be constructed on $N$ sorted points in $\mathcal{O}(\nicefrac{N}{B})$ I/O's. The parameter $\epsilon$ determines the size of the fanout and in turn the size of a bootstrapped substructure for storing $\mathcal{O}(B^{1+\epsilon})$ points.
@@ -916,8 +937,6 @@ The external memory buffered priority search tree is a combination of the extern
 	\label{fig:gerth_tree}
 \end{figure}
 
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%
 % Main data structure %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%
@@ -929,7 +948,6 @@ This section presents the main data structure achieving the results of Theorem~\
 \label{thm:main_structure}
 An external memory data structure exists supporting insertion and deletion of points in amortized $\mathcal{O}(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N)$ I/O's and three sided range queries in amortized $\mathcal{O}(\frac{1}{\epsilon} \log_B N + \nicefrac{K}{B})$, where $\epsilon$ is a constant, $0 < \epsilon \leq \nicefrac{1}{2}$, $N$ is the number of points in the structure, and $K$ is the size of the output. The structure can be constructed in amortized $\mathcal{O}(\nicefrac{N}{B})$ I/O's on an x-sorted set of points and stored in $\mathcal{O}(\nicefrac{N}{B})$ blocks.
 \end{theorem}
-\todo{Kasper: Skal $\epsilon$ vaere en konstant. I saafald kan man vel bare slette $\frac{1}{\epsilon}$ ledet?}
 
 The structure is a slightly modified version of the B-tree. Each internal node, except for the root, has a node degree between $\nicefrac{\Delta}{2}$ and $\Delta$, with $\Delta = \lceil B^\epsilon \rceil$. The root has node degree between $2$ and $\Delta$.
 
@@ -945,7 +963,6 @@ For each internal node, $v$, we also store an instance of the child structure, $
 Finally, for each internal node, $v$, we store, in $\mathcal{O}(1)$ blocks, information about the minimum $y$-value of the points of each of $v$'s children or $\infty$ if the child does not store any points.
 
 All information at the root is kept in internal memory except for the child structure.
-\todo{Kasper: Hvorfor ikke child structure?}
 
 \subsection{Invariants}
 For a node $v$ in the main data structure the following invariants must be true:
@@ -1625,8 +1642,14 @@ The result of the experiment on the \textbf{search} part of the algorithms is de
 
 \chapter{Conclusion}
 \label{chp:conclusion}
+\todo{Conclude this shit!\dots}
 
-\todo{Conclude this shit!}
+\section{Future work}
+\todo{optimize spage usage}
+
+\todo{Eliminate std::set}
+
+
 
 \clearpage
 \addcontentsline{toc}{chapter}{Bibliography}
