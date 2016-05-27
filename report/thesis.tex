@@ -103,9 +103,11 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\pagestyle{plain}
-\pagenumbering{roman} 
+
+%\pagenumbering{roman}
 \chapter*{Abstract}
+\pagestyle{plain}
+\pagenumbering{roman}
 \addcontentsline{toc}{chapter}{Abstract}
 
 The world is becoming increasingly more data driven -- almost everything in our daily lives generate data. The data sets generated are typically larger than what we can solve in a normal computers main memory. We therefore need clever techniques to handle and analyse the large data sets in order to make sense of it all. Much of the data that is gathered is spatial in nature, i.e. contains e.g. GPS coordinates. Analysing coordinates require us to solve complicated problems within the field of computational geometry. One of such problems could be the problem of three-sided range reporting. In this problem we are asked to maintain a dynamic set of points, $\mathcal{S}$, of $N$ points in $\mathbb{R}^2$. The set can be updated by inserting or deleting points. Any solution to the problem must be able to answer three-sided range queries, i.e. given a range of the type $\left[x_1,x_2\right]\times \left[y,\infty\right]$ we report points in $\mathcal{S} \cap \left[x_1,x_2\right]\times \left[y,\infty\right]$.
