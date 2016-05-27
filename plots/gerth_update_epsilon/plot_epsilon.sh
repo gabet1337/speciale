@@ -1,5 +1,5 @@
 #!/usr/bin/gnuplot
-set terminal postscript eps enhanced color font 'Verdana,20'
+set terminal postscript eps enhanced color font 'Verdana,24'
 set output 'gerth_epsilon.eps'
 set style line 11 lc rgb '#000000' lt 1
 set border 3 back ls 11
@@ -19,7 +19,7 @@ set key top left
 set xlabel 'N'
 set ylabel 'Time / N'
 set xrange [1:10]
-set yrange [0:*]
+set yrange [0:4.8e-05]
 unset ytics
 unset xtics
 B = 1024*1024
