@@ -1,5 +1,5 @@
 #!/usr/bin/gnuplot
-set terminal postscript eps enhanced color font 'Verdana,12'
+set terminal postscript eps enhanced color font 'Verdana,24'
 set output 'arge_buffer_size_experiment_results/2016-04-28.10_03_24/time.eps'
 set style line 11 lc rgb '#000000' lt 1
 set border 3 back ls 11
