@@ -1419,19 +1419,19 @@ Compiler & gcc 4.8.4 with optimization level 2
 Many experiments were conducted to evaluate the performance of the structures against each other. In this chapter we present and discuss the most interesting results. Some of the experiments are limited to only run for a fixed amount of time. This was a necessary restriction as the internal memory structures are severely limited when data input is greater than the available main memory. This will be very apparent in many of the presented results.
 
 \section{Parameter tuning}
-Both the original and buffered external memory priority search tree by Arge et al.~(Chapter~\ref{chp:arge_pst}) and Brodal (Chapter~\ref{chp:epst}) respectively are parametrised with fanout and buffer size. These parameters are of a very machine dependent nature as larger main memory allows for larger buffer sizes. It is our goal to utilize as much main memory as available in the machine running the data structure. We decided to focus the parameter tuning sorely on the \textsc{insert} operation, since this would allow us to construct data structures with a large amount of data, which again would give rise to interesting experiments for the remaining operations. Put in other words; it is of no interest to achieve a data structure that queries \textit{really} fast if we are unable to construct it with a decent amount of data within a decent amount of time.
+Both the original and buffered external memory priority search tree by Arge et al.~(Chapter~\ref{chp:arge_pst}) and Brodal (Chapter~\ref{chp:epst}) respectively are parametrised with fanout and buffer size. These parameters are of a very machine dependent nature as larger main memory allows for larger buffer sizes. It is our goal to utilize as much main memory as available in the machine running the data structure. We decided to focus the parameter tuning sorely on the \texttt{insert} operation, since this would allow us to construct data structures with a large amount of data, which again would give rise to interesting experiments for the remaining operations. Put in other words; it is of no interest to achieve a data structure that queries \textit{really} fast if we are unable to construct it with a decent amount of data within a decent amount of time.
 
 In Subsection~\ref{subsec:tuning_gerth} we present our tuning parameters for the structure by Brodal, and in Subsection~\ref{subsec:tuning_arge} we present our findings for the structure by Arge et al.
 
 \subsection{External memory buffered priority search tree}
 \label{subsec:tuning_gerth}
-The experiments on Brodals consisted of inserting 5 Gb of data, i.e. $5 \cdot 1024 \cdot 1024 \cdot 1024 / 8 = 640$ Mb datapoints. The coordinates of the data points was uniformly distributed among the positive integers. 
+The experiments on Brodals consisted of inserting 5 Gb of data, i.e. $5 \cdot 1024 \cdot 1024 \cdot 1024 / 8 = 640$ million datapoints. The coordinates of the data points was uniformly distributed among the positive integers. 
 
 \subsubsection*{Buffer size}
 
-In the experiment conducted on the buffer size we fixed the fanout to two and varied the buffer size. Theoretically the running time should decrease with ever increasing buffer sizes as shown in Figure~\ref{fig:gerth_buffer_size_theory}. We are, however, limited by the main memory size and thus have to be careful not to cause swapping out memory to disk as this greatly decreases performance. 
+In the experiment conducted on the buffer size we fixed the fanout to two and varied the buffer size. Theoretically the running time should decrease with ever increasing buffer sizes as shown in Figure~\ref{fig:gerth_buffer_size_theory}. We are, however, limited by the main memory size and thus have to be careful not to cause swapping of memory to disk as this greatly decreases performance. 
 
-The result plotted as running time per insert is depicted in Figure~\ref{fig:gerth_buffer_size_experiment}. Clearly the actual running time follows the same tendency as the theoretical number of I/O's per insert. We will focus on the number of I/O's to support this claim. In Figure~\ref{fig:gerth_buffer_size_experiment_ios_per_insert} we plot the actual number of I/O's used per insert. Again it seems we have a good alignment between the actual number and the theoretical number of I/O's. In order to verify the running times to be truly bound by the number of I/O's we plot the actual time per insert divided by the number of I/O's per insert. Please refer to Figure~\ref{fig:gerth_buffer_size_experiment_time_divided_asymptotic}. We expect a close relation between running time and the theoretical number of I/O's to produce a plot with close-to straight lines. For buffers sizes 1~Mb, 2~Mb, 4~Mb and 8~Mb, we believe this to be the case. For buffer size 16 Mb we see more fluctuations and we can hardly argue that the plot follows a straight line. We believe this is caused by the limited amount of internal memory forcing us to utilize more main memory than available, which again causes the operating system to swap out internal memory to external memory. In order to verify this we repeated the experiment for buffer sizes 8 Mb and 16 Mb, this time measuring the number of major page faults. The result is depicted in Figure \todo{CREATE THIS EXPERIMENT AND EXPLAIN}.
+The results plotted as running time per insert is depicted in Figure~\ref{fig:gerth_buffer_size_experiment}. Clearly the actual running time follows the same tendency as the theoretical number of I/O's per insert. We will focus on the number of I/O's to support this claim. In Figure~\ref{fig:gerth_buffer_size_experiment_ios_per_insert} we plot the actual number of I/O's used per insert. Again it seems we have a good alignment between the actual number and the theoretical number of I/O's. In order to verify the running times to be truly bound by the number of I/O's we plot the actual time per insert divided by the number of I/O's per insert. Please refer to Figure~\ref{fig:gerth_buffer_size_experiment_time_divided_asymptotic}. We expect a close relation between running time and the theoretical number of I/O's to produce a plot with close-to straight lines. For buffers of sizes 1~Mb, 2~Mb, 4~Mb, and 8~Mb, we believe this to be the case. For buffer size 16 Mb we see more fluctuations and we can hardly argue the plot follows a straight line. We believe this is caused by the limited amount of internal memory forcing us to utilize more main memory than available, which again causes the operating system to swap out internal memory to external memory. In order to verify this we repeated the experiment for buffer sizes 8 Mb and 16 Mb, this time measuring the number of major page faults. The result is depicted in Figure \todo{CREATE THIS EXPERIMENT AND EXPLAIN}.
 
 \begin{figure}[htp]
 \centering
@@ -1458,7 +1458,7 @@ The result plotted as running time per insert is depicted in Figure~\ref{fig:ger
 \clearpage
 
 \subsubsection*{Fanout}
-In the experiment conducted on the fanout parameter we fixed the buffer size to 1 Mb and varied the fanout parameter. The readers intuition might deceive him into concluding an ever increasing fanout would cause an ever decreasing update time. This was certainly what we had expected since we pass down an ever decreasing $B / B^\epsilon$ fraction, and each such fraction charges an I/O to the total running time. In Figure~\ref{fig:gerth_fanout_experiment} we present the theoretical update time per operation. We see a clear tendency of ever increasing fanouts causing an ever decreasing running time for $B^\epsilon \in \{4, 5, 8, 16, 32, 64 \}$. When zooming in on the graphs for $B^\epsilon \in \{2, 3, 4, 5\}$ in Figure~\ref{fig:gerth_fanout_experiment_zoom} we see that no theoretical gain is to be expected when decreasing the fanout from 3 to 2. In fact it seems we achieve the exact same update time per operation for fanout 2 and fanout 4. This is, however, not as surprising as one might think. See Equation~\ref{eq:equal_fanouts_2_4_1} and Equation~\ref{eq:equal_fanouts_2_4_2} where the theoretical bound is shown to be the exact same for these fanouts. \\
+In the experiment conducted on the fanout parameter we fixed the buffer size to 1 Mb and varied the fanout parameter. The readers intuition might deceive him into concluding an ever increasing fanout would cause an ever decreasing update time. This was certainly what we had expected since we pass down an ever decreasing $B / B^\epsilon$ fraction, and each such fraction charges an I/O to the total running time. In Figure~\ref{fig:gerth_fanout_experiment} we present the theoretical update time per operation. We see a clear tendency of ever increasing fanouts causing an ever decreasing running time for $B^\epsilon \in \{4, 5, 6, 8, 16, 32, 64 \}$. When zooming in on the graphs for fanouts $B^\epsilon \in \{2, 3, 4, 5\}$ in Figure~\ref{fig:gerth_fanout_experiment_zoom} we see that no theoretical gain is to be expected when decreasing the fanout from 3 to 2. In fact it seems we achieve the exact same update time per operation for fanout 2 and fanout 4. This is, however, not as surprising as one might think. See Equation~\ref{eq:equal_fanouts_2_4_1} and Equation~\ref{eq:equal_fanouts_2_4_2} where the theoretical bound is shown to be the exact same for fanouts 2 and 4. \\
 
 Let $B^\epsilon = 2$:
 \begin{equation} \label{eq:equal_fanouts_2_4_1}
@@ -1475,18 +1475,15 @@ Let $B^\epsilon = 4$:
 	\end{split}
 \end{equation}
 
-What Equation~\ref{eq:equal_fanouts_2_4_1} and Equation~\ref{eq:equal_fanouts_2_4_2} essential states is that we expect no performance gain when recursively sending half as many points from root to leaf in a tree of double the height. \todo{NOT SURE!}.
+What Equation~\ref{eq:equal_fanouts_2_4_1} and Equation~\ref{eq:equal_fanouts_2_4_2} essential states is that we expect no performance gain when recursively sending half as many points from root to leaf in a tree of double the height.
 
-The results showing the update time per insert on varying fanout is depicted in Figure~\ref{fig:gerth_fanout_experiment}. Clearly the actual running time aligns with what the theoretical number of I/O's per update from Figure~\ref{fig:gerth_fanout_experiment} suggests. Being truly I/O bound we expect the theoretical number of I/O's and the actual running time to align with well with the actual number of I/Os per update. We are pleased to see this is in fact the case in Figure~\ref{fig:gerth_fanout_experiment_ios}.
+The results showing the experimentally measured update time per insert on varying fanout is depicted in Figure~\ref{fig:gerth_fanout_experiment_time}. Clearly the actual running time aligns with what the theoretical number of I/O's per update from Figure~\ref{fig:gerth_fanout_experiment} suggests. Being truly I/O bound we expect the theoretical number of I/O's and the actual running time to align well with with the actual number of I/Os per update. We are pleased to see this is in fact the case in Figure~\ref{fig:gerth_fanout_experiment_ios}.
 
-If we zoom in on fanouts 2, 3 and 4 (????) we see minor inconsistencies from what the theory suggests. Comparing Figure ??? to Figure ??? we see that even though we would expect....
+To support our claims of the measured running time and number of I/O's aligning well with theory, we have made a plot dividing the actual result with the expected measure. These plots can be seen in Figure~\ref{fig:gerth_fanout_experiment_ios_divided_asymptotic} for the I/O's and in Figure~\ref{fig:gerth_fanout_experiment_time_divided_asymptotic} for the running time. We conclude there is a close relation between the actual measures and what the theory suggests, since we see close-to straight lines in both plots.
 
-%since the $B / B^\epsilon$ threshold we send down the tree on every overflow, is ever 
+If we zoom in on the measured running time for fanouts 2, 3, 4, 5, and 6 we see minor inconsistencies from what the theory suggests. Comparing the measured running time per update in Figure~\ref{fig:gerth_fanout_experiment_time_zoomed} to the expected number of I/O's per update in Figure~\ref{fig:gerth_fanout_experiment_zoom} we see the tendencies aligns, but the order of the fanouts are inconsistent. For example we would have expected fanout 2 to perform the same as fanout 4, and surely we had expected fanout 3 to perform the best of them all. This is not the case.
 
-
-%Figure~\ref{fig:gerth_fanout_experiment} shows how the time per insert grows as the input size increases with regards to different fanout sizes in the data structure of Brodal. The result is very much in line with the theoretical bounds as depicted in Figure~\ref{fig:gerth_fanout_theory} but the results are slightly inconsistent with the theoretical bounds in the area between fanout sizes of 2 and 6 - running time decreases with increasing fanout sizes. In Figure~\ref{fig:gerth_fanout_experiment_ios} we have plotted the number of I/O's for each fanout and it shows that the number of I/O's increases with increasing fanout sizes in line with the theoretical expectations. The explanation for this small inconsistency might be found in the fact that larger fanouts decrease the number of node degree overflows and in turn the number of point buffer underflows. For small fanouts this fact might decrease the running time more than the decreased amount of points sent down on each overflow, caused by the increased fanout, increase the running time.
-
-%We see that the behaviour returns to the expected theoretical bounds for fanouts above 6. The experiment with fanout 64 was terminated before time as it would have taken too long to finish either ways.
+We believe these inconsistencies can be explained by the one parameter that is not encapsulated in the I/O model; the amount of internal work done. Theory suggest we see decreasing node degree overflows on increasing fanouts, and in turn we expect less node degree overflows to produce fewer point buffer underflows. These expectations align well with our measures on the total number of point buffer underflows depicted in Figure~\ref{fig:gerth_fanout_experiment_pbu}. But what the I/O model does not account for is the internal work needed for handling the actual point buffer underflow. In fact we regard this exact operation to be the most expensive with regard to internal work. \todo{Any way to substiante claim of internal work. Maybe run a profiler on the code.} Refer to Figure~\ref{fig:brodal_pb_underflow} for a detailed description of the underflow procedure. What we claim is that in the area of fanouts from 2-6, for the smaller of the fanouts, we are dominated by the internal work needed for handling the many point buffer underflows such that we do not benefit from the large $B / B^\epsilon$ fraction of points we pass down on each overflow.
 
 \begin{figure}[h]
 \centering
@@ -1505,58 +1502,75 @@ If we zoom in on fanouts 2, 3 and 4 (????) we see minor inconsistencies from wha
 \end{minipage}
 \centering
 \includegraphics[width=\textwidth]{../src/experiments/gerth_fanout_experiment_results/2016-05-06.11_52_24/time}
-\caption{Experimentally measured update time per operation for various $B^\epsilon~\in~\{2,3,4,5,6,8,16,32,64\}$ on the data structure of Brodal with buffer size $B = 1 Mb$. Clearly the tendencies align with the theoretical update bounds depicted in Figure~\ref{fig:gerth_fanout_experiment}.}
+\caption{Experimentally measured update time per operation for fanouts $B^\epsilon~\in~\{2,3,4,5,6,8,16,32,64\}$ on the data structure of Brodal with buffer size $B = 1 Mb$. Clearly the tendencies align with the theoretical update bounds depicted in Figure~\ref{fig:gerth_fanout_experiment}.}
 \label{fig:gerth_fanout_experiment_time}
 \end{figure}
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{../src/experiments/gerth_fanout_experiment_results/2016-05-06.11_52_24/ios}
-\caption{Experimentally meassured number of I/O's per insert as a function of input size on the structure of Brodal with a fixed buffer size of 1 Mb and varying fanouts $B^\epsilon~\in~\{2,3,4,5,6,8,16,32,64\}$. Clearly the tendencies align with the theoretical update bounds depicted in Figure~\ref{fig:gerth_fanout_experiment}.}
+\caption{Experimentally measured number of I/O's per insert as a function of input size on the structure of Brodal with a fixed buffer size of 1 Mb and varying fanouts $B^\epsilon~\in~\{2,3,4,5,6,8,16,32,64\}$. Clearly the tendencies align with the theoretical update bounds depicted in Figure~\ref{fig:gerth_fanout_experiment}.}
 \label{fig:gerth_fanout_experiment_ios}
 \begin{minipage}[t]{0.48\columnwidth}
   \centering
   \includegraphics[width=\linewidth]{../src/experiments/gerth_fanout_experiment_results/2016-05-06.11_52_24/ios_divided_asymptotic}
-  \caption{Experimentally meassured number of I/O's divided by the theoretical number of I/O's per update. A straight line suggests a close relation between the two measures.}
+  \caption{Experimentally measured number of I/O's divided by the theoretical number of I/O's per update. A straight line suggests a close relation between the two measures.}
   \label{fig:gerth_fanout_experiment_ios_divided_asymptotic}
 \end{minipage}
 \hfill
 \begin{minipage}[t]{0.48\columnwidth}
   \centering
   \includegraphics[width=\linewidth]{../src/experiments/gerth_fanout_experiment_results/2016-05-06.11_52_24/time_divided_asymptotic}
-  \caption{Experimentally meassured running time per update divided by the theoretical number of I/O's per update. A straight line suggests a close relation between the two measures.}
+  \caption{Experimentally measured running time per update divided by the theoretical number of I/O's per update. A straight line suggests a close relation between the two measures.}
   \label{fig:gerth_fanout_experiment_time_divided_asymptotic}
 \end{minipage}
 \end{figure}
 
 \begin{figure}[]
 \includegraphics[width=\textwidth]{../src/experiments/gerth_fanout_experiment_results/2016-05-06.11_52_24/time_zoomed}
-\caption{Missing}
+\caption{Zoomed-in plot of experimentally measured update time per operation for fanouts $B^\epsilon~\in~\{2,3,4,5,6\}$. Comparing these to the theoretical number of I/O's per update depicted in Figure~\ref{fig:gerth_fanout_experiment_zoom} we see minor divergences. This can be explained by the internal work done on point buffer undeflows.}
 \label{fig:gerth_fanout_experiment_time_zoomed}
 \includegraphics[width=\textwidth]{../src/experiments/gerth_fanout_experiment_results/2016-05-06.11_52_24/pbu}
-\caption{Missing}
+\caption{Experimentally measured number of point buffer underflows. Clearly there is a tendency to ever decreasing point buffer underflows for ever increasing fanouts.}
 \label{fig:gerth_fanout_experiment_pbu}
 \end{figure}
-
-
-\todo{Add plots of gerth statistics. Maybe just the plot of node degree overflow}
 
 \clearpage
 
 \subsubsection*{Summary}
 
-We conclude from our experiments with differe nt fanouts and buffer sizes that in order to get as fast an update time as possible we need a fanout of between 2-6 and as large a buffer size as internal memory allows.
+We conclude from our experiments with different fanouts and buffer sizes that in order to get as fast an update time as possible we need a fanout of between 2-6 and as large a buffer size as internal memory allows.
 
 It is also worth noting that since the experimental results are very much in line with the theoretical results it can be concluded that the data structure is I/O bound.
 
 \subsection{External memory priority search tree}
 \label{subsec:tuning_arge}
 
-\todo{We need a single experiment where we test different buffer sizes with Arge's structure for good measure}
+The experiments on Arges consisted of inserting 50 Mb of data, i.e. $5 \cdot 50 \cdot 1024 \cdot 1024 / 8 = 6.25$ million datapoints. The coordinates of the data points was uniformly distributed among the positive integers. 
+
+The results of the experiment measuring running time per update is depicted in Figure~\ref{fig:arge_buffer_size_experiment}. Clearly we are very far away from the expected update time per operation depicted in Figure~\ref{fig:arge_buffer_size_theory}. The main reason behind this is most likely that more data is needed in the structure for the theoretical $\mathcal{O}(\log_B N)$ I/O per update to be apparent. It would seem we are dominated by the fact we need to load and store $B$ data points on each node visited in order to handle an update. Since the experiments on Arge was very time consuming, we decided to elect the buffer size of $4 Kb$ as the winning buffer size. We will elaborate more on the main bottlenecks of Arges structure in the insert experiment found in Section~\ref{src:insertion}.
+
+\begin{figure}[h]
+\centering
+\begin{minipage}[t]{0.48\columnwidth}
+  \centering
+  \includegraphics[width=\linewidth]{../plots/arge_complexities/arge_complexity}
+  \caption{Theoretical asymptotic update time per operation for buffer sizes $B~\in~\{4\text{Kb},8\text{Kb},16\text{Kb},32\text{Kb}\}$ for Arges structure. Each graph is on the form $f(N) = \log_B N$.}
+  \label{fig:arge_buffer_size_theory}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\columnwidth}
+  \centering
+  \includegraphics[width=\linewidth]{../src/experiments/arge_buffer_size_experiment_results/2016-04-28.10_03_24/time}
+  \caption{Experimentally measured update time per operation for buffer sizes $B~\in~\{4\text{Kb},8\text{Kb},16\text{Kb},32\text{Kb}\}$. Note the relatively long running time needed for inserting 50 Mb data.}
+  \label{fig:arge_buffer_size_experiment}
+\end{minipage}
+\end{figure}
 
 \clearpage
 
 \section{Insertion}
+\label{src:insertion}
 The goal of this experiment is to ascertain how our different structures compare against each other when it comes to pure insertions. The experiment will consist of inserting as much data as possible in 24 hours with an upper limit of 10Gb. The data is uniformly random in the positive integer range.
 
 Figure~\ref{fig:theory_insert_complexity} shows the theoretical complexities of inserting an element into the different structures for different $N$. We expect the actual running times to be very similar to these. If the non-I/O efficient data structures fill out the internal memory we expect to see a significant increase in running time at that point as the structures will be forced to use the virtual memory to swap out memory.
@@ -1665,10 +1679,10 @@ The libspatial external R*-Tree depicted in Figure~\ref{fig:time_divided_with_as
 \end{figure}
 
 \section{Three-sided range queries}
-Since the analysis of the theoretical query bounds are done using filtering, we conduct test that focuses both on the \textit{search} and the \textit{report} part of the algorithms. Please refer to section~\ref{sec:filtering} for a description of the method of filtering.
+Since the analysis of the theoretical query bounds are done using the method of filtering, we conduct experiments that focuses on both the \textit{search} and the \textit{report} part of the algorithms. Please refer to section~\ref{sec:filtering} for a description of the method of filtering.
 
-\subsection{Uniform reporting}
-The experiment on the \textbf{search} part of the algorithms was conducted by first inserting data \textit{inside} 5 fixed query windows of 5 Mb each. This was followed by inserting uniformly distributed data \textit{outside} the fixed query windows. For insertion of every 10 Mb we report all reports inside the fixed query windows giving a total of 25 Mb reported points. The idea is that we report on both small and large ranges and high and low in the tree. Please refer to figure~\ref{fig:experiment_query_uniform} for an illustration of the distribution of data points. We make sure to stop all clocks when inserting such that our measures only reflect the actual reporting being done.
+\subsection{Focus on searching}
+The experiment on the \textbf{search} part of the algorithms was conducted by first inserting data \textit{inside} 5 fixed query windows of 5 Mb data each, i.e. each query window contains . This was followed by inserting uniformly distributed data \textit{outside} the fixed query windows. For insertion of every 10 Mb we report all reports inside the fixed query windows giving a total of 25 Mb reported points. The idea is that we report on both small and large ranges and high and low in the tree. Please refer to figure~\ref{fig:experiment_query_uniform} for an illustration of the distribution of data points. We make sure to stop all clocks when inserting such that our measures only reflect the actual reporting being done.
 
 \begin{figure}[h]
 	\centering
@@ -1676,6 +1690,8 @@ The experiment on the \textbf{search} part of the algorithms was conducted by fi
 	\caption{Distribution of points for the uniform reporting experiment (search). The gray areas (a) - (e) contains 5 Mb points each. Points are distributed uniformly random. The query window (a) spans 5 \% of the $x$-axis and 100 \% of the $y$-axis (b) spans 17 \% of the $x$-axis and 20 \% of the $y$-axis (c) spans 11 \% of the $x$-axis and 60 \% of the $y$-axis (d) spans 14 \% of the $x$-axis and 40 \% of the $y$-axis (e) spans 8 \% of the $x$-axis and 80 \% of the $y$-axis.}
 	\label{fig:experiment_query_uniform}
 \end{figure}
+
+\subsection{Focus on reporting}
 
 The experiment on the \textbf{report} part of the algorithms was conducted by fixing $x_1$, $x_2$ and $y_1, \cdots y_n$ and inserting data points such that there is exactly 
 1 Mb data points in the range $[x_1, x_2] \times [y_i, y_{i+1}]$. In the range outside  $[x_1, x_2] \times [- \infty, \infty]$ we distribute data points uniformly at random. Now we report points in ranges $[x_1, x_2] \times [y_1, \infty]$, $[x_1, x_2] \times [y_2, \infty]$ $\cdots$ $[x_1, x_2] \times [y_n, \infty]$. The idea is that the number of reported points $K$ grows with 1 Mb when reporting in the range $[x_1, x_2] \times [y_i, y_{i+1}]$ compared to reporting in the range $[x_1, x_2] \times [y_i, y_{i}]$.
