@@ -685,7 +685,7 @@ This means that in one end of the trade-off they can for $\lambda = B^\epsilon$ 
 
 \chapter{Internal Priority Search Tree}
 \label{chp:internal_pst}
-In this section we present an internal memory data structure for the range reporting problem. The data structure was originally presented by McCreight~\cite{DBLP:journals/siamcomp/McCreight85} and is denoted a priority search tree. The priority search tree is basically a combination of a binary search tree on the $x$-coordinate and a heap on the $y$-coordinate. A formal definition of a priority search tree for a set of $N$ points, $P$, is as follows. We assume that all points have distinct coordinates, though this assumption can be removed by using the normal lexicographical ordering of points.
+In this section we present an internal memory data structure for the range reporting problem. The data structure was originally presented by McCreight \cite{DBLP:journals/siamcomp/McCreight85} and is denoted a priority search tree. The priority search tree is basically a combination of a binary search tree on the $x$-coordinate and a heap on the $y$-coordinate. A formal definition of a priority search tree for a set of $N$ points, $P$, is as follows. We assume that all points have distinct coordinates, though this assumption can be removed by using the normal lexicographical ordering of points.
 
 \begin{itemize}
 	\item If $P = \varnothing$ then the priority search tree is an empty leaf.
@@ -1096,9 +1096,7 @@ By summing over all layers of the tree we get the total cost of flushing all buf
 
 This gives an amortized cost of $\mathcal{O}(1/B)$ per update to flush all buffers.
 
-The $\mathcal{O}(\bar{N})$ reinsertions into the new tree can be done in amortized $\mathcal{O}(\frac{\bar{N}}{\epsilon B^{1-\epsilon}} \log_B \bar{N})$ I/O's are paid by the $\bar{N}/2$ updates during the epoch.
-
-%\includegraphics[width=\textwidth]{../handwritten notes/Notes on global rebuilding analysis.jpg}
+The $\mathcal{O}(\bar{N})$ reinsertions into the new initially empty tree can be done in amortized $\mathcal{O}(\frac{\bar{N}}{\epsilon B^{1-\epsilon}}\log_B\bar{N})$ I/O's are paid by the $\bar{N}/2$ updates during the epoch.
 
 \subsection{Three sided range queries}
 \label{subsec:brodal_3_sided}
