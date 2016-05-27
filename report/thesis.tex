@@ -1745,6 +1745,13 @@ The result of the experiment on the \textbf{search} part of the algorithms is de
 
 \todo{Conclude this shit!}
 
+\section{Future work}
+The structure of Brodal described in Chapter~\ref{chp:epst} is also able to report top-$k$ queries. A top-$k$ query reports the top $k$ points in the query range. The structure does this in $\mathcal{O}(\frac{1}{\epsilon}\log_B N + K/B)$, i.e. in the same bound as three-sided range queries, but here $K$ is the minimum of $k$ and the number of points in the query range. It would have been interesting to see how the structure performs these top-$k$ queries compared to other results.
+
+Many of the structures discussed in this thesis also describes a construction algorithm. In future work it could interesting to see how the structures compare in terms of construction time.
+
+\todo{replace std::set}
+
 \clearpage
 \addcontentsline{toc}{chapter}{Bibliography}
 \bibliography{references}
