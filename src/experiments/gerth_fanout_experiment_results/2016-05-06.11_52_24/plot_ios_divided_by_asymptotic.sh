@@ -1,5 +1,5 @@
 #!/usr/bin/gnuplot
-set terminal postscript eps enhanced color font 'Verdana,20'
+set terminal postscript eps enhanced color font 'Verdana,24'
 set output 'gerth_fanout_experiment_results/2016-05-06.11_52_24/ios_divided_asymptotic.eps'
 set style line 11 lc rgb '#000000' lt 1
 set border 3 back ls 11
