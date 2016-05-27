@@ -603,13 +603,13 @@ Ramaswamy and Subramanian presents a suboptimal space data structure that answer
 	\item \textit{Descendants of right siblings}: there can be an unbounded number of them, but for every such node, its parent's region has to be completely contained inside the query. That pays for the cost of looking into these nodes. That is, for every $J$ descendant blocks that are partially cut the query, the will be at least $\nicefrac{J}{2}$ blocks that lie completely inside the query. 
 
 \end{itemize} 
- 
+
 Please refer to Figure~\ref{fig:ramaswamy_query} for an illustration of the categories.
 
 \begin{figure}[h]
 	\centering
 		\includegraphics[width=0.9\textwidth]{../figures/ramaswamy_query}
-	\caption{Binary tree implementation of Priority Search Tree in secondary memory showing a corner, ancestor sibling and sibling's descendant. Here, B is 4.\todo{The lines blur together. Maybe make all internal lines dashed.}}
+	\caption{Binary tree implementation of Priority Search Tree in secondary memory showing a corner, ancestor sibling and sibling's descendant. Here, B is 4.}
 	\label{fig:ramaswamy_query}
 \end{figure}
 
@@ -824,8 +824,6 @@ Let $L$ be the points stored in $\mathcal{L}$ and let $\ell = \lceil \nicefrac{\
 
 A catalog structure stores in $\mathcal{O}(1)$ disk blocks a reference to each of the $2\ell-1$ blocks. For block $b_i$ we store the minimum and maximum $x$-values for the points contained in the block. For a merged block $b_{i,j}$ we store the interval $\left[ i,j\right]$ and the minimum $y$-value of the points in the block. Note, this minimum $y$-value is also the point where the sweep line created the block $b_{i,j}$.
 
-%TODO maybe argue that L uses \mathcal{O}(B^{1+\epsilon}) blocks. Edit: I believe L uses B^epsilon blocks, right?
-
 %%%%%%%%%%%%%
 % UPDATES %%%
 %%%%%%%%%%%%%
@@ -849,8 +847,6 @@ We know from construction that the blocks intersected contains $B$ points on or 
 The $t$ relevant blocks are scanned and the points contained in the query are reported. The total number of I/O's required becomes $\mathcal{O}(1+t) = \mathcal{O}(1+\nicefrac{K}{B})$ as $t \leq 2\frac{K}{B}-2$ from the previous observation.
 
 We have now showed that we are able to construct a dynamic data structure with the bounds stated in Theorem~\ref{thm:child_structure}.
-
-\todo{Consider moving no-splitting lemma from implementation considerations to here.}
 
 \section{Main structure}
 \label{sec:arge_structure}
@@ -951,7 +947,6 @@ This section presents the main data structure achieving the results of Theorem~\
 \label{thm:main_structure}
 An external memory data structure exists supporting insertion and deletion of points in amortized $\mathcal{O}(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N)$ I/O's and three sided range queries in amortized $\mathcal{O}(\frac{1}{\epsilon} \log_B N + \nicefrac{K}{B})$, where $\epsilon$ is a constant, $0 < \epsilon \leq \nicefrac{1}{2}$, $N$ is the number of points in the structure, and $K$ is the size of the output. The structure can be constructed in amortized $\mathcal{O}(\nicefrac{N}{B})$ I/O's on an x-sorted set of points and stored in $\mathcal{O}(\nicefrac{N}{B})$ blocks.
 \end{theorem}
-\todo{Kasper: Skal $\epsilon$ vaere en konstant. I saafald kan man vel bare slette $\frac{1}{\epsilon}$ ledet?}
 
 The structure is a slightly modified version of the B-tree. Each internal node, except for the root, has a node degree between $\nicefrac{\Delta}{2}$ and $\Delta$, with $\Delta = \lceil B^\epsilon \rceil$. The root has node degree between $2$ and $\Delta$.
 
@@ -967,7 +962,6 @@ For each internal node, $v$, we also store an instance of the child structure, $
 Finally, for each internal node, $v$, we store, in $\mathcal{O}(1)$ blocks, information about the minimum $y$-value of the points of each of $v$'s children or $\infty$ if the child does not store any points.
 
 All information at the root is kept in internal memory except for the child structure.
-\todo{Kasper: Hvorfor ikke child structure?}
 
 \subsection{Invariants}
 For a node $v$ in the main data structure the following invariants must be true:
@@ -1132,7 +1126,7 @@ Assume we during a query visit $V$ nodes not on the search paths for $x_1$ or $x
 The worst case bound now becomes the sum of visiting the $V$ nodes, the nodes on the search paths for $x_1$ and $x_2$, and the output: $\mathcal{O}(V+\frac{1}{\epsilon}\log_B N + K/B) = \mathcal{O}(\frac{1}{\epsilon}\log_B N + K/B)$.
 On top of this comes the cost of pushing down update buffer elements and handling overflowing update buffers and overflowing point buffers.
 
-This cost of pushing $\Omega(B/\Delta)$ points to a child is however already paid for by the update operations and is thus covered by the analysis of Subsection~\ref{subsec:gerth_updates}. It is only when we push down $\mathcal{O}(B/\Delta)$ updates to a child, with an amortized cost of $\mathcal{O}(1)$, that this cost is covered by the cost of visiting the child. \todo{Not sure about this}.
+This cost of pushing $\Omega(B/\Delta)$ points to a child is however already paid for by the update operations and is thus covered by the analysis of Subsection~\ref{subsec:gerth_updates}. It is only when we push down $\mathcal{O}(B/\Delta)$ updates to a child, with an amortized cost of $\mathcal{O}(1)$, that this cost is covered by the cost of visiting the child.
 
 Handling the overflowing update buffers and underflowing point buffers is also paid by the update operations and thus the analysis in Subsection~\ref{subsec:gerth_updates}.
 
@@ -1259,18 +1253,19 @@ It is a little harder to argue about the complexity of a three sided query. A B-
 Throughout our implementation of the internal priority search tree, external memory priority search tree, and the external memory buffered priority search tree we noted down important considerations.
 In this chapter we present these considerations together with a short presentation of how we wrote wrappers around MySQL, Boost R-tree, and libspatial R*-tree. We end the chapter with a description of the experimental framework we developed to significantly simplify the experimental phase of the project.
 
-All code can be cloned from the following git repository. Instructions on how to compile and run the code can be found in the accompanying \texttt{readme} file.
+All code can be cloned from the following git repository or downloaded from the mirrors listed below. Instructions on how to compile and run the code can be found in the accompanying \texttt{readme} file.
 
 \begin{center}
 \url{https://github.com/gabet1337/speciale}
 \url{https://github.com/gabet1337/speciale.git}
 \url{git@github.com:gabet1337/speciale.git}
-\todo{insert link to cs.au.dk page}
+\url{http://cs.au.dk/~peterg/three_sided.zip}
+\url{http://cs.au.dk/~chrha22/three_sided.zip}
 \end{center}
 
 \section{General}
 Almost all code was developed using pair programming and we strongly believe that this technique, though slow and cumbersome, eliminated many mistakes that would otherwise had slowed us down later on.
-Everything we implemented were unit tested and large parts of the project were implemented using test driven development. We made sure to make sound design choices to enable easy extension and reuse of our code. Stubs and mocks were used to ease the integration of substructures into larger pieces.\todo{come up with better work than pieces}
+Everything we implemented were unit tested and large parts of the project were implemented using test driven development. We made sure to make sound design choices to enable easy extension and reuse of our code. Stubs and mocks were used to ease the integration of substructures into larger pieces.\todo{come up with better word than pieces}
 We also wrote checkers to automatically check validity of a tree. In the case of the external memory buffered priority search tree we wrote a checker that would iterate the entire tree and check that no invariants were broken. We also added a method to print the trees in a dot format allowing us to visualize every step of the algorithm. This really made debugging easier as it supplied us with a quick overview of the structure.
 
 In order to fully test that there were no errors in our implementation we wrote a random test that would insert thousands of points and test validity of the tree for every insert. We would then repeat this test for several thousand iterations over several days while continuing on other parts of the code.
@@ -1312,14 +1307,6 @@ It is clear that direct invocation of the \texttt{read} and \texttt{write} syste
 The results of Figure~\ref{fig:stream_input_speed} and~\ref{fig:stream_output_speed} shows that the \texttt{buffered\_stream} performs similarly to using \texttt{mmap} when reading 5Gb of data while using \texttt{fread} and \texttt{fwrite} is significantly slower.
 Figure~\ref{fig:stream_output_speed} surprisingly shows that it is faster to use the virtual memory to write data. Using virtual memory however also means that we lose some control of when and how data is written to disk, and we lose the control to accurately measure disk I/O's as we have no control of how the operating system schedules I/O's. We would also have a harder time measuring the number of page faults caused by our structures' internal work as every I/O will cause a page fault which will interfere with our measurements. With these considerations in mind we conclude that it makes most sense to use the \texttt{buffered\_stream}.
 
-%\begin{lemma}
-%\label{lma:no_splits}
-%When visiting blocks from most recent collapsed block to least recent collapsed block, it is always sufficient to test whether the start or end index of a block is marked to check if the entire block has been covered.
-%\end{lemma}
-
-%Proof of Lemma~\ref{lma:no_splits}. Assume for contradiction a block $b_{ij}$ has marked[$i$] = marked[$j$] = 1 and marked[$k$] = 0 for  $i < k < j$. The assumption basically states we have chosen a block $b_{ij}$ with a marked start-index and end-index and with part of the block being unmarked. Then we must have split a block before arriving at the block in question. This contradicts the fact that we always collapse (and thus never splits) blocks. $\square$ \\
-
-
 \section{External Memory Buffered Priority Search Tree}
 \label{sec:impl_main_data_structure}
 This Section will present important implementation specific design choices for the main data structure of the external memory buffered priority search tree by Brodal presented in Section~\ref{sec:main_data_structure}.
@@ -1329,7 +1316,7 @@ In Section~\ref{sec:main_data_structure} we argued how the operations \texttt{in
 The implementation we present uses the same idea of introducing a delegated subroutine which is responsible for maintaining one event only.
 
 % introduce dependency mechanism (partly load/flush node).
-We decided to implement a \textbf{dependency mechanism} on each node that allows for the node to be partly flushed and loaded. This allows us to optimize the number of I/O's being made as we can restrict the load and flush to be done only on needed data. The data for each node naturally groups into a separate stream for the insert buffer, delete buffer, point buffer, meta data on children and meta data for the node itself. %TODO We will argue in section ?? exactly why the grouping is done as described here.
+We decided to implement a \textbf{dependency mechanism} on each node that allows for the node to be partly flushed and loaded. This allows us to optimize the number of I/O's being made as we can restrict the load and flush to be done only on needed data. The data for each node naturally groups into a separate stream for the insert buffer, delete buffer, point buffer, meta data on children, and meta data for the node itself.
 
 % introduce event loop
 As described in Section~\ref{sec:main_data_structure} we have to enable a mechanism that allows for subroutines to call each other, as one event can cause other events to be risen. If we simply let each subroutine call each other using a na\"{\i}ve call stack we would have to manage that a subroutine can be both caller and callee and so it is responsible for loading and flushing data with respect to the recursion path we are currently on. This would require a logical complex mechanism that does nothing but manage the control flow of the recursion and handling data load and flushing. In order to overcome this we have introduced an \textbf{event loop mechanism} that uses a stack of events to control flushing, loading and calling  proper subroutines. Using this mechanism we are able to predict exactly what data is needed. Furthermore it becomes an easy task to flush all required data before taking further steps in the recursion ensuring optimal use of available main memory.
@@ -1759,6 +1746,8 @@ The structure of Brodal described in Chapter~\ref{chp:epst} is also able to repo
 Many of the structures discussed in this thesis also describes a construction algorithm. In future work it could interesting to see how the structures compare in terms of construction time.
 
 \todo{replace std::set}
+
+\todo{non uniform worst case reporting experiment}
 
 \clearpage
 \addcontentsline{toc}{chapter}{Bibliography}
