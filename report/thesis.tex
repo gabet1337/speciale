@@ -1622,14 +1622,14 @@ To collaborate these findings we conducted a single experiment measuring the I/O
 \begin{minipage}{0.48\columnwidth}
   \centering
   \includegraphics[width=\linewidth]{../src/experiments/insert_experiment_results/2016-05-27.10_58_31/time_and_pfs}%
-  \caption{Time and page faults per insert divided by $N$ for the boost R tree.}
+  \caption{Time and page faults per insert divided by $N$ for the Boost R-Tree.}
   \label{fig:time_divided_with_asymptotic_boost}
 \end{minipage}
 
 \begin{minipage}{0.48\columnwidth}
   \centering
   \includegraphics[width=\linewidth]{../src/experiments/insert_experiment_results/2016-05-27.13_39_38/time_and_pfs}%
-  \caption{Time and page faults per insert divided by $N$ for the libspatial external R tree.}
+  \caption{Time and page faults per insert divided by $N$ for the libspatial external R*-Tree.}
   \label{fig:time_divided_with_asymptotic_libspatial}
 \end{minipage}%
 \hfill
@@ -1641,15 +1641,21 @@ To collaborate these findings we conducted a single experiment measuring the I/O
 \end{minipage}
 \end{figure}
 
-Figure~\ref{fig:time_divided_with_asymptotic_brodal}-\ref{fig:time_divided_with_asymptotic_mysql} shows the time per insert divided by the theoretical asymptotic bound of each of our tested structures. We would have liked to see that each of the lines were straight horizontal lines as this would mean that the actual running time would match the theoretical bounds. For the case of the internal structures, we see that in Figure~\ref{fig:time_divided_with_asymptotic_internal} and \ref{fig:time_divided_with_asymptotic_boost} that the bounds match very well theory. We have almost perfectly straight horizontal lines up until a point where the lines suddenly deviated from the straight horizontal line. We could read from our data that this was the point where the structures ran out of internal memory and started causing many major pagefaults, i.e. started swapping out internal memory to disk.
+Figure~\ref{fig:time_divided_with_asymptotic_brodal}-\ref{fig:time_divided_with_asymptotic_mysql} shows the time per insert divided by the theoretical asymptotic bound of each of our tested structures. The external memory structures also shows the number of I/O's per insert divided by the theoretical asymptotic bound while the main memory structures shows the page faults per insert divided by the theoretical asymptotic bound. 
 
-The libspatial external R-tree depicted in Figure~\ref{fig:time_divided_with_asymptotic_libspatial} seems to suffer from the same problems as the internal algorithms. It stays within a reasonably distance to a straight horizontal line before suddenly deviating to a large increase just as in the case of the internal algorithms. We determined that it was out of the scope of this thesis to determine the cause of this.
+If the actual running time match the theoretical bounds we would like to see that the graphs are horizontal lines with a factor as close to 1 as possible. The caveat is that the main memory algorithms will start to swap out memory when they run empty which will severely increase the running time. If this holds we will see a significant increase in time together with a increase in page faults.
 
-Just as suspected we saw that MySQL performs inserts in constant time with a large constant factor. This can be seen by the straight line in Figure~\ref{fig:time_divided_with_asymptotic_mysql}.
+In Figure~\ref{fig:time_divided_with_asymptotic_brodal} we see that the time per insert in the structure of Brodal comes closer and closer to the theoretical bound. This can be seen by the flattening of the graph as the input size goes up. This would suggest that the structure becomes more and more I/O bound as the input size goes up. The structure follows the same trend in terms of I/O which further strengthens this hypothesis.
 
-Figure~\ref{fig:time_divided_with_asymptotic_brodal} shows that as $N$ increases we get closer and closer to a straight horizontal line. This would suggest that for small $N$ the structure is not I/O bound as there must be a lot of work besides the I/O's that affect the running time. \todo{run for longer}
+In Figure~\ref{fig:time_divided_with_asymptotic_arge} we see that the time per insert and number of I/O's per insert follows the theoretical bound very well up to a point. We investigated this point further and saw that this was the exact moment when the structure went from 2 to 3 layers. Adding another layer significantly increased the amount of I/O's. In terms of I/O's we see that the curve flattens once again which shows that the number of I/O's once again become a constant factor of the theoretical bounds. The same cannot be said for the actual running time which does not follow the same trend. We would have liked to see that it would flatten just as the number of I/O's but this is not the case which suggest that the structure is still heavily CPU bound at this point.
 
-Figure~\ref{fig:time_divided_with_asymptotic_arge} follows the theoretical bound very well up to a certain point. We examined this point closer and saw that this was the point that the structure went from having two layers to three. Continuing inserts showed that the plot  would flatten once again now with a larger constant. \todo{run on larger input to see if it flattens again.}
+Figure~\ref{fig:time_divided_with_asymptotic_internal} shows that the main memory priority search tree of McCreight performs exactly as expected as long as the structure is contained in main memory. At the exact moment the structure starts to swap out main memory we see a significant increase in running time just as expected.
+
+It is almost the same picture for the Boost R-Tree in Figure~\ref{fig:time_divided_with_asymptotic_boost}. The insertion time in an R-Tree heavily depends on heuristics which explains the decreasing graph and far from worst case behaviour. Once again we see the same behaviour when we run out of main memory -- the running time suffers tremendously.
+
+The libspatial external R*-Tree depicted in Figure~\ref{fig:time_divided_with_asymptotic_libspatial} shows that the running time follows the expected theoretical bounds very well. We would have liked to measure the number of I/O's for this structure but since it is a library implementation we have not been able to do this. The good news is that it does not generate any page faults.
+
+\todo{MYSQL!!!!}
 
 \section{Deletion}
 \begin{figure}[htp!]
