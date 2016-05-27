@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
-<ipe version="70005" creator="Ipe 7.1.4">
-<info created="D:20160426152720" modified="D:20160426152720"/>
+<ipe version="70107" creator="Ipe 7.2.2">
+<info created="D:20160426152720" modified="D:20160527173941"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -390,12 +390,12 @@ h
 <use name="mark/disk(sx)" pos="144 672" size="normal" stroke="black"/>
 <use name="mark/disk(sx)" pos="164 692" size="normal" stroke="black"/>
 <use name="mark/disk(sx)" pos="156 676" size="normal" stroke="black"/>
-<path stroke="black" rarrow="normal/normal">
+<path stroke="black" dash="dashed" rarrow="normal/normal">
 204 808 m
 204 644 l
 204 644 l
 </path>
-<path stroke="black" rarrow="normal/normal">
+<path stroke="black" dash="dashed" rarrow="normal/normal">
 376 644 m
 204 644 l
 204 644 l
