@@ -36,6 +36,6 @@ plot brodal(x,buffer_size,2) with linespoint title sprintf("Brodal with fanout 2
      brodal(x,buffer_size,16) with linespoint title sprintf("Brodal with fanout 16") ls 8,\
      arge(x,buffer_size) with linespoint title sprintf("Arge") ls 1,\
      internal(x) with linespoint title sprintf("Internal PST") ls 5,\
-     rtree(x) with linespoint title sprintf("Boost RTree") ls 3,\
-     rstar(x) with linespoint title sprintf("libspatial R*Tree") ls 6,\
+     rtree(x) with linespoint title sprintf("Boost R-Tree") ls 3,\
+     rstar(x) with linespoint title sprintf("Libspatial R*-Tree") ls 6,\
      mysql(x) with linespoint title sprintf("MySQL (no index)") ls 4
