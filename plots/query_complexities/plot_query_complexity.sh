@@ -9,7 +9,7 @@ set grid back ls 12
 set style line 1 lc rgb '#8b1a0e' pi 5 pt 1 ps 1 lt 1 lw 2 # --- red
 set style line 2 lc rgb '#5e9c36' pi 6 pt 6 ps 1 lt 1 lw 2 # --- green
 set style line 3 lc rgb '#88419d' pi 5 pt 2 ps 1 lt 1 lw 2 # --- purple
-set style line 4 lc rgb '#225ea8' pi 6 pt 3 ps 1 lt 1 lw 2 # --- blue
+set style line 4 lc rgb '#225ea8' pi 8 pt 3 ps 1 lt 1 lw 2 # --- blue
 set style line 5 lc rgb '#000000' pi 5 pt 4 ps 1 lt 1 lw 2 # --- black
 set style line 6 lc rgb '#00ced1' pi 6 pt 5 ps 1 lt 1 lw 2 # --- darkturquoise
 set style line 7 lc rgb '#ff00ff' pi 5 pt 7 ps 1 lt 1 lw 2 # --- magenta
@@ -27,7 +27,8 @@ internal(x) = log(x)/log(2)
 arge(x,B) = log(x)/log(B)
 rtree(x) = x
 rstar(x) = x
-mysql(x) = log(x)/log(buffer_size)
+#mysql(x) = log(x)/log(buffer_size)
+mysql(x) = x
 unset ytics
 unset xtics
 
@@ -37,6 +38,4 @@ plot brodal(x,buffer_size,2) with linespoint title sprintf("Brodal with fanout 2
      internal(x) with linespoint title sprintf("Internal PST") ls 5,\
      rtree(x) with linespoint title sprintf("Boost RTree") ls 3,\
      rstar(x) with linespoint title sprintf("libspatial R*Tree") ls 6,\
-     mysql(x) with linespoint title sprintf("MySQL") ls 4
-
-
+     mysql(x) with linespoint title sprintf("MySQL (no index)") ls 4
