@@ -1657,11 +1657,15 @@ The libspatial external R*-Tree depicted in Figure~\ref{fig:time_divided_with_as
 \todo{MYSQL!!!!}
 
 \section{Deletion}
+It was difficult to come up with a good way to test the different structures against each other when it comes to deletion. In order to delete data we need to first insert it, and we need to insert equally much in all structures in order to compare fairly. As described in the previous section it was not possible to insert much data in the internal structures as well as the structure by Arge et al. To somewhat come around this problem we decided to insert nothing more than 50megabytes worth of uniformly distributed points in all the structures. We could then completely empty the structures again while measuring for each megabyte. This way we hoped we could exclude some structures from further analysis.
+
 \begin{figure}[htp!]
 \includegraphics[width=\textwidth]{../plots/delete_complexities/delete_complexity}
 \caption{Theoretical delete time for all tested structures.}
 \label{fig:theory_delete_complexity}
 \end{figure}
+
+Figure~\ref{fig:theory_delete_complexity} shows the theoretical complexity for deletion in the structures. We expect the internal memory algorithms to outperform the external structures significantly while still in main memory. As soon as we leave main memory we expect them to become obsolete. In external memory we expect the structure by Brodal to be the best due to the effective buffering of deletes.
 
 \section{Three-sided range queries}
 Since the analysis of the theoretical query bounds are done using the method of filtering, we conduct experiments that focuses on both the \textit{search} and the \textit{report} part of the algorithms. Please refer to section~\ref{sec:filtering} for a description of the method of filtering.
