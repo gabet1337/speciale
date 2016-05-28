@@ -23,7 +23,7 @@ class insert_experiment : public base_experiment {
       point p = data.read();
       pst->insert(p);
       data_read += data_size;
-      if (data_read > 2ULL*1024ULL*1024ULL*1024ULL) {
+      if (exp_time.elapsed() > one_day) {
         std::cout << "TIMES UP!" << std::endl;
         measure_everything(instance.id, data_read/(1024*1024));
         save_results(instance);
@@ -48,9 +48,9 @@ int main() {
   insert_experiment ie("insert_experiment");
   // ie.add(1, "Gerth", common::PST_VARIANT::GERTH, ARGE_BUFFER_SIZE, log(2.5)/log(ARGE_BUFFER_SIZE));
   //ie.add(2, "Arge", common::PST_VARIANT::ARGE, ARGE_BUFFER_SIZE, ARGE_EPSILON);
-  //ie.add(3, "Internal", common::PST_VARIANT::INTERNAL, INTERNAL_BUFFER_SIZE, INTERNAL_EPSILON);
-  //ie.add(4, "Boost R-tree", common::PST_VARIANT::RTREE, RTREE_BUFFER_SIZE, RTREE_EPSILON);
-  //ie.add(6, "libspatial", common::PST_VARIANT::SPATIAL, SPATIAL_BUFFER_SIZE, SPATIAL_EPSILON);
+  ie.add(3, "Internal", common::PST_VARIANT::INTERNAL, INTERNAL_BUFFER_SIZE, INTERNAL_EPSILON);
+  ie.add(4, "Boost R-tree", common::PST_VARIANT::RTREE, RTREE_BUFFER_SIZE, RTREE_EPSILON);
+  ie.add(6, "libspatial", common::PST_VARIANT::SPATIAL, SPATIAL_BUFFER_SIZE, SPATIAL_EPSILON);
   ie.add(5, "MySQL", common::PST_VARIANT::MYSQL, MYSQL_BUFFER_SIZE, MYSQL_EPSILON);
   ie.run();
   ie.plot();
