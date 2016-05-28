@@ -17,10 +17,10 @@ set style line 8 lc rgb '#87ceeb' pt 8 ps 1 lt 1 lw 2 # --- skyblue
 set key top left
 set xlabel 'N (input size in Mb)'
 set ylabel 'Time (s)'
-#set xrange [0:0]
+set xrange [0:2000]
 #set yrange [0:0]
-plot 'gerth_query_fanout_experiment_results/2016-05-19.19_04_49/gerth_fanout2' u 1:2 t 'fanout2' w lp ls 2, \
-'gerth_query_fanout_experiment_results/2016-05-19.19_04_49/gerth_fanout4' u 1:2 t 'fanout4' w lp ls 3, \
-'gerth_query_fanout_experiment_results/2016-05-19.19_04_49/gerth_fanout8' u 1:2 t 'fanout8' w lp ls 4, \
-'gerth_query_fanout_experiment_results/2016-05-19.19_04_49/gerth_fanout16' u 1:2 t 'fanout16' w lp ls 5, \
-'gerth_query_fanout_experiment_results/2016-05-19.19_04_49/gerth_fanout32' u 1:2 t 'fanout32' w lp ls 6
+plot 'gerth_query_fanout_experiment_results/2016-05-19.19_04_49/gerth_fanout2' u 1:($2/4) t 'fanout2' w lp ls 2, \
+'gerth_query_fanout_experiment_results/2016-05-19.19_04_49/gerth_fanout4' u 1:($2/4) t 'fanout4' w lp ls 3, \
+'gerth_query_fanout_experiment_results/2016-05-19.19_04_49/gerth_fanout8' u 1:($2/4) t 'fanout8' w lp ls 4, \
+'gerth_query_fanout_experiment_results/2016-05-19.19_04_49/gerth_fanout16' u 1:($2/4) t 'fanout16' w lp ls 5, \
+'gerth_query_fanout_experiment_results/2016-05-19.19_04_49/gerth_fanout32' u 1:($2/4) t 'fanout32' w lp ls 6

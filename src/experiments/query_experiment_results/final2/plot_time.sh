@@ -1,10 +1,10 @@
 #!/usr/bin/gnuplot
-set terminal postscript eps enhanced color font 'Verdana,11'
+set terminal postscript eps enhanced color font 'Verdana,12'
 set output 'query_experiment_results/final2/time.eps'
-set style line 11 lc rgb '#808080' lt 1
+set style line 11 lc rgb '#000000' lt 1
 set border 3 back ls 11
 set tics nomirror
-set style line 12 lc rgb '#808080' lt 0 lw 1
+set style line 12 lc rgb '#000000' lt 0 lw 1
 set grid back ls 12
 set style line 1 lc rgb '#8b1a0e' pi 1 pt 1 ps 1 lt 1 lw 2 # --- red
 set style line 2 lc rgb '#5e9c36' pi 4 pt 6 ps 1 lt 1 lw 2 # --- green
@@ -17,11 +17,11 @@ set style line 8 lc rgb '#87ceeb' pi 4 pt 8 ps 1 lt 1 lw 2 # --- skyblue
 set key top right
 set xlabel 'N (input size in Mb)'
 set ylabel 'Time (s)'
-set xrange [0:1200]
+set xrange [0:1000]
 set yrange [0:1400]
-plot 'query_experiment_results/final2/gerth_Gerth' u 1:($2/4) t 'Brodal\_fanout2' w lp ls 2, \
-'query_experiment_results/final2/internal_Internal' u 1:2 t 'Internal' w lp ls 5, \
-'query_experiment_results/final2/rtree_Boost R-tree' u 1:2 t 'Boost R-tree' w lp ls 3, \
+plot 'query_experiment_results/final2/gerth_Gerth' u 1:($2/4) t 'Brodal with fanout 2' w lp ls 2, \
+'query_experiment_results/final2/internal_Internal' u 1:2 t 'Internal PST' w lp ls 5, \
+'query_experiment_results/final2/rtree_Boost R-tree' u 1:2 t 'Boost R-Tree' w lp ls 3, \
 'query_experiment_results/final2/arge_Arge' u 1:2 t 'Arge' w lp ls 1, \
-'query_experiment_results/final2/spatial_libspatial' u 1:2 t 'libspatial' w lp ls 6, \
-'query_experiment_results/final2/mysql_MySQL' u 1:2 t 'MySQL' w lp ls 4
+'query_experiment_results/final2/spatial_libspatial' u 1:2 t 'Libspatial R*-Tree' w lp ls 6, \
+'query_experiment_results/final2/mysql_MySQL' u 1:2 t 'MySQL (no index)' w lp ls 4

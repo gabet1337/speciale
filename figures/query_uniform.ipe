@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
-<ipe version="70005" creator="Ipe 7.1.4">
-<info created="D:20160503132223" modified="D:20160503132752"/>
+<ipe version="70107" creator="Ipe 7.2.2">
+<info created="D:20160503132223" modified="D:20160528172835"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -449,13 +449,13 @@ h
 <use name="mark/disk(sx)" pos="440 736" size="normal" stroke="black"/>
 <use name="mark/disk(sx)" pos="444 772" size="normal" stroke="black"/>
 <use name="mark/disk(sx)" pos="436 784" size="normal" stroke="black"/>
-<text matrix="1 0 0 1 0 -4" transformations="translations" pos="148 488" stroke="black" type="label" width="4.981" height="4.289" depth="0" valign="baseline">a</text>
+<text matrix="1 0 0 1 1.3655 -3.54483" transformations="translations" pos="148 488" stroke="black" type="label" width="4.981" height="4.289" depth="0" valign="baseline">a</text>
 <text matrix="1 0 0 1 0 -4" transformations="translations" pos="216 760" stroke="black" type="label" width="5.535" height="6.918" depth="0" valign="baseline">b</text>
-<text transformations="translations" pos="284 616" stroke="black" type="label" width="4.428" height="4.289" depth="0" valign="baseline">c</text>
-<text transformations="translations" pos="356 680" stroke="black" type="label" width="5.535" height="6.918" depth="0" valign="baseline">d</text>
-<text transformations="translations" pos="412 552" stroke="black" type="label" width="4.428" height="4.289" depth="0" valign="baseline">e</text>
+<text matrix="1 0 0 1 2.10077 -0.700256" transformations="translations" pos="284 616" stroke="black" type="label" width="4.428" height="4.289" depth="0" valign="baseline">c</text>
+<text matrix="1 0 0 1 1.61597 -2.42396" transformations="translations" pos="356 680" stroke="black" type="label" width="5.535" height="6.918" depth="0" valign="baseline">d</text>
+<text matrix="1 0 0 1 -2.10077 -3.85141" transformations="translations" pos="412 552" stroke="black" type="label" width="4.428" height="4.289" depth="0" valign="baseline">e</text>
 <text transformations="translations" pos="120 472" stroke="black" type="label" width="4.981" height="6.42" depth="0" valign="baseline">$0$</text>
 <text matrix="1 0 0 1 -72 -72" transformations="translations" pos="504 540" stroke="black" type="label" width="30.58" height="8.11" depth="0.83" valign="baseline">$2^{31}-1$</text>
-<text matrix="1 0 0 1 -412 252" transformations="translations" pos="504 540" stroke="black" type="label" valign="baseline">$2^{31}-1$</text>
+<text matrix="1 0 0 1 -412 252" transformations="translations" pos="504 540" stroke="black" type="label" width="30.58" height="8.11" depth="0.83" valign="baseline">$2^{31}-1$</text>
 </page>
 </ipe>
