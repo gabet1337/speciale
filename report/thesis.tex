@@ -737,7 +737,7 @@ Whenever we store a point in an interior node, then the leaf node which correspo
 \end{figure}
 
 \section{Construction}
-Assuming we are given a list of $x$-sorted points we can construct the dynamic Priority Search Tree using a bottom-up construction method similar to the bottom-up construction of a heap. In the first phase of construction we associate each point with a place-holder in the Priority Search Tree. These place-holders will become the leaf level of the data structure. Next we select pairs of place-holders and compare them to one another in terms of their $y$-coordinate. We denote the point with the highest $y$-coordinate as the winning point and the comparison between points as a tournament round. It is the winning point that will be represented by a new internal node at one level higher in the tree. Please refer to Figure~\ref{fig:dynamic_pst_construction} for an illustration of the construction of the leaf level of the data structure.
+Assuming we are given a list of $x$-sorted points we can construct a balanced dynamic Priority Search Tree using a bottom-up construction method similar to the bottom-up construction of a heap. In the first phase of construction we associate each point with a place-holder in the Priority Search Tree. These place-holders will become the leaf level of the data structure. Next we select pairs of place-holders and compare them to one another in terms of their $y$-coordinate. We denote the point with the highest $y$-coordinate as the winning point and the comparison between points as a tournament round. It is the winning point that will be represented by a new internal node at one level higher in the tree. Please refer to Figure~\ref{fig:dynamic_pst_construction} for an illustration of the construction of the leaf level of the data structure.
 At the next level of the tree, we perform the same comparisons as before to determine which nodes will advance to the third level. At most $\nicefrac{N}{2}$ are compared at this level.
 
 \begin{figure}[h]
@@ -764,7 +764,7 @@ $$\frac{1/2}{(1-1/2)^2} = 2$$
 
 Plugging this in to the above sum we get that the total number of steps to build a dynamic Priority Search Tree on $N$ points is $\mathcal{O}(N)$.
 
-This implies we can construct the dynamic priority search in linear time assuming we are given a sorted input.
+This implies we can construct the balanced dynamic Priority Search Tree in linear time assuming we are given a sorted input. The tree is balanced since we place all leafs at the same level. If the size of the input is not a perfect power of 2, the tree will be imbalanced by a single level.
 
 \section{Insertion}
 
@@ -784,8 +784,6 @@ Locating the interior node representing the point to be deleted can be done in $
 
 \section{Rebalancing}
 If we use the operations for dynamic updates as stated above without any measures for tree rebalancing, we could end up with a highly unbalanced tree. We fix this using global rebuilding when a linear number of updates have been performed. We can collect all points in sorted order in linear time by visiting leafs from left to right using a depth first traversal of the tree. On the collected points we now use the linear construction algorithm to rebalance the tree. Using this strategy yields a data structure that handles updates in $\mathcal{O}(\log N)$ amortized. By using a Red-Black tree as the heart of the tree we can achieve a data structure that is $\mathcal{O}(\log N)$ worst case by performing rotations to rebalance the tree.
-
-\todo{somehow mention that the tree becomes perfectly balanced a result of construction}
 
 \section{Bounds in the I/O model}
 The above bounds translate directly to the I/O model as we cannot guarantee that nodes on the search path are perfectly placed in blocks, which in the worst case means that each visit to a node will equal 1 I/O.
