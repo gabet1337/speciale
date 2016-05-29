@@ -92,7 +92,7 @@
 
 \pagestyle{empty} 
 \vspace*{\fill}\noindent{\rule{\linewidth}{1mm}\\[4ex]
-{\Huge\sf Three-sided Range Reporting}\\[2ex]
+{\Huge\sf Three-sided Range Reporting in\\External Memory}\\[2ex]
 {\huge\sf Peter Gabrielsen, 20114179}\\[2ex]
 {\huge\sf Christoffer Holb\ae k Hansen, 20114637}\\[2ex]
 \noindent\rule{\linewidth}{1mm}\\[4ex]
@@ -133,7 +133,7 @@ Our results show that \todo{\dots}
 \label{chp:preface}
 \addcontentsline{toc}{chapter}{Preface}
 
-Writing this thesis has been been a long and often frustrating process with many ups and downs. The \textit{struggle} has been very real~\footnote{Denotes a situation where the user wishes to express that they are encountering some sort of undesirable difficulty, but dealing with it~\cite{real_struggle}.} at some points during the four and a half months. We got off to a very shaky start to say the least. Only a few days before we were supposed to begin work on our thesis we decided, based on a gut feeling, that the topic we were initially set on covering was not going to lead to a good thesis; or at least not one that we thought would encapsulate the hard work we have been putting in to our courses in the 5 years we have studied Computer Science at Aarhus University. With much haste, we thus decided to try set up a meeting with Kasper Larsen and Gerth St\o lting Brodal. Gerth referred us to Kasper and to our surprise Kasper had a project in mind. The project sounded extremely challenging but also very interesting. It would allow us to really dig into some  data structures of very high complexity and implement these in \texttt{C++} while at the same time using our deep understanding of algorithm analysis. This would allow us to utilize all of the hard work we had put into virtually all offered algorithmic courses. We gladly accepted and only a few days before start we now had ourselves a project.
+Writing this thesis has been been a long and often frustrating process with many ups and downs. The \textit{struggle} has been very real\footnote{Denotes a situation where the user wishes to express that they are encountering some sort of undesirable difficulty, but dealing with it~\cite{real_struggle}.} at some points during the four and a half months. We got off to a very shaky start to say the least. Only a few days before we were supposed to begin work on our thesis we decided, based on a gut feeling, that the topic we were initially set on covering was not going to lead to a good thesis; or at least not one that we thought would encapsulate the hard work we have been putting in to our courses in the 5 years we have studied Computer Science at Aarhus University. With much haste, we thus decided to try set up a meeting with Kasper Larsen and Gerth St\o lting Brodal. Gerth referred us to Kasper and to our surprise Kasper had a project in mind. The project sounded extremely challenging but also very interesting. It would allow us to really dig into some  data structures of very high complexity and implement these in \texttt{C++} while at the same time using our deep understanding of algorithm analysis. This would allow us to utilize all of the hard work we had put into virtually all offered algorithmic courses. We gladly accepted and only a few days before start we now had ourselves a project.
 \begin{center}
 \texttt{\#BetterGutFeeling}.
 \end{center}
@@ -145,13 +145,13 @@ The experiments often ran for more than a week at a time and in order for us to 
 
 Another perk of The Imperial March was the ability to scare the crap out of Christoffer. Peter would be able to sit comfortably at home and randomly start the cacophony which would make Christoffer jump out of his seat and generally become very anxious about when the next sound would come.
 
-\todo{sum it all up}
+After over a month of intense experimenting, documentation, and \LaTeX'ing we concluded with a small out-of-sight victory dance, shut down our faithful test machines, and with all our new knowledge and insight we could finally have our happily ever after.
 
 \todo{More people to thank?}
 
 A number of people have been part to giving this thesis life. First and foremost we would like to thank our primary advisor, Kasper Larsen, for our weekly meetings, constructive feedback, enthusiasm, and engagement in the project.
 We would also like to thank our formal advisor, Gerth St\o lting Brodal, for his great work on the data structure we have implemented in this thesis and sparring when we were in doubt.
-In more general terms we would like to thank Aarhus University for giving us 5 years worth of great courses preparing us for the life to come within the field of Computer Science.
+In more general terms we would like to thank Aarhus University for giving us 5 years worth of great courses and preparing us for the life to come within the field of Computer Science.
 
 We have really enjoyed working on this thesis and we sincerely hope you enjoy reading it as much as we have enjoyed writing it!
 
@@ -266,6 +266,7 @@ With the advent of \textit{Big Data} many industries has come to realise that ad
 They simply prove to perform much slower than the asymptotic bounds suggests. The algorithms community has found the reason to be the very same that ensured the success of the computer industry. The paradox derives from the standard RAM-model of computation, where we assume an infinite memory and uniform access cost. See Figure~\ref{fig:ram_model}.
 
 \begin{wrapfigure}{O}{0.5\textwidth}
+\captionsetup{width=0.40\textwidth}
 	\centering
 		\includegraphics[width=0.4\textwidth]{../figures/ram_model}
 	\caption{RAM-model. The standard model of computation. We assume an infinite memory with uniform access cost.}
@@ -1255,23 +1256,21 @@ All code can be cloned from the following git repository or downloaded from the 
 
 \begin{center}
 \url{https://github.com/gabet1337/speciale}
-\url{https://github.com/gabet1337/speciale.git}
-\url{git@github.com:gabet1337/speciale.git}
 \url{http://cs.au.dk/~peterg/three_sided.zip}
 \url{http://cs.au.dk/~chrha22/three_sided.zip}
 \end{center}
 
 \section{General}
-Almost all code was developed using pair programming and we strongly believe that this technique, though slow and cumbersome, eliminated many mistakes that would otherwise had slowed us down later on.
+Almost all code was developed using pair programming and we strongly believe this technique, though slow and cumbersome, eliminated many mistakes that would otherwise had slowed us down later on.
 Everything we implemented were unit tested and large parts of the project were implemented using test driven development. We made sure to make sound design choices to enable easy extension and reuse of our code. Stubs and mocks were used to ease the integration of substructures into larger structures.
-We also wrote checkers to automatically check validity of a tree. In the case of the external memory buffered priority search tree we wrote a checker that would iterate the entire tree and check that no invariants were broken. We also added a method to print the trees in a dot format allowing us to visualize every step of the algorithm. This really made debugging easier as it supplied us with a quick overview of the structure.
+We also wrote checkers to automatically check validity of a tree. In the case of the external memory buffered priority search tree we wrote a checker that would iterate the entire tree and check that no invariants were broken. We also included a method to print the trees in a DOT format (graph description language) allowing us to visualize every step of the algorithm. This really made debugging easier as it supplied us with a quick overview of the structure.
 
 In order to fully test that there were no errors in our implementation we wrote a random test that would insert thousands of points and test validity of the tree for every insert. We would then repeat this test for several thousand iterations over several days while continuing on other parts of the code.
 
-Using all these methods and tools we feel more safe that our code works as intended.
+Using all these methods and tools we feel confident that our code works as intended.
 
 \section{Stream}
-The implementations we present makes use of the concept of \textit{streams}. A stream gives access to reading and writing from disk to memory and vice versa. A stream typically manages an internal buffer which is a mirror of a small portion of the disk allowing for fast interaction with that small piece. Although the C++ standard library provides several streams that allow for the internal buffer to be managed we introduce an implementation of our own. We denote this stream \texttt{buffered\_stream}. This design choice was made because of the nature of our experiments in which it is of extreme importance that we are able to argue about the exact number of I/O's being used. By introducing a stream of our own we avoid that any undefined behaviour in the standard library implementations gives rise to a potential I/O overhead and we will be able to exactly count the I/O's. Such an overhead would be reflected directly in the overall running time of our implementation.
+The implementations we present makes use of the concept of \textit{streams}. A stream gives access to reading and writing from disk to memory and vice versa. A stream typically manages an internal buffer which is a mirror of a small portion of the disk allowing for fast interaction with that small piece. Although the C++ standard library provides several streams that allow for the internal buffer to be managed we introduce an implementation of our own. We denote this stream \texttt{buffered\_stream}. This design choice was made because of the nature of our experiments in which it is of extreme importance that we are able to argue about the exact number of I/O's being used. By introducing a stream of our own we avoid that any undefined behaviour in the standard library implementations gives rise to a potential I/O overhead and we will be able to exactly count the I/O's. Any such I/O overhead would be reflected directly in the overall running time of our implementation.
 
 The stream we introduce makes use of the \texttt{read} and \texttt{write} system calls and is equipped with a buffer of size $B$ in internal memory that is maintained on all operations.
 
@@ -1307,7 +1306,7 @@ Figure~\ref{fig:stream_output_speed} surprisingly shows that it is faster to use
 \label{sec:impl_main_data_structure}
 This Section will present important implementation specific design choices for the main data structure of the external memory buffered priority search tree by Brodal presented in Section~\ref{sec:main_data_structure}.
 
-In Section~\ref{sec:main_data_structure} we argued how the operations \texttt{insert}, \texttt{delete}, and \texttt{report} are supported using subroutines for handling overflowing deletion buffers, overflowing insertion buffers, split leafs with overflowing point buffers, split nodes of degree $\Delta+1$, and fill underflowing point buffers.
+In Section~\ref{sec:main_data_structure} we argued how the operations \texttt{insert}, \texttt{delete}, and \texttt{report} are supported using subroutines for handling overflowing deletion buffers, overflowing insertion buffers, split leafs with overflowing point buffers, split nodes of degree $B^\epsilon+1$, and fill underflowing point buffers.
 
 The implementation we present uses the same idea of introducing a delegated subroutine which is responsible for maintaining one event only.
 
@@ -1343,18 +1342,26 @@ We also implemented wrappers around MySQL 5.7.12, boost 1.60.0 R-tree using the 
 We developed an extensive framework for running experiments in order to automate the process as much as possible.
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=\textwidth]{../figures/experimental-setup2}
-	\caption{The life of an experiment}
+	\includegraphics[width=\textwidth]{../figures/experimental_setup3}
+	\caption{(a) An experiment is created by extending a Base class (b) The experiment is added to an experiment queue (c) When a machine becomes available the experiment runs (c) Measures on statistics and time are automatically plotted and finally the mother board beeper plays a tune to signal that an experiment has been processed}
 	\label{fig:experimental_setup2}
 \end{figure}
 
+\begin{wrapfigure}{O}{0.55\textwidth}
+\captionsetup{width=0.45\textwidth}
+	\centering
+		\includegraphics[width=0.45\textwidth]{../figures/experimental_setup_4}
+	\caption{(a) A factory produces and instances of a PST (b) Each experiment is run in a delegated thread (c) Measures are recorded on statistics and time}
+	\label{fig:missing}
+\end{wrapfigure}
+
 Figure~\ref{fig:experimental_setup2} depicts the flow of an experiment from thought to result. In order to achieve this flow we wrote a framework that would do all the hard work for us such that all we had to do for each experiment was to describe the actual experiment. As an example, to test the time it takes to insert in all the structures all we would have to do was to tell the framework to insert into the priority search tree and measure for each 10 megabytes. The framework would then automatically run the experiment on all the structures one at a time, measure time, I/O's, pagefaults, and other data structure specific statistics (overflows, splits, etc.), plot all the gathered data as a function of the input size, and finally play a small tune to signal that the experiment had finished. To make sure that no experiment leaves any ungathered memory behind we start each experiment in its own thread such that the memory would be automatically recollected upon termination of the thread and all caches are dropped between each experiment.
 
-We measured the running time using the \texttt{high\_resolution\_clock} in the \texttt{chrono} library. It was measured in both seconds and milliseconds to make sure we had all the required data. In most cases it suffices to measure in seconds.
+The running time was measured using the \texttt{chrono} library's \texttt{high\_resolution\_clock}. It was measured in both seconds and milliseconds to make sure we had all the required data. In most cases it suffices to measure in seconds.
 
-In order to obtain a deeper understanding of the results we chose to measure the number of page faults generated by running the algorithms. This was done using \texttt{perf} - a performance analysis tool for Linux. We also measured the number of I/O's required by our programs by extending our custom stream with a counter on calls to \texttt{read} and \texttt{write}.
+In order to obtain a deeper understanding of the results we chose to measure the number of major page faults generated by running the algorithms. This was done using \texttt{perf} - a performance analysis tool for Linux. We also measured the number of I/O's required by our programs by extending our custom stream with a counter on calls to \texttt{read} and \texttt{write}.
 
-As the machines run on 32 bit operating systems it is very important to define \texttt{\_FILE\_OFFSET\_BITS=64}. This forces the system to use 64 bit pointers when seeking in files allowing us to handle data sets larger than $2^{32}$ on the machines.
+As the machines run on a 32 bit operating systems it is very important to define \texttt{\_FILE\_OFFSET\_BITS=64}. This forces the system to use 64 bit pointers when seeking in files allowing us to handle data sets larger than $2^{32}$ on the machines.
 
 \begin{savequote}[0.4\textwidth]
 --- We made the buttons on the screen look so good you'll want to lick them.
@@ -1368,6 +1375,8 @@ It is important to mention some considerations when it comes to choice of persis
 The rotational latency makes it very important to store data on the disk in consecutive blocks as scattering data across the disk would be detrimental to the performance as each block would have to wait for the rotational latency. As long as the mechanical disk is still as widespread as it is, these culprits of the mechanical disk have to be taken in consideration when designing I/O efficient algorithms.
 
 With these considerations in mind we acquired two very old Dell machines with the specifications outlined in Figure~\ref{fig:pc_specs}.
+
+We used newer machines for some experiments where it made sense. An example of a situation where it made sense was when we experimentally compared the actual running time with the theoretical running time of a single data structure, i.e. check whether the actual running time divided by the asymptotic complexity would give a horizontal line. For these experiments a newer machine would not change the results but rather provide faster results and not take up scarce time on the two Dell machines.
 
 \begin{figure}[h]
 \centering
@@ -1664,6 +1673,14 @@ It was difficult to come up with a good way to test the different structures aga
 \end{figure}
 
 Figure~\ref{fig:theory_delete_complexity} shows the theoretical complexity for deletion in the structures. We expect the internal memory algorithms to outperform the external structures significantly while still in main memory. As soon as we leave main memory we expect them to become obsolete. In external memory we expect the structure by Brodal to be the best due to the effective buffering of deletes.
+
+\begin{figure}[htp!]
+\includegraphics[width=\textwidth]{../src/experiments/delete_experiment_results/2016-05-27.10_10_14/time}
+\caption{Missing}
+\label{fig:delete_complexity_result}
+\end{figure}
+
+\clearpage
 
 \section{Three-sided range queries}
 Since the analysis of the theoretical query bounds are done using the method of filtering, we conduct experiments that focuses on both the \textit{search} and the \textit{report} part of the algorithms. Please refer to section~\ref{sec:filtering} for a description of the method of filtering.
