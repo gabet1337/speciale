@@ -340,8 +340,8 @@ Leading up to our experimental Chapter~\ref{chp:experimental_results} we present
 
 
 \begin{savequote}[0.5\textwidth]
---- All models are wrong but some are useful
-\qauthor{E. P. Box, George}
+"All models are wrong but some are useful."
+\qauthor{---  George E. P. Box}
 \end{savequote}
 \chapter{Model of computation}
 \label{chp:iomodel}
@@ -360,8 +360,8 @@ The fundamental bounds in the external memory model is that scanning $N$ records
 For convenience we will assume $M > B^2$. This assumption is known as the \textit{tall-cache assumption} in the cache-oblivious model and basically states that the number of blocks \nicefrac{M}{B} is larger than the size of each block $B$~\cite{Prokop99cache-obliviousalgorithms}.
 
 \begin{savequote}[0.5\textwidth]
---- The way I see it, if you want the rainbow, you gotta put up with the rain.
-\qauthor{Parton, Dolly}
+"The way I see it, if you want the rainbow, you gotta put up with the rain."
+\qauthor{--- Dolly Parton}
 \end{savequote}
 \chapter{Preliminaries}
 \label{chp:prelims}
@@ -527,31 +527,31 @@ It is showed in~\cite{ionote} that a $N$-element B-tree $T$ with branching param
 
 We conclude that the total cost of a sequence of $N$ update operations on an initially empty buffer tree is $\mathcal{O}(\frac{N}{B} \log_{\nicefrac{M}{B}} \frac{N}{B})$.
 
-\section{General Sets of Points}
-Throughout this thesis we will impose the restriction that no two points have equal $x$- or $y$-coordinate. The restriction is made in order to simplify the description and analysis of the algorithms we introduce. As it is a highly unrealistic restriction we will show that it is easy to remedy. The key observation is that we never assume coordinates to be real numbers. The only thing we assume is that points come from a totally ordered universe such we can compare points. This means we can replace the real-valued coordinates with elements from the \textit{composite-number space} where all elements are defined to be pairs of reals. The \textit{composite number} of two reals $a$ and $b$ is denoted by $(a \mid b)$. We define a total order on the composite-number space by using a lexicographic order. So, for two composite numbers $(a \mid b)$ and $(a' \mid b')$, we have:
+%\section{General Sets of Points}
+%Throughout this thesis we will impose the restriction that no two points have equal $x$- or $y$-coordinate. The restriction is made in order to simplify the description and analysis of the algorithms we introduce. As it is a highly unrealistic restriction we will show that it is easy to remedy. The key observation is that we never assume coordinates to be real numbers. The only thing we assume is that points come from a totally ordered universe such we can compare points. This means we can replace the real-valued coordinates with elements from the \textit{composite-number space} where all elements are defined to be pairs of reals. The \textit{composite number} of two reals $a$ and $b$ is denoted by $(a \mid b)$. We define a total order on the composite-number space by using a lexicographic order. So, for two composite numbers $(a \mid b)$ and $(a' \mid b')$, we have:
 
-$$ (a \mid b) < (a' \mid b') \Leftrightarrow a < a' \text{ or } (a = a' \text{ and } b < b') $$
+%$$ (a \mid b) < (a' \mid b') \Leftrightarrow a < a' \text{ or } (a = a' \text{ and } b < b') $$
 
-For a given set $P$ of distinct points in the plane we replace point $p \coloneqq (p_x, p_y)$ by a new point $\hat{p} \coloneqq ((p_x \mid p_y),(p_y \mid p_x))$ that has composite numbers as coordinate values. We denote this new point set as $\hat{P}$. It follows trivially that the mapping lets points $\hat{p} \in \hat{P}$ take distinct values for the first and second coordinate. What is left is to transform a query $Q \coloneqq [x_1,x_2] \times [y,\infty]$ to the new composite space. The transformed range $\hat{Q}$ is defined as follows:
+%For a given set $P$ of distinct points in the plane we replace point $p \coloneqq (p_x, p_y)$ by a new point $\hat{p} \coloneqq ((p_x \mid p_y),(p_y \mid p_x))$ that has composite numbers as coordinate values. We denote this new point set as $\hat{P}$. It follows trivially that the mapping lets points $\hat{p} \in \hat{P}$ take distinct values for the first and second coordinate. What is left is to transform a query $Q \coloneqq [x_1,x_2] \times [y,\infty]$ to the new composite space. The transformed range $\hat{Q}$ is defined as follows:
 
-$$ \hat{Q} \coloneqq [(x_1 \mid -\infty), (x_2 \mid +\infty)] \times [(y \mid -\infty),(+\infty \mid +\infty)] $$
+%$$ \hat{Q} \coloneqq [(x_1 \mid -\infty), (x_2 \mid +\infty)] \times [(y \mid -\infty),(+\infty \mid +\infty)] $$
 
-What remains is to prove that the points of $\hat{P}$ that is reported using query $\hat{Q}$ corresponds exactly to the points that is reported from $P$ using query $Q$.
+%What remains is to prove that the points of $\hat{P}$ that is reported using query $\hat{Q}$ corresponds exactly to the points that is reported from $P$ using query $Q$.
 
-\begin{lemma}
-\label{lma:composite_universe_query}
-Let $p$ be a point and $Q$ a query range. Then
+%\begin{lemma}
+%\label{lma:composite_universe_query}
+%Let $p$ be a point and $Q$ a query range. Then
 
-$$ p \in Q \Leftrightarrow \hat{p} \in \hat{Q} $$
-\end{lemma}
+%$$ p \in Q \Leftrightarrow \hat{p} \in \hat{Q} $$
+%\end{lemma}
 
-\textit{Proof.} Let $Q \coloneqq [x_1, x_2] \times [y, \infty]$ and let $p \coloneqq (p_x,p_y)$. By definition $p$ lies in $Q$ if and only if $x_1 \leq p_x \leq x_2$ and $y \leq p_y \leq \infty$. This is easily seen to hold if and only if $(x_1 \mid -\infty) \leq (p_x \mid p_y) \leq (x_2 \mid +\infty)$ and $(y \mid -\infty) \leq (p_y \mid p_x) \leq (+\infty, +\infty)$, this is, if and only if $\hat{p}$ lies in $\hat{Q}$. $\square$ \\
+%\textit{Proof.} Let $Q \coloneqq [x_1, x_2] \times [y, \infty]$ and let $p \coloneqq (p_x,p_y)$. By definition $p$ lies in $Q$ if and only if $x_1 \leq p_x \leq x_2$ and $y \leq p_y \leq \infty$. This is easily seen to hold if and only if $(x_1 \mid -\infty) \leq (p_x \mid p_y) \leq (x_2 \mid +\infty)$ and $(y \mid -\infty) \leq (p_y \mid p_x) \leq (+\infty, +\infty)$, this is, if and only if $\hat{p}$ lies in $\hat{Q}$. $\square$ \\
 
-From Lemma~\ref{lma:composite_universe_query} is follows that our approach is correct.
+%From Lemma~\ref{lma:composite_universe_query} is follows that our approach is correct.
 
 \begin{savequote}[0.5\textwidth]
---- If at first you don't succeed, call it version 1.0
-\qauthor{Unknown}
+Nanos gigantum humeris insidentes.
+\qauthor{--- Bernard of Chartres}
 \end{savequote}
 \chapter{Related work}
 \label{chp:related_work}
@@ -684,9 +684,13 @@ For any $\max\left\lbrace \log\log N, \log_M N \right\rbrace \leq \lambda \leq B
 
 This means that in one end of the trade-off they can for $\lambda = B^\epsilon$ obtain an update time of $\mathcal{O}(1/B^{1-\epsilon})$ and query time of $\mathcal{O}(\log_B N)$. This matches the bounds of the buffer tree of Arge. In the other end of the trade-off where they are able to achieve fast updates very close to the optimal disk transfer rate of $1/B$ namely they obtain: $t_u^{\min} = \mathcal{O}(\frac{1}{B} \cdot \max\left\lbrace \log\log N, \log_M N \right\rbrace)$.
 
+\begin{savequote}[0.5\textwidth]
+"All my best thoughts were stolen by the ancients."
+\qauthor{--- Ralph Waldo Emerson}
+\end{savequote}
 \chapter{Internal Priority Search Tree}
 \label{chp:internal_pst}
-In this section we present an internal memory data structure for the range reporting problem. The data structure was originally presented by McCreight \cite{DBLP:journals/siamcomp/McCreight85} and is denoted a priority search tree. The priority search tree is basically a combination of a binary search tree on the $x$-coordinate and a heap on the $y$-coordinate. A formal definition of a priority search tree for a set of $N$ points, $P$, is as follows. We assume that all points have distinct coordinates, though this assumption can be removed by using the normal lexicographical ordering of points.
+In this section we present an internal memory data structure for the three-sided range reporting problem. The data structure was originally presented by McCreight \cite{DBLP:journals/siamcomp/McCreight85} and is denoted a priority search tree. The priority search tree is basically a combination of a binary search tree on the $x$-coordinate and a heap on the $y$-coordinate. A formal definition of a priority search tree for a set of $N$ points, $P$, is as follows. We assume that all points have distinct coordinates, though this assumption can be removed by using the normal lexicographical ordering of points.
 
 \begin{itemize}
 	\item If $P = \varnothing$ then the priority search tree is an empty leaf.
@@ -788,6 +792,10 @@ If we use the operations for dynamic updates as stated above without any measure
 \section{Bounds in the I/O model}
 The above bounds translate directly to the I/O model as we cannot guarentee that nodes on the search path are perfectly placed in blocks, which in the worst case means that each visit to a node will equal 1 I/O.
 
+\begin{savequote}[0.5\textwidth]
+"Truth, like gold, is to be obtained not by its growth, but by washing away from it all that is not gold."
+\qauthor{--- Leo Tolstoy}
+\end{savequote}
 \chapter{External Memory Priority Search Tree}
 \label{chp:arge_pst}
 In this chapter we present an older result on dynamic three-sided range queries due to Arge et al.~\cite{arge_samoladas_vitter_1999}.
@@ -921,6 +929,11 @@ We report all points in $Q$, since, by the rules, a point in $Q$ cannot be in an
 \subsection{Analysis}
 In every internal node $v$ visited we spend $\mathcal{O}(1+K_v/B)$ I/O's. There are $\mathcal{O}(\log_B N)$ nodes on the search path from root to the leftmost leaf and rightmost leaf and thus the number of I/O's used on these paths is $\mathcal{O}(\log_B N + K/B)$. All other internal nodes visited are visited because all points were reported in the parent. If we do not report all points from a $Y$-set we can charge the $\mathcal{O}(1)$ I/O's of visiting the child to the parent which must have reported $\Theta(B)$ points. As the cost of reporting from the query data structures is $\mathcal{O}(1+K/B)$ the total cost amounts to $\mathcal{O}(\log_B N + K/B)$.
 
+
+\begin{savequote}[0.50\textwidth]
+"Daring ideas are like chessmen moved forward: they may be beaten, but they may start a winning game."
+\qauthor{--- Goethe}
+\end{savequote}
 \chapter{External Memory Buffered Priority Search Tree}
 \label{chp:epst}
 In this chapter we present an external memory data structure described by Brodal~\cite{DBLP:journals/corr/Brodal15}. The structure supports updates in amortized $\mathcal{O}\left(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N\right)$ I/O's, three sided range queries in $\mathcal{O}\left(\frac{1}{\epsilon}\log_B N + \nicefrac{K}{B}\right)$ I/O's for $0 \leq \epsilon \leq \frac{1}{2}$, and can be constructed on $N$ sorted points in $\mathcal{O}(\nicefrac{N}{B})$ I/O's. The parameter $\epsilon$ determines the size of the fanout and in turn the size of a bootstrapped substructure for storing $\mathcal{O}(B^{1+\epsilon})$ points.
@@ -1170,9 +1183,9 @@ In total we need to handle $\mathcal{O}(N_{del} + \frac{N_{ins}}{\Delta B})$ hol
 All this adds up to $\mathcal{O}(\frac{N_{ins}+N_{del}}{B/\Delta} \frac{1}{\epsilon} \log_B N) = \mathcal{O}(\frac{N_{ins}+N_{del}}{\epsilon B^{1-\epsilon}} \log_B N)$  I/O's for handling updates. This matches the amortized bounds of the structure.
 
 
-\begin{savequote}[0.4\textwidth]
---- The problem with quotes found on the internet is that they are often not true.
-\qauthor{Lincoln, Abraham}
+\begin{savequote}[0.5\textwidth]
+"The problem with quotes found on the\\internet is that they are often not true."
+\qauthor{--- Abraham Lincoln}
 \end{savequote}
 \chapter{Other structures}
 \label{chp:other_structures}
@@ -1240,8 +1253,8 @@ It is a little harder to argue about the complexity of a three sided query. A B-
 If we enforce no index on the MySQL table, then we believe the standard implementation will simply append all insertions to a contiguous stream, which can be done in $\mathcal{O}(1)$ I/O's. We believe deletions and queries can be handled in $\mathcal{O}(N/B)$ I/O's by scanning the entire stream.
 
 \begin{savequote}[0.7\textwidth]
---- There is nothing more deceptive than an obvious fact.
-\qauthor{Holmes, Sherlock}
+"There is nothing more deceptive than an obvious fact."
+\qauthor{--- Sherlock Holmes}
 \end{savequote}
 \chapter{Implementation}
 \label{chp:implementation}
@@ -1360,9 +1373,9 @@ In order to obtain a deeper understanding of the results we chose to measure the
 
 As the machines run on a 32 bit operating systems it is very important to define \texttt{\_FILE\_OFFSET\_BITS=64}. This forces the system to use 64 bit pointers when seeking in files allowing us to handle data sets larger than $2^{32}$ on the machines.
 
-\begin{savequote}[0.4\textwidth]
---- We made the buttons on the screen look so good you'll want to lick them.
-\qauthor{Jobs, Steve}
+\begin{savequote}[0.6\textwidth]
+"We must never make experiments to confirm our ideas, \\ but simply to control them."
+\qauthor{--- Claude Bernard}
 \end{savequote}
 \chapter{Experimental setup}
 \label{chp:experimental_setup}
