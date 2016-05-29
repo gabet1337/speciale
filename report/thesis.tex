@@ -237,8 +237,8 @@ We have really enjoyed working on this thesis and we sincerely hope you enjoy re
 \end{figure}
 
 \begin{savequote}[0.7\textwidth]
---- The difference in speed between modern CPU and disk technologies is  analogous to the difference in speed in sharpening a pencil using a sharpener on one's desk or by taking an airplane to the other side of the world and using a sharpener on someone else's desk.
-\qauthor{Comer, D.}
+``The difference in speed between modern CPU and disk technologies is  analogous to the difference in speed in sharpening a pencil using a sharpener on one's desk or by taking an airplane to the other side of the world and using a sharpener on someone else's desk.''
+\qauthor{--- D. Comer}
 \end{savequote}
 \chapter{Introduction}
 \label{chp:introduction}
@@ -340,8 +340,8 @@ Leading up to our experimental Chapter~\ref{chp:experimental_results} we present
 
 
 \begin{savequote}[0.5\textwidth]
---- All models are wrong but some are useful
-\qauthor{E. P. Box, George}
+``All models are wrong but some are useful.''
+\qauthor{---  George E. P. Box}
 \end{savequote}
 \chapter{Model of computation}
 \label{chp:iomodel}
@@ -359,9 +359,9 @@ The fundamental bounds in the external memory model is that scanning $N$ records
 
 For convenience we will assume $M > B^2$. This assumption is known as the \textit{tall-cache assumption} in the cache-oblivious model and basically states that the number of blocks \nicefrac{M}{B} is larger than the size of each block $B$~\cite{Prokop99cache-obliviousalgorithms}.
 
-\begin{savequote}[0.5\textwidth]
---- The way I see it, if you want the rainbow, you gotta put up with the rain.
-\qauthor{Parton, Dolly}
+\begin{savequote}[0.42\textwidth]
+``The way I see it, if you want the rainbow, you gotta put up with the rain.''
+\qauthor{--- Dolly Parton}
 \end{savequote}
 \chapter{Preliminaries}
 \label{chp:prelims}
@@ -387,7 +387,7 @@ If we can show that $\Phi(D_i) \geq \Phi(D_0)$ for all $i$ then we know that we 
 
 \section{Global rebuilding}
 \label{sec:prelim_global_rebuilding}
-The term \textit{global rebuilding} refers to the standard technique of making a (typically small) static data structure dynamic. We simply store all updates in a \textit{update block} and once a certain threshold has been collected we rebuild the data structure~\cite{ionote}. For data structures that does not allow the space for deleted records to be reoccupied we \textit{mark} (or \textit{weak delete}) the elements. Whenever $\alpha N$ elements have been marked, for some constant $\alpha > 0$, the entire data structure is rebuilt from scratch with only the non-marked elements. The cost of rebuilding is at most a constant factor higher than the cost of inserting $\alpha N$ elements and so the amortized cost of global rebuilding is paid in advance when elements are inserted, i.e. elements are charged double such that they later can pay for being removed from the structure during a global rebuild.~\cite{Meyer:2003/AMH/1744652}.
+The term \textit{global rebuilding} refers to the standard technique of making a (typically small) static data structure dynamic. We simply store all updates in an \textit{update block} and once a certain threshold has been collected we rebuild the data structure~\cite{ionote}. For data structures that does not allow the space for deleted records to be reoccupied we \textit{mark} (or \textit{weak delete}) the elements. Whenever $\alpha N$ elements have been marked, for some constant $\alpha > 0$, the entire data structure is rebuilt from scratch with only the non-marked elements. The cost of rebuilding is at most a constant factor higher than the cost of inserting $\alpha N$ elements and so the amortized cost of global rebuilding is paid in advance when elements are inserted, i.e. elements are charged double such that they later can pay for being removed from the structure during a global rebuild.~\cite{Meyer:2003/AMH/1744652}.
 
 \section{Filtering}
 \label{sec:filtering}
@@ -396,7 +396,7 @@ The technique of \textit{filtering} is used on retrieval problems where we query
 \section{Bootstrapping}
 It is often possible to develop dynamic external memory data structures by "externalizing" the equivalent internal memory data structure. In the case of trees this typically involves increasing the fanout from binary to multiway. This, however, results in problems when searching and reporting items from the tree, e.g. it might be the case that each subtree of a node only contributes one item to the query answer each costing one I/O.
 
-This problem can sometimes be solved by augmenting the data structure with several filtering substructures, i.e. smaller versions of the same problem. This approach was first described by Arge and Vitter~\cite{arge_vitter_2003} in a paper giving an optimal solution to diagonal corner two-sided 2D queries. Each of the substructures typically holds $\mathcal{O}(B^2)$ elements, and answers queries in $\log_B B^2 + \nicefrac{K}{B}$, where $K$ is the size of the output. It can even be a static structure if it can be constructed in $\mathcal{O}(B)$ I/O's, since $B$ updates can be stored in a separate buffer and applied using a global rebuild in amortized $\mathcal{O}(1)$ I/O's per update~\cite{vitter_2008}.
+This problem can sometimes be solved by augmenting the data structure with several filtering substructures, i.e. smaller versions of the same problem. This approach was first described by Arge and Vitter~\cite{arge_vitter_2003} in a paper giving an optimal solution to diagonal corner two-sided 2D queries. Each of the substructures typically holds $\mathcal{O}(B^2)$ elements ($B$ elements from each subtree), and answers queries in $\log_B B^2 + \nicefrac{K}{B}$, where $K$ is the size of the output. It can even be a static structure if it can be constructed in $\mathcal{O}(B)$ I/O's, since $B$ updates can be stored in a separate buffer and applied using a global rebuild in amortized $\mathcal{O}(1)$ I/O's per update~\cite{vitter_2008}.
 
 \section{B-Tree}
 \label{sec:prelim_b_tree}
@@ -527,31 +527,31 @@ It is showed in~\cite{ionote} that a $N$-element B-Tree with branching parameter
 
 We conclude that the total cost of a sequence of $N$ update operations on an initially empty Buffer Tree is $\mathcal{O}(\frac{N}{B} \log_{\nicefrac{M}{B}} \frac{N}{B})$.
 
-\section{General Sets of Points}
-Throughout this thesis we will impose the restriction that no two points have equal $x$- or $y$-coordinate. The restriction is made in order to simplify the description and analysis of the algorithms we introduce. As it is a highly unrealistic restriction we will show that it is easy to remedy. The key observation is that we never assume coordinates to be real numbers. The only thing we assume is that points come from a totally ordered universe such we can compare points. This means we can replace the real-valued coordinates with elements from the \textit{composite-number space} where all elements are defined to be pairs of reals. The \textit{composite number} of two reals $a$ and $b$ is denoted by $(a \mid b)$. We define a total order on the composite-number space by using a lexicographic order. So, for two composite numbers $(a \mid b)$ and $(a' \mid b')$, we have:
+%\section{General Sets of Points}
+%Throughout this thesis we will impose the restriction that no two points have equal $x$- or $y$-coordinate. The restriction is made in order to simplify the description and analysis of the algorithms we introduce. As it is a highly unrealistic restriction we will show that it is easy to remedy. The key observation is that we never assume coordinates to be real numbers. The only thing we assume is that points come from a totally ordered universe such we can compare points. This means we can replace the real-valued coordinates with elements from the \textit{composite-number space} where all elements are defined to be pairs of reals. The \textit{composite number} of two reals $a$ and $b$ is denoted by $(a \mid b)$. We define a total order on the composite-number space by using a lexicographic order. So, for two composite numbers $(a \mid b)$ and $(a' \mid b')$, we have:
 
-$$ (a \mid b) < (a' \mid b') \Leftrightarrow a < a' \text{ or } (a = a' \text{ and } b < b') $$
+%$$ (a \mid b) < (a' \mid b') \Leftrightarrow a < a' \text{ or } (a = a' \text{ and } b < b') $$
 
-For a given set $P$ of distinct points in the plane we replace point $p \coloneqq (p_x, p_y)$ by a new point $\hat{p} \coloneqq ((p_x \mid p_y),(p_y \mid p_x))$ that has composite numbers as coordinate values. We denote this new point set as $\hat{P}$. It follows trivially that the mapping lets points $\hat{p} \in \hat{P}$ take distinct values for the first and second coordinate. What is left is to transform a query $Q \coloneqq [x_1,x_2] \times [y,\infty]$ to the new composite space. The transformed range $\hat{Q}$ is defined as follows:
+%For a given set $P$ of distinct points in the plane we replace point $p \coloneqq (p_x, p_y)$ by a new point $\hat{p} \coloneqq ((p_x \mid p_y),(p_y \mid p_x))$ that has composite numbers as coordinate values. We denote this new point set as $\hat{P}$. It follows trivially that the mapping lets points $\hat{p} \in \hat{P}$ take distinct values for the first and second coordinate. What is left is to transform a query $Q \coloneqq [x_1,x_2] \times [y,\infty]$ to the new composite space. The transformed range $\hat{Q}$ is defined as follows:
 
-$$ \hat{Q} \coloneqq [(x_1 \mid -\infty), (x_2 \mid +\infty)] \times [(y \mid -\infty),(+\infty \mid +\infty)] $$
+%$$ \hat{Q} \coloneqq [(x_1 \mid -\infty), (x_2 \mid +\infty)] \times [(y \mid -\infty),(+\infty \mid +\infty)] $$
 
-What remains is to prove that the points of $\hat{P}$ that is reported using query $\hat{Q}$ corresponds exactly to the points that is reported from $P$ using query $Q$.
+%What remains is to prove that the points of $\hat{P}$ that is reported using query $\hat{Q}$ corresponds exactly to the points that is reported from $P$ using query $Q$.
 
-\begin{lemma}
-\label{lma:composite_universe_query}
-Let $p$ be a point and $Q$ a query range. Then
+%\begin{lemma}
+%\label{lma:composite_universe_query}
+%Let $p$ be a point and $Q$ a query range. Then
 
-$$ p \in Q \Leftrightarrow \hat{p} \in \hat{Q} $$
-\end{lemma}
+%$$ p \in Q \Leftrightarrow \hat{p} \in \hat{Q} $$
+%\end{lemma}
 
-\textit{Proof.} Let $Q \coloneqq [x_1, x_2] \times [y, \infty]$ and let $p \coloneqq (p_x,p_y)$. By definition $p$ lies in $Q$ if and only if $x_1 \leq p_x \leq x_2$ and $y \leq p_y \leq \infty$. This is easily seen to hold if and only if $(x_1 \mid -\infty) \leq (p_x \mid p_y) \leq (x_2 \mid +\infty)$ and $(y \mid -\infty) \leq (p_y \mid p_x) \leq (+\infty, +\infty)$, this is, if and only if $\hat{p}$ lies in $\hat{Q}$. $\square$ \\
+%\textit{Proof.} Let $Q \coloneqq [x_1, x_2] \times [y, \infty]$ and let $p \coloneqq (p_x,p_y)$. By definition $p$ lies in $Q$ if and only if $x_1 \leq p_x \leq x_2$ and $y \leq p_y \leq \infty$. This is easily seen to hold if and only if $(x_1 \mid -\infty) \leq (p_x \mid p_y) \leq (x_2 \mid +\infty)$ and $(y \mid -\infty) \leq (p_y \mid p_x) \leq (+\infty, +\infty)$, this is, if and only if $\hat{p}$ lies in $\hat{Q}$. $\square$ \\
 
-From Lemma~\ref{lma:composite_universe_query} is follows that our approach is correct.
+%From Lemma~\ref{lma:composite_universe_query} is follows that our approach is correct.
 
 \begin{savequote}[0.5\textwidth]
---- If at first you don't succeed, call it version 1.0
-\qauthor{Unknown}
+``Nanos gigantum humeris insidentes.''
+\qauthor{--- Bernard of Chartres}
 \end{savequote}
 \chapter{Related work}
 \label{chp:related_work}
@@ -566,7 +566,7 @@ The study of adapting the priority search tree to external memory was initiated 
 	\label{fig:icking_external_pst}
 \end{figure}
 
-Kanellakis et al. presents a linear space partially dynamic solution in~\cite{Kanellakis1996589}. The data structure answers three-sided queries in $\mathcal{O}(\log_B N + \nicefrac{K}{B} + \log_2 B)$ I/O's and supports inserts in $\mathcal{O}(\log_B N + (\log^2_B \nicefrac{N}{B})$ I/O's. The result is fairly involved and is unlikely to perform well in any practical manner. We will omit the full details and only present the overall ideas. As a first step all points are shifted such that they lie above the line $y = x$. The basic building block of the data structure is the \textit{metablock tree}; a B-ary tree of \textit{metablocks}, each of which represents $B^2$ data points. The root represents the $B^2$ data points with the largest $y$-values. The remaining $N - B^2$ data points are divided into $B$ groups of $(N - B^2)/B$ data points each based on the $x$-coordinate. The first group contains the $(N - B^2)/B$ data points with the smallest $x$-values and so on. A recursive tree of the exact same type is constructed for each such group of data points. This process continues until a group has at most $B^2$ data points and can fit into a single metablock. Refer to Figure~\ref{fig:kanellakis_metablock_tree} for an illustration of a metablock tree.
+Kanellakis et al. presents a linear space and partially dynamic solution in~\cite{Kanellakis1996589}. The data structure answers three-sided queries in $\mathcal{O}(\log_B N + \nicefrac{K}{B} + \log_2 B)$ I/O's and supports inserts in $\mathcal{O}(\log_B N + (\log^2_B \nicefrac{N}{B})$ I/O's. The result is fairly involved and is unlikely to perform well in any practical manner. We will omit the full details and only present the overall ideas. As a first step all points are shifted such that they lie above the line $y = x$. The basic building block of the data structure is the \textit{metablock tree}; a B-ary tree of \textit{metablocks}, each of which represents $B^2$ data points. The root represents the $B^2$ data points with the largest $y$-values. The remaining $N - B^2$ data points are divided into $B$ groups of $(N - B^2)/B$ data points each based on the $x$-coordinate. The first group contains the $(N - B^2)/B$ data points with the smallest $x$-values and so on. A recursive tree of the exact same type is constructed for each such group of data points. This process continues until a group has at most $B^2$ data points and can fit into a single metablock. Refer to Figure~\ref{fig:kanellakis_metablock_tree} for an illustration of a metablock tree.
 
 \begin{figure}[h]
 	\centering
@@ -684,18 +684,22 @@ For any $\max\left\lbrace \log\log N, \log_M N \right\rbrace \leq \lambda \leq B
 
 This means that in one end of the trade-off they can for $\lambda = B^\epsilon$ obtain an update time of $\mathcal{O}(1/B^{1-\epsilon})$ and query time of $\mathcal{O}(\log_B N)$. This matches the bounds of the buffer tree of Arge. In the other end of the trade-off where they are able to achieve fast updates very close to the optimal disk transfer rate of $1/B$ namely they obtain: $t_u^{\min} = \mathcal{O}(\frac{1}{B} \cdot \max\left\lbrace \log\log N, \log_M N \right\rbrace)$.
 
-\chapter{Internal Priority Search Tree}
+\begin{savequote}[0.5\textwidth]
+``All my best thoughts were stolen by the ancients.''
+\qauthor{--- Ralph Waldo Emerson}
+\end{savequote}
+\chapter{Internal Memory Priority Search Tree}
 \label{chp:internal_pst}
-In this section we present an internal memory data structure for the range reporting problem. The data structure was originally presented by McCreight \cite{DBLP:journals/siamcomp/McCreight85} and is denoted a priority search tree. The priority search tree is basically a combination of a binary search tree on the $x$-coordinate and a heap on the $y$-coordinate. A formal definition of a priority search tree for a set of $N$ points, $P$, is as follows. We assume that all points have distinct coordinates, though this assumption can be removed by using the normal lexicographical ordering of points.
+In this chapter we present an internal memory data structure for the range reporting problem. The data structure was originally presented by McCreight \cite{DBLP:journals/siamcomp/McCreight85} and is denoted a Priority Search Tree. The Priority Search Tree is basically a combination of a binary search tree on the $x$-coordinate and a heap on the $y$-coordinate. A formal definition of a Priority Search Tree for a set of $N$ points, $P$, is as follows. We assume that all points have distinct coordinates, though this assumption can be removed by using the normal lexicographical ordering of points.
 
 \begin{itemize}
-	\item If $P = \varnothing$ then the priority search tree is an empty leaf.
+	\item If $P = \varnothing$ then the Priority Search Tree is an empty leaf.
 	\item Otherwise, let $p_\text{max}$ be the point in the set $P$ with the largest $y$-coordinate. \\ \\
 			Let $x_{\text{mid}}$ be the median of the $x$-coordinates of the remaining points. \\ \\ Now let
 			$$ P_\text{below} \coloneqq \{p \in P \setminus \{p_\text{max} \} : p_x < x_\text{mid} \}\text{,}$$
 			$$ P_\text{above} \coloneqq \{p \in P \setminus \{p_\text{max} \} : p_x > x_\text{mid} \}\text{.}$$
 			
-			The priority search tree consists of a root node $v$ where the point \\
+			The Priority Search Tree consists of a root node $v$ where the point \\
 			$p(v) \coloneqq p_{\text{max}}$ and the value $x(v) \coloneqq x_{\text{mid}}$ are stored. Furthermore,
 			\begin{itemize}[label=$\bullet$]
 				\item the left subtree of $v$ is a priority search tree for the set $P_{\text{below}}$.
@@ -703,12 +707,12 @@ In this section we present an internal memory data structure for the range repor
 			\end{itemize}
 \end{itemize}
 
-What is important to note is that the specific construction method allows the data structure to be indexed in two different ways. First, the tree can be searched as a binary search tree based on $x$-coordinate. Second, the tree operates as a max-heap based on $y$-coordinate. Please refer to Figure~\ref{fig:static_pst} for an illustration of a priority search tree constructed on points $P = \{A, B, C, D, E, F, G, H\}$.
+What is important to note is that the specific construction method allows the data structure to be indexed in two different ways. First, the tree can be searched as a binary search tree based on the $x$-coordinate. Second, the tree operates as a max-heap based on the $y$-coordinate. Please refer to Figure~\ref{fig:static_pst} for an illustration of a Priority Search Tree constructed on points $P = \{A, B, C, D, E, F, G, H\}$.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=0.68]{../figures/internal_pst_static}
-	\caption{The letter given in the node represents the $y_{\text{max}}$ stored as key, while the dashed line represents the median $x$ value stored in the node.}
+	\caption{The letter given in the node represents the $y_{\text{max}}$ stored as a key, while the dashed line represents the median $x$ value stored in the node.}
 	\label{fig:static_pst}
 \end{figure}
 
@@ -727,17 +731,17 @@ The search operation follows two root to leaf paths each of length $\mathcal{O}(
 
 \section{Dynamic Priority Search Tree}
 The key difference between the static solution presented by McCreight and a dynamic solution is that we always ensure that each point is placed in exactly one leaf and the order of the leafs from left to right corresponds to the order of the $x$-coordinate of the points. The internal nodes of the tree store the point with greatest $y$-coordinate represented by a leaf in the subtree of the node which is not already stored by an ancestor of this interior node. It is clear we have $N$ leaf nodes and $N-1$ internal nodes in the data structure.
-Whenever we store a point in an interior node, then the leaf node which corresponds to this point is considered a \textit{placeholder} for this point. A total of $N - 1$ nodes are left as placeholders. Please refer to Figure~\ref{fig:dynamic_pst} for an illustration of a dynamic priority search tree over the points $P = \{A, B, C, D, E, F, G \}$.
+Whenever we store a point in an interior node, then the leaf node which corresponds to this point is considered a \textit{place-holder} for this point. A total of $N - 1$ nodes are left as place-holders. Please refer to Figure~\ref{fig:dynamic_pst} for an illustration of a dynamic Priority Search Tree over the points $P = \{A, B, C, D, E, F, G \}$.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=0.68]{../figures/internal_pst_dynamic}
-	\caption{8 data points and the corresponding dynamic priority search tree. Dotted leafs are placeholders for a key higher up in the tree.}
+	\caption{8 data points and the corresponding dynamic Priority Search Tree. Dotted leafs are place-holders for a key higher up in the tree.}
 	\label{fig:dynamic_pst}
 \end{figure}
 
 \section{Construction}
-Assuming we are given a list of $x$-sorted points we can construct the dynamic priority search tree using a bottom-up construction method similar to the bottom-up construction of a heap. At the first phase of construction we associate each point with a placeholder in the priority search tree. These placeholders will become the leaf level of the data structure. Next we select pairs of placeholders and compare them to one another in terms of their $y$-coordinate. We denote the point with the highest $y$-coordinate as the winning point and the comparison between points as a tournament round. It is the winning point that will be represented by a new internal node at one level higher in the tree. Please refer to Figure~\ref{fig:dynamic_pst_construction} for an illustration of the construction of the leaf level of the data structure.
+Assuming we are given a list of $x$-sorted points we can construct a balanced dynamic Priority Search Tree using a bottom-up construction method similar to the bottom-up construction of a heap. In the first phase of construction we associate each point with a place-holder in the Priority Search Tree. These place-holders will become the leaf level of the data structure. Next we select pairs of place-holders and compare them to one another in terms of their $y$-coordinate. We denote the point with the highest $y$-coordinate as the winning point and the comparison between points as a tournament round. It is the winning point that will be represented by a new internal node at one level higher in the tree. Please refer to Figure~\ref{fig:dynamic_pst_construction} for an illustration of the construction of the leaf level of the data structure.
 At the next level of the tree, we perform the same comparisons as before to determine which nodes will advance to the third level. At most $\nicefrac{N}{2}$ are compared at this level.
 
 \begin{figure}[h]
@@ -750,7 +754,7 @@ At the next level of the tree, we perform the same comparisons as before to dete
 Every tournament round will potentially leave an empty interior node behind as the wining point is moved one level up. If this occurs we have to check if any previous tournament losers are now eligible to be represented higher in the tree. We must also remember that some interior nodes in the tree may not represent any points and will thus remain empty when the construction is complete.
 
 \subsection*{Analysis}
-First, all points is inserted as leafs in the bottom layer of the data structure. The leafs counts for $\nicefrac{N}{2}$ of the total nodes in the tree. The next $N/2^2$ nodes are created at height $h = 1$ and the tournaments are played one level down. For the $i$'th step we create $N/2^i$ nodes and we will play tournaments $i$ levels down. The total steps to build the dynamic priority search tree of size $N$ is thus:
+First, all points is inserted as leafs in the bottom layer of the data structure. The leafs counts for $\nicefrac{N}{2}$ of the total nodes in the tree. The next $N/2^2$ nodes are created at height $h = 1$ and the tournaments are played one level down. For the $i$'th step we create $N/2^i$ nodes and we play tournaments $i$ levels down. The total steps to build the dynamic Priority Search Tree of size $N$ is thus:
 
 $$\sum\limits_{i=0}^{\log(N)} \frac{N}{2^{i+1}}i = \frac{N}{2} \left( \sum\limits_{i=0}^{\log(N)} i\left(\frac{1}{2}\right)^i \right) \leq \frac{N}{2} \left( \sum\limits_{i=0}^{\infty} i\left(\frac{1}{2}\right)^i \right)$$
 
@@ -762,32 +766,36 @@ For $x = \frac{1}{2}$ we get
 
 $$\frac{1/2}{(1-1/2)^2} = 2$$
 
-Plugging this in to the above sum we get that the total number of steps to build a dynamic priority search tree on $N$ points is $\mathcal{O}(N)$.
+Plugging this in to the above sum we get that the total number of steps to build a dynamic Priority Search Tree on $N$ points is $\mathcal{O}(N)$.
 
-This implies we can construct the dynamic priority search in linear time assuming we are given sorted input.
+This implies we can construct the balanced dynamic Priority Search Tree in linear time assuming we are given a sorted input. The tree is balanced since we place all leafs at the same level. If the size of the input is not a perfect power of 2, the tree will be imbalanced by a single level.
 
 \section{Insertion}
 
-In order to dynamically insert points into the data structure, we add a new leaf (placeholder) for the new point and perform a pushdown operation with the new point starting at the root as will be described below. We can determine where to add the new placeholder as the dynamic priority search tree is a binary search tree on the $x$-coordinate of the points. When we reach an existing leaf, we add a new internal node in place of this leaf, and make the existing leaf one of the children of this new internal node. Then we add a new leaf to the tree as the other child, and store the new point in this leaf. In order to maintain the heap order of the priority search tree we now perform a pushdown operation, where we at each step compare the $y$-coordinate of the point to be inserted with the $y$-coordinate of the point represented by the given internal node. If the $y$-coordinate of the point to be inserted is less than that of the point stored in the internal node, then we push the point to be inserted further down the tree. However, if the $y$-coordinate of the point to be inserted is greater than the $y$-coordinate of the point in the internal node, then we store the point to be inserted in this internal node, and take the point which was formerly represented by this internal node and continue the pushdown operation with this point instead.
+In order to dynamically insert points into the data structure, we add a new leaf (place-holder) for the new point and perform a push-down operation with the new point starting at the root as will be described below. We can determine where to add the new place-holder as the dynamic Priority Search Tree is a binary search tree on the $x$-coordinate of the points. When we reach an existing leaf, we add a new internal node in place of this leaf, and make the existing leaf one of the children of this new internal node. Then we add a new leaf to the tree as the other child, and store the new point in this leaf. In order to maintain the heap order of the Priority Search Tree we now perform a push-down operation, where we at each step compare the $y$-coordinate of the point to be inserted with the $y$-coordinate of the point represented by the given internal node. If the $y$-coordinate of the point to be inserted is less than that of the point stored in the internal node, then we push the point to be inserted further down the tree. However, if the $y$-coordinate of the point to be inserted is greater than the $y$-coordinate of the point in the internal node, then we store the point to be inserted in this internal node, and take the point which was formerly represented by this internal node and continue the push-down operation with this point instead.
 
 \subsection*{Analysis}
 
-The first step of the insertion algorithm is a binary search traversal on the $x$-coordinate of the new point. The path is of length $\mathcal{O}(\log N)$. Adding a new internal node in place of the old leaf takes a constant amount of operations. The pushdown operation follows a single root to leaf path of length $\mathcal{O}(\log N)$ and uses a constant amount of work in each node. So we conclude insertions can be done in $\mathcal{O}(\log N)$.
+The first step of the insertion algorithm is a binary search traversal on the $x$-coordinate of the new point. The path is of length $\mathcal{O}(\log N)$. Adding a new internal node in place of the old leaf takes a constant amount of operations. The push-down operation follows a single root to leaf path of length $\mathcal{O}(\log N)$ and uses a constant amount of work in each node. We conclude insertion of an element can be done in $\mathcal{O}(\log N)$.
 
 \section{Deletion}
 
-When dynamically deleting a point we must locate the interior node (if any) representing the point we wish to delete. After we have removed the point from the interior of the dynamic search tree, we must replay a portion of the tournament among the points below this interior node in order to replace it. Finally we must delete the leaf which is the placeholder for the point.
+When dynamically deleting a point we must locate the interior node (if any) representing the point we wish to delete. After we have removed the point from the interior of the dynamic search tree, we must replay a portion of the tournament among the points below this interior node in order to replace it. Finally we must delete the leaf which is the place-holder for the point.
 
 \subsection*{Analysis}
-Locating the interior node representing the point to be deleted can be done in $\mathcal{O}(\log N)$ using the binary search property maintained by the priority search tree. Once we have located the interior node we can remove this point in $\mathcal{O}(1)$. The deletion of the point of an interior node leafs a hole in the tree that we fill by playing tournaments following a node to leaf path of length $\mathcal{O}(\log N)$. We conclude the deletion algorithm requires $\mathcal{O}(\log N)$ per deletion.
+Locating the interior node representing the point to be deleted can be done in $\mathcal{O}(\log N)$ using the binary search property maintained by the Priority Search Tree. Once we have located the interior node we can remove this point in $\mathcal{O}(1)$. The deletion of the point of an interior node leaves a hole in the tree that we fill by replaying tournaments following a node to leaf path of length $\mathcal{O}(\log N)$. We conclude the deletion algorithm requires $\mathcal{O}(\log N)$ per deletion.
 
 
 \section{Rebalancing}
-If we use the operations for dynamic updates as stated above without any measures for tree rebalancing, we could end up with a highly unbalanced tree. We fix this using global rebuilding when a linear number of updates have been performed. We can collect all points in sorted order in linear time by visiting leafs from left to right using a DFS traversal of the tree. On the collected points we now use the linear construction algorithm to rebalance the tree. Using this strategy yields a data structure that handles updates in $\mathcal{O}(\log N)$ amortized. By using a Red-Black tree as the heart of the tree we can achieve a data structure that is $\mathcal{O}(\log N)$ worst case by performing rotations to rebalance the tree.
+If we use the operations for dynamic updates as stated above without any measures for tree rebalancing, we could end up with a highly unbalanced tree. We fix this using global rebuilding when a linear number of updates have been performed. We can collect all points in sorted order in linear time by visiting leafs from left to right using a depth first traversal of the tree. On the collected points we now use the linear construction algorithm to rebalance the tree. Using this strategy yields a data structure that handles updates in $\mathcal{O}(\log N)$ amortized. By using a Red-Black tree as the heart of the tree we can achieve a data structure that is $\mathcal{O}(\log N)$ worst case by performing rotations to rebalance the tree.
 
 \section{Bounds in the I/O model}
-The above bounds translate directly to the I/O model as we cannot guarentee that nodes on the search path are perfectly placed in blocks, which in the worst case means that each visit to a node will equal 1 I/O.
+The above bounds translate directly to the I/O model as we cannot guarantee that nodes on the search path are perfectly placed in blocks, which in the worst case means that each visit to a node will equal 1 I/O.
 
+\begin{savequote}[0.5\textwidth]
+``Truth, like gold, is to be obtained not by its growth, but by washing away from it all that is not gold.''
+\qauthor{--- Leo Tolstoy}
+\end{savequote}
 \chapter{External Memory Priority Search Tree}
 \label{chp:arge_pst}
 In this chapter we present an older result on dynamic three-sided range queries due to Arge et al.~\cite{arge_samoladas_vitter_1999}.
@@ -921,6 +929,11 @@ We report all points in $Q$, since, by the rules, a point in $Q$ cannot be in an
 \subsection{Analysis}
 In every internal node $v$ visited we spend $\mathcal{O}(1+K_v/B)$ I/O's. There are $\mathcal{O}(\log_B N)$ nodes on the search path from root to the leftmost leaf and rightmost leaf and thus the number of I/O's used on these paths is $\mathcal{O}(\log_B N + K/B)$. All other internal nodes visited are visited because all points were reported in the parent. If we do not report all points from a $Y$-set we can charge the $\mathcal{O}(1)$ I/O's of visiting the child to the parent which must have reported $\Theta(B)$ points. As the cost of reporting from the query data structures is $\mathcal{O}(1+K/B)$ the total cost amounts to $\mathcal{O}(\log_B N + K/B)$.
 
+
+\begin{savequote}[0.50\textwidth]
+``Daring ideas are like chessmen moved forward: they may be beaten, but they may start a winning game.''
+\qauthor{--- Goethe}
+\end{savequote}
 \chapter{External Memory Buffered Priority Search Tree}
 \label{chp:epst}
 In this chapter we present an external memory data structure described by Brodal~\cite{DBLP:journals/corr/Brodal15}. The structure supports updates in amortized $\mathcal{O}\left(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N\right)$ I/O's, three sided range queries in $\mathcal{O}\left(\frac{1}{\epsilon}\log_B N + \nicefrac{K}{B}\right)$ I/O's for $0 \leq \epsilon \leq \frac{1}{2}$, and can be constructed on $N$ sorted points in $\mathcal{O}(\nicefrac{N}{B})$ I/O's. The parameter $\epsilon$ determines the size of the fanout and in turn the size of a bootstrapped substructure for storing $\mathcal{O}(B^{1+\epsilon})$ points.
@@ -1170,17 +1183,17 @@ In total we need to handle $\mathcal{O}(N_{del} + \frac{N_{ins}}{\Delta B})$ hol
 All this adds up to $\mathcal{O}(\frac{N_{ins}+N_{del}}{B/\Delta} \frac{1}{\epsilon} \log_B N) = \mathcal{O}(\frac{N_{ins}+N_{del}}{\epsilon B^{1-\epsilon}} \log_B N)$  I/O's for handling updates. This matches the amortized bounds of the structure.
 
 
-\begin{savequote}[0.4\textwidth]
---- The problem with quotes found on the internet is that they are often not true.
-\qauthor{Lincoln, Abraham}
+\begin{savequote}[0.5\textwidth]
+``The problem with quotes found on the\\internet is that they are often not true.''
+\qauthor{--- Abraham Lincoln}
 \end{savequote}
 \chapter{Other structures}
 \label{chp:other_structures}
-\section{R-tree}
+\section{R-Tree}
 
-The R-tree was introduced by Antonin Guttman in~\cite{Guttman:1984:RDI:602259.602266}. The structure is heuristic in nature and does not provide any close to optimal search bounds. Arge et al. has, however, provided strong evidence for R-trees outperforming several theoretical optimal data structures in practice in~\cite{Arge:2008:PRP:1328911.1328920}. We will introduce the important ideas of the R-tree.
+The R-Tree was introduced by Antonin Guttman in~\cite{Guttman:1984:RDI:602259.602266}. The structure is heuristic in nature and does not provide any close to optimal worst case search bounds. Arge et al. has, however, provided strong evidence for R-Trees outperforming several theoretical optimal data structures in practice in~\cite{Arge:2008:PRP:1328911.1328920}. We will introduce the important ideas of the R-Tree.
 
-Let $P$ be a set of points. An R-tree stores all points from $P$ in leaf nodes, each of which contains $\Theta(B)$ points. Each non-leaf node $u$ has $\Theta(B)$ children, except for the root which must have 2 children unless it is the only node in the tree. For each child $v$, $u$ stores a \textit{minimum bounding rectangle} (MBR), which is the smallest rectangle that \textit{tightly} encloses all the data points in the subtree of $v$. Note that there is no constraint on how points should be grouped into leafs nodes. Also, there is no constraint on how non-leaf nodes should be grouped in higher level nodes. Since each point is stored only once, the entire data structure consumes linear space. Please refer to figure~\ref{fig:r_tree_structure} for an illustration of an R-tree structure.
+Let $P$ be a set of points. An R-Tree stores all points from $P$ in leaf nodes, each of which contains $\Theta(B)$ points. Each non-leaf node $u$ has $\Theta(B)$ children, except for the root which must have 2 children unless it is the only node in the tree. For each child $v$, $u$ stores a \textit{minimum bounding rectangle} (MBR), which is the smallest rectangle that \textit{tightly} encloses all the data points in the subtree of $v$. Note that there is no constraint on how points should be grouped into leaf nodes. Also, there is no constraint on how non-leaf nodes should be grouped in higher level nodes. Since each point is stored only once, the entire data structure consumes linear space. Please refer to figure~\ref{fig:r_tree_structure} for an illustration of a R-Tree structure.
 
 \begin{figure}[h]
 	\centering
@@ -1190,20 +1203,20 @@ Let $P$ be a set of points. An R-tree stores all points from $P$ in leaf nodes, 
 \end{figure}
 
 \subsection{Query}
-Given a query $Q = \left[x_1,x_2\right] \times \left[y_1,\infty\right]$ we want to find all the points in $P$ that are covered by $Q$. The relation to the R-tree is that we only need to visit those nodes whose MBRs intersect $Q$. Intuitively, this means we desire as \textit{small} MBRs as possible, as this directly implies that a query spans fewer MBRs, again implying fewer nodes are visited. A good heuristic is therefore to minimize the perimeter of each MBR as this directly implies MBRs that covers smaller areas.
+Given a query $Q = \left[x_1,x_2\right] \times \left[y_1,\infty\right]$ we want to find all the points in $P$ that are covered by $Q$. The relation to the R-Tree is that we only need to visit those nodes whose MBRs intersect $Q$. Intuitively, this means we desire as \textit{small} MBRs as possible, as this directly implies that a query spans fewer MBRs, again implying fewer nodes are visited. A good heuristic is therefore to minimize the perimeter of each MBR as this directly implies MBRs that covers smaller areas.
 
 \subsection{Insertions}
-To insert a point $p$, we add $p$ to a leaf node $u$ by following a single root-to-leaf path. If $u$ overflows we split it, which creates a new child of $parent(u)$. This could cause $parent(u)$ to overflow which is handled in a recursive manner. Finally, if the root split, then a new root is created. Note that it is legal to insert a point $p$ into \textit{any} leaf, after which, the data structure will still be considered legal. This is the main property that differs R-trees from standard B-trees. There are several heuristics for choosing a subtree to insert into. It is these heuristics that gives rise to the different R-Tree variants and names. We will cover the original R-Tree heuristic and the R$^*$-Tree heuristic.
+To insert a point $p$, we add $p$ to a leaf node $u$ by following a single root-to-leaf path. If $u$ overflows we split it, which creates a new child of $parent(u)$. This could cause $parent(u)$ to overflow which is handled in a recursive manner. Finally, if the root split, then a new root is created. Note that it is legal to insert a point $p$ into \textit{any} leaf, after which, the data structure will still be considered legal. This is the main property that differs R-Trees from standard B-Trees. There are several heuristics for choosing a subtree to insert into. It is these heuristics that gives rise to the different R-Tree variants and names. We will cover the original R-Tree heuristic and the R$^*$-Tree heuristic.
 
 The formal definition of inserting a new point $p$ is as follows. Given a non-leaf $u$ with children $v_1, v_2, \cdots, v_{\Theta(B)}$, we need to pick the best child $v^*$ such that the new point $p$ is best inserted into the subtree of $v^*$.
 
-\textbf{Choosing a subtree to insert in an R-tree.}  The standard R-tree chooses the best child in a greedy manner. Specifically, $v^*$ is simply the child $v_i$ whose MBR requires the \textit{least increase} of area in order to cover $p$.
+\textbf{Choosing a subtree to insert in an R-Tree.}  The standard R-Tree chooses the best child in a greedy manner. Specifically, $v^*$ is simply the child $v_i$ whose MBR requires the \textit{least increase} of area in order to cover $p$.
 
-\textbf{Choosing a subtree to insert in an R$^*$-tree.} The problems in the original R-Tree is that certain types of data points may create small areas but large distances which will initiate a bad split. To overcome this, a mixed heuristic is employed. At leaf level we try to minimize the overlap and in case of \textit{ties} the MBR that requires the \textit{least increase} of perimeter is chosen. If this again yields a tie the MBR that increases the least in area is chosen. At the higher levels, it behaves similar to the R-tree.
+\textbf{Choosing a subtree to insert in an R$^*$-Tree.} The problems in the original R-Tree is that certain types of data points may create small areas but large distances which will initiate a bad split. To overcome this, a mixed heuristic is employed. At leaf level we try to minimize the overlap and in case of \textit{ties} the MBR that requires the \textit{least increase} of perimeter is chosen. If this again yields a tie the MBR that increases the least in area is chosen. At the higher levels, it behaves similar to the R-Tree.
 
-\textbf{Node split in an R-Tree} was by Guttman originally proposed done using two different heuristics. The \textit{linear method} chooses far apart nodes as ends. Randomly nodes are then chosen and assigned such that require the smallest MBR enlargment. The \textit{quadratic method} chooses two nodes so the dead space between them is maximized. Nodes are then assigned such that MBR area is minimized.
+\textbf{Node split in an R-Tree} was by Guttman originally proposed done using two different heuristics. The \textit{linear method} chooses far apart nodes as ends. Randomly nodes are then chosen and assigned such that they require the smallest MBR enlargement. The \textit{quadratic method} chooses two nodes such that the dead space between them is maximized. Nodes are then assigned such that the MBR area is minimized.
 
-\textbf{Node split in an R$^*$-Tree is fairly more involved} but the main idea is to always split point set $S$ using an axis-orthogonal cut. This means that points of $S$ is sorted with respect to their $x$- and $y$-value respectively. Then, the first $\nicefrac{B}{2}$ points are inserted into $S_1$ and the rest is inserted into $S_2$ for the $x$-sorted points and into $S'_1$ and $S'_2$ for the $y$-sorted points. The final split is the better one of the two splits, i.e. the splits that have the least combined MBR perimeter and least combined MBR area. The above applies to splitting of a leaf node. The case of a non-leaf node is a bit different because the items be split are MBRs. The strategy is however the same and involves sorting the MBRs by their centroids. Please refer to figure~\ref{fig:r_tree_splitting} for an illustration of the splitting of a node.
+\textbf{Node split in an R$^*$-Tree is fairly more involved} but the main idea is to always split point set $S$ using an axis-orthogonal cut. This means that points of $S$ is sorted with respect to their $x$- and $y$-value respectively. Then, the first $\nicefrac{B}{2}$ points are inserted into $S_1$ and the rest is inserted into $S_2$ for the $x$-sorted points and into $S'_1$ and $S'_2$ for the $y$-sorted points. The final split is the better one of the two splits, i.e. the splits that have the least combined MBR perimeter and least combined MBR area. The above applies to splitting of a leaf node. The case of a non-leaf node is a bit different because the items split are MBRs. The strategy is however the same and involves sorting the MBRs by their centroids. Please refer to figure~\ref{fig:r_tree_splitting} for an illustration of the splitting of a node.
 
 \begin{figure}[h]
 	\centering
@@ -1231,23 +1244,23 @@ Queries of the form $\left[x_1,x_2\right] \times \left[y_1,\infty\right]$ were a
 \subsection{Analysis}
 It is important to keep an open connection to the server at all times, if not we will end up spending a lot of time reconnecting to the server.
 
-Inserting points in the DBMS involves sending the query to the server, parsing the query, and finally inserting the rows. Due to the primary key on the table, we know that MySQL will build a B-tree on the data. This will give an insertion time of $\mathcal{O}(\log_B N)$ I/O's for some MySQL implementation specific $B$.
+Inserting points in the database involves sending the query to the server, parsing the query, and finally inserting the rows. Due to the primary key on the table, we know that MySQL will build a B-Tree on the data. This will give an insertion time of $\mathcal{O}(\log_B N)$ I/O's for some MySQL implementation specific $B$.
 
 Deleting points is similar to inserting and is also done in $\mathcal{O}(\log_B N)$.
 
-It is a little harder to argue about the complexity of a three sided query. A B-tree can answer normal two sided range queries in $\mathcal{O}(\log_B N + K/B)$. We can however not guarantee that all points in the two sided range should be reported and thus we cannot properly attribute any I/O's to the output, i.e. use filtering. We will have to settle with a complexity of $\mathcal{O}(\log_B N + T/B)$ where $T$ is the size of the output within the $x$ range of the query.
+It is a little harder to argue about the complexity of a three sided query. A B-Tree can answer normal two sided range queries in $\mathcal{O}(\log_B N + K/B)$. We can however not guarantee that all points in the two sided range should be reported and thus we cannot properly attribute any I/O's to the output, i.e. use filtering. We will have to settle with a complexity of $\mathcal{O}(\log_B N + T/B)$ where $T$ is the size of the output within the $x$ range of the query.
 
 If we enforce no index on the MySQL table, then we believe the standard implementation will simply append all insertions to a contiguous stream, which can be done in $\mathcal{O}(1)$ I/O's. We believe deletions and queries can be handled in $\mathcal{O}(N/B)$ I/O's by scanning the entire stream.
 
 \begin{savequote}[0.7\textwidth]
---- There is nothing more deceptive than an obvious fact.
-\qauthor{Holmes, Sherlock}
+``There is nothing more deceptive than an obvious fact.''
+\qauthor{--- Sherlock Holmes}
 \end{savequote}
 \chapter{Implementation}
 \label{chp:implementation}
 
-Throughout our implementation of the internal priority search tree, external memory priority search tree, and the external memory buffered priority search tree we noted down important considerations.
-In this chapter we present these considerations together with a short presentation of how we wrote wrappers around MySQL, Boost R-tree, and libspatial R*-tree. We end the chapter with a description of the experimental framework we developed to significantly simplify the experimental phase of the project.
+Throughout our implementation of the Internal Memory Priority Search Tree, External Memory Priority Search Tree, and the External Memory Buffered Priority Search Tree we noted down important considerations.
+In this chapter we present these considerations together with a short presentation of how we wrote wrappers around MySQL, Boost R-Tree, and libspatial R*-Tree. We end the chapter with a description of the experimental framework we developed to significantly simplify the experimental phase of the project.
 
 All code can be cloned from the following git repository or downloaded from the mirrors listed below. Instructions on how to compile and run the code can be found in the accompanying \texttt{readme} file.
 
@@ -1360,9 +1373,9 @@ In order to obtain a deeper understanding of the results we chose to measure the
 
 As the machines run on a 32 bit operating systems it is very important to define \texttt{\_FILE\_OFFSET\_BITS=64}. This forces the system to use 64 bit pointers when seeking in files allowing us to handle data sets larger than $2^{32}$ on the machines.
 
-\begin{savequote}[0.4\textwidth]
---- We made the buttons on the screen look so good you'll want to lick them.
-\qauthor{Jobs, Steve}
+\begin{savequote}[0.55\textwidth]
+``We must never make experiments to confirm our ideas, but simply to control them.''
+\qauthor{--- Claude Bernard}
 \end{savequote}
 \chapter{Experimental setup}
 \label{chp:experimental_setup}
@@ -1400,8 +1413,8 @@ Compiler & gcc 4.8.4 with optimization level 2
 \end{figure}
 
 \begin{savequote}[0.4\textwidth]
---- The end justifies the means.
-\qauthor{Machiavelli, Niccol\'{o}}
+``Big results require big ambitions.''
+\qauthor{--- Heraclitus}
 \end{savequote}
 \chapter{Our results}
 \label{chp:experimental_results}
@@ -1753,8 +1766,8 @@ The experiment on the \textbf{report} part of the algorithms was conducted by fi
 The result of the experiment on the \textbf{search} part of the algorithms is depicted in Figure~\ref{fig:result_query_search_complexity}. Arges structure is limited by the ???
 
 \begin{savequote}[0.4\textwidth]
---- To succeed, jump as quickly at opportunities as you do at conclusions.
-\qauthor{Franklin, Benjamin}
+``To succeed, jump as quickly at opportunities as you do at conclusions.''
+\qauthor{--- Benjamin Franklin}
 \end{savequote}
 \chapter{Conclusion}
 \label{chp:conclusion}
