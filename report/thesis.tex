@@ -1063,7 +1063,7 @@ We will in the following look at each step individually and argue their complexi
 	\begin{figure}[htp!]
 		\centering
 		\includegraphics[width=0.9\textwidth]{../figures/brodal_point_buffer_underflow}
-		\caption{Point buffer underflow. Here $B = 32$, $\epsilon = 2/5$ giving $B^\epsilon = 4$. The point buffer $P_v$ contains less than $B/2$ points, meaning it is underflowed. The point buffers of the children are considered and the top $B/2$ points are added to $X$. Now deletions from $D_v$ cancels points in $X$ and the remaining of $X$ is inserted into $P_v$ and the child structure of the parent $C_p$. Finally the heap order is maintained by swapping points between $P_v$ and $I_v$ and reflecting the changes in $C_p$.}
+		\caption{Point buffer underflow. Here $B = 32$, $\epsilon = 2/5$ giving $B^\epsilon = 4$. The point buffer $P_v$ contains less than $B/2$ points, i.e. it is underflowed. The point buffers of the children are considered and the top $B/2$ points are added to $X$. Now deletions from $D_v$ cancels points in $X$ and the remaining of $X$ is inserted into $P_v$ and the child structure of the parent $C_p$. Finally the heap order is maintained by swapping points between $P_v$ and $I_v$ and reflecting the changes in $C_p$.}
 		\label{fig:brodal_pb_underflow}
 	\end{figure}
 	
@@ -1075,7 +1075,7 @@ We will in the following look at each step individually and argue their complexi
 \end{enumerate}
 
 \subsubsection*{Analysis}
-The tree grows in height during insertions by splitting leafs and internal nodes. We stay balanced during these insertions since we only increase in height whenever the root splits which causes every path from root to leaf to increase by one. In the B-tree we handle rebalancing using fusion of nodes. We do not apply this method here but instead apply global rebuilding when a linear number of updates have been performed. By~\ref{update:pbo} it follows that the total number of leafs created during $N$ insertions can be at most $\mathcal{O}(N/B)$ implying that at most $\mathcal{O}(\frac{N}{\Delta B})$ internal nodes can be created by splitting internal nodes. From this it follows that the tree has height $\mathcal{O}(\log_\Delta \frac{N}{B}) = \mathcal{O}(\frac{1}{\epsilon} \log_B N)$.
+The tree grows in height during insertions by splitting leafs and internal nodes. We stay balanced during these insertions since we only increase in height whenever the root splits which causes every path from root to leaf to increase by one. In the B-Tree we handle rebalancing using fusion of nodes. We do not apply this method here but instead apply global rebuilding when a linear number of updates have been performed. By~\ref{update:pbo} it follows that the total number of leafs created during $N$ insertions can be at most $\mathcal{O}(N/B)$ implying that at most $\mathcal{O}(\frac{N}{\Delta B})$ internal nodes can be created by splitting internal nodes. From this it follows that the tree has height $\mathcal{O}(\log_\Delta \frac{N}{B}) = \mathcal{O}(\frac{1}{\epsilon} \log_B N)$.
 
 We can now argue that every update in~\ref{update:del} and~\ref{update:ins} requires amortized $\mathcal{O}(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N)$ I/O's. As every $\Theta (B/\Delta)$ update require $\mathcal{O}(1)$ I/O's on every layer of the tree we get the correct amortized bound:
 \begin{align*}
@@ -1088,7 +1088,7 @@ In~\ref{update:pbo}, we know that at most $\mathcal{O}(N/B)$ leafs are created e
 
 In~\ref{update:deg}, we know that at most $\mathcal{O}(\frac{N}{B\Delta})$ internal nodes are created. The creation of such a node costs $\mathcal{O}(\Delta)$ giving an amortized cost of $\mathcal{O}(1/B)$ I/O's per update.
 
-In~\ref{update:pbu} each refilling might trigger a cascaded recursive refilling of one or more of the children. Every refilling takes $\mathcal{O}(\Delta)$ I/O's and moves $\Theta(B)$ points one level up through the tree's point buffers. Each point can at most move $\mathcal{O}(\log_\Delta \frac{N}{B})$ levels up, as this is the tree's height. This means that the total number of I/O's for the refillings during the course of $N$ operations is amortized $\mathcal{O}(\frac{1}{B/\Delta} \log_\Delta \frac{N}{B}) = \frac{1}{\epsilon B^{1-\epsilon}} \log_B N$ per point.
+In~\ref{update:pbu} each refilling might trigger a cascaded recursive refilling of one or more of the children. Every refilling takes $\mathcal{O}(\Delta)$ I/O's and moves $\Theta(B)$ points one level up through the tree's point buffers. Each point can at most move $\mathcal{O}(\log_\Delta \frac{N}{B})$ levels up, as this is the tree's height. This means that the total number of I/O's for the refillings during the course of $N$ operations is amortized $\mathcal{O}(\frac{1}{B/\Delta} \log_\Delta \frac{N}{B}) = \mathcal{O}(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N)$ per point.
 
 This argument ignores the fact that when pulling up points some points might swap positions from $I_v$ to $P_v$. This swap does not change the fact that the number of points we pull up remain the same and therefore it does not affect the amortized accounting.
 
@@ -1124,7 +1124,7 @@ By summing over all layers of the tree we get the total cost of flushing all buf
 
 This gives an amortized cost of $\mathcal{O}(1/B)$ per update to flush all buffers.
 
-The $\mathcal{O}(\bar{N})$ reinsertions into the new initially empty tree can be done in amortized $\mathcal{O}(\frac{\bar{N}}{\epsilon B^{1-\epsilon}}\log_B\bar{N})$ I/O's are paid by the $\bar{N}/2$ updates during the epoch.
+The $\mathcal{O}(\bar{N})$ reinsertions into the new initially empty tree can be done in amortized $\mathcal{O}(\frac{\bar{N}}{\epsilon B^{1-\epsilon}}\log_B\bar{N})$ I/O's which is paid by the $\bar{N}/2$ updates during the epoch.
 
 \subsection{Three sided range queries}
 \label{subsec:brodal_3_sided}
@@ -1134,9 +1134,7 @@ We identify the nodes to visit in a breadth first manner.
 Starting from the root we identify, from the query's $x$-range, the children that are relevant to the query and push all insertions and deletions in the root to the identified children without handling possible overflows. After having done this we know that the point buffers of the children do not change further and we can thus report all points in the query range from the child structure and the point buffer of the root. The children worth visiting are added to the back of the breadth first search queue. We can decide whether a child is worth visiting without reading the node by comparing $y$ with the minimum $y$-value of that child's point buffer. This value is stored in the parent.
 All nodes except for the root do not need to report from their point buffers as the parent of the node has already reported the relevant points from the child structure.
 
-After all points have been reported we might have some buffers that have temporarily overflowed. This is now handled in a bottom up fashion using the update operations described in Subsection~\ref{subsec:gerth_updates}. We will handle a single subtree at a time and make sure that the entire subtree has no broken invariants, i.e. buffers that overflow or underflow or any nodes with a too high node degree. We do this by the update operations~\ref{update:del}-\ref{update:deg} and at the same time we disallow that any recursion leafs the subtree, i.e. no splits may recursively split nodes outside of the subtree. When the entire subtree has no overflows or underflows we can remedy a potential underflowed point buffer using update operation~\ref{update:pbu} and continue to the next subtree one level higher in the tree. See Figure~\ref{fig:gerth_fixup}.
-
-%REMOVED This process could also be described recursively. The base case of the recursion is the leaf $l$ which is handled by moving points from $I_l$ into $P_l$ and potentially splitting. At a layer above $l$ at node $v$ we might have many children which are all leafs and handled according to the base case. Node $v$ is now handled as described before and we have thus taken a step in the recursion. This process continues up to the root of the tree leaving the tree in a state with no overflows or underflows.
+After all points have been reported we might have some buffers that have temporarily overflowed. This is now handled in a bottom up fashion using the update operations described in Subsection~\ref{subsec:gerth_updates}. We will handle a single subtree at a time and make sure that the entire subtree has no broken invariants, i.e. buffers that overflow or underflow or any nodes with a too high node degree. We do this by the update operations~\ref{update:del}-\ref{update:deg} and at the same time we disallow that any recursion leaves the subtree, i.e. no splits may recursively split nodes outside of the subtree. When the entire subtree has no overflows or underflows we can remedy a potential underflowed point buffer using update operation~\ref{update:pbu} and continue to the next subtree one level higher in the tree. See Figure~\ref{fig:gerth_fixup}.
 
 \begin{figure}
 \centering
@@ -1152,16 +1150,16 @@ Assume we during a query visit $V$ nodes not on the search paths for $x_1$ or $x
 The worst case bound now becomes the sum of visiting the $V$ nodes, the nodes on the search paths for $x_1$ and $x_2$, and the output: $\mathcal{O}(V+\frac{1}{\epsilon}\log_B N + K/B) = \mathcal{O}(\frac{1}{\epsilon}\log_B N + K/B)$.
 On top of this comes the cost of pushing down update buffer elements and handling overflowing update buffers and overflowing point buffers.
 
-This cost of pushing $\Omega(B/\Delta)$ points to a child is however already paid for by the update operations and is thus covered by the analysis of Subsection~\ref{subsec:gerth_updates}. It is only when we push down $\mathcal{O}(B/\Delta)$ updates to a child, with an amortized cost of $\mathcal{O}(1)$, that this cost is covered by the cost of visiting the child.
+This cost of pushing $\Omega(B/\Delta)$ points to a child is however already paid for by the update operations and is thus covered by the analysis of Subsection~\ref{subsec:gerth_updates}. It is only when we push down $\mathcal{O}(B/\Delta)$ updates to a child, with an amortized cost of $\mathcal{O}(1)$ that this cost is covered by the cost of visiting the child.
 
 Handling the overflowing update buffers and underflowing point buffers is also paid by the update operations and thus the analysis in Subsection~\ref{subsec:gerth_updates}.
 
 This all adds up to a total amortized cost of $\mathcal{O}(\frac{1}{\epsilon} \log_B N + K/B)$ I/O's for a three-sided range query.
 
 \subsection{Construction}
-The structure can be initialized with an initial set of $N$ points using just $\mathcal{O}(\text{Sort}(N))$ I/O's. If the points are sorted on $x$ we only need $\mathcal{O}(\text{Scan}(N))$. For the remainder of this section we assume that the points are initially sorted with regards to $x$.
+The structure can be initialized with a set of $N$ points using just $\mathcal{O}(\text{Sort}(N))$ I/O's. If the points are sorted on $x$ we only need $\mathcal{O}(\text{Scan}(N))$. For the remainder of this section we assume that the points are initially sorted with regards to $x$.
 
-The first step of the construction is to construct a B-tree with each internal node having a degree of $\Delta/2$ over the $x$-values such that each leaf stores $B/2$ points with the exception of the rightmost leaf which might contain less than $B/2$ points and the rightmost internal nodes having a degree less than $\Delta/2$.
+The first step of the construction is to construct a B-Tree with each internal node having a degree of $\Delta/2$ over the $x$-values such that each leaf stores $B/2$ points with the exception of the rightmost leaf which might contain less than $B/2$ points and the rightmost internal nodes having a degree less than $\Delta/2$.
 
 The point buffers of the internal nodes are now filled bottom up pulling the top $B/2$ highest $y$-value points up. If this results in a child having an underflowing point buffer we recursively fill that child before proceeding. In a second iteration we do the same but in a top-down fashion.
 
@@ -1172,13 +1170,13 @@ This construction algorithm could also have been used for global rebuilding givi
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{../figures/gerth_construction}
-	\caption{A B-tree with each internal node having a degree of $\Delta/2$. Each leaf stores $B/2$ points with the exception of the rightmost. The bold points are the top $B/2$ points that is pulled up from the leafs into the layer above.}
+	\caption{A B-Tree with each internal node having a degree of $\Delta/2$. Each leaf stores $B/2$ points with the exception of the rightmost. The bold points are the top $B/2$ points that is pulled up from the leafs into the layer above.}
 	\label{fig:gerth_construction}
 \end{figure}
 
 \subsubsection*{Analysis}
 
-We know level $i$ of the tree contains at most $\frac{N}{B\Delta^i}$ nodes. It follows that the number of points stored at or above level $i$ is $\mathcal{O}(\sum\limits_{j=i}^\infty B\frac{N}{B\Delta^j}) = \mathcal{O}(\frac{N}{\Delta^i})$. This must mean we cannot move $B/2$ points to level $i$ from $i-1$ more than $\mathcal{O}(\frac{N}{\Delta^i} / \frac{B}{2})$ times. We know that we can move $B/2$ points using $\mathcal{O}(\Delta)$ I/O's and the total number of I/O's to fill the point buffers becomes:
+We know level $i$ of the tree contains at most $\frac{N}{B\Delta^i}$ nodes. It follows that the number of points stored at or above level $i$ is $\mathcal{O}\left(\sum_{j=i}^\infty B\frac{N}{B\Delta^j}\right) = \mathcal{O}\left(\frac{N}{\Delta^i}\right)$. It must follow that we cannot move $B/2$ points to level $i$ from $i-1$ more than $\mathcal{O}\left(\frac{N}{\Delta^i} / \frac{B}{2}\right)$ times. We know that we can move $B/2$ points using $\mathcal{O}(\Delta)$ I/O's and thus the total number of I/O's to fill the point buffers becomes:
 $$\mathcal{O}\left(\sum\limits_{i=1}^\infty \Delta \frac{N}{B\Delta^i}\right) = \mathcal{O}\left(\frac{N}{B}\sum\limits_{i=1}^\infty \Delta \frac{1}{\Delta^i}\right) = \mathcal{O}\left(\frac{N}{B}\sum\limits_{i=0}^\infty \frac{1}{\Delta^i}\right) = \mathcal{O}\left(\frac{N}{B}\right)$$
 
 Another aspect we have to look at is what happens to the amortized analysis when we initialize our data structure using this construction method, i.e. we have to argue that the amortized cost of the remaining operations remain unchanged during the epoch started by the construction.
@@ -1186,16 +1184,15 @@ Another aspect we have to look at is what happens to the amortized analysis when
 In order to argue this we consider a sequence of operations containing $N_{ins}$ insertions and $N_{del}$ deletions and a newly constructed tree of $N$ points.
 
 Let us first consider the cost of creating new nodes in the tree. Each leaf has initially at most $B/2$ points and it follows that we can at most create $2N_{ins}/B$ new leafs. Each new leaf is created in $\mathcal{O}(1)$ I/O's and it thus cost at most $\mathcal{O}(N_{ins}/B)$ I/O's to create new leafs during $N_{ins}$ insertions.
-By a similar argument it follows that at most $\mathcal{O}(\frac{N_{ins}}{\Delta B})$ new internal nodes can be created since each internal node initially has a degree of $\leq \Delta/2$. Each new internal node is created in $\mathcal{O}(\Delta)$ I/O's and it thus costs $\mathcal{O}(N_{ins}/B)$ I/O's to create new internal nodes without the cost of refilling point buffers which we will account for in the following.
+By a similar argument it follows that at most $\mathcal{O}\left(\frac{N_{ins}}{\Delta B}\right)$ new internal nodes can be created since each internal node initially has a degree of $\leq \Delta/2$. Each new internal node is created in $\mathcal{O}(\Delta)$ I/O's and it thus costs $\mathcal{O}(N_{ins}/B)$ I/O's to create new internal nodes without the cost of refilling point buffers which we will account for in the following.
 
-An insertion has to be moved at most the height of the tree levels down before it is cancelled or moved into a point buffer. Since the height of the tree is $\mathcal{O}(\frac{1}{\epsilon} \log_B N)$ it follows that the cost of handling overflowing insertions buffers during the course of $N_{ins}$ insertions becomes $\mathcal{O}(\frac{N_{ins}}{B/\Delta}\frac{1}{\epsilon}\log_B N)$ I/O's.
+An insertion has to be moved at most from the top to the bottom of the tree before it is cancelled or moved into a point buffer. Since the height of the tree is $\mathcal{O}\left(\frac{1}{\epsilon} \log_B N\right)$ it follows that the cost of handling overflowing insertion buffers during the course of $N_{ins}$ insertions becomes $\mathcal{O}\left(\frac{N_{ins}}{B/\Delta}\frac{1}{\epsilon}\log_B N\right)$ I/O's.
 A similar argument can be given for the case of deletions.
 
-Each deletion leafs behind a hole which needs to be filled. This hole is filled by recursively pulling up points which effectively moves down the hole. Each split of internal nodes also potentially creates up to $B$ holes.
-In total we need to handle $\mathcal{O}(N_{del} + \frac{N_{ins}}{\Delta B})$ holes. We can move up $B/2$ points using $\mathcal{O}(\Delta)$ I/O's and they at most need to be moved to the top of the tree, i.e. they need to be at most moved the height of the tree levels up. This gives a total cost of $\mathcal{O}((N_{del} + \frac{N_{ins}}{\Delta B})\frac{\Delta}{B}\frac{1}{\epsilon} \log_B N)$ I/O's.
+Each deletion leaves behind a hole which needs to be filled. This hole is filled by recursively pulling up points which effectively moves down the hole. Each split of internal nodes also potentially creates up to $B$ holes.
+In total we need to handle $\mathcal{O}\left(N_{del} + \frac{N_{ins}}{\Delta B}\right)$ holes. We can move up $B/2$ points using $\mathcal{O}(\Delta)$ I/O's and they at most need to be moved to the top of the tree, i.e. they need to be at most moved the height of the tree levels up. This gives a total cost of $\mathcal{O}\left(\left(N_{del} + \frac{N_{ins}}{\Delta B}\right)\frac{\Delta}{B}\frac{1}{\epsilon} \log_B N\right)$ I/O's.
 
-All this adds up to $\mathcal{O}(\frac{N_{ins}+N_{del}}{B/\Delta} \frac{1}{\epsilon} \log_B N) = \mathcal{O}(\frac{N_{ins}+N_{del}}{\epsilon B^{1-\epsilon}} \log_B N)$  I/O's for handling updates. This matches the amortized bounds of the structure.
-
+All this adds up to $\mathcal{O}\left(\frac{N_{ins}+N_{del}}{B/\Delta} \frac{1}{\epsilon} \log_B N\right) = \mathcal{O}\left(\frac{N_{ins}+N_{del}}{\epsilon B^{1-\epsilon}} \log_B N\right)$ I/O's. This matches the amortized bounds of the structure.
 
 \begin{savequote}[0.5\textwidth]
 ``The problem with quotes found on the\\internet is that they are often not true.''
