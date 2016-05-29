@@ -133,7 +133,7 @@ Our results show that \todo{\dots}
 \label{chp:preface}
 \addcontentsline{toc}{chapter}{Preface}
 
-Writing this thesis has been been a long and often frustrating process with many ups and downs. The \textit{struggle} has been very real~\footnote{Denotes a situation where the user wishes to express that they are encountering some sort of undesirable difficulty, but dealing with it~\cite{real_struggle}.} at some points during the four and a half months. We got off to a very shaky start to say the least. Only a few days before we were supposed to begin work on our thesis we decided, based on a gut feeling, that the topic we were initially set on covering was not going to lead to a good thesis; or at least not one that we thought would encapsulate the hard work we have been putting in to our courses in the 5 years we have studied Computer Science at Aarhus University. With much haste, we thus decided to try set up a meeting with Kasper Larsen and Gerth St\o lting Brodal. Gerth referred us to Kasper and to our surprise Kasper had a project in mind. The project sounded extremely challenging but also very interesting. It would allow us to really dig into some  data structures of very high complexity and implement these in \texttt{C++} while at the same time using our deep understanding of algorithm analysis. This would allow us to utilize all of the hard work we had put into virtually all offered algorithmic courses. We gladly accepted and only a few days before start we now had ourselves a project.
+Writing this thesis has been been a long and often frustrating process with many ups and downs. The \textit{struggle} has been very real\footnote{Denotes a situation where the user wishes to express that they are encountering some sort of undesirable difficulty, but dealing with it~\cite{real_struggle}.} at some points during the four and a half months. We got off to a very shaky start to say the least. Only a few days before we were supposed to begin work on our thesis we decided, based on a gut feeling, that the topic we were initially set on covering was not going to lead to a good thesis; or at least not one that we thought would encapsulate the hard work we have been putting in to our courses in the 5 years we have studied Computer Science at Aarhus University. With much haste, we thus decided to try set up a meeting with Kasper Larsen and Gerth St\o lting Brodal. Gerth referred us to Kasper and to our surprise Kasper had a project in mind. The project sounded extremely challenging but also very interesting. It would allow us to really dig into some  data structures of very high complexity and implement these in \texttt{C++} while at the same time using our deep understanding of algorithm analysis. This would allow us to utilize all of the hard work we had put into virtually all offered algorithmic courses. We gladly accepted and only a few days before start we now had ourselves a project.
 \begin{center}
 \texttt{\#BetterGutFeeling}.
 \end{center}
@@ -145,13 +145,13 @@ The experiments often ran for more than a week at a time and in order for us to 
 
 Another perk of The Imperial March was the ability to scare the crap out of Christoffer. Peter would be able to sit comfortably at home and randomly start the cacophony which would make Christoffer jump out of his seat and generally become very anxious about when the next sound would come.
 
-\todo{sum it all up}
+After over a month of intense experimenting, documentation, and \LaTeX'ing we concluded with a small out-of-sight victory dance, shut down our faithful test machines, and with all our new knowledge and insight we could finally have our happily ever after.
 
 \todo{More people to thank?}
 
 A number of people have been part to giving this thesis life. First and foremost we would like to thank our primary advisor, Kasper Larsen, for our weekly meetings, constructive feedback, enthusiasm, and engagement in the project.
 We would also like to thank our formal advisor, Gerth St\o lting Brodal, for his great work on the data structure we have implemented in this thesis and sparring when we were in doubt.
-In more general terms we would like to thank Aarhus University for giving us 5 years worth of great courses preparing us for the life to come within the field of Computer Science.
+In more general terms we would like to thank Aarhus University for giving us 5 years worth of great courses and preparing us for the life to come within the field of Computer Science.
 
 We have really enjoyed working on this thesis and we sincerely hope you enjoy reading it as much as we have enjoyed writing it!
 
@@ -1372,6 +1372,8 @@ It is important to mention some considerations when it comes to choice of persis
 The rotational latency makes it very important to store data on the disk in consecutive blocks as scattering data across the disk would be detrimental to the performance as each block would have to wait for the rotational latency. As long as the mechanical disk is still as widespread as it is, these culprits of the mechanical disk have to be taken in consideration when designing I/O efficient algorithms.
 
 With these considerations in mind we acquired two very old Dell machines with the specifications outlined in Figure~\ref{fig:pc_specs}.
+
+We used newer machines for some experiments where it made sense. An example of a situation where it made sense was when we experimentally compared the actual running time with the theoretical running time of a single data structure, i.e. check whether the actual running time divided by the asymptotic complexity would give a horizontal line. For these experiments a newer machine would not change the results but rather provide faster results and not take up scarce time on the two Dell machines.
 
 \begin{figure}[h]
 \centering
