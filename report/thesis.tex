@@ -237,7 +237,7 @@ We have really enjoyed working on this thesis and we sincerely hope you enjoy re
 \end{figure}
 
 \begin{savequote}[0.7\textwidth]
-"The difference in speed between modern CPU and disk technologies is  analogous to the difference in speed in sharpening a pencil using a sharpener on one's desk or by taking an airplane to the other side of the world and using a sharpener on someone else's desk."
+``The difference in speed between modern CPU and disk technologies is  analogous to the difference in speed in sharpening a pencil using a sharpener on one's desk or by taking an airplane to the other side of the world and using a sharpener on someone else's desk.''
 \qauthor{--- D. Comer}
 \end{savequote}
 \chapter{Introduction}
@@ -340,7 +340,7 @@ Leading up to our experimental Chapter~\ref{chp:experimental_results} we present
 
 
 \begin{savequote}[0.5\textwidth]
-"All models are wrong but some are useful."
+``All models are wrong but some are useful.''
 \qauthor{---  George E. P. Box}
 \end{savequote}
 \chapter{Model of computation}
@@ -359,8 +359,8 @@ The fundamental bounds in the external memory model is that scanning $N$ records
 
 For convenience we will assume $M > B^2$. This assumption is known as the \textit{tall-cache assumption} in the cache-oblivious model and basically states that the number of blocks \nicefrac{M}{B} is larger than the size of each block $B$~\cite{Prokop99cache-obliviousalgorithms}.
 
-\begin{savequote}[0.5\textwidth]
-"The way I see it, if you want the rainbow, you gotta put up with the rain."
+\begin{savequote}[0.42\textwidth]
+``The way I see it, if you want the rainbow, you gotta put up with the rain.''
 \qauthor{--- Dolly Parton}
 \end{savequote}
 \chapter{Preliminaries}
@@ -387,7 +387,7 @@ If we can show that $\Phi(D_i) \geq \Phi(D_0)$ for all $i$ then we know that we 
 
 \section{Global rebuilding}
 \label{sec:prelim_global_rebuilding}
-The term \textit{global rebuilding} refers to the standard technique of making a (typically small) static data structure dynamic. We simply store all updates in a \textit{update block} and once a certain threshold has been collected we rebuild the data structure~\cite{ionote}. For data structures that does not allow the space for deleted records to be reoccupied we \textit{mark} (or \textit{weak delete}) the elements. Whenever $\alpha N$ elements have been marked, for some constant $\alpha > 0$, the entire data structure is rebuilt from scratch with only the non-marked elements. The cost of rebuilding is at most a constant factor higher than the cost of inserting $\alpha N$ elements and so the amortized cost of global rebuilding is paid in advance when elements are inserted, i.e. elements are charged double such that they later can pay for being removed from the structure during a global rebuild.~\cite{Meyer:2003/AMH/1744652}.
+The term \textit{global rebuilding} refers to the standard technique of making a (typically small) static data structure dynamic. We simply store all updates in an \textit{update block} and once a certain threshold has been collected we rebuild the data structure~\cite{ionote}. For data structures that does not allow the space for deleted records to be reoccupied we \textit{mark} (or \textit{weak delete}) the elements. Whenever $\alpha N$ elements have been marked, for some constant $\alpha > 0$, the entire data structure is rebuilt from scratch with only the non-marked elements. The cost of rebuilding is at most a constant factor higher than the cost of inserting $\alpha N$ elements and so the amortized cost of global rebuilding is paid in advance when elements are inserted, i.e. elements are charged double such that they later can pay for being removed from the structure during a global rebuild.~\cite{Meyer:2003/AMH/1744652}.
 
 \section{Filtering}
 \label{sec:filtering}
@@ -396,7 +396,7 @@ The technique of \textit{filtering} is used on retrieval problems where we query
 \section{Bootstrapping}
 It is often possible to develop dynamic external memory data structures by "externalizing" the equivalent internal memory data structure. In the case of trees this typically involves increasing the fanout from binary to multiway. This, however, results in problems when searching and reporting items from the tree, e.g. it might be the case that each subtree of a node only contributes one item to the query answer each costing one I/O.
 
-This problem can sometimes be solved by augmenting the data structure with several filtering substructures, i.e. smaller versions of the same problem. This approach was first described by Arge and Vitter~\cite{arge_vitter_2003} in a paper giving an optimal solution to diagonal corner two-sided 2D queries. Each of the substructures typically holds $\mathcal{O}(B^2)$ elements, and answers queries in $\log_B B^2 + \nicefrac{K}{B}$, where $K$ is the size of the output. It can even be a static structure if it can be constructed in $\mathcal{O}(B)$ I/O's, since $B$ updates can be stored in a separate buffer and applied using a global rebuild in amortized $\mathcal{O}(1)$ I/O's per update~\cite{vitter_2008}.
+This problem can sometimes be solved by augmenting the data structure with several filtering substructures, i.e. smaller versions of the same problem. This approach was first described by Arge and Vitter~\cite{arge_vitter_2003} in a paper giving an optimal solution to diagonal corner two-sided 2D queries. Each of the substructures typically holds $\mathcal{O}(B^2)$ elements ($B$ elements from each subtree), and answers queries in $\log_B B^2 + \nicefrac{K}{B}$, where $K$ is the size of the output. It can even be a static structure if it can be constructed in $\mathcal{O}(B)$ I/O's, since $B$ updates can be stored in a separate buffer and applied using a global rebuild in amortized $\mathcal{O}(1)$ I/O's per update~\cite{vitter_2008}.
 
 \section{B-Tree}
 \label{sec:prelim_b_tree}
@@ -550,7 +550,7 @@ We conclude that the total cost of a sequence of $N$ update operations on an ini
 %From Lemma~\ref{lma:composite_universe_query} is follows that our approach is correct.
 
 \begin{savequote}[0.5\textwidth]
-"Nanos gigantum humeris insidentes."
+``Nanos gigantum humeris insidentes.''
 \qauthor{--- Bernard of Chartres}
 \end{savequote}
 \chapter{Related work}
@@ -685,7 +685,7 @@ For any $\max\left\lbrace \log\log N, \log_M N \right\rbrace \leq \lambda \leq B
 This means that in one end of the trade-off they can for $\lambda = B^\epsilon$ obtain an update time of $\mathcal{O}(1/B^{1-\epsilon})$ and query time of $\mathcal{O}(\log_B N)$. This matches the bounds of the buffer tree of Arge. In the other end of the trade-off where they are able to achieve fast updates very close to the optimal disk transfer rate of $1/B$ namely they obtain: $t_u^{\min} = \mathcal{O}(\frac{1}{B} \cdot \max\left\lbrace \log\log N, \log_M N \right\rbrace)$.
 
 \begin{savequote}[0.5\textwidth]
-"All my best thoughts were stolen by the ancients."
+``All my best thoughts were stolen by the ancients.''
 \qauthor{--- Ralph Waldo Emerson}
 \end{savequote}
 \chapter{Internal Memory Priority Search Tree}
@@ -793,7 +793,7 @@ If we use the operations for dynamic updates as stated above without any measure
 The above bounds translate directly to the I/O model as we cannot guarantee that nodes on the search path are perfectly placed in blocks, which in the worst case means that each visit to a node will equal 1 I/O.
 
 \begin{savequote}[0.5\textwidth]
-"Truth, like gold, is to be obtained not by its growth, but by washing away from it all that is not gold."
+``Truth, like gold, is to be obtained not by its growth, but by washing away from it all that is not gold.''
 \qauthor{--- Leo Tolstoy}
 \end{savequote}
 \chapter{External Memory Priority Search Tree}
@@ -931,7 +931,7 @@ In every internal node $v$ visited we spend $\mathcal{O}(1+K_v/B)$ I/O's. There 
 
 
 \begin{savequote}[0.50\textwidth]
-"Daring ideas are like chessmen moved forward: they may be beaten, but they may start a winning game."
+``Daring ideas are like chessmen moved forward: they may be beaten, but they may start a winning game.''
 \qauthor{--- Goethe}
 \end{savequote}
 \chapter{External Memory Buffered Priority Search Tree}
@@ -1184,16 +1184,16 @@ All this adds up to $\mathcal{O}(\frac{N_{ins}+N_{del}}{B/\Delta} \frac{1}{\epsi
 
 
 \begin{savequote}[0.5\textwidth]
-"The problem with quotes found on the\\internet is that they are often not true."
+``The problem with quotes found on the\\internet is that they are often not true.''
 \qauthor{--- Abraham Lincoln}
 \end{savequote}
 \chapter{Other structures}
 \label{chp:other_structures}
-\section{R-tree}
+\section{R-Tree}
 
-The R-tree was introduced by Antonin Guttman in~\cite{Guttman:1984:RDI:602259.602266}. The structure is heuristic in nature and does not provide any close to optimal search bounds. Arge et al. has, however, provided strong evidence for R-trees outperforming several theoretical optimal data structures in practice in~\cite{Arge:2008:PRP:1328911.1328920}. We will introduce the important ideas of the R-tree.
+The R-Tree was introduced by Antonin Guttman in~\cite{Guttman:1984:RDI:602259.602266}. The structure is heuristic in nature and does not provide any close to optimal worst case search bounds. Arge et al. has, however, provided strong evidence for R-Trees outperforming several theoretical optimal data structures in practice in~\cite{Arge:2008:PRP:1328911.1328920}. We will introduce the important ideas of the R-Tree.
 
-Let $P$ be a set of points. An R-tree stores all points from $P$ in leaf nodes, each of which contains $\Theta(B)$ points. Each non-leaf node $u$ has $\Theta(B)$ children, except for the root which must have 2 children unless it is the only node in the tree. For each child $v$, $u$ stores a \textit{minimum bounding rectangle} (MBR), which is the smallest rectangle that \textit{tightly} encloses all the data points in the subtree of $v$. Note that there is no constraint on how points should be grouped into leafs nodes. Also, there is no constraint on how non-leaf nodes should be grouped in higher level nodes. Since each point is stored only once, the entire data structure consumes linear space. Please refer to figure~\ref{fig:r_tree_structure} for an illustration of an R-tree structure.
+Let $P$ be a set of points. An R-Tree stores all points from $P$ in leaf nodes, each of which contains $\Theta(B)$ points. Each non-leaf node $u$ has $\Theta(B)$ children, except for the root which must have 2 children unless it is the only node in the tree. For each child $v$, $u$ stores a \textit{minimum bounding rectangle} (MBR), which is the smallest rectangle that \textit{tightly} encloses all the data points in the subtree of $v$. Note that there is no constraint on how points should be grouped into leaf nodes. Also, there is no constraint on how non-leaf nodes should be grouped in higher level nodes. Since each point is stored only once, the entire data structure consumes linear space. Please refer to figure~\ref{fig:r_tree_structure} for an illustration of a R-Tree structure.
 
 \begin{figure}[h]
 	\centering
@@ -1203,20 +1203,20 @@ Let $P$ be a set of points. An R-tree stores all points from $P$ in leaf nodes, 
 \end{figure}
 
 \subsection{Query}
-Given a query $Q = \left[x_1,x_2\right] \times \left[y_1,\infty\right]$ we want to find all the points in $P$ that are covered by $Q$. The relation to the R-tree is that we only need to visit those nodes whose MBRs intersect $Q$. Intuitively, this means we desire as \textit{small} MBRs as possible, as this directly implies that a query spans fewer MBRs, again implying fewer nodes are visited. A good heuristic is therefore to minimize the perimeter of each MBR as this directly implies MBRs that covers smaller areas.
+Given a query $Q = \left[x_1,x_2\right] \times \left[y_1,\infty\right]$ we want to find all the points in $P$ that are covered by $Q$. The relation to the R-Tree is that we only need to visit those nodes whose MBRs intersect $Q$. Intuitively, this means we desire as \textit{small} MBRs as possible, as this directly implies that a query spans fewer MBRs, again implying fewer nodes are visited. A good heuristic is therefore to minimize the perimeter of each MBR as this directly implies MBRs that covers smaller areas.
 
 \subsection{Insertions}
-To insert a point $p$, we add $p$ to a leaf node $u$ by following a single root-to-leaf path. If $u$ overflows we split it, which creates a new child of $parent(u)$. This could cause $parent(u)$ to overflow which is handled in a recursive manner. Finally, if the root split, then a new root is created. Note that it is legal to insert a point $p$ into \textit{any} leaf, after which, the data structure will still be considered legal. This is the main property that differs R-trees from standard B-trees. There are several heuristics for choosing a subtree to insert into. It is these heuristics that gives rise to the different R-Tree variants and names. We will cover the original R-Tree heuristic and the R$^*$-Tree heuristic.
+To insert a point $p$, we add $p$ to a leaf node $u$ by following a single root-to-leaf path. If $u$ overflows we split it, which creates a new child of $parent(u)$. This could cause $parent(u)$ to overflow which is handled in a recursive manner. Finally, if the root split, then a new root is created. Note that it is legal to insert a point $p$ into \textit{any} leaf, after which, the data structure will still be considered legal. This is the main property that differs R-Trees from standard B-Trees. There are several heuristics for choosing a subtree to insert into. It is these heuristics that gives rise to the different R-Tree variants and names. We will cover the original R-Tree heuristic and the R$^*$-Tree heuristic.
 
 The formal definition of inserting a new point $p$ is as follows. Given a non-leaf $u$ with children $v_1, v_2, \cdots, v_{\Theta(B)}$, we need to pick the best child $v^*$ such that the new point $p$ is best inserted into the subtree of $v^*$.
 
-\textbf{Choosing a subtree to insert in an R-tree.}  The standard R-tree chooses the best child in a greedy manner. Specifically, $v^*$ is simply the child $v_i$ whose MBR requires the \textit{least increase} of area in order to cover $p$.
+\textbf{Choosing a subtree to insert in an R-Tree.}  The standard R-Tree chooses the best child in a greedy manner. Specifically, $v^*$ is simply the child $v_i$ whose MBR requires the \textit{least increase} of area in order to cover $p$.
 
-\textbf{Choosing a subtree to insert in an R$^*$-tree.} The problems in the original R-Tree is that certain types of data points may create small areas but large distances which will initiate a bad split. To overcome this, a mixed heuristic is employed. At leaf level we try to minimize the overlap and in case of \textit{ties} the MBR that requires the \textit{least increase} of perimeter is chosen. If this again yields a tie the MBR that increases the least in area is chosen. At the higher levels, it behaves similar to the R-tree.
+\textbf{Choosing a subtree to insert in an R$^*$-Tree.} The problems in the original R-Tree is that certain types of data points may create small areas but large distances which will initiate a bad split. To overcome this, a mixed heuristic is employed. At leaf level we try to minimize the overlap and in case of \textit{ties} the MBR that requires the \textit{least increase} of perimeter is chosen. If this again yields a tie the MBR that increases the least in area is chosen. At the higher levels, it behaves similar to the R-Tree.
 
-\textbf{Node split in an R-Tree} was by Guttman originally proposed done using two different heuristics. The \textit{linear method} chooses far apart nodes as ends. Randomly nodes are then chosen and assigned such that require the smallest MBR enlargment. The \textit{quadratic method} chooses two nodes so the dead space between them is maximized. Nodes are then assigned such that MBR area is minimized.
+\textbf{Node split in an R-Tree} was by Guttman originally proposed done using two different heuristics. The \textit{linear method} chooses far apart nodes as ends. Randomly nodes are then chosen and assigned such that they require the smallest MBR enlargement. The \textit{quadratic method} chooses two nodes such that the dead space between them is maximized. Nodes are then assigned such that the MBR area is minimized.
 
-\textbf{Node split in an R$^*$-Tree is fairly more involved} but the main idea is to always split point set $S$ using an axis-orthogonal cut. This means that points of $S$ is sorted with respect to their $x$- and $y$-value respectively. Then, the first $\nicefrac{B}{2}$ points are inserted into $S_1$ and the rest is inserted into $S_2$ for the $x$-sorted points and into $S'_1$ and $S'_2$ for the $y$-sorted points. The final split is the better one of the two splits, i.e. the splits that have the least combined MBR perimeter and least combined MBR area. The above applies to splitting of a leaf node. The case of a non-leaf node is a bit different because the items be split are MBRs. The strategy is however the same and involves sorting the MBRs by their centroids. Please refer to figure~\ref{fig:r_tree_splitting} for an illustration of the splitting of a node.
+\textbf{Node split in an R$^*$-Tree is fairly more involved} but the main idea is to always split point set $S$ using an axis-orthogonal cut. This means that points of $S$ is sorted with respect to their $x$- and $y$-value respectively. Then, the first $\nicefrac{B}{2}$ points are inserted into $S_1$ and the rest is inserted into $S_2$ for the $x$-sorted points and into $S'_1$ and $S'_2$ for the $y$-sorted points. The final split is the better one of the two splits, i.e. the splits that have the least combined MBR perimeter and least combined MBR area. The above applies to splitting of a leaf node. The case of a non-leaf node is a bit different because the items split are MBRs. The strategy is however the same and involves sorting the MBRs by their centroids. Please refer to figure~\ref{fig:r_tree_splitting} for an illustration of the splitting of a node.
 
 \begin{figure}[h]
 	\centering
@@ -1244,23 +1244,23 @@ Queries of the form $\left[x_1,x_2\right] \times \left[y_1,\infty\right]$ were a
 \subsection{Analysis}
 It is important to keep an open connection to the server at all times, if not we will end up spending a lot of time reconnecting to the server.
 
-Inserting points in the DBMS involves sending the query to the server, parsing the query, and finally inserting the rows. Due to the primary key on the table, we know that MySQL will build a B-tree on the data. This will give an insertion time of $\mathcal{O}(\log_B N)$ I/O's for some MySQL implementation specific $B$.
+Inserting points in the database involves sending the query to the server, parsing the query, and finally inserting the rows. Due to the primary key on the table, we know that MySQL will build a B-Tree on the data. This will give an insertion time of $\mathcal{O}(\log_B N)$ I/O's for some MySQL implementation specific $B$.
 
 Deleting points is similar to inserting and is also done in $\mathcal{O}(\log_B N)$.
 
-It is a little harder to argue about the complexity of a three sided query. A B-tree can answer normal two sided range queries in $\mathcal{O}(\log_B N + K/B)$. We can however not guarantee that all points in the two sided range should be reported and thus we cannot properly attribute any I/O's to the output, i.e. use filtering. We will have to settle with a complexity of $\mathcal{O}(\log_B N + T/B)$ where $T$ is the size of the output within the $x$ range of the query.
+It is a little harder to argue about the complexity of a three sided query. A B-Tree can answer normal two sided range queries in $\mathcal{O}(\log_B N + K/B)$. We can however not guarantee that all points in the two sided range should be reported and thus we cannot properly attribute any I/O's to the output, i.e. use filtering. We will have to settle with a complexity of $\mathcal{O}(\log_B N + T/B)$ where $T$ is the size of the output within the $x$ range of the query.
 
 If we enforce no index on the MySQL table, then we believe the standard implementation will simply append all insertions to a contiguous stream, which can be done in $\mathcal{O}(1)$ I/O's. We believe deletions and queries can be handled in $\mathcal{O}(N/B)$ I/O's by scanning the entire stream.
 
 \begin{savequote}[0.7\textwidth]
-"There is nothing more deceptive than an obvious fact."
+``There is nothing more deceptive than an obvious fact.''
 \qauthor{--- Sherlock Holmes}
 \end{savequote}
 \chapter{Implementation}
 \label{chp:implementation}
 
-Throughout our implementation of the internal priority search tree, external memory priority search tree, and the external memory buffered priority search tree we noted down important considerations.
-In this chapter we present these considerations together with a short presentation of how we wrote wrappers around MySQL, Boost R-tree, and libspatial R*-tree. We end the chapter with a description of the experimental framework we developed to significantly simplify the experimental phase of the project.
+Throughout our implementation of the Internal Memory Priority Search Tree, External Memory Priority Search Tree, and the External Memory Buffered Priority Search Tree we noted down important considerations.
+In this chapter we present these considerations together with a short presentation of how we wrote wrappers around MySQL, Boost R-Tree, and libspatial R*-Tree. We end the chapter with a description of the experimental framework we developed to significantly simplify the experimental phase of the project.
 
 All code can be cloned from the following git repository or downloaded from the mirrors listed below. Instructions on how to compile and run the code can be found in the accompanying \texttt{readme} file.
 
@@ -1373,8 +1373,8 @@ In order to obtain a deeper understanding of the results we chose to measure the
 
 As the machines run on a 32 bit operating systems it is very important to define \texttt{\_FILE\_OFFSET\_BITS=64}. This forces the system to use 64 bit pointers when seeking in files allowing us to handle data sets larger than $2^{32}$ on the machines.
 
-\begin{savequote}[0.6\textwidth]
-"We must never make experiments to confirm our ideas, \\ but simply to control them."
+\begin{savequote}[0.55\textwidth]
+``We must never make experiments to confirm our ideas, but simply to control them.''
 \qauthor{--- Claude Bernard}
 \end{savequote}
 \chapter{Experimental setup}
@@ -1413,7 +1413,7 @@ Compiler & gcc 4.8.4 with optimization level 2
 \end{figure}
 
 \begin{savequote}[0.4\textwidth]
-"Big results require big ambitions."
+``Big results require big ambitions.''
 \qauthor{--- Heraclitus}
 \end{savequote}
 \chapter{Our results}
@@ -1766,7 +1766,7 @@ The experiment on the \textbf{report} part of the algorithms was conducted by fi
 The result of the experiment on the \textbf{search} part of the algorithms is depicted in Figure~\ref{fig:result_query_search_complexity}. Arges structure is limited by the ???
 
 \begin{savequote}[0.4\textwidth]
-"To succeed, jump as quickly at opportunities as you do at conclusions."
+``To succeed, jump as quickly at opportunities as you do at conclusions.''
 \qauthor{--- Benjamin Franklin}
 \end{savequote}
 \chapter{Conclusion}
