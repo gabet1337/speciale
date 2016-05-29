@@ -1163,7 +1163,7 @@ Handling the overflowing update buffers and underflowing point buffers is also p
 This all adds up to a total amortized cost of $\mathcal{O}(\frac{1}{\epsilon} \log_B N + K/B)$ I/O's for a three-sided range query.
 
 \subsection{Construction}
-The structure can be initialized with an initial set of $N$ points using just $\mathcal{O}(\text{Sort}(N))$ I/O's. If the points are already sorted on $x$ we just need $\mathcal{O}(\text{Scan}(N))$. For the remainder of this Section we assume that the points are initially sorted with regards to $x$.
+The structure can be initialized with an initial set of $N$ points using just $\mathcal{O}(\text{Sort}(N))$ I/O's. If the points are sorted on $x$ we only need $\mathcal{O}(\text{Scan}(N))$. For the remainder of this section we assume that the points are initially sorted with regards to $x$.
 
 The first step of the construction is to construct a B-tree with each internal node having a degree of $\Delta/2$ over the $x$-values such that each leaf stores $B/2$ points with the exception of the rightmost leaf which might contain less than $B/2$ points and the rightmost internal nodes having a degree less than $\Delta/2$.
 
