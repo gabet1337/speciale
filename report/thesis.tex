@@ -262,7 +262,7 @@ In the early days of electronic computers disks were faster than processors. Sin
 	\label{fig:cpu_vs_disk}
 \end{figure}
 
-With the advent of \textit{Big Data} many industries has come to realise that adapting classic and well founded internal memory algorithms on large datasets is undesirable. 
+With the advent of \textit{Big Data} many industries has come to realise that adapting classic and well founded internal memory algorithms on large data sets is undesirable. 
 They simply prove to perform much slower than the asymptotic bounds suggests. The algorithms community has found the reason to be the very same that ensured the success of the computer industry. The paradox derives from the standard RAM-model of computation, where we assume an infinite memory and uniform access cost. See Figure~\ref{fig:ram_model}.
 
 \begin{wrapfigure}{O}{0.5\textwidth}
@@ -284,7 +284,7 @@ The RAM-model is as powerful as it is simple, but it ignores the more complicate
 
 As we move away from the CPU the access time gets bigger. CPU registers can be accessed in a few nanoseconds. Accessing CPU caches adds a small multiple to that time. Main memory access are typically a few tens of nanoseconds. Now comes a big gap, as the time to access disks are typically measured in milliseconds, i.e. more than $10^6$ times slower than main memory access. Also, the storage capacity increases. CPU registers are good for bytes of data, caches for a few megabytes, main memory for gigabytes, and disks are good for terabytes of data~\cite{Tanenbaum:1998:SCO:552473}.
 
-Disk systems try to amortize the large access time by transferring large contiguous blocks of data and many modern operation systems utilizes sophisticated paging and pre-fetching strategies to move blocks as needed~\cite{Tanenbaum:2007:MOS:1410217}. This is the main reason we still have many worst-case optimal internal memory algorithms performing well on large datasets. If the algorithms, however, relies on scattered access across data, even good operating systems cannot take advantage of block access and we start to see severe scalability problems. It is these observations that gives rise to the external memory model The model encapsulates performance as number of disk accesses as opposed to RAM accesses.
+Disk systems try to amortize the large access time by transferring large contiguous blocks of data and many modern operation systems utilizes sophisticated paging and pre-fetching strategies to move blocks to and from disk as needed~\cite{Tanenbaum:2007:MOS:1410217}. This is the main reason we still have many worst-case optimal internal memory algorithms performing well on large datasets. If the algorithms, however, relies on scattered access across data, even good operating systems cannot take advantage of block access and we start to see severe scalability problems. It is these observations that gives rise to the external memory model The model encapsulates performance as number of disk accesses as opposed to RAM accesses.
 
 In some industries, disk-based systems presents too large of an obstacle, and in an attempt to close the gap they have moved towards developing internal memory big data processing algorithms. This move has been enabled by growing main memory capacities but it comes with the price of issues such as fault-tolerance and consistency which are inherently more challenging to handle in volatile memory~\cite{Zhang2015}.
 
@@ -365,7 +365,7 @@ For convenience we will assume $M > B^2$. This assumption is known as the \texti
 \end{savequote}
 \chapter{Preliminaries}
 \label{chp:prelims}
-This chapter aims to give an overview of some of the techniques used throughout this thesis. Some of the techniques are very rudimentary and may be skipped or revisited when encountered in later chapters.
+This chapter aims to give an overview of some of the techniques and structures used throughout this thesis. Some of the techniques are very rudimentary and may be skipped or revisited when encountered in later chapters.
 
 \section{Amortization}
 Amortization is an important algorithmic tool to argue about average performance of an operation in the worst case.
@@ -455,30 +455,30 @@ A B-tree on $N$ elements are stored in $\mathcal{O}(\nicefrac{N}{B})$ blocks and
 \label{sec:prelim_buffer_tree}
 The Buffer Tree of Arge~\cite{Arge:1995:BTN:645930.672850} combines the basic B-Tree described in Section~\ref{sec:prelim_b_tree} with a \textit{buffer-technique} that will be introduced shortly. The result is an external data structure supporting batched operations efficiently in terms of I/O's. The ideas introduced by Arge has proven especially useful when generalizing well-known internal-memory algorithms into efficient I/O algorithms~\cite{Arge:1995:BTN:645930.672850}. The main idea of the buffer-technique is to introduce \textit{laziness} in the update algorithms and utilizing main memory to process a large number of updates simultaneously. For example, when inserting a point we do not search all the way down the tree to find the leaf. Instead, the point is inserted into a buffer of the root. Whenever the size of a buffer exceeds a certain threshold we push elements from the buffer one level down to buffers on the next level of the tree. This process of emptying full buffers is repeated recursively down the tree.
 
-Formally the basic Buffer tree is defined according to Definition~\ref{def:buffer_tree}. Refer to Figure~\ref{fig:buffer_tree} for an illustration of a Buffer tree.
+Formally the basic Buffer Tree is defined according to Definition~\ref{def:buffer_tree}. Refer to Figure~\ref{fig:buffer_tree} for an illustration of a Buffer Tree.
 
 \begin{definition}
 \label{def:buffer_tree}
-A basic buffer tree $\mathcal{T}$ is
+A basic Buffer Tree $\mathcal{T}$ is
 \begin{itemize}
-	\item A B-tree with leaf parameter $B$.
+	\item A B-Tree with leaf parameter $B$.
 	\item All internal nodes, except for the root, have degree between $\frac{1}{4}$ $\nicefrac{M}{B}$ and $\nicefrac{M}{B}$.
 	\item The root have degree between 2 and $\nicefrac{M}{B}$.
-	\item Each internal node have a buffer of size $M$.
+	\item Each internal node has a buffer of size $M$.
 \end{itemize}
 \end{definition}
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=1\textwidth]{../figures/buffer_tree}
-	\caption{Buffer tree.}
+	\caption{Buffer Tree.}
 	\label{fig:buffer_tree}
 \end{figure}
 
-\textbf{Updates} are handled by augmenting the element in question with information on whether we are inserting or deleting. Since an element can be represented in multiple buffers, we also augment elements with a time stamp.
+\textbf{Updates} are handled by augmenting the element in question with information on whether we are inserting or deleting the element. Since an element can be represented in multiple buffers, we also augment elements with a time stamp.
 Whenever we have collected $B$ elements we insert all of them into the root buffer of size $M$. Whenever the buffer overflows, i.e. have more than $M$ points, we initiate a buffer-emptying process that distributes all elements in the buffers to the children.
 
-For an \textit{internal} node that do not have leafs as children this process is done as follows. First, we load the $M$ unsorted elements into main memory and sort them. Then we scan through the sorted list while removing matching inserts and deletes with respect to the time stamps of each element. Now we simply distribute remaining elements one level down using a single scan. We make sure to distribute the elements in sorted order, since this will guarantee that we leave no buffer of a child with more than $M$ unsorted elements followed by list of sorted elements. Thus, we are able to sort the resulting buffer in a linear number of I/O's as depicted in Figure~\ref{fig:buffer_tree_buffer_sort}.
+For an \textit{internal} node that does not have leafs as children this process is done as follows. First, we load the $M$ unsorted elements into main memory and sort them. Then we scan through the sorted list while removing matching inserts and deletes with respect to the time stamps of each element. Now we simply distribute remaining elements one level down using a single scan. We make sure to distribute the elements in sorted order, since this will guarantee that we leave no buffer of a child with more than $M$ unsorted elements followed by a list of sorted elements. Thus, we are able to sort the resulting buffer in a linear number of I/O's as depicted in Figure~\ref{fig:buffer_tree_buffer_sort}.
 
 \begin{figure}[h]
 	\centering
@@ -487,45 +487,45 @@ For an \textit{internal} node that do not have leafs as children this process is
 	\label{fig:buffer_tree_buffer_sort}
 \end{figure}
 
-We then recursively empty full child buffers provided that the children are internal nodes that do not have leafs as children. Only when we have emptied buffers of all overflowing internal nodes which does not have leafs as children, we proceed and process the buffer-emptying process to leaf nodes. The reason is that a buffer-emptying process on a leaf node may result in the need for rebalancing. By only emptying leaf nodes after all internal node buffer-emptying processes have been performed we prevent rebalancing and buffer-emptying processes from interfering with each other.
+We then recursively empty full child buffers provided that the children are internal nodes that do not have leafs as children. Only when we have emptied buffers of all overflowing internal nodes which do not have leafs as children, we proceed and process the buffer-emptying process to leaf nodes. The reason is that a buffer-emptying process on a leaf node may result in the need for rebalancing. By only emptying leaf nodes after all internal node buffer-emptying processes have been performed we prevent rebalancing and buffer-emptying processes from interfering with each other.
 
-We empty all relevant leaf nodes buffers one-by-one while maintaining the \textit{leaf-emptying invariant} that all buffers of nodes on the path from root of $\mathcal{T}$ to a leaf node with full buffer are empty. Since we handle all internal nodes before emptying the leaf nodes this invariant is true when we handle the buffer-emptying of the first leaf. To empty a node $u$ with $K$ elements in the leafs, we start by sorting the buffer and remove matching inserts and deletes. Then, we merge the buffer elements with the $K$ leafs below, again removing matching inserts and deletes. The resulting set of $K'$ sorted elements now needs to replace the $K$ original leafs along with new routing elements of $u$ reflecting the changes. If we end up with a resulting set of size $K' < K$, i.e. we do not have enough elements to fill the $K$ leafs, we introduce $K-K'$ dummy elements and insert those in the remaining leafs. If we have $K' \geq K$ we place $K$ elements in the leafs. The remaining elements (if any) are finally placed one-by-one issuing rebalancing of the B-tree when necessary. See Figure~\ref{fig:buffer_tree_buffer_empty}.
+We empty all relevant leaf nodes buffers one-by-one while maintaining the \textit{leaf-emptying invariant} that all buffers of nodes on the path from the root of $\mathcal{T}$ to a leaf node with a full buffer are empty. Since we handle all internal nodes before emptying the leaf nodes this invariant is true when we handle the buffer-emptying of the first leaf. To empty a node $u$ with $K$ elements in the leafs, we start by sorting the buffer and remove matching inserts and deletes. Then, we merge the buffer elements with the $K$ leafs below, again removing matching inserts and deletes. The resulting set of $K'$ sorted elements now needs to replace the $K$ original leafs along with new routing elements of $u$ reflecting the changes. If we end up with a resulting set of size $K' < K$, i.e. we do not have enough elements to fill the $K$ leafs, we introduce $K-K'$ dummy elements and insert those in the remaining leafs. If we have $K' \geq K$ we place $K$ elements in the leafs. The remaining elements (if any) are finally placed one-by-one while issuing rebalancing of the B-Tree when necessary. See Figure~\ref{fig:buffer_tree_buffer_empty}.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.75\textwidth]{../figures/buffer_tree_buffer_empty}
+	\includegraphics[width=0.73\textwidth]{../figures/buffer_tree_buffer_empty}
 	\caption{Buffer emptying process. First the $K$ original leafs and the buffer are merged, and matching inserts and deletes are removed. This gives a set of size $K'$. If $K = K'$ the original leafs are replaced with the $K'$ new ones. If $K' < K$ we add \textit{dummy elements}, here represented as circles, to the set such that we replace all of the original $K$ leafs with elements from the new set. If $K' > K$, we use a subset of size $K$ to replace the original leafs, and the rest of the points are then inserted one by one.}
 	\label{fig:buffer_tree_buffer_empty}
 \end{figure}
 
-We can rebalance as in a normal B-tree using splits as depicted in Figure~\ref{fig:buffer_tree_split}, since the leaf emptying invariant ensures that all nodes from $u$ to the root of $\mathcal{T}$ have empty buffers.
+We can rebalance as in a normal B-Tree using splits as depicted in Figure~\ref{fig:buffer_tree_split}, since the leaf emptying invariant ensures that all nodes from $u$ to the root of $\mathcal{T}$ have empty buffers.
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.75\textwidth]{../figures/buffer_tree_split}
-	\caption{Split in a buffer tree. The \textit{leaf-emptying invariant} guarantees there are empty buffers on the root to leaf path ensuring splits can be done as in a normal B-tree.}
+	\caption{Split in a Buffer Tree. The \textit{leaf-emptying invariant} guarantees that there are empty buffers on the root to leaf path ensuring splits can be done as in a normal B-Tree.}
 	\label{fig:buffer_tree_split}
 \end{figure}
 
-After we have emptied all leaf-node buffers we remove the placeholder-elements one-by-one. The leaf-emptying invariant ensures that a node $v$ on the path from $u$ to the root has an empty buffer, but $v's$ sibling may not have an empty buffer. Therefore we cannot fuse in a normal B-tree manner. Instead, we perform a buffer-emptying process on $v's$ immediate sibling before performing the actual fuse. See Figure~\ref{fig:buffer_tree_fuse}.
+After we have emptied all leaf-node buffers we remove the place-holder elements one-by-one. The leaf-emptying invariant ensures that a node $v$ on the path from $u$ to the root has an empty buffer, but $v's$ sibling may not have an empty buffer. Therefore we cannot fuse in a normal B-Tree manner. Instead, we perform a buffer-emptying process on $v's$ immediate sibling before performing the actual fuse. See Figure~\ref{fig:buffer_tree_fuse}.
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.4\textwidth]{../figures/buffer_tree_fuse}
-	\caption{Buffer tree fusing. (a) node $v$ already have an empty buffer guaranteed by the \textit{leaf-emptying invariant}, but no such guarantee is given for the sibling node $v'$, so we have to start a buffer-emptying process on $v'$ (b) The buffer emptying of $v'$ might cause a leaf-node split which is handled before we fuse $v$ and $v'$ (c) After the buffer-emptying process of $v'$ and rebalancing has finished we perform the actual fuse of nodes. This is done as in a normal B-tree.}
+	\caption{Buffer tree fusing. (a) node $v$ already have an empty buffer guaranteed by the \textit{leaf-emptying invariant}, but no such guarantee is given for the sibling node $v'$, so we have to start a buffer-emptying process on $v'$ (b) The buffer emptying of $v'$ might cause a leaf-node split which is handled before we fuse $v$ and $v'$ (c) After the buffer-emptying process of $v'$ and rebalancing has finished we perform the actual fuse of nodes. This is done as in a normal B-Tree.}
 	\label{fig:buffer_tree_fuse}
 \end{figure}
 
 The emptying of the buffer of a sibling node $v'$ can result in buffers running full. We empty all such full non-leaf buffers before performing the actual fuse on $v$. The place-holder elements ensures we are always only in the process of handling a rebalancing caused by a single delete.
 
 \subsection{Analysis}
-Emptying an internal node buffer of size $X$ takes $\mathcal{O}(\nicefrac{X}{B})$ to scan the elements and $\mathcal{O}(\nicefrac{M}{B})$ to distribute them one level down. In order to empty a leaf node we have to scan the $\Theta(M)$ elements below it which gives an additional $\mathcal{O}(\nicefrac{X}{B} + \nicefrac{M}{B})$ I/O's.
+To empty an internal node buffer of size $X$ we need $\mathcal{O}(\nicefrac{X}{B})$ to scan the elements and $\mathcal{O}(\nicefrac{M}{B})$ to distribute them one level down. In order to empty a leaf node we have to scan the $\Theta(M)$ elements below it which gives an additional $\mathcal{O}(\nicefrac{X}{B} + \nicefrac{M}{B})$ I/O's.
 
 By letting the branching parameter equal $\nicefrac{M}{B}$ and the leaf parameter equal $B$, we can push all elements in a buffer of size $M$ down to the next level in $\mathcal{O}(\nicefrac{M}{B})$ I/O's. This follows from the fact that all the elements fit into main memory and we use $\mathcal{O}(1)$ I/O's to push one block one level down. Disregarding rebalancing of the tree, we can argue that we touch each block of elements a constant number of times on each of the $\mathcal{O}(\log_{\nicefrac{M}{B}} \frac{N}{B})$ levels of the tree. Thus, inserting $N$ elements can be done in an optimal $\mathcal{O}(\frac{N}{B} \log_{\nicefrac{M}{B}} \frac{N}{B})$ I/O's in total assuming no rebalancing of the tree.
 
-It is showed in~\cite{ionote} that a $N$-element B-tree $T$ with branching parameter $b$ and leaf parameter $k = \Omega(B)$ has an amortized number of internal node rebalancing operations (split/fuse) needed after an update equal to $\mathcal{O}(\frac{1}{b \cdot k}\log_b \frac{N}{B}$ I/O's. From this it follows directly that the total number of internal node rebalancing operations performed during $N$ updates is $\mathcal{O}(\frac{N}{b \cdot M/B}\log_{M/B} \frac{N}{B})$ Since each operations takes $\mathcal{O}(\nicefrac{M}{B})$ I/O's to empty a non-empty buffer, the total cost of the rebalancing is also $\mathcal{O}(\frac{N}{B} \log_{\nicefrac{M}{B}} \frac{N}{B})$.
+It is showed in~\cite{ionote} that a $N$-element B-Tree with branching parameter $b$ and leaf parameter $k = \Omega(B)$ has an amortized number of internal node rebalancing operations (split/fuse) needed after an update equal to $\mathcal{O}(\frac{1}{b \cdot k}\log_b \frac{N}{B})$ I/O's. From this it follows directly that the total number of internal node rebalancing operations performed during $N$ updates is $\mathcal{O}(\frac{N}{b \cdot M/B}\log_{M/B} \frac{N}{B})$ Since each operation takes $\mathcal{O}(\nicefrac{M}{B})$ I/O's to empty a non-empty buffer, the total cost of the rebalancing is also $\mathcal{O}(\frac{N}{B} \log_{\nicefrac{M}{B}} \frac{N}{B})$.
 
-We conclude that the total cost of a sequence of $N$ update operations on an initially empty buffer tree is $\mathcal{O}(\frac{N}{B} \log_{\nicefrac{M}{B}} \frac{N}{B})$.
+We conclude that the total cost of a sequence of $N$ update operations on an initially empty Buffer Tree is $\mathcal{O}(\frac{N}{B} \log_{\nicefrac{M}{B}} \frac{N}{B})$.
 
 \section{General Sets of Points}
 Throughout this thesis we will impose the restriction that no two points have equal $x$- or $y$-coordinate. The restriction is made in order to simplify the description and analysis of the algorithms we introduce. As it is a highly unrealistic restriction we will show that it is easy to remedy. The key observation is that we never assume coordinates to be real numbers. The only thing we assume is that points come from a totally ordered universe such we can compare points. This means we can replace the real-valued coordinates with elements from the \textit{composite-number space} where all elements are defined to be pairs of reals. The \textit{composite number} of two reals $a$ and $b$ is denoted by $(a \mid b)$. We define a total order on the composite-number space by using a lexicographic order. So, for two composite numbers $(a \mid b)$ and $(a' \mid b')$, we have:
