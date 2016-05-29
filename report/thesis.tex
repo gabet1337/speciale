@@ -566,7 +566,7 @@ The study of adapting the priority search tree to external memory was initiated 
 	\label{fig:icking_external_pst}
 \end{figure}
 
-Kanellakis et al. presents a linear space partially dynamic solution in~\cite{Kanellakis1996589}. The data structure answers three-sided queries in $\mathcal{O}(\log_B N + \nicefrac{K}{B} + \log_2 B)$ I/O's and supports inserts in $\mathcal{O}(\log_B N + (\log^2_B \nicefrac{N}{B})$ I/O's. The result is fairly involved and is unlikely to perform well in any practical manner. We will omit the full details and only present the overall ideas. As a first step all points are shifted such that they lie above the line $y = x$. The basic building block of the data structure is the \textit{metablock tree}; a B-ary tree of \textit{metablocks}, each of which represents $B^2$ data points. The root represents the $B^2$ data points with the largest $y$-values. The remaining $N - B^2$ data points are divided into $B$ groups of $(N - B^2)/B$ data points each based on the $x$-coordinate. The first group contains the $(N - B^2)/B$ data points with the smallest $x$-values and so on. A recursive tree of the exact same type is constructed for each such group of data points. This process continues until a group has at most $B^2$ data points and can fit into a single metablock. Refer to Figure~\ref{fig:kanellakis_metablock_tree} for an illustration of a metablock tree.
+Kanellakis et al. presents a linear space and partially dynamic solution in~\cite{Kanellakis1996589}. The data structure answers three-sided queries in $\mathcal{O}(\log_B N + \nicefrac{K}{B} + \log_2 B)$ I/O's and supports inserts in $\mathcal{O}(\log_B N + (\log^2_B \nicefrac{N}{B})$ I/O's. The result is fairly involved and is unlikely to perform well in any practical manner. We will omit the full details and only present the overall ideas. As a first step all points are shifted such that they lie above the line $y = x$. The basic building block of the data structure is the \textit{metablock tree}; a B-ary tree of \textit{metablocks}, each of which represents $B^2$ data points. The root represents the $B^2$ data points with the largest $y$-values. The remaining $N - B^2$ data points are divided into $B$ groups of $(N - B^2)/B$ data points each based on the $x$-coordinate. The first group contains the $(N - B^2)/B$ data points with the smallest $x$-values and so on. A recursive tree of the exact same type is constructed for each such group of data points. This process continues until a group has at most $B^2$ data points and can fit into a single metablock. Refer to Figure~\ref{fig:kanellakis_metablock_tree} for an illustration of a metablock tree.
 
 \begin{figure}[h]
 	\centering
@@ -684,18 +684,18 @@ For any $\max\left\lbrace \log\log N, \log_M N \right\rbrace \leq \lambda \leq B
 
 This means that in one end of the trade-off they can for $\lambda = B^\epsilon$ obtain an update time of $\mathcal{O}(1/B^{1-\epsilon})$ and query time of $\mathcal{O}(\log_B N)$. This matches the bounds of the buffer tree of Arge. In the other end of the trade-off where they are able to achieve fast updates very close to the optimal disk transfer rate of $1/B$ namely they obtain: $t_u^{\min} = \mathcal{O}(\frac{1}{B} \cdot \max\left\lbrace \log\log N, \log_M N \right\rbrace)$.
 
-\chapter{Internal Priority Search Tree}
+\chapter{Internal Memory Priority Search Tree}
 \label{chp:internal_pst}
-In this section we present an internal memory data structure for the range reporting problem. The data structure was originally presented by McCreight \cite{DBLP:journals/siamcomp/McCreight85} and is denoted a priority search tree. The priority search tree is basically a combination of a binary search tree on the $x$-coordinate and a heap on the $y$-coordinate. A formal definition of a priority search tree for a set of $N$ points, $P$, is as follows. We assume that all points have distinct coordinates, though this assumption can be removed by using the normal lexicographical ordering of points.
+In this chapter we present an internal memory data structure for the range reporting problem. The data structure was originally presented by McCreight \cite{DBLP:journals/siamcomp/McCreight85} and is denoted a Priority Search Tree. The Priority Search Tree is basically a combination of a binary search tree on the $x$-coordinate and a heap on the $y$-coordinate. A formal definition of a Priority Search Tree for a set of $N$ points, $P$, is as follows. We assume that all points have distinct coordinates, though this assumption can be removed by using the normal lexicographical ordering of points.
 
 \begin{itemize}
-	\item If $P = \varnothing$ then the priority search tree is an empty leaf.
+	\item If $P = \varnothing$ then the Priority Search Tree is an empty leaf.
 	\item Otherwise, let $p_\text{max}$ be the point in the set $P$ with the largest $y$-coordinate. \\ \\
 			Let $x_{\text{mid}}$ be the median of the $x$-coordinates of the remaining points. \\ \\ Now let
 			$$ P_\text{below} \coloneqq \{p \in P \setminus \{p_\text{max} \} : p_x < x_\text{mid} \}\text{,}$$
 			$$ P_\text{above} \coloneqq \{p \in P \setminus \{p_\text{max} \} : p_x > x_\text{mid} \}\text{.}$$
 			
-			The priority search tree consists of a root node $v$ where the point \\
+			The Priority Search Tree consists of a root node $v$ where the point \\
 			$p(v) \coloneqq p_{\text{max}}$ and the value $x(v) \coloneqq x_{\text{mid}}$ are stored. Furthermore,
 			\begin{itemize}[label=$\bullet$]
 				\item the left subtree of $v$ is a priority search tree for the set $P_{\text{below}}$.
@@ -703,12 +703,12 @@ In this section we present an internal memory data structure for the range repor
 			\end{itemize}
 \end{itemize}
 
-What is important to note is that the specific construction method allows the data structure to be indexed in two different ways. First, the tree can be searched as a binary search tree based on $x$-coordinate. Second, the tree operates as a max-heap based on $y$-coordinate. Please refer to Figure~\ref{fig:static_pst} for an illustration of a priority search tree constructed on points $P = \{A, B, C, D, E, F, G, H\}$.
+What is important to note is that the specific construction method allows the data structure to be indexed in two different ways. First, the tree can be searched as a binary search tree based on the $x$-coordinate. Second, the tree operates as a max-heap based on the $y$-coordinate. Please refer to Figure~\ref{fig:static_pst} for an illustration of a Priority Search Tree constructed on points $P = \{A, B, C, D, E, F, G, H\}$.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=0.68]{../figures/internal_pst_static}
-	\caption{The letter given in the node represents the $y_{\text{max}}$ stored as key, while the dashed line represents the median $x$ value stored in the node.}
+	\caption{The letter given in the node represents the $y_{\text{max}}$ stored as a key, while the dashed line represents the median $x$ value stored in the node.}
 	\label{fig:static_pst}
 \end{figure}
 
@@ -727,17 +727,17 @@ The search operation follows two root to leaf paths each of length $\mathcal{O}(
 
 \section{Dynamic Priority Search Tree}
 The key difference between the static solution presented by McCreight and a dynamic solution is that we always ensure that each point is placed in exactly one leaf and the order of the leafs from left to right corresponds to the order of the $x$-coordinate of the points. The internal nodes of the tree store the point with greatest $y$-coordinate represented by a leaf in the subtree of the node which is not already stored by an ancestor of this interior node. It is clear we have $N$ leaf nodes and $N-1$ internal nodes in the data structure.
-Whenever we store a point in an interior node, then the leaf node which corresponds to this point is considered a \textit{placeholder} for this point. A total of $N - 1$ nodes are left as placeholders. Please refer to Figure~\ref{fig:dynamic_pst} for an illustration of a dynamic priority search tree over the points $P = \{A, B, C, D, E, F, G \}$.
+Whenever we store a point in an interior node, then the leaf node which corresponds to this point is considered a \textit{place-holder} for this point. A total of $N - 1$ nodes are left as place-holders. Please refer to Figure~\ref{fig:dynamic_pst} for an illustration of a dynamic Priority Search Tree over the points $P = \{A, B, C, D, E, F, G \}$.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=0.68]{../figures/internal_pst_dynamic}
-	\caption{8 data points and the corresponding dynamic priority search tree. Dotted leafs are placeholders for a key higher up in the tree.}
+	\caption{8 data points and the corresponding dynamic Priority Search Tree. Dotted leafs are place-holders for a key higher up in the tree.}
 	\label{fig:dynamic_pst}
 \end{figure}
 
 \section{Construction}
-Assuming we are given a list of $x$-sorted points we can construct the dynamic priority search tree using a bottom-up construction method similar to the bottom-up construction of a heap. At the first phase of construction we associate each point with a placeholder in the priority search tree. These placeholders will become the leaf level of the data structure. Next we select pairs of placeholders and compare them to one another in terms of their $y$-coordinate. We denote the point with the highest $y$-coordinate as the winning point and the comparison between points as a tournament round. It is the winning point that will be represented by a new internal node at one level higher in the tree. Please refer to Figure~\ref{fig:dynamic_pst_construction} for an illustration of the construction of the leaf level of the data structure.
+Assuming we are given a list of $x$-sorted points we can construct the dynamic Priority Search Tree using a bottom-up construction method similar to the bottom-up construction of a heap. In the first phase of construction we associate each point with a place-holder in the Priority Search Tree. These place-holders will become the leaf level of the data structure. Next we select pairs of place-holders and compare them to one another in terms of their $y$-coordinate. We denote the point with the highest $y$-coordinate as the winning point and the comparison between points as a tournament round. It is the winning point that will be represented by a new internal node at one level higher in the tree. Please refer to Figure~\ref{fig:dynamic_pst_construction} for an illustration of the construction of the leaf level of the data structure.
 At the next level of the tree, we perform the same comparisons as before to determine which nodes will advance to the third level. At most $\nicefrac{N}{2}$ are compared at this level.
 
 \begin{figure}[h]
@@ -750,7 +750,7 @@ At the next level of the tree, we perform the same comparisons as before to dete
 Every tournament round will potentially leave an empty interior node behind as the wining point is moved one level up. If this occurs we have to check if any previous tournament losers are now eligible to be represented higher in the tree. We must also remember that some interior nodes in the tree may not represent any points and will thus remain empty when the construction is complete.
 
 \subsection*{Analysis}
-First, all points is inserted as leafs in the bottom layer of the data structure. The leafs counts for $\nicefrac{N}{2}$ of the total nodes in the tree. The next $N/2^2$ nodes are created at height $h = 1$ and the tournaments are played one level down. For the $i$'th step we create $N/2^i$ nodes and we will play tournaments $i$ levels down. The total steps to build the dynamic priority search tree of size $N$ is thus:
+First, all points is inserted as leafs in the bottom layer of the data structure. The leafs counts for $\nicefrac{N}{2}$ of the total nodes in the tree. The next $N/2^2$ nodes are created at height $h = 1$ and the tournaments are played one level down. For the $i$'th step we create $N/2^i$ nodes and we play tournaments $i$ levels down. The total steps to build the dynamic Priority Search Tree of size $N$ is thus:
 
 $$\sum\limits_{i=0}^{\log(N)} \frac{N}{2^{i+1}}i = \frac{N}{2} \left( \sum\limits_{i=0}^{\log(N)} i\left(\frac{1}{2}\right)^i \right) \leq \frac{N}{2} \left( \sum\limits_{i=0}^{\infty} i\left(\frac{1}{2}\right)^i \right)$$
 
@@ -762,31 +762,33 @@ For $x = \frac{1}{2}$ we get
 
 $$\frac{1/2}{(1-1/2)^2} = 2$$
 
-Plugging this in to the above sum we get that the total number of steps to build a dynamic priority search tree on $N$ points is $\mathcal{O}(N)$.
+Plugging this in to the above sum we get that the total number of steps to build a dynamic Priority Search Tree on $N$ points is $\mathcal{O}(N)$.
 
-This implies we can construct the dynamic priority search in linear time assuming we are given sorted input.
+This implies we can construct the dynamic priority search in linear time assuming we are given a sorted input.
 
 \section{Insertion}
 
-In order to dynamically insert points into the data structure, we add a new leaf (placeholder) for the new point and perform a pushdown operation with the new point starting at the root as will be described below. We can determine where to add the new placeholder as the dynamic priority search tree is a binary search tree on the $x$-coordinate of the points. When we reach an existing leaf, we add a new internal node in place of this leaf, and make the existing leaf one of the children of this new internal node. Then we add a new leaf to the tree as the other child, and store the new point in this leaf. In order to maintain the heap order of the priority search tree we now perform a pushdown operation, where we at each step compare the $y$-coordinate of the point to be inserted with the $y$-coordinate of the point represented by the given internal node. If the $y$-coordinate of the point to be inserted is less than that of the point stored in the internal node, then we push the point to be inserted further down the tree. However, if the $y$-coordinate of the point to be inserted is greater than the $y$-coordinate of the point in the internal node, then we store the point to be inserted in this internal node, and take the point which was formerly represented by this internal node and continue the pushdown operation with this point instead.
+In order to dynamically insert points into the data structure, we add a new leaf (place-holder) for the new point and perform a push-down operation with the new point starting at the root as will be described below. We can determine where to add the new place-holder as the dynamic Priority Search Tree is a binary search tree on the $x$-coordinate of the points. When we reach an existing leaf, we add a new internal node in place of this leaf, and make the existing leaf one of the children of this new internal node. Then we add a new leaf to the tree as the other child, and store the new point in this leaf. In order to maintain the heap order of the Priority Search Tree we now perform a push-down operation, where we at each step compare the $y$-coordinate of the point to be inserted with the $y$-coordinate of the point represented by the given internal node. If the $y$-coordinate of the point to be inserted is less than that of the point stored in the internal node, then we push the point to be inserted further down the tree. However, if the $y$-coordinate of the point to be inserted is greater than the $y$-coordinate of the point in the internal node, then we store the point to be inserted in this internal node, and take the point which was formerly represented by this internal node and continue the push-down operation with this point instead.
 
 \subsection*{Analysis}
 
-The first step of the insertion algorithm is a binary search traversal on the $x$-coordinate of the new point. The path is of length $\mathcal{O}(\log N)$. Adding a new internal node in place of the old leaf takes a constant amount of operations. The pushdown operation follows a single root to leaf path of length $\mathcal{O}(\log N)$ and uses a constant amount of work in each node. So we conclude insertions can be done in $\mathcal{O}(\log N)$.
+The first step of the insertion algorithm is a binary search traversal on the $x$-coordinate of the new point. The path is of length $\mathcal{O}(\log N)$. Adding a new internal node in place of the old leaf takes a constant amount of operations. The push-down operation follows a single root to leaf path of length $\mathcal{O}(\log N)$ and uses a constant amount of work in each node. We conclude insertion of an element can be done in $\mathcal{O}(\log N)$.
 
 \section{Deletion}
 
-When dynamically deleting a point we must locate the interior node (if any) representing the point we wish to delete. After we have removed the point from the interior of the dynamic search tree, we must replay a portion of the tournament among the points below this interior node in order to replace it. Finally we must delete the leaf which is the placeholder for the point.
+When dynamically deleting a point we must locate the interior node (if any) representing the point we wish to delete. After we have removed the point from the interior of the dynamic search tree, we must replay a portion of the tournament among the points below this interior node in order to replace it. Finally we must delete the leaf which is the place-holder for the point.
 
 \subsection*{Analysis}
-Locating the interior node representing the point to be deleted can be done in $\mathcal{O}(\log N)$ using the binary search property maintained by the priority search tree. Once we have located the interior node we can remove this point in $\mathcal{O}(1)$. The deletion of the point of an interior node leafs a hole in the tree that we fill by playing tournaments following a node to leaf path of length $\mathcal{O}(\log N)$. We conclude the deletion algorithm requires $\mathcal{O}(\log N)$ per deletion.
+Locating the interior node representing the point to be deleted can be done in $\mathcal{O}(\log N)$ using the binary search property maintained by the Priority Search Tree. Once we have located the interior node we can remove this point in $\mathcal{O}(1)$. The deletion of the point of an interior node leaves a hole in the tree that we fill by replaying tournaments following a node to leaf path of length $\mathcal{O}(\log N)$. We conclude the deletion algorithm requires $\mathcal{O}(\log N)$ per deletion.
 
 
 \section{Rebalancing}
-If we use the operations for dynamic updates as stated above without any measures for tree rebalancing, we could end up with a highly unbalanced tree. We fix this using global rebuilding when a linear number of updates have been performed. We can collect all points in sorted order in linear time by visiting leafs from left to right using a DFS traversal of the tree. On the collected points we now use the linear construction algorithm to rebalance the tree. Using this strategy yields a data structure that handles updates in $\mathcal{O}(\log N)$ amortized. By using a Red-Black tree as the heart of the tree we can achieve a data structure that is $\mathcal{O}(\log N)$ worst case by performing rotations to rebalance the tree.
+If we use the operations for dynamic updates as stated above without any measures for tree rebalancing, we could end up with a highly unbalanced tree. We fix this using global rebuilding when a linear number of updates have been performed. We can collect all points in sorted order in linear time by visiting leafs from left to right using a depth first traversal of the tree. On the collected points we now use the linear construction algorithm to rebalance the tree. Using this strategy yields a data structure that handles updates in $\mathcal{O}(\log N)$ amortized. By using a Red-Black tree as the heart of the tree we can achieve a data structure that is $\mathcal{O}(\log N)$ worst case by performing rotations to rebalance the tree.
+
+\todo{somehow mention that the tree becomes perfectly balanced a result of construction}
 
 \section{Bounds in the I/O model}
-The above bounds translate directly to the I/O model as we cannot guarentee that nodes on the search path are perfectly placed in blocks, which in the worst case means that each visit to a node will equal 1 I/O.
+The above bounds translate directly to the I/O model as we cannot guarantee that nodes on the search path are perfectly placed in blocks, which in the worst case means that each visit to a node will equal 1 I/O.
 
 \chapter{External Memory Priority Search Tree}
 \label{chp:arge_pst}
