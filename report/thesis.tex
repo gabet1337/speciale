@@ -237,7 +237,7 @@ We have really enjoyed working on this thesis and we sincerely hope you enjoy re
 \end{figure}
 
 \begin{savequote}[0.7\textwidth]
-"The difference in speed between modern CPU and disk technologies is  analogous to the difference in speed in sharpening a pencil using a sharpener on one's desk or by taking an airplane to the other side of the world and using a sharpener on someone else's desk."
+``The difference in speed between modern CPU and disk technologies is  analogous to the difference in speed in sharpening a pencil using a sharpener on one's desk or by taking an airplane to the other side of the world and using a sharpener on someone else's desk.''
 \qauthor{--- D. Comer}
 \end{savequote}
 \chapter{Introduction}
@@ -340,7 +340,7 @@ Leading up to our experimental Chapter~\ref{chp:experimental_results} we present
 
 
 \begin{savequote}[0.5\textwidth]
-"All models are wrong but some are useful."
+``All models are wrong but some are useful.''
 \qauthor{---  George E. P. Box}
 \end{savequote}
 \chapter{Model of computation}
@@ -360,7 +360,7 @@ The fundamental bounds in the external memory model is that scanning $N$ records
 For convenience we will assume $M > B^2$. This assumption is known as the \textit{tall-cache assumption} in the cache-oblivious model and basically states that the number of blocks \nicefrac{M}{B} is larger than the size of each block $B$~\cite{Prokop99cache-obliviousalgorithms}.
 
 \begin{savequote}[0.5\textwidth]
-"The way I see it, if you want the rainbow, you gotta put up with the rain."
+``The way I see it, if you want the rainbow, you gotta put up with the rain.''
 \qauthor{--- Dolly Parton}
 \end{savequote}
 \chapter{Preliminaries}
@@ -550,7 +550,7 @@ We conclude that the total cost of a sequence of $N$ update operations on an ini
 %From Lemma~\ref{lma:composite_universe_query} is follows that our approach is correct.
 
 \begin{savequote}[0.5\textwidth]
-"Nanos gigantum humeris insidentes."
+``Nanos gigantum humeris insidentes.''
 \qauthor{--- Bernard of Chartres}
 \end{savequote}
 \chapter{Related work}
@@ -685,7 +685,7 @@ For any $\max\left\lbrace \log\log N, \log_M N \right\rbrace \leq \lambda \leq B
 This means that in one end of the trade-off they can for $\lambda = B^\epsilon$ obtain an update time of $\mathcal{O}(1/B^{1-\epsilon})$ and query time of $\mathcal{O}(\log_B N)$. This matches the bounds of the buffer tree of Arge. In the other end of the trade-off where they are able to achieve fast updates very close to the optimal disk transfer rate of $1/B$ namely they obtain: $t_u^{\min} = \mathcal{O}(\frac{1}{B} \cdot \max\left\lbrace \log\log N, \log_M N \right\rbrace)$.
 
 \begin{savequote}[0.5\textwidth]
-"All my best thoughts were stolen by the ancients."
+``All my best thoughts were stolen by the ancients.''
 \qauthor{--- Ralph Waldo Emerson}
 \end{savequote}
 \chapter{Internal Memory Priority Search Tree}
@@ -793,7 +793,7 @@ If we use the operations for dynamic updates as stated above without any measure
 The above bounds translate directly to the I/O model as we cannot guarantee that nodes on the search path are perfectly placed in blocks, which in the worst case means that each visit to a node will equal 1 I/O.
 
 \begin{savequote}[0.5\textwidth]
-"Truth, like gold, is to be obtained not by its growth, but by washing away from it all that is not gold."
+``Truth, like gold, is to be obtained not by its growth, but by washing away from it all that is not gold.''
 \qauthor{--- Leo Tolstoy}
 \end{savequote}
 \chapter{External Memory Priority Search Tree}
@@ -931,7 +931,7 @@ In every internal node $v$ visited we spend $\mathcal{O}(1+K_v/B)$ I/O's. There 
 
 
 \begin{savequote}[0.50\textwidth]
-"Daring ideas are like chessmen moved forward: they may be beaten, but they may start a winning game."
+``Daring ideas are like chessmen moved forward: they may be beaten, but they may start a winning game.''
 \qauthor{--- Goethe}
 \end{savequote}
 \chapter{External Memory Buffered Priority Search Tree}
@@ -1184,7 +1184,7 @@ All this adds up to $\mathcal{O}(\frac{N_{ins}+N_{del}}{B/\Delta} \frac{1}{\epsi
 
 
 \begin{savequote}[0.5\textwidth]
-"The problem with quotes found on the\\internet is that they are often not true."
+``The problem with quotes found on the\\internet is that they are often not true.''
 \qauthor{--- Abraham Lincoln}
 \end{savequote}
 \chapter{Other structures}
@@ -1253,14 +1253,14 @@ It is a little harder to argue about the complexity of a three sided query. A B-
 If we enforce no index on the MySQL table, then we believe the standard implementation will simply append all insertions to a contiguous stream, which can be done in $\mathcal{O}(1)$ I/O's. We believe deletions and queries can be handled in $\mathcal{O}(N/B)$ I/O's by scanning the entire stream.
 
 \begin{savequote}[0.7\textwidth]
-"There is nothing more deceptive than an obvious fact."
+``There is nothing more deceptive than an obvious fact.''
 \qauthor{--- Sherlock Holmes}
 \end{savequote}
 \chapter{Implementation}
 \label{chp:implementation}
 
-Throughout our implementation of the internal priority search tree, external memory priority search tree, and the external memory buffered priority search tree we noted down important considerations.
-In this chapter we present these considerations together with a short presentation of how we wrote wrappers around MySQL, Boost R-tree, and libspatial R*-tree. We end the chapter with a description of the experimental framework we developed to significantly simplify the experimental phase of the project.
+Throughout our implementation of the Internal Memory Priority Search Tree, External Memory Priority Search Tree, and the External Memory Buffered Priority Search Tree we noted down important considerations.
+In this chapter we present these considerations together with a short presentation of how we wrote wrappers around MySQL, Boost R-Tree, and libspatial R*-Tree. We end the chapter with a description of the experimental framework we developed to significantly simplify the experimental phase of the project.
 
 All code can be cloned from the following git repository or downloaded from the mirrors listed below. Instructions on how to compile and run the code can be found in the accompanying \texttt{readme} file.
 
@@ -1373,8 +1373,8 @@ In order to obtain a deeper understanding of the results we chose to measure the
 
 As the machines run on a 32 bit operating systems it is very important to define \texttt{\_FILE\_OFFSET\_BITS=64}. This forces the system to use 64 bit pointers when seeking in files allowing us to handle data sets larger than $2^{32}$ on the machines.
 
-\begin{savequote}[0.6\textwidth]
-"We must never make experiments to confirm our ideas, \\ but simply to control them."
+\begin{savequote}[0.55\textwidth]
+``We must never make experiments to confirm our ideas, but simply to control them.''
 \qauthor{--- Claude Bernard}
 \end{savequote}
 \chapter{Experimental setup}
@@ -1413,7 +1413,7 @@ Compiler & gcc 4.8.4 with optimization level 2
 \end{figure}
 
 \begin{savequote}[0.4\textwidth]
-"Big results require big ambitions."
+``Big results require big ambitions.''
 \qauthor{--- Heraclitus}
 \end{savequote}
 \chapter{Our results}
@@ -1766,7 +1766,7 @@ The experiment on the \textbf{report} part of the algorithms was conducted by fi
 The result of the experiment on the \textbf{search} part of the algorithms is depicted in Figure~\ref{fig:result_query_search_complexity}. Arges structure is limited by the ???
 
 \begin{savequote}[0.4\textwidth]
-"To succeed, jump as quickly at opportunities as you do at conclusions."
+``To succeed, jump as quickly at opportunities as you do at conclusions.''
 \qauthor{--- Benjamin Franklin}
 \end{savequote}
 \chapter{Conclusion}
