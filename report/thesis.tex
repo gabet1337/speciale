@@ -691,8 +691,11 @@ In this chapter we present an internal memory data structure for the three-sided
 
 \begin{itemize}
 	\item If $P = \varnothing$ then the Priority Search Tree is an empty leaf.
-	\item Otherwise, let $p_\text{max}$ be the point in the set $P$ with the largest $y$-coordinate. \\ \\
-			Let $x_{\text{mid}}$ be the median of the $x$-coordinates of the remaining points. \\ \\ Now let
+	\item Otherwise, let $p_\text{max}$ be the point in the set $P$ with the largest $y$-coordinate.
+	
+			Let $x_{\text{mid}}$ be the median of the $x$-coordinates of the remaining points.
+			
+			Now let
 			$$ P_\text{below} \coloneqq \{p \in P \setminus \{p_\text{max} \} : p_x < x_\text{mid} \}\text{,}$$
 			$$ P_\text{above} \coloneqq \{p \in P \setminus \{p_\text{max} \} : p_x > x_\text{mid} \}\text{.}$$
 			
