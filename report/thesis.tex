@@ -824,7 +824,7 @@ The result is a weight-balanced B-Tree where each node is augmented with a boots
 An external memory data structure exists supporting insertion and deletion in amortized $\mathcal{O}(\log_B N/B)$ I/O's and three sided range queries in $\mathcal{O}(\log_B N/B + K/B)$ I/O's, where $N$ is the input size, and $K$ is the size of the output. The structure uses $\mathcal{O}(N/B)$ space.
 \end{theorem}
 
-\section{Dynamic three-sided queries on $\Theta(B^2)$ points}
+\section{Dynamic 3-sided queries on \texorpdfstring{$\Theta(B^2)$}{tb2} points}
 \label{sec:child_structure}
 In this section we describe a data structure that supports the operations stated in Theorem~\ref{thm:child_structure}.
 \begin{theorem}
@@ -1475,7 +1475,7 @@ The results plotted as running time per insert is depicted in Figure~\ref{fig:ge
 \clearpage
 
 \subsubsection*{Fanout}
-In the experiment conducted on the fanout parameter we fixed the buffer size to 1 Mb and varied the fanout parameter. The readers intuition might deceive him into concluding an ever increasing fanout would cause an ever decreasing update time. This was certainly what we had expected since we pass down an ever decreasing $B / B^\epsilon$ fraction, and each such fraction charges an I/O to the total running time. In Figure~\ref{fig:gerth_fanout_experiment} we present the theoretical update time per operation. We see a clear tendency of ever increasing fanouts causing an ever decreasing running time for $B^\epsilon \in \{4, 5, 6, 8, 16, 32, 64 \}$. When zooming in on the graphs for fanouts $B^\epsilon \in \{2, 3, 4, 5\}$ in Figure~\ref{fig:gerth_fanout_experiment_zoom} we see that no theoretical gain is to be expected when decreasing the fanout from 3 to 2. In fact it seems we achieve the exact same update time per operation for fanout 2 and fanout 4. This is, however, not as surprising as one might think. See Equation~\ref{eq:equal_fanouts_2_4_1} and Equation~\ref{eq:equal_fanouts_2_4_2} where the theoretical bound is shown to be the exact same for fanouts 2 and 4. \\
+In the experiment conducted on the fanout parameter we fixed the buffer size to 1 Mb and varied the fanout parameter. The readers intuition might deceive him into concluding an ever increasing fanout would cause an ever decreasing update time. This was certainly what we had expected since we pass down an ever decreasing $B / B^\epsilon$ fraction, and each such fraction charges an I/O to the total running time. In Figure~\ref{fig:gerth_fanout_experiment} we present the theoretical update time per operation. We see a clear tendency of ever increasing fanouts causing an ever decreasing running time for $B^\epsilon \in \{4, 5, 6, 8, 16, 32, 64 \}$. When zooming in on the graphs for fanouts $B^\epsilon \in \{2, 3, 4, 5\}$ in Figure~\ref{fig:gerth_fanout_experiment_zoom} we see that no theoretical gain is to be expected when decreasing the fanout from 3 to 2. In fact it seems we achieve the exact same update time per operation for fanout 2 and fanout 4. This is, however, not as surprising as one might think. See Equation~\ref{eq:equal_fanouts_2_4_1} and Equation~\ref{eq:equal_fanouts_2_4_2} where the theoretical bound is shown to be the exact same for fanouts 2 and 4.\\
 
 Let $B^\epsilon = 2$:
 \begin{equation} \label{eq:equal_fanouts_2_4_1}
