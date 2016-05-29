@@ -690,7 +690,7 @@ This means that in one end of the trade-off they can for $\lambda = B^\epsilon$ 
 \end{savequote}
 \chapter{Internal Memory Priority Search Tree}
 \label{chp:internal_pst}
-In this chapter we present an internal memory data structure for the range reporting problem. The data structure was originally presented by McCreight \cite{DBLP:journals/siamcomp/McCreight85} and is denoted a Priority Search Tree. The Priority Search Tree is basically a combination of a binary search tree on the $x$-coordinate and a heap on the $y$-coordinate. A formal definition of a Priority Search Tree for a set of $N$ points, $P$, is as follows. We assume that all points have distinct coordinates, though this assumption can be removed by using the normal lexicographical ordering of points.
+In this chapter we present an internal memory data structure for the three-sided range reporting problem. The data structure was originally presented by McCreight \cite{DBLP:journals/siamcomp/McCreight85} and is denoted a Priority Search Tree. The Priority Search Tree is basically a combination of a binary search tree on the $x$-coordinate and a heap on the $y$-coordinate. A formal definition of a Priority Search Tree for a set of $N$ points, $P$, is as follows. We assume that all points have distinct coordinates, though this assumption can be removed by using the normal lexicographical ordering of points.
 
 \begin{itemize}
 	\item If $P = \varnothing$ then the Priority Search Tree is an empty leaf.
@@ -716,7 +716,7 @@ What is important to note is that the specific construction method allows the da
 	\label{fig:static_pst}
 \end{figure}
 
-\section{Three-sided Range Query}
+\section{Three-sided range query}
 When answering a query of the form $[x_1,x_2] \times [y,\infty]$ we begin at the root of the tree and first check the $y$-coordinate of this node against the $y$-coordinate of the baseline of the query interval. As long as the $y$-coordinate of the current node is greater than the $y$-coordinate of the horizontal segment defining the base of our three-sided range, we will continue down the tree. We can use the fact that the tree is a basic binary search tree on the $x$-coordinates to only visit the part of the tree that is within our search range. Please refer to Figure~\ref{fig:static_pst_query} for an illustration of the general query pattern.
 
 \begin{figure}[h]
@@ -771,8 +771,26 @@ Plugging this in to the above sum we get that the total number of steps to build
 This implies we can construct the balanced dynamic Priority Search Tree in linear time assuming we are given a sorted input. The tree is balanced since we place all leafs at the same level. If the size of the input is not a perfect power of 2, the tree will be imbalanced by a single level.
 
 \section{Insertion}
+In order to dynamically insert points into the data structure, we add a new leaf (place-holder) for the new point and perform a push-down operation with the new point starting at the root as will be described below.
 
-In order to dynamically insert points into the data structure, we add a new leaf (place-holder) for the new point and perform a push-down operation with the new point starting at the root as will be described below. We can determine where to add the new place-holder as the dynamic Priority Search Tree is a binary search tree on the $x$-coordinate of the points. When we reach an existing leaf, we add a new internal node in place of this leaf, and make the existing leaf one of the children of this new internal node. Then we add a new leaf to the tree as the other child, and store the new point in this leaf. In order to maintain the heap order of the Priority Search Tree we now perform a push-down operation, where we at each step compare the $y$-coordinate of the point to be inserted with the $y$-coordinate of the point represented by the given internal node. If the $y$-coordinate of the point to be inserted is less than that of the point stored in the internal node, then we push the point to be inserted further down the tree. However, if the $y$-coordinate of the point to be inserted is greater than the $y$-coordinate of the point in the internal node, then we store the point to be inserted in this internal node, and take the point which was formerly represented by this internal node and continue the push-down operation with this point instead.
+We can determine where to add the new place-holder as the dynamic Priority Search Tree is a binary search tree on the $x$-coordinate of the points. When we reach an existing leaf, we add a new internal node in place of this leaf, and make the existing leaf one of the children of this new internal node. Then we add a new leaf to the tree as the other child, and store the new point in this leaf. See Figure~\ref{fig:dynamic_pst_insert_step1}.
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=0.7\textwidth]{../figures/internal_pst_insert_step1}
+	\caption{First step of the insertion algorithm. A new placeholder is created for the new point to be inserted and a new internal node is created as its parent. Here point $B$ is inserted. Note that the ordering of the $x$-coordinates of the points is preserved in the order of the leaves following the addition of a new placeholder.}
+	\label{fig:dynamic_pst_insert_step1}
+\end{figure}
+
+
+In order to maintain the heap order of the Priority Search Tree we now perform a push-down operation, where we at each step compare the $y$-coordinate of the point to be inserted with the $y$-coordinate of the point represented by the given internal node. If the $y$-coordinate of the point to be inserted is less than that of the point stored in the internal node, then we push the point to be inserted further down the tree. However, if the $y$-coordinate of the point to be inserted is greater than the $y$-coordinate of the point in the internal node, then we store the point to be inserted in this internal node, and take the point which was formerly represented by this internal node and continue the push-down operation with this point instead. See Figure~\ref{fig:dynamic_pst_insert_step2}.
+
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.5\textwidth]{../figures/internal_pst_insert_step2}
+	\caption{Second step of the insertion algorithm. The push-down operation of point B starts at the root. Here $B$ has smaller $y$-coordinate than points $F$ and $E$. Point $B$ has larger $y$-coordinate than point $C$ and so it occupies the internal node and pushes point $C$ further down the tree.}
+	\label{fig:dynamic_pst_insert_step2}
+\end{figure}
 
 \subsection*{Analysis}
 
