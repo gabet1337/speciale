@@ -939,12 +939,12 @@ In every internal node $v$ visited we spend $\mathcal{O}(1+K_v/B)$ I/O's. There 
 In this chapter we present an external memory data structure described by Brodal~\cite{DBLP:journals/corr/Brodal15}. The structure supports updates in amortized $\mathcal{O}\left(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N\right)$ I/O's, three sided range queries in $\mathcal{O}\left(\frac{1}{\epsilon}\log_B N + \nicefrac{K}{B}\right)$ I/O's for $0 \leq \epsilon \leq \frac{1}{2}$, and can be constructed on $N$ sorted points in $\mathcal{O}(\nicefrac{N}{B})$ I/O's. The parameter $\epsilon$ determines the size of the fanout and in turn the size of a bootstrapped substructure for storing $\mathcal{O}(B^{1+\epsilon})$ points.
 The substructure is very similar to that of Arge et al.~\cite[Section~3.1]{arge_vitter_2003} for handling $\Theta(B^2)$ points with the main difference being that we reduce the capacity to allow an amortized constant number of I/O's per update. The bootstrapped structure is in~\cite{arge_vitter_2003} used to store the top $\Theta(B^2)$ points w.r.t. the $y$ value for the subtree rooted at the given node of the substructure. This structure uses it in a slightly different way to store the top $\mathcal{O}(B^{1+\epsilon})$ points of the children of the given  node. The bootstrapped structure is described further in Section~\ref{sec:child_structure} and will be referred to as the \textit{child structure} in the rest of the chapter.
 
-The external memory buffered priority search tree is a combination of the external memory priority search tree of Arge et al.~\cite{arge_samoladas_vitter_1999} described in Chapter~\ref{chp:arge_pst}, and the buffered updates of the Buffer tree also thanks to Arge~\cite{Arge:1995:BTN:645930.672850} described in Section~\ref{sec:prelim_buffer_tree}. The main data structure is described in Section~\ref{sec:main_data_structure}.
+The External Memory Buffered Priority Search Tree is a combination of the External Memory Priority Search Tree of Arge et al.~\cite{arge_samoladas_vitter_1999} described in Chapter~\ref{chp:arge_pst}, and the buffered updates of the Buffer Tree also thanks to Arge~\cite{Arge:1995:BTN:645930.672850} described in Section~\ref{sec:prelim_buffer_tree}. The main data structure is described in Section~\ref{sec:main_data_structure}.
 
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{../figures/gerth_tree}
-	\caption{External memory priority search tree with buffers. The point buffers of the children is in the child structure of the parent allowing for fast queries.}
+	\caption{External Memory Priority Search Tree with buffers. The point buffers of the children is in the child structure of the parent allowing for fast queries.}
 	\label{fig:gerth_tree}
 \end{figure}
 
@@ -962,14 +962,14 @@ This section presents the main data structure achieving the results of Theorem~\
 An external memory data structure exists supporting insertion and deletion of points in amortized $\mathcal{O}(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N)$ I/O's and three sided range queries in amortized $\mathcal{O}(\frac{1}{\epsilon} \log_B N + \nicefrac{K}{B})$, where $\epsilon$ is a constant, $0 < \epsilon \leq \nicefrac{1}{2}$, $N$ is the number of points in the structure, and $K$ is the size of the output. The structure can be constructed in amortized $\mathcal{O}(\nicefrac{N}{B})$ I/O's on an x-sorted set of points and stored in $\mathcal{O}(\nicefrac{N}{B})$ blocks.
 \end{theorem}
 
-The structure is a slightly modified version of the B-tree. Each internal node, except for the root, has a node degree between $\nicefrac{\Delta}{2}$ and $\Delta$, with $\Delta = \lceil B^\epsilon \rceil$. The root has node degree between $2$ and $\Delta$.
+The structure is a slightly modified version of the B-Tree. Each internal node, except for the root, has a node degree between $\nicefrac{\Delta}{2}$ and $\Delta$, with $\Delta = \lceil B^\epsilon \rceil$. The root has node degree between $2$ and $\Delta$.
 
 Each node $v$ stores three buffers containing $\mathcal{O}(B)$ points each, namely a point buffer $P_v$, an insertion buffer $I_v$, and a deletion buffer $D_v$ which purpose will be described shortly.
 
 The subtree at node $v$ contains points in the range spanned by the points in the point buffer $P_v$, i.e. the structure is a search tree on the points in $P_v$ w.r.t. to the normal lexicographical ordering of points.
 
-As in the internal priority search tree of McCreight~\cite{DBLP:journals/siamcomp/McCreight85} described in Chapter~\ref{chp:internal_pst}, the points with highest $y$-value resides in the top of the tree, i.e. we have a heap ordering among the nodes of the tree on the $y$-value. This means that for a node $v$, no child $c$ of $v$ stores an element in $P_c$ with a larger $y$-value than the minimum $y$-value in $P_v$.
-The buffers $I_v$ and $D_v$ stores delayed insertions and deletions on their way down to a point buffer of a descendent. Using the basic ideas of the buffer tree of Arge~\cite{Arge:1995:BTN:645930.672850} described in Section~\ref{sec:prelim_buffer_tree}, buffers are handled recursively whenever an overflow occurs.
+As in the Internal Memory Priority Search Tree of McCreight~\cite{DBLP:journals/siamcomp/McCreight85} described in Chapter~\ref{chp:internal_pst}, the points with highest $y$-value resides in the top of the tree, i.e. we have a heap ordering among the nodes of the tree on the $y$-value. This means that for a node $v$, no child $c$ of $v$ stores an element in $P_c$ with a larger $y$-value than the minimum $y$-value in $P_v$.
+The buffers $I_v$ and $D_v$ stores delayed insertions and deletions on their way down to a point buffer of a descendent. Using the basic ideas of the Buffer Tree of Arge~\cite{Arge:1995:BTN:645930.672850} described in Section~\ref{sec:prelim_buffer_tree}, buffers are handled recursively whenever an overflow occurs.
 
 For each internal node, $v$, we also store an instance of the child structure, $C_v$, containing the elements $P_c$ for every child $c$ of $v$. See Figure~\ref{fig:gerth_tree}.
 
@@ -989,7 +989,7 @@ For a node $v$ in the main data structure the following invariants must be true:
 
 \subsection{Updates}
 \label{subsec:gerth_updates}
-We update the structure with inserts and deletions by adding points to either the insertion or deletion buffer respectively of the root, while maintaining the above invariants.
+We update the structure with insertions and deletions by adding points to either the insertion or deletion buffer respectively of the root, while maintaining the above invariants.
 During an update the insertion or deletion buffers might overflow, i.e get size larger than $B$ or $B/4$ respectively. This is handled in the following five steps:
 \begin{inlinelist}
 	\item handle overflowing deletion buffers
@@ -1002,12 +1002,12 @@ During an update the insertion or deletion buffers might overflow, i.e get size 
 We will in the following look at each step individually and argue their complexity.
 
 \begin{enumerate}[label=(\roman*)]
-	\item\label{update:del} A deletion buffer at node $v$ overflows when $\vert D_v \vert > B/4$. Since the structure is a B-tree on the lexicographically ordering of points, by the pigeon-hole principle, there must exist a child $c$ such that we can push $U \subseteq D_v$ of $\lceil \vert D_v \vert / \Delta \rceil$ deletions to $c$. This is illustrated in Figure~\ref{fig:pigeon_hole}. Points in $U$ are removed from $D_v$, $I_c$, $D_c$, $P_c$, and $C_v$. Any point $p$ in $U$ lexicographically larger than the minimum point in $P_c$ (w.r.t. $y$) is removed from $U$ as the deletion cannot cancel any updates further down in the tree. See Figure~\ref{fig:brodal_deletion_buffer_overflow}.
+	\item\label{update:del} A deletion buffer at node $v$ overflows when $\vert D_v \vert > B/4$. Since the structure is a B-Tree on the lexicographically ordering of points, by the pigeon-hole principle, there must exist a child $c$ such that we can push $U \subseteq D_v$ of $\lceil \vert D_v \vert / \Delta \rceil$ deletions to $c$. This is illustrated in Figure~\ref{fig:pigeon_hole}. Points in $U$ are removed from $D_v$, $I_c$, $D_c$, $P_c$, and $C_v$. Any point $p$ in $U$ lexicographically larger than the minimum point in $P_c$ (w.r.t. $y$) is removed from $U$ as the deletion cannot cancel any updates further down in the tree. See Figure~\ref{fig:brodal_deletion_buffer_overflow}.
 	
 	\begin{figure}[htp!]
 		\centering
 		\includegraphics[width=0.9\textwidth]{../figures/pigeon_hole2}
-		\caption{Pigeon hole principle. Each cross represents a deletion stored in the deletion buffer of $v$. Here $\nicefrac{B}{4} = 16$ and $\epsilon = \nicefrac{1}{3}$. This gives $B^{\epsilon} = 4$. By the pigeon hole principle we must have that at least one of the x-ranges contains at least $\nicefrac{B}{B^{\epsilon}}$ points that can be send down to the child that is responsible. Here the child $c_3$ will receive a subset of the deletions.}
+		\caption{Pigeon hole principle. Each cross represents a deletion stored in the deletion buffer of $v$. Here $\nicefrac{B}{4} = 16$ and $\epsilon = \nicefrac{1}{3}$. This gives $B^{\epsilon} = 4$. By the pigeon hole principle we must have that at least one of the x-ranges contains at least $\nicefrac{B}{B^{\epsilon}}$ points that can be sent down to the child that is responsible. Here the child $c_3$ will receive a subset of the deletions.}
 		\label{fig:pigeon_hole}
 	\end{figure}
 	
@@ -1273,9 +1273,9 @@ All code can be cloned from the following git repository or downloaded from the 
 \section{General}
 Almost all code was developed using pair programming and we strongly believe this technique, though slow and cumbersome, eliminated many mistakes that would otherwise had slowed us down later on.
 Everything we implemented were unit tested and large parts of the project were implemented using test driven development. We made sure to make sound design choices to enable easy extension and reuse of our code. Stubs and mocks were used to ease the integration of substructures into larger structures.
-We also wrote checkers to automatically check validity of a tree. In the case of the external memory buffered priority search tree we wrote a checker that would iterate the entire tree and check that no invariants were broken. We also included a method to print the trees in a DOT format (graph description language) allowing us to visualize every step of the algorithm. This really made debugging easier as it supplied us with a quick overview of the structure.
+We also wrote checkers to automatically check validity of a tree. In the case of the External Memory Buffered Priority Search Tree we wrote a checker that would iterate the entire tree and check that no invariants were broken. We also included a method to print the trees in a DOT format (graph description language) allowing us to visualize every step of the algorithm. This really made debugging easier as it supplied us with a quick overview of the structure.
 
-In order to fully test that there were no errors in our implementation we wrote a random test that would insert thousands of points and test validity of the tree for every insert. We would then repeat this test for several thousand iterations over several days while continuing on other parts of the code.
+In order to fully test that there were no errors in our implementation we wrote a random test that would insert thousands of points and test validity of the tree for every insert, delete, and query. We would then repeat this test for several thousand iterations over several days while continuing on other parts of the code.
 
 Using all these methods and tools we feel confident that our code works as intended.
 
@@ -1314,7 +1314,7 @@ Figure~\ref{fig:stream_output_speed} surprisingly shows that it is faster to use
 
 \section{External Memory Buffered Priority Search Tree}
 \label{sec:impl_main_data_structure}
-This Section will present important implementation specific design choices for the main data structure of the external memory buffered priority search tree by Brodal presented in Section~\ref{sec:main_data_structure}.
+This Section will present important implementation specific design choices for the main data structure of the External Memory Buffered Priority Search Tree by Brodal presented in Section~\ref{sec:main_data_structure}.
 
 In Section~\ref{sec:main_data_structure} we argued how the operations \texttt{insert}, \texttt{delete}, and \texttt{report} are supported using subroutines for handling overflowing deletion buffers, overflowing insertion buffers, split leafs with overflowing point buffers, split nodes of degree $B^\epsilon+1$, and fill underflowing point buffers.
 
@@ -1339,21 +1339,21 @@ As both event loop and buffer over-/underflow thresholds depends on whether we a
 The \textbf{general representation} of buffers makes use of Red-Black search trees (\texttt{set<point>} from the C++ standard library) on totally ordered points. This design choice allows us to retrieve the minimum and maximum element in each buffer in constant time using \texttt{iterator} pointers. Furthermore we are able to traverse each buffer in sorted order in linear time which is needed when computing a subset of points to handle on a buffer overflow and underflow. We are aware that using a search tree comes with the price of a space blow-up, as each node needs a pointer for children and parent, giving a total of $32 \cdot N$ bytes extra compared to a \texttt{std::vector<point>} representation. We maintain the point buffer as two separate search trees totally ordered on the $x$-value and $y$-value respectively. This is needed as we frequently need access to the minimum $y$-value when deciding whether we should insert a point into the point buffer or insert buffer. The \textbf{catalog structure} containing information about the children of each node is also represented as a Red-Black search tree on interval-start of the children. In detail each catalog item stores information about the minimum point, minimum $y$-point, maximum $y$-point and node id for each child. In the \textbf{info file} of each node we maintain a bit on whether the node is a leaf, a virtual leaf or an internal node, whether the node currently has an overflowing or underflowing point buffer, overflowing point buffer, insert buffer, delete buffer, and whether the node is currently node degree overflowed. This allow the event loop to identify whether we should fix any broken invariants caused by events in the neighbourhood, using only 1 I/O.
 
 \section{External Memory Priority Search Tree}
-Drawing from the experiences gained while implementing the external memory buffered priority search tree of Section~\ref{sec:impl_main_data_structure} we decided to once again make use of the event loop to handle our recursion allowing for full control of loading and flushing. This choice also allowed for simple adaptation of the caching mechanism previously described.
+Drawing from the experiences gained while implementing the External Memory Buffered Priority Search Tree of Section~\ref{sec:impl_main_data_structure} we decided to once again make use of the event loop to handle our recursion allowing for full control of loading and flushing. This choice also allowed for simple adaptation of the caching mechanism previously described.
 
-The elements of the base B-tree is a simple type containing a point, a reference to a child, and a bool telling us whether the point has been deleted. The elements are stored in nodes which is just a collection of the simple point types, a reference to a query data structure, and some booleans used in loading and flushing mechanisms. The collection used for the simple point types is a Red-Black tree (\texttt{std::set}). This collection allows us to find the child responsible for a point in logarithmic time using binary search and naturally keeps the points in sorted order w.r.t the $x$-values.
+The elements of the base B-Tree is a simple type containing a point, a reference to a child, and a bool telling us whether the point has been deleted. The elements are stored in nodes which is just a collection of the simple point types, a reference to a query data structure, and some booleans used in loading and flushing mechanisms. The collection used for the simple point types is a Red-Black tree (\texttt{std::set}). This collection allows us to find the child responsible for a point in logarithmic time using binary search and naturally keeps the points in sorted order w.r.t the $x$-values.
 
 Updates and reporting are done as described in Section~\ref{sec:arge_updates} and~\ref{sec:arge_query} with no remarkably deviations.
 
 \section{Other structures}
-We also implemented wrappers around MySQL 5.7.12, boost 1.60.0 R-tree using the quadratic method, and libspatialindex 1.8.5 external R*-tree such that we could use these structures as a priority search tree. These structures are described further in Chapter~\ref{chp:other_structures}. We made sure to implement functionality to disallow duplicates in the structures on top of the basic functionality of the structures.
+We also implemented wrappers around MySQL 5.7.12, Boost 1.60.0 R-Tree using the quadratic method, and libspatialindex 1.8.5 external R*-Tree such that we could use these structures as a Priority Search Tree. These structures are described further in Chapter~\ref{chp:other_structures}. We made sure to implement functionality to disallow duplicates in the structures on top of the basic functionality of the structures.
 
 \section{Experimental framework}
 We developed an extensive framework for running experiments in order to automate the process as much as possible.
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=\textwidth]{../figures/experimental_setup3}
-	\caption{(a) An experiment is created by extending a Base class (b) The experiment is added to an experiment queue (c) When a machine becomes available the experiment runs (c) Measures on statistics and time are automatically plotted and finally the mother board beeper plays a tune to signal that an experiment has been processed}
+	\caption{(a) An experiment is created by extending a Base class (b) The experiment is added to an experiment queue (c) When a machine becomes available the experiment is run (c) Measures on statistics and time are automatically plotted and finally the motherboard beeper plays a tune to signal that an experiment has been processed.}
 	\label{fig:experimental_setup2}
 \end{figure}
 
@@ -1361,11 +1361,11 @@ We developed an extensive framework for running experiments in order to automate
 \captionsetup{width=0.45\textwidth}
 	\centering
 		\includegraphics[width=0.45\textwidth]{../figures/experimental_setup_4}
-	\caption{(a) A factory produces and instances of a PST (b) Each experiment is run in a delegated thread (c) Measures are recorded on statistics and time}
+	\caption{(a) A factory produces an instance of a Priority Search Tree (b) Each experiment is run in a delegated thread (c) Measures are recorded on statistics and time.}
 	\label{fig:missing}
 \end{wrapfigure}
 
-Figure~\ref{fig:experimental_setup2} depicts the flow of an experiment from thought to result. In order to achieve this flow we wrote a framework that would do all the hard work for us such that all we had to do for each experiment was to describe the actual experiment. As an example, to test the time it takes to insert in all the structures all we would have to do was to tell the framework to insert into the priority search tree and measure for each 10 megabytes. The framework would then automatically run the experiment on all the structures one at a time, measure time, I/O's, pagefaults, and other data structure specific statistics (overflows, splits, etc.), plot all the gathered data as a function of the input size, and finally play a small tune to signal that the experiment had finished. To make sure that no experiment leaves any ungathered memory behind we start each experiment in its own thread such that the memory would be automatically recollected upon termination of the thread and all caches are dropped between each experiment.
+Figure~\ref{fig:experimental_setup2} depicts the flow of an experiment from thought to result. In order to achieve this flow we wrote a framework that would do all the hard work for us such that all we had to do for each experiment was to describe the actual experiment. As an example, to test the time it takes to insert in all the structures all we would have to do was to tell the framework to insert into the Priority Search Tree and measure for each 10 megabytes. The framework would then automatically run the experiment on all the structures one at a time, measure time, I/O's, page faults, and other data structure specific statistics (overflows, splits, etc.), plot all the gathered data as a function of the input size, and finally play a small tune to signal that the experiment had finished. To make sure that no experiment leaves any ungathered memory behind we start each experiment in its own thread such that the memory would be automatically recollected upon termination of the thread and all caches are dropped between each experiment.
 
 The running time was measured using the \texttt{chrono} library's \texttt{high\_resolution\_clock}. It was measured in both seconds and milliseconds to make sure we had all the required data. In most cases it suffices to measure in seconds.
 
