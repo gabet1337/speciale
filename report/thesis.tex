@@ -817,7 +817,7 @@ The above bounds translate directly to the I/O model as we cannot guarantee that
 \chapter{External Memory Priority Search Tree}
 \label{chp:arge_pst}
 In this chapter we present an older result on dynamic three-sided range queries due to Arge et al.~\cite{arge_samoladas_vitter_1999}.
-The result is a weight-balanced B-tree where each node is augmented with a bootstrapped structure for storing the top $\Theta(B^2)$ points w.r.t. the $y$-value of the subtree rooted at that node. The bootstrapped structure is described in Section~\ref{sec:child_structure} and the main data structure of Arge et al.~that proves Theorem~\ref{thm:arge_structure} is described in Section~\ref{sec:arge_structure}.
+The result is a weight-balanced B-Tree where each node is augmented with a bootstrapped structure for storing the top $\Theta(B^2)$ points w.r.t. the $y$-value of the subtree rooted at that node. The bootstrapped structure is described in Section~\ref{sec:child_structure} and the main data structure of Arge et al.~that proves Theorem~\ref{thm:arge_structure} is described in Section~\ref{sec:arge_structure}.
 
 \begin{theorem}
 \label{thm:arge_structure}
@@ -865,7 +865,7 @@ This reconstruction is done in $\mathcal{O}(\ell')$ I/O's. As $\ell' \leq \lceil
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=1]{../figures/sweep-line-with-query}
-	\caption{The grey area is our query and we should report the points within. This is done by finding the fat line segments which is the segments just below the sweep line at $y$. The segments can be found using the catalog and the blocks can be scanned and points reported in $\mathcal{O}(1+\nicefrac{K}{B})$.}
+	\caption{The grey area is our query and we should report the points within. This is done by finding the fat line segments which is the segments just below the sweep line at $y$. The segments can be found using the catalog and the blocks can be scanned and relevant points can be reported in $\mathcal{O}(1+\nicefrac{K}{B})$.}
 	\label{fig:sweep-line-query}
 \end{figure}
 
@@ -877,14 +877,14 @@ We have now showed that we are able to construct a dynamic data structure with t
 
 \section{Main structure}
 \label{sec:arge_structure}
-As mentioned earlier, the main structure is a weight-balanced B-tree~\cite{arge_vitter_1996} on the normal lexicographical ordering of points with regards to $x$. The differences between a weight balanced B-tree and a regular B-tree are with the regards to how and when splitting and fusing of nodes takes place. Constraints are imposed on the \textit{weight} of a node rather than the number of children. The weight of a node $v$ is the number of elements stored in the subtree rooted at $v$. Let $a$ be the branching parameter and $k$ the leaf parameter of the tree. An internal node on level $l$ has weight between $\frac{1}{2}a^lk$ and $2a^lk$ and has at least one child. Inserting in a weight balanced B-tree is similar to a normal B-tree and when a leaf splits it might cause the weight of the parent to become too large and recursively split on a path from a leaf to the root.
+As mentioned earlier, the main structure is a weight-balanced B-Tree~\cite{arge_vitter_1996} on the normal lexicographical ordering of points with regards to $x$. The differences between a weight balanced B-Tree and a regular B-Tree are with the regards to how and when splitting and fusing of nodes takes place. Constraints are imposed on the \textit{weight} of a node rather than the number of children. The weight of a node $v$ is the number of elements stored in the subtree rooted at $v$. Let $a$ be the branching parameter and $k$ the leaf parameter of the tree. An internal node on level $l$ has weight between $\frac{1}{2}a^lk$ and $2a^lk$ and has at least one child. Inserting in a weight balanced B-Tree is similar to a normal B-Tree and when a leaf splits it might cause the weight of the parent to become too large and recursively split on a path from a leaf to the root.
 
-Each internal node of the structures stores an instance of the bootstrapped structure for answering three-sided queries on $\Theta(B^2)$ points. Arge et al. denotes this structure the \textit{query data structure} as it allows for fast queries which will be explained later. Points are stored in the query data structure according to the following rules.
+Each internal node of the structure stores an instance of the bootstrapped structure described above for answering three-sided queries on $\Theta(B^2)$ points. Arge et al. denotes this structure the \textit{query data structure} as it allows for fast queries which will be explained later. Points are stored in the query data structure according to the following rules.
 \begin{itemize}
 	\item{An internal node stores at most $B^2$ points in the associated query data structure.}
 	\item{For a child $w$ of internal node $v$ the Y-set of $w$ denoted $Y(w)$ is the points of the query data structure of $v$ that is associated with the range that is associated with $w$. See Figure~\ref{fig:arge_child_strucutre}.}
 	\item{An internal node stores at most $B$ points for each child of the node, i.e. for all children $w$ of an internal node $v$ we have that the size of $Y(w)$ is at most $B$.}
-	\item{A leaf stores at most $2k$ points in its query data structure where $k$ is the leaf parameter of the B-tree.}
+	\item{A leaf stores at most $2k$ points in its query data structure where $k$ is the leaf parameter of the B-Tree.}
 	\item{If a node or leaf $v$ stores points in its query data structure then $Y(v)$ in $parent(v)$ must contain at least $B/2$ points.}
 \end{itemize}
 
@@ -896,12 +896,12 @@ Each internal node of the structures stores an instance of the bootstrapped stru
 \end{figure}
 
 
-The base B-tree uses linear space and since each point is stored only once in a query data structure and the query data structure uses linear space, we can conclude that the structure stores $N$ points in $\mathcal{O}(N/B)$ blocks, i.e. uses linear space.
+The base B-Tree uses linear space and since each point is stored only once in a query data structure and the query data structure uses linear space, we can conclude that the structure stores $N$ points in $\mathcal{O}(N/B)$ blocks, i.e. uses linear space.
 
 \section{Updates}
 \label{sec:arge_updates}
 \subsection{Insertion}
-Inserting a point in the structure involves two steps. The first is to insert the point in the base B-tree. This is done as described in Section~\ref{sec:prelim_b_tree} and may result in nodes splitting which in turn might result in the splitting of query data structures. Let $v$ be a node in the tree that has just been split into $v'$ and $v''$ as depicted in Figure~\ref{fig:arge_split_1}. As a result $Y(v')$ and $Y(v'')$ may contain fewer than $B/2$ points. This is remedied by promoting points of $v'$ (resp. $v''$) into $Y(v')$ (resp. $Y(v'')$). Promoting a point from $v'$ to $parent(v')$ is done by finding the top-most point $p'$ stored in the query data structure of $v'$ in $\mathcal{O}(1)$ I/O's using the block structure of $Q_{v'}$. The points found are as shown in Figure~\ref{fig:arge_split_2}. Now, $p'$ is deleted from $Q_{v'}$ and inserted into $Q_{parent(v')}$. This process might cause one of the $Y$ sets of the children to become too small and we thus need to recursively promote a point. This recursion might in the worst case be on a path from $v$ down to a leaf. The process is called \textit{bubble-up}.
+Inserting a point in the structure involves two steps. The first is to insert the point in the base B-Tree. This is done as described in Section~\ref{sec:prelim_b_tree} and may result in nodes splitting which in turn might result in the splitting of query data structures. Let $v$ be a node in the tree that has just been split into $v'$ and $v''$ as depicted in Figure~\ref{fig:arge_split_1}. As a result $Y(v')$ and $Y(v'')$ may contain fewer than $B/2$ points. This is remedied by promoting points of $v'$ (resp. $v''$) into $Y(v')$ (resp. $Y(v'')$). Promoting a point from $v'$ to $parent(v')$ is done by finding the top-most point $p'$ stored in the query data structure of $v'$ in $\mathcal{O}(1)$ I/O's using the block structure of $Q_{v'}$. The points found are as shown in Figure~\ref{fig:arge_split_2}. Now, $p'$ is deleted from $Q_{v'}$ and inserted into $Q_{parent(v')}$. This process might cause one of the $Y$ sets of the children to become too small and we thus need to recursively promote a point. This recursion might in the worst case be on a path from $v$ down to a leaf. The process is called \textit{bubble-up}.
 
 \begin{figure}[h]
 	\centering
@@ -920,7 +920,7 @@ After inserting in the base tree and appropriate reorganization we need to inser
 If we reach a leaf we simply insert the point into the query data structure of the leaf.
 
 \subsection{Deletion}
-Rebalancing the tree after handling a delete is done by adopting global rebuilding instead of using fusion of nodes. To delete a point we search down in the base tree for the point and mark it as deleted without actually removing the point. The next step is to remove the point from the query data structure that it resides in. This is done similar to finding the query data structure to insert the point into. The $Y$-set is recursively found on the search path of the point and if the $Y$-set contains the points, then the point is removed. If the $Y$-set becomes too small as a result we perform a \textit{bubble-up} operation.
+Rebalancing the tree after handling a delete is done by adopting global rebuilding instead of using fusion of nodes. To delete a point we search down in the base tree for the point and mark it as deleted without actually removing the point. The next step is to remove the point from the query data structure that it resides in. This is done similar to finding the query data structure to insert the point into. The $Y$-set is recursively found on the search path of the point and if the $Y$-set contains the point, then the point is removed. If the $Y$-set becomes too small as a result we perform a \textit{bubble-up} operation.
 
 \subsection{Analysis}
 Inserting in the base tree can be done in $\mathcal{O}(\log_B N)$ I/O's by Section~\ref{sec:prelim_b_tree} and can cause as many splits on the path from a leaf to the root. Each split might cause $B/2$ \textit{bubble-up} operations. Each \textit{bubble-up} at $v$ costs $\mathcal{O}(1)$ I/O's and might recurse all the way to a leaf for a total of $\mathcal{O}(\log_B weight(v))$ where $weight(v)$ is the size of the subtree rooted at $v$. In the worst case $B/2$ of these operations are performed totalling at $\mathcal{O}(B\log_B weight(v)) = \mathcal{O}(weight(v))$ I/O's.
