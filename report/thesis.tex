@@ -1787,7 +1787,11 @@ The result of the experiment on the \textbf{search} part of the algorithms is de
 \chapter{Conclusion}
 \label{chp:conclusion}
 
-\todo{Conclude this shit!}
+We have implemented three different Priority Search Trees: the Internal Memory Priority Search Tree by McCreight~\cite{DBLP:journals/siamcomp/McCreight85}, the External Memory Priority Search Tree by Arge et al~\cite{arge_samoladas_vitter_1999}, and the External Memory Buffered Priority Search Tree by Brodal~\cite{DBLP:journals/corr/Brodal15}. We have also implemented wrappers around MySQL 5.7.12, Boost R-Tree, and libspatial external memory R*-Tree, such that the implementation match the interface of a Priority Search Tree. All the above structures have been thoroughly described and analysed in the I/O model, and for the internal memory structures we have argued about the complexity in the RAM model and concluded that the complexity can be adopted directly in the I/O model due to the obliviousness and inefficiency of access to data not available in memory.
+
+We have conducted several experiments to compare the structures on the three important operations in the Priority Search Tree interface: \texttt{insert}, \texttt{delete}, and \texttt{query}.
+
+Our results show...\todo{comment on each of the main results one for one}
 
 \section{Future work}
 The structure of Brodal described in Chapter~\ref{chp:epst} is also able to report top-$k$ queries. A top-$k$ query reports the top $k$ points in the query range. The structure does this in $\mathcal{O}(\frac{1}{\epsilon}\log_B N + K/B)$, i.e. in the same bound as three-sided range queries, but here $K$ is the minimum of $k$ and the number of points in the query range. It would have been interesting to see how the structure performs these top-$k$ queries compared to other results.
