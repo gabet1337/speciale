@@ -687,7 +687,7 @@ This means that in one end of the trade-off they can for $\lambda = B^\epsilon$ 
 \end{savequote}
 \chapter{Internal Memory Priority Search Tree}
 \label{chp:internal_pst}
-In this chapter we present an internal memory data structure for the three-sided range reporting problem. The data structure was originally presented by McCreight \cite{DBLP:journals/siamcomp/McCreight85} and is denoted a Priority Search Tree. The Priority Search Tree is basically a combination of a binary search tree on the $x$-coordinate and a heap on the $y$-coordinate. A formal definition of a Priority Search Tree for a set of $N$ points, $P$, is as follows. We assume that all points have distinct coordinates, though this assumption can be removed by using the normal lexicographical ordering of points.
+In this chapter we present a static internal memory data structure for the three-sided range reporting problem. The data structure was originally presented by McCreight \cite{DBLP:journals/siamcomp/McCreight85} and is denoted a Priority Search Tree. The Priority Search Tree can be constructed in linear time and is basically a combination of a binary search tree on the $x$-coordinate and a heap on the $y$-coordinate. A formal definition of a Priority Search Tree for a set of $N$ points, $P$, is as follows. We assume that all points have distinct coordinates, though this assumption can be removed by using the normal lexicographical ordering of points.
 
 \begin{itemize}
 	\item If $P = \varnothing$ then the Priority Search Tree is an empty leaf.
@@ -696,14 +696,14 @@ In this chapter we present an internal memory data structure for the three-sided
 			Let $x_{\text{mid}}$ be the median of the $x$-coordinates of the remaining points.
 			
 			Now let
-			$$ P_\text{below} \coloneqq \{p \in P \setminus \{p_\text{max} \} : p_x < x_\text{mid} \}\text{,}$$
-			$$ P_\text{above} \coloneqq \{p \in P \setminus \{p_\text{max} \} : p_x > x_\text{mid} \}\text{.}$$
+			$$ P_\text{below} \coloneqq \{p \in P \setminus \{p_\text{max} \} : p_x < x_\text{mid} \}$$
+			$$ P_\text{above} \coloneqq \{p \in P \setminus \{p_\text{max} \} : p_x > x_\text{mid} \}$$
 			
 			The Priority Search Tree consists of a root node $v$ where the point \\
 			$p(v) \coloneqq p_{\text{max}}$ and the value $x(v) \coloneqq x_{\text{mid}}$ are stored. Furthermore,
 			\begin{itemize}[label=$\bullet$]
-				\item the left subtree of $v$ is a priority search tree for the set $P_{\text{below}}$.
-				\item the right subtree of $v$ is a priority search tree for the set $P_{\text{above}}$.
+				\item the left subtree of $v$ is a priority search tree for the set $P_{\text{below}}$
+				\item the right subtree of $v$ is a priority search tree for the set $P_{\text{above}}$
 			\end{itemize}
 \end{itemize}
 
@@ -741,8 +741,10 @@ Whenever we store a point in an interior node, then the leaf node which correspo
 \end{figure}
 
 \section{Construction}
-Assuming we are given a list of $x$-sorted points we can construct a balanced dynamic Priority Search Tree using a bottom-up construction method similar to the bottom-up construction of a heap. In the first phase of construction we associate each point with a place-holder in the Priority Search Tree. These place-holders will become the leaf level of the data structure. Next we select pairs of place-holders and compare them to one another in terms of their $y$-coordinate. We denote the point with the highest $y$-coordinate as the winning point and the comparison between points as a tournament round. It is the winning point that will be represented by a new internal node at one level higher in the tree. Please refer to Figure~\ref{fig:dynamic_pst_construction} for an illustration of the construction of the leaf level of the data structure.
-At the next level of the tree, we perform the same comparisons as before to determine which nodes will advance to the third level. At most $\nicefrac{N}{2}$ are compared at this level.
+Assuming we are given a list of $x$-sorted points we can construct a balanced dynamic Priority Search Tree using a bottom-up construction method similar to the bottom-up construction of a heap. In the first phase of construction we associate each point with a place-holder in the Priority Search Tree. These place-holders will become the leaf level of the data structure. Next we select pairs of place-holders and compare them to one another in terms of their $y$-coordinate. We denote the point with the highest $y$-coordinate as the \textit{winning} point and the comparison between points as a \textit{tournament round}. It is the winning point that will be represented by a new internal node at one level higher in the tree. Please refer to Figure~\ref{fig:dynamic_pst_construction} for an illustration of the construction of the leaf level of the data structure.
+At the next level of the tree, we perform the same comparisons as before to determine which nodes will advance to the third level. At most $\nicefrac{N}{2}$ points are compared at this level.
+
+Every tournament round will potentially leave an empty interior node behind as the wining point is moved one level up. If this occurs we have to check if any previous tournament losers are now eligible to be represented higher in the tree. We must also remember that some interior nodes in the tree may not represent any points and will thus remain empty when the construction is complete.
 
 \begin{figure}[h]
 	\centering
@@ -751,10 +753,8 @@ At the next level of the tree, we perform the same comparisons as before to dete
 	\label{fig:dynamic_pst_construction}
 \end{figure}
 
-Every tournament round will potentially leave an empty interior node behind as the wining point is moved one level up. If this occurs we have to check if any previous tournament losers are now eligible to be represented higher in the tree. We must also remember that some interior nodes in the tree may not represent any points and will thus remain empty when the construction is complete.
-
 \subsection*{Analysis}
-First, all points is inserted as leafs in the bottom layer of the data structure. The leafs counts for $\nicefrac{N}{2}$ of the total nodes in the tree. The next $N/2^2$ nodes are created at height $h = 1$ and the tournaments are played one level down. For the $i$'th step we create $N/2^i$ nodes and we play tournaments $i$ levels down. The total steps to build the dynamic Priority Search Tree of size $N$ is thus:
+First, all points is inserted as leafs in the bottom layer of the data structure. The leafs counts for $N/2$ of the total nodes in the tree. The next $N/2^2$ nodes are created at height $h = 1$ and the tournaments are played one level down. For the $i$'th step we create $N/2^i$ nodes and we play tournaments $i$ levels down. The total steps to build the dynamic Priority Search Tree of size $N$ is thus:
 
 $$\sum\limits_{i=0}^{\log(N)} \frac{N}{2^{i+1}}i = \frac{N}{2} \left( \sum\limits_{i=0}^{\log(N)} i\left(\frac{1}{2}\right)^i \right) \leq \frac{N}{2} \left( \sum\limits_{i=0}^{\infty} i\left(\frac{1}{2}\right)^i \right)$$
 
@@ -775,7 +775,7 @@ In order to dynamically insert points into the data structure, we add a new leaf
 
 We can determine where to add the new place-holder as the dynamic Priority Search Tree is a binary search tree on the $x$-coordinate of the points. When we reach an existing leaf, we add a new internal node in place of this leaf, and make the existing leaf one of the children of this new internal node. Then we add a new leaf to the tree as the other child, and store the new point in this leaf. See Figure~\ref{fig:dynamic_pst_insert_step1}.
 
-\begin{figure}[h]
+\begin{figure}[b]
 	\centering
 		\includegraphics[width=0.7\textwidth]{../figures/internal_pst_insert_step1}
 	\caption{First step of the insertion algorithm. A new place-holder is created for the new point to be inserted and a new internal node is created as its parent. Here point $B$ is inserted. Note that the ordering of the $x$-coordinates of the points is preserved in the order of the leafs following the addition of a new place-holder.}
@@ -787,7 +787,7 @@ In order to maintain the heap order of the Priority Search Tree we now perform a
 
 \begin{figure}[H]
 	\centering
-		\includegraphics[width=0.5\textwidth]{../figures/internal_pst_insert_step2}
+		\includegraphics[width=1.0\textwidth]{../figures/internal_pst_insert_step2}
 	\caption{Second step of the insertion algorithm. The push-down operation of point B starts at the root. Here point $B$ has smaller $y$-coordinate than points $F$ and $E$. Point $B$ has larger $y$-coordinate than point $C$ and so it occupies the internal node and pushes point $C$ further down the tree.}
 	\label{fig:dynamic_pst_insert_step2}
 \end{figure}
