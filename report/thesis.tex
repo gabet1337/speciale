@@ -347,11 +347,11 @@ The external memory model (or I/O model) measures the efficiency of an algorithm
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=1\textwidth]{../figures/block_io}
-	\caption{The I/O Model. Only reads and writes between internal and external memory are charged.}
+	\caption{The I/O Model. Only reads and writes of contiguous blocks between internal and external memory are charged.}
 	\label{fig:io_model}
 \end{figure}
 
-The fundamental bounds in the external memory model is that scanning $N$ records can be done in $\mathcal{O}(\text{Scan}) = \mathcal{O}(\nicefrac{N}{B})$, sorting $N$ records in $\mathcal{O}(\text{Sort}) = \mathcal{O}(\nicefrac{N}{B} \log_{\nicefrac{M}{B}}\nicefrac{N}{B})$, and searching for a single records between $N$ records in $\mathcal{O}(\log_B N)$. We denote $\mathcal{O}(\nicefrac{N}{B})$ as being linear in terms of I/Os. Note that the $B$ factor is very important as $\nicefrac{N}{B} < \mathcal{O}(\nicefrac{N}{B} \log_{\nicefrac{M}{B}}\nicefrac{N}{B}) \ll N$.
+The fundamental bounds in the external memory model is that scanning $N$ records can be done in $\mathcal{O}(\text{Scan}) = \mathcal{O}(\nicefrac{N}{B})$, sorting $N$ records in $\mathcal{O}(\text{Sort}) = \mathcal{O}(\nicefrac{N}{B} \log_{\nicefrac{M}{B}}\nicefrac{N}{B})$, and searching for a single records between $N$ records in $\mathcal{O}(\log_B N)$. We denote $\mathcal{O}(\nicefrac{N}{B})$ as being linear in terms of I/O's. Note that the $B$ factor is very important since $\nicefrac{N}{B} < \mathcal{O}(\nicefrac{N}{B} \log_{\nicefrac{M}{B}}\nicefrac{N}{B}) \ll N$.
 
 For convenience we will assume $M > B^2$. This assumption is known as the \textit{tall-cache assumption} in the cache-oblivious model and basically states that the number of blocks \nicefrac{M}{B} is larger than the size of each block $B$~\cite{Prokop99cache-obliviousalgorithms}.
 
