@@ -403,7 +403,7 @@ This gives the following definition of a B-Tree:
 \label{def:btree}
 $\mathcal{T}$ is a B-Tree with branching parameter $b$ if
 \begin{itemize}
-	\item All leafs have the same depth
+	\item All leafs have the same depth.
 	\item All nodes store at most $b-1$ elements.
 	\item All nodes and leafs except for the root have degree between $\frac{1}{2}b$ and $b$.
 	\item The root has degree between $2$ and $b$.
@@ -503,16 +503,17 @@ We can rebalance as in a normal B-Tree using splits as depicted in Figure~\ref{f
 	\label{fig:buffer_tree_split}
 \end{figure}
 
-After we have emptied all leaf-node buffers we remove the place-holder elements one-by-one. The leaf-emptying invariant ensures that a node $v$ on the path from $u$ to the root has an empty buffer, but $v's$ sibling may not have an empty buffer. Therefore we cannot fuse in a normal B-Tree manner. Instead, we perform a buffer-emptying process on $v's$ immediate sibling before performing the actual fuse. See Figure~\ref{fig:buffer_tree_fuse}.
+After we have emptied all leaf-node buffers we remove the place-holder elements one-by-one. The leaf-emptying invariant ensures that a node $v$ on the path from $u$ to the root has an empty buffer, but $v's$ sibling may not have an empty buffer. Therefore we cannot fuse in a normal B-Tree manner. Instead, we perform a buffer-emptying process on $v's$ immediate sibling before performing the actual fuse.
+The emptying of the buffer of a sibling node $v'$ can result in buffers running full. We empty all such full non-leaf buffers before performing the actual fuse on $v$. See Figure~\ref{fig:buffer_tree_fuse}.
+
+The place-holder elements ensures we are always only in the process of handling a rebalancing caused by a single delete.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.4\textwidth]{../figures/buffer_tree_fuse}
+	\includegraphics[width=0.45\textwidth]{../figures/buffer_tree_fuse}
 	\caption{Buffer tree fusing. (a) node $v$ already have an empty buffer guaranteed by the \textit{leaf-emptying invariant}, but no such guarantee is given for the sibling node $v'$, so we have to start a buffer-emptying process on $v'$ (b) The buffer emptying of $v'$ might cause a leaf-node split which is handled before we fuse $v$ and $v'$ (c) After the buffer-emptying process of $v'$ and rebalancing has finished we perform the actual fuse of nodes. This is done as in a normal B-Tree.}
 	\label{fig:buffer_tree_fuse}
 \end{figure}
-
-The emptying of the buffer of a sibling node $v'$ can result in buffers running full. We empty all such full non-leaf buffers before performing the actual fuse on $v$. The place-holder elements ensures we are always only in the process of handling a rebalancing caused by a single delete.
 
 \subsection{Analysis}
 To empty an internal node buffer of size $X$ we need $\mathcal{O}(\nicefrac{X}{B})$ to scan the elements and $\mathcal{O}(\nicefrac{M}{B})$ to distribute them one level down. In order to empty a leaf node we have to scan the $\Theta(M)$ elements below it which gives an additional $\mathcal{O}(\nicefrac{X}{B} + \nicefrac{M}{B})$ I/O's.
