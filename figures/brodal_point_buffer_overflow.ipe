@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70107" creator="Ipe 7.2.2">
-<info created="D:20160503183544" modified="D:20160531185947"/>
+<info created="D:20160503183544" modified="D:20160531191022"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -254,12 +254,12 @@ h
 <page>
 <layer name="alpha"/>
 <view layers="alpha" active="alpha"/>
-<path layer="alpha" matrix="0.870837 0 0 0.686716 128.297 227.417" stroke="black">
+<path layer="alpha" matrix="0.870837 0 0 0.727111 128.297 192.56" stroke="black">
 404 772 m
 288 688 l
 288 688 l
 </path>
-<path matrix="0.708894 0 0 0.781139 189.022 160.772" stroke="black" fill="white">
+<path matrix="0.708894 0 0 0.827089 189.022 121.993" stroke="black" fill="white">
 232 668 m
 228 668
 228 672
@@ -282,50 +282,50 @@ h
 232 668
 232 668 c
 </path>
-<path matrix="0.664586 0 0 0.721052 225.708 134.573" stroke="black">
+<path matrix="0.664586 0 0 0.763466 225.708 94.2542" stroke="black">
 288 800 m
 288 784 l
 </path>
-<text matrix="0.664586 0 0 0.721052 237.493 198.581" transformations="translations" pos="284 712" stroke="black" type="label" width="7.482" height="7.13" depth="0" valign="baseline" size="small">$v&apos;$</text>
-<text matrix="0.664586 0 0 0.721052 213.07 131.689" transformations="translations" pos="232 792" stroke="black" type="label" width="13.027" height="6.132" depth="1.39" valign="baseline" size="small">$P_{v&apos;}$</text>
-<path matrix="0.443058 0 0 0.585854 301.12 305.282" stroke="black">
+<text matrix="0.664586 0 0 0.763466 237.587 162.782" transformations="translations" pos="284 712" stroke="black" type="label" width="7.094" height="6.134" depth="0" valign="baseline" size="footnote">$v&apos;$</text>
+<text matrix="0.664586 0 0 0.763466 213.07 91.2003" transformations="translations" pos="232 792" stroke="black" type="label" width="13.027" height="6.132" depth="1.39" valign="baseline" size="small">$P_{v&apos;}$</text>
+<path matrix="0.443058 0 0 0.620316 301.12 275.005" stroke="black">
 404 772 m
 392 708 l
 392 708 l
 </path>
-<path matrix="4.94906 0 0 0.585854 -1519.3 305.282" stroke="black" dash="dashed">
+<path matrix="4.94906 0 0 0.620316 -1519.3 275.005" stroke="black" dash="dashed">
 404 772 m
 416 708 l
 416 708 l
 </path>
-<path matrix="1.37071 0 0 0.585854 -73.6515 305.282" stroke="black" dash="dashed">
+<path matrix="1.37071 0 0 0.620316 -73.6515 275.005" stroke="black" dash="dashed">
 404 772 m
 468 708 l
 468 708 l
 </path>
-<path matrix="1.32917 0 0 0.721052 281.533 261.478" fill="darkgray">
+<path matrix="1.32917 0 0 0.763466 281.533 228.624" fill="darkgray">
 76 624 m
 76 608 l
 84 608 l
 84 624 l
 h
 </path>
-<path matrix="0.775353 0 0 0.721052 219.505 146.11" stroke="black">
+<path matrix="0.775353 0 0 0.763466 219.505 106.47" stroke="black">
 176 784 m
 176 752 l
 272 752 l
 272 784 l
 h
 </path>
-<path matrix="0.775353 0 0 0.721052 182.288 134.573" stroke="black">
+<path matrix="0.775353 0 0 0.763466 182.288 94.2542" stroke="black">
 224 784 m
 320 784 l
 </path>
-<path matrix="0.664586 0 0 0.721052 223.049 134.573" stroke="black">
+<path matrix="0.664586 0 0 0.763466 223.049 94.2542" stroke="black">
 256 800 m
 256 784 l
 </path>
-<path matrix="0.708894 0 0 0.781137 282.064 160.772" stroke="black" fill="white">
+<path matrix="0.708894 0 0 0.827086 282.064 121.993" stroke="black" fill="white">
 232 668 m
 228 668
 228 672
@@ -348,40 +348,40 @@ h
 232 668
 232 668 c
 </path>
-<path matrix="0.664586 0 0 0.721052 318.75 134.573" stroke="black">
+<path matrix="0.664586 0 0 0.763466 318.75 94.2542" stroke="black">
 288 800 m
 288 784 l
 </path>
-<text matrix="0.664586 0 0 0.721052 328.259 198.632" transformations="translations" pos="284 712" stroke="black" type="label" width="9.669" height="7.13" depth="0" valign="baseline" size="small">$v&apos;&apos;$</text>
-<text matrix="0.664586 0 0 0.721052 303.126 131.689" transformations="translations" pos="232 792" stroke="black" type="label" width="15.224" height="6.132" depth="1.39" valign="baseline" size="small">$P_{v&apos;&apos;}$</text>
-<path matrix="1.33317 0 0 0.721052 374.239 261.478" fill="darkgray">
+<text matrix="0.664586 0 0 0.763466 328.353 162.835" transformations="translations" pos="284 712" stroke="black" type="label" width="9.28" height="6.134" depth="0" valign="baseline" size="footnote">$v&apos;&apos;$</text>
+<text matrix="0.664586 0 0 0.763466 303.126 91.2003" transformations="translations" pos="232 792" stroke="black" type="label" width="15.224" height="6.132" depth="1.39" valign="baseline" size="small">$P_{v&apos;&apos;}$</text>
+<path matrix="1.33317 0 0 0.763466 374.239 228.624" fill="darkgray">
 76 624 m
 76 608 l
 84 608 l
 84 624 l
 h
 </path>
-<path matrix="0.775353 0 0 0.721052 312.547 146.11" stroke="black">
+<path matrix="0.775353 0 0 0.763466 312.547 106.47" stroke="black">
 176 784 m
 176 752 l
 272 752 l
 272 784 l
 h
 </path>
-<path matrix="0.775353 0 0 0.721052 275.33 134.573" stroke="black">
+<path matrix="0.775353 0 0 0.763466 275.33 94.2542" stroke="black">
 224 784 m
 320 784 l
 </path>
-<path matrix="0.664586 0 0 0.721052 316.091 134.573" stroke="black">
+<path matrix="0.664586 0 0 0.763466 316.091 94.2542" stroke="black">
 256 800 m
 256 784 l
 </path>
-<path matrix="0.165563 0 0 0.686716 126.206 227.266" stroke="black">
+<path matrix="0.275254 0 0 0.727111 82.6146 192.399" stroke="black">
 404 772 m
 288 688 l
 288 688 l
 </path>
-<path matrix="0.708894 0 0 0.781137 -30.2724 160.62" stroke="black" fill="white">
+<path matrix="0.708894 0 0 0.827086 -42.2724 121.833" stroke="black" fill="white">
 232 668 m
 228 668
 228 672
@@ -404,75 +404,71 @@ h
 232 668
 232 668 c
 </path>
-<path matrix="0.664586 0 0 0.721052 6.41277 134.422" stroke="black">
+<path matrix="0.664586 0 0 0.763466 -5.58723 94.0937" stroke="black">
 288 800 m
 288 784 l
 </path>
-<text matrix="0.664586 0 0 0.721052 20.1867 200.703" transformations="translations" pos="284 712" stroke="black" type="label" width="4.798" height="3.861" depth="0" valign="baseline" size="small">$v$</text>
-<text matrix="0.664586 0 0 0.721052 -12.1957 131.538" transformations="translations" pos="232 792" stroke="black" type="label" width="10.332" height="6.133" depth="0.99" valign="baseline" size="small">$P_{v}$</text>
-<path matrix="3.54446 0 0 0.585854 -1239.03 305.131" stroke="black" dash="dashed">
+<text matrix="0.664586 0 0 0.763466 8.1867 164.274" transformations="translations" pos="284 712" stroke="black" type="label" width="4.798" height="3.861" depth="0" valign="baseline" size="small">$v$</text>
+<text matrix="0.664586 0 0 0.763466 -24.1957 91.0398" transformations="translations" pos="232 792" stroke="black" type="label" width="10.332" height="6.133" depth="0.99" valign="baseline" size="small">$P_{v}$</text>
+<path matrix="3.54446 0 0 0.620316 -1239.03 274.844" stroke="black" dash="dashed">
 404 772 m
 416 708 l
 416 708 l
 </path>
-<path matrix="1.37071 0 0 0.585854 -360.833 305.131" stroke="black" dash="dashed">
+<path matrix="1.37071 0 0 0.620316 -360.833 274.844" stroke="black" dash="dashed">
 404 772 m
 468 708 l
 468 708 l
 </path>
-<path matrix="2.32605 0 0 0.721052 -21.4999 261.327" fill="red">
+<path matrix="2.32605 0 0 0.763466 -33.4999 228.464" fill="red">
 76 624 m
 76 608 l
 84 608 l
 84 624 l
 h
 </path>
-<path matrix="0.775353 0 0 0.721052 0.21018 145.959" stroke="black">
+<path matrix="0.775353 0 0 0.763466 -11.7898 106.309" stroke="black">
 176 784 m
 176 752 l
 272 752 l
 272 784 l
 h
 </path>
-<path matrix="0.775353 0 0 0.721052 -37.0067 134.422" stroke="black">
+<path matrix="0.775353 0 0 0.763466 -49.0067 94.0937" stroke="black">
 224 784 m
 320 784 l
 </path>
-<path matrix="0.664586 0 0 0.721052 3.75442 134.422" stroke="black">
+<path matrix="0.664586 0 0 0.763466 -8.24558 94.0937" stroke="black">
 256 800 m
 256 784 l
 </path>
-<path matrix="0.600695 0 0 0.708176 101.866 219.918" stroke="black" dash="dashed">
-152 760 m
-16 704 l
-16 704 l
-</path>
-<path matrix="0.764409 0 0 0.901315 128.884 78.3313" stroke="black" dash="dashed">
+<path matrix="0.764409 0 0 0.954333 128.884 34.7038" stroke="black" dash="dashed">
 460 752 m
 260 712 l
 260 712 l
 </path>
-<path matrix="1.09296 0 0 1 20.757 0" stroke="black" rarrow="normal/normal">
+<path matrix="1.09296 0 0 1.05882 20.757 -48.2353" stroke="black" rarrow="normal/normal">
 268 720 m
 248 720 l
 248 720 l
 </path>
-<path matrix="1.38461 0 0 0.501754 -26.3393 459.986" stroke="black" dash="dotted">
+<path matrix="1.38461 0 0 0.531269 -26.3393 438.809" stroke="black" dash="dotted">
 120 564 m
 40.4969 0 0 40.4969 158 578 196 564 a
 </path>
-<path matrix="1.46235 0 0 0.501754 245.515 459.986" stroke="black" dash="dotted">
-120 564 m
-40.4969 0 0 40.4969 158 578 196 564 a
-</path>
-<text matrix="0.746315 0 0 1 110.708 -8" transformations="translations" pos="188 752" stroke="black" type="label" width="5.185" height="6.918" depth="0" valign="baseline">$d$</text>
-<text matrix="0.746315 0 0 1 397.8 -8" transformations="translations" pos="188 752" stroke="black" type="label" width="22.343" height="6.919" depth="0.83" valign="baseline">$d+1$</text>
-<path matrix="0.746315 0 0 1 107.722 0" stroke="black" dash="dashed">
+<text matrix="0.746315 0 0 1.05882 110.708 -56.7059" transformations="translations" pos="188 752" stroke="black" type="label" width="5.185" height="6.918" depth="0" valign="baseline">$d$</text>
+<text matrix="0.746315 0 0 1.05882 401.8 -56.7059" transformations="translations" pos="188 752" stroke="black" type="label" width="22.343" height="6.919" depth="0.83" valign="baseline">$d+1$</text>
+<path matrix="0.746315 0 0 1.05882 107.722 -48.2353" stroke="black" dash="dashed">
 116 756 m
 156 820 l
 156 820 l
 </path>
-<path matrix="0.708897 0 0 0.781137 -11.2275 218.304" stroke="black" fill="white">
+<path matrix="0.746315 0 0 1.05882 394.814 -48.2353" stroke="black" dash="dashed">
+116 756 m
+156 820 l
+156 820 l
+</path>
+<path matrix="0.708897 0 0 0.827089 275.955 183.071" stroke="black" fill="white">
 232 668 m
 228 668
 228 672
@@ -495,40 +491,44 @@ h
 232 668
 232 668 c
 </path>
-<path matrix="2.32606 0 0 0.721052 34.7618 307.474" fill="darkgray">
+<path matrix="2.32606 0 0 0.763467 321.944 277.486" fill="darkgray">
 76 624 m
 76 608 l
 84 608 l
 84 624 l
 h
 </path>
-<text matrix="0.664586 0 0 0.721052 39.2315 258.387" transformations="translations" pos="284 712" stroke="black" type="label" width="4.626" height="3.864" depth="1.74" valign="baseline" size="small">$p$</text>
-<path matrix="0.775354 0 0 0.721052 19.255 203.643" stroke="black">
+<text matrix="0.664586 0 0 0.763467 326.413 225.511" transformations="translations" pos="284 712" stroke="black" type="label" width="4.626" height="3.864" depth="1.74" valign="baseline" size="small">$p$</text>
+<path matrix="0.775354 0 0 0.763467 306.437 167.546" stroke="black">
 176 784 m
 176 752 l
 272 752 l
 272 784 l
 h
 </path>
-<path matrix="0.775354 0 0 0.721052 -17.9615 192.106" stroke="black">
+<path matrix="0.775354 0 0 0.763467 269.22 155.331" stroke="black">
 224 784 m
 320 784 l
 </path>
-<path matrix="0.664586 0 0 0.721052 22.7993 192.106" stroke="black">
+<path matrix="0.664586 0 0 0.763467 309.981 155.331" stroke="black">
 256 800 m
 256 784 l
 </path>
-<path matrix="0.664586 0 0 0.721052 25.4577 192.106" stroke="black">
+<path matrix="0.664586 0 0 0.763467 312.64 155.331" stroke="black">
 288 800 m
 288 784 l
 </path>
-<text matrix="0.664586 0 0 0.721052 1.53228 258.443" transformations="translations" pos="284 680" stroke="black" type="label" width="10.917" height="6.126" depth="2.16" valign="baseline" size="small">$C_{p}$</text>
-<path matrix="0.746315 0 0 1 394.814 0" stroke="black" dash="dashed">
-116 756 m
-156 820 l
-156 820 l
+<text matrix="0.664586 0 0 0.763467 288.715 225.57" transformations="translations" pos="284 680" stroke="black" type="label" width="10.917" height="6.126" depth="2.16" valign="baseline" size="small">$C_{p}$</text>
+<path matrix="1.45028 0 0 0.5 -55.7133 472" stroke="black" dash="dotted">
+408 540 m
+40.1995 0 0 -40.1995 368 544 328.111 539.014 a
 </path>
-<path matrix="0.708897 0 0 0.78114 275.955 218.456" stroke="black" fill="white">
+<path matrix="0.764409 0 0 0.954333 -159.116 34.7038" stroke="black" dash="dashed">
+460 752 m
+260 712 l
+260 712 l
+</path>
+<path matrix="0.708897 0 0 0.827086 -11.2275 182.91" stroke="black" fill="white">
 232 668 m
 228 668
 228 672
@@ -551,33 +551,33 @@ h
 232 668
 232 668 c
 </path>
-<path matrix="2.32606 0 0 0.721052 321.944 307.626" fill="darkgray">
+<path matrix="2.32606 0 0 0.763467 34.7618 277.325" fill="darkgray">
 76 624 m
 76 608 l
 84 608 l
 84 624 l
 h
 </path>
-<text matrix="0.664586 0 0 0.721052 326.413 258.538" transformations="translations" pos="284 712" stroke="black" type="label" width="4.626" height="3.864" depth="1.74" valign="baseline" size="small">$p$</text>
-<path matrix="0.775354 0 0 0.721052 306.437 203.794" stroke="black">
+<text matrix="0.664586 0 0 0.763467 39.2315 225.351" transformations="translations" pos="284 712" stroke="black" type="label" width="4.626" height="3.864" depth="1.74" valign="baseline" size="small">$p$</text>
+<path matrix="0.775354 0 0 0.763467 19.255 167.387" stroke="black">
 176 784 m
 176 752 l
 272 752 l
 272 784 l
 h
 </path>
-<path matrix="0.775354 0 0 0.721052 269.22 192.257" stroke="black">
+<path matrix="0.775354 0 0 0.763467 -17.9615 155.171" stroke="black">
 224 784 m
 320 784 l
 </path>
-<path matrix="0.664586 0 0 0.721052 309.981 192.257" stroke="black">
+<path matrix="0.664586 0 0 0.763467 22.7993 155.171" stroke="black">
 256 800 m
 256 784 l
 </path>
-<path matrix="0.664586 0 0 0.721052 312.64 192.257" stroke="black">
+<path matrix="0.664586 0 0 0.763467 25.4577 155.171" stroke="black">
 288 800 m
 288 784 l
 </path>
-<text matrix="0.664586 0 0 0.721052 288.715 258.594" transformations="translations" pos="284 680" stroke="black" type="label" width="10.917" height="6.126" depth="2.16" valign="baseline" size="small">$C_{p}$</text>
+<text matrix="0.664586 0 0 0.763467 1.53228 225.41" transformations="translations" pos="284 680" stroke="black" type="label" width="10.917" height="6.126" depth="2.16" valign="baseline" size="small">$C_{p}$</text>
 </page>
 </ipe>
