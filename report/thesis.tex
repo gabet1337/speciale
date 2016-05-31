@@ -589,7 +589,7 @@ Please refer to Table~\ref{tbl:related_work_summary} for a summary of the result
 \end{table}
 
 \section{Lower bounds}	
-Solving the problem of three-sided range queries is very closely related to that of the 1D-dictionary problem. We can reduce the three-sided range reporting problem to the 1D-dictionary by restricting elements to be of the form $(x,x)$ and test membership by a query of the form $\left[x,x\right] \times \left[-\infty, \infty\right]$.
+Solving the problem of three-sided range queries is very closely related to that of the 1D-dictionary problem. The 1D-dictionary problem asks us to maintain a dynamic set of keys such that we can answer membership queries, i.e. whether or not a key is contained in the set or not. We can reduce the three-sided range reporting problem to the 1D-dictionary by restricting elements to be of the form $(x,x)$ and test membership by a query of the form $\left[x,x\right] \times \left[-\infty, \infty\right]$.
 %Any solution that solves the three-sided range query problem can solve the 1D-dictionary problem by testing membership of an element $(x,y)$ by reporting all points in the range $\left[x,x\right] \times \left[y, \infty\right]$. 
 By reduction we must have that the lower bounds of the 1D-dictionary problem also applies to that of three-sided range queries.
 
