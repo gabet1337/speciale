@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70107" creator="Ipe 7.2.2">
-<info created="D:20160327185759" modified="D:20160531110619"/>
+<info created="D:20160327185759" modified="D:20160531112322"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -399,7 +399,6 @@ h
 272 704 l
 h
 </path>
-<text matrix="1 0 0 1 180 -60" transformations="translations" pos="204 768" stroke="black" type="label" width="13.015" height="7.473" depth="2.49" valign="baseline">$\left(a\right)$</text>
 <use matrix="1 0 0 1 100 64" name="mark/disk(sx)" pos="276 724" size="normal" stroke="black"/>
 <use matrix="1 0 0 1 100 64" name="mark/disk(sx)" pos="296 712" size="normal" stroke="black"/>
 <use matrix="1 0 0 1 100 64" name="mark/disk(sx)" pos="304 724" size="normal" stroke="black"/>
@@ -408,18 +407,18 @@ h
 <use matrix="1 0 0 1 100 64" name="mark/disk(sx)" pos="284 716" size="normal" stroke="black"/>
 <use matrix="1 0 0 1 100 64" name="mark/disk(sx)" pos="292 728" size="normal" stroke="black"/>
 <text matrix="1 0 0 1 96 68" transformations="translations" pos="276 668" stroke="black" type="label" width="39.117" height="6.815" depth="1.93" valign="baseline">$K$ points</text>
-<path matrix="1 0 0 1 -192 -96" stroke="black">
+<path matrix="1 0 0 1 -192 -80" stroke="black">
 224 736 m
 336 736 l
 336 736 l
 </path>
-<path matrix="1 0 0 1 -192 -96" stroke="black">
+<path matrix="1 0 0 1 -192 -80" stroke="black">
 224 688 m
 336 688 l
 336 688 l
 </path>
-<text matrix="1 0 0 1 -201.928 -86.7569" transformations="translations" pos="240 696" stroke="black" type="label" width="19.937" height="11.761" depth="3.35" valign="baseline" size="LARGE">$Q_v$</text>
-<path matrix="1 0 0 1 -192 -96" stroke="black" dash="dashed">
+<text matrix="1 0 0 1 -201.928 -70.7569" transformations="translations" pos="240 696" stroke="black" type="label" width="19.937" height="11.761" depth="3.35" valign="baseline" size="LARGE">$Q_v$</text>
+<path matrix="1 0 0 1 -192 -80" stroke="black" dash="dashed">
 264 736 m
 264 740
 268 740
@@ -439,27 +438,27 @@ h
 264 736
 264 736 c
 </path>
-<use matrix="1 0 0 1 -192 -96" name="mark/disk(sx)" pos="276 724" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -192 -96" name="mark/disk(sx)" pos="296 712" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -192 -96" name="mark/disk(sx)" pos="304 724" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -192 -96" name="mark/disk(sx)" pos="280 700" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -192 -96" name="mark/disk(sx)" pos="304 696" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -192 -96" name="mark/disk(sx)" pos="284 716" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -192 -96" name="mark/disk(sx)" pos="292 728" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -112 32" name="mark/circle(sx)" pos="196 580" size="normal" stroke="black"/>
-<text matrix="1 0 0 1 172 52" transformations="translations" pos="68 604" stroke="black" type="label" width="40.477" height="7.473" depth="2.49" valign="baseline">$K \geq B/2$</text>
-<path matrix="1 0 0 1 -28 -96" stroke="black">
+<use matrix="1 0 0 1 -192 -80" name="mark/disk(sx)" pos="276 724" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -192 -80" name="mark/disk(sx)" pos="296 712" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -192 -80" name="mark/disk(sx)" pos="304 724" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -192 -80" name="mark/disk(sx)" pos="280 700" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -192 -80" name="mark/disk(sx)" pos="304 696" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -192 -80" name="mark/disk(sx)" pos="284 716" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -192 -80" name="mark/disk(sx)" pos="292 728" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -112 48" name="mark/circle(sx)" pos="196 580" size="normal" stroke="black"/>
+<text matrix="1 0 0 1 172 68" transformations="translations" pos="68 604" stroke="black" type="label" width="40.477" height="7.473" depth="2.49" valign="baseline">$K \geq B/2$</text>
+<path matrix="1 0 0 1 -28 -80" stroke="black">
 224 736 m
 336 736 l
 336 736 l
 </path>
-<path matrix="1 0 0 1 -28 -96" stroke="black">
+<path matrix="1 0 0 1 -28 -80" stroke="black">
 224 688 m
 336 688 l
 336 688 l
 </path>
-<text matrix="1 0 0 1 -37.928 -86.757" transformations="translations" pos="240 696" stroke="black" type="label" width="19.937" height="11.761" depth="3.35" valign="baseline" size="LARGE">$Q_v$</text>
-<path matrix="1 0 0 1 -28 -96" stroke="black" dash="dashed">
+<text matrix="1 0 0 1 -37.928 -70.757" transformations="translations" pos="240 696" stroke="black" type="label" width="19.937" height="11.761" depth="3.35" valign="baseline" size="LARGE">$Q_v$</text>
+<path matrix="1 0 0 1 -28 -80" stroke="black" dash="dashed">
 264 736 m
 264 740
 268 740
@@ -479,15 +478,15 @@ h
 264 736
 264 736 c
 </path>
-<use matrix="1 0 0 1 -28 -96" name="mark/disk(sx)" pos="276 724" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -28 -96" name="mark/disk(sx)" pos="296 712" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -28 -96" name="mark/disk(sx)" pos="304 724" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -28 -96" name="mark/disk(sx)" pos="280 700" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -28 -96" name="mark/disk(sx)" pos="304 696" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -28 -96" name="mark/disk(sx)" pos="284 716" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -28 -96" name="mark/disk(sx)" pos="292 728" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 52 32" name="mark/circle(sx)" pos="196 580" size="normal" stroke="black"/>
-<path matrix="1 0 0 1 52 116" stroke="black" dash="dotted">
+<use matrix="1 0 0 1 -28 -80" name="mark/disk(sx)" pos="276 724" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -28 -80" name="mark/disk(sx)" pos="296 712" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -28 -80" name="mark/disk(sx)" pos="304 724" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -28 -80" name="mark/disk(sx)" pos="280 700" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -28 -80" name="mark/disk(sx)" pos="304 696" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -28 -80" name="mark/disk(sx)" pos="284 716" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -28 -80" name="mark/disk(sx)" pos="292 728" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 52 48" name="mark/circle(sx)" pos="196 580" size="normal" stroke="black"/>
+<path matrix="1 0 0 1 52 132" stroke="black" dash="dotted">
 220 484 m
 220 488
 224 488
@@ -499,24 +498,24 @@ h
 220 484
 220 484 c
 </path>
-<path matrix="1 0 0 1.2 52 20" stroke="black" dash="dotted" rarrow="farc/normal">
+<path matrix="1 0 0 1.2 52 36" stroke="black" dash="dotted" rarrow="farc/normal">
 224 460 m
 224 480 l
 224 480 l
 </path>
-<text matrix="1 0 0 1 352 52" transformations="translations" pos="68 604" stroke="black" type="label" width="40.477" height="7.473" depth="2.49" valign="baseline">$K \geq B/2$</text>
-<path matrix="1 0 0 1 148 -96" stroke="black">
+<text matrix="1 0 0 1 352 68" transformations="translations" pos="68 604" stroke="black" type="label" width="40.477" height="7.473" depth="2.49" valign="baseline">$K \geq B/2$</text>
+<path matrix="1 0 0 1 148 -80" stroke="black">
 224 736 m
 336 736 l
 336 736 l
 </path>
-<path matrix="1 0 0 1 148 -96" stroke="black">
+<path matrix="1 0 0 1 148 -80" stroke="black">
 224 688 m
 336 688 l
 336 688 l
 </path>
-<text matrix="1 0 0 1 138.072 -86.757" transformations="translations" pos="240 696" stroke="black" type="label" width="19.937" height="11.761" depth="3.35" valign="baseline" size="LARGE">$Q_v$</text>
-<path matrix="1 0 0 1 148 -96" stroke="black" dash="dashed">
+<text matrix="1 0 0 1 138.072 -70.757" transformations="translations" pos="240 696" stroke="black" type="label" width="19.937" height="11.761" depth="3.35" valign="baseline" size="LARGE">$Q_v$</text>
+<path matrix="1 0 0 1 148 -80" stroke="black" dash="dashed">
 264 736 m
 264 740
 268 740
@@ -536,15 +535,15 @@ h
 264 736
 264 736 c
 </path>
-<use matrix="1 0 0 1 148 -96" name="mark/disk(sx)" pos="276 724" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 148 -96" name="mark/disk(sx)" pos="296 712" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 148 -96" name="mark/disk(sx)" pos="304 724" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 148 -96" name="mark/disk(sx)" pos="280 700" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 148 -96" name="mark/disk(sx)" pos="304 696" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 148 -96" name="mark/disk(sx)" pos="284 716" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 148 -96" name="mark/disk(sx)" pos="292 728" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 228 16.6215" name="mark/circle(sx)" pos="196 580" size="normal" stroke="black"/>
-<path matrix="1 0 0 1 200 112.622" stroke="black" dash="dotted">
+<use matrix="1 0 0 1 148 -80" name="mark/disk(sx)" pos="276 724" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 148 -80" name="mark/disk(sx)" pos="296 712" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 148 -80" name="mark/disk(sx)" pos="304 724" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 148 -80" name="mark/disk(sx)" pos="280 700" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 148 -80" name="mark/disk(sx)" pos="304 696" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 148 -80" name="mark/disk(sx)" pos="284 716" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 148 -80" name="mark/disk(sx)" pos="292 728" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 228 32.6215" name="mark/circle(sx)" pos="196 580" size="normal" stroke="black"/>
+<path matrix="1 0 0 1 200 128.622" stroke="black" dash="dotted">
 220 484 m
 220 488
 224 488
@@ -556,15 +555,15 @@ h
 220 484
 220 484 c
 </path>
-<path matrix="1 0 0 1.2 200 16.6215" stroke="black" dash="dotted" rarrow="farc/normal">
+<path matrix="1 0 0 1.2 200 32.6215" stroke="black" dash="dotted" rarrow="farc/normal">
 224 460 m
 224 480 l
 224 480 l
 </path>
-<text matrix="1 0 0 1 138 66" transformations="translations" pos="296.348 498.078" stroke="black" type="label" width="12.934" height="7.473" depth="2.49" valign="baseline">$\left(d\right)$</text>
+<text matrix="1 0 0 1 138 82" transformations="translations" pos="296.348 498.078" stroke="black" type="label" width="12.06" height="7.473" depth="2.49" valign="baseline">$\left(c\right)$</text>
 <text matrix="1 0 0 1 100 64" transformations="translations" pos="148 652" stroke="black" type="label" width="7.401" height="4.289" depth="0" valign="baseline">$w$</text>
-<text matrix="1 0 0 1 -80 0" transformations="translations" pos="160 656" stroke="black" type="label" width="40.477" height="7.473" depth="2.49" valign="baseline">$K &lt; B/2$</text>
-<text matrix="1 0 0 1 8 4" transformations="translations" pos="84 560" stroke="black" type="label" width="12.024" height="7.473" depth="2.49" valign="baseline">$\left(b\right)$</text>
-<text matrix="1 0 0 1 172 4" transformations="translations" pos="84 560" stroke="black" type="label" width="12.06" height="7.473" depth="2.49" valign="baseline">$\left(c\right)$</text>
+<text matrix="1 0 0 1 -80 16" transformations="translations" pos="160 656" stroke="black" type="label" width="40.477" height="7.473" depth="2.49" valign="baseline">$K &lt; B/2$</text>
+<text matrix="1 0 0 1 8 20" transformations="translations" pos="84 560" stroke="black" type="label" width="13.015" height="7.473" depth="2.49" valign="baseline">$\left(a\right)$</text>
+<text matrix="1 0 0 1 172 20" transformations="translations" pos="84 560" stroke="black" type="label" width="12.024" height="7.473" depth="2.49" valign="baseline">$\left(b\right)$</text>
 </page>
 </ipe>
