@@ -1857,13 +1857,13 @@ Querying is done by locating the nodes intersecting the left side of the query u
 Ramaswamy and Subramanian brings down the space usage in~\cite{Subramanian:1995:PTN:313651.313769}. This is done by building a search tree that divides the points into smaller regions of size $B \log B$ instead of $B$ giving a total of $\nicefrac{N}{B} \log B$ regions. Now a slightly modified caching scheme is used with an additional secondary level structure for each region giving a total space usage of $\mathcal{O}(\nicefrac{N}{B} \log \log B)$. Reusing this idea in a multilevel scheme brings down the data structure to a $\mathcal{O}(\nicefrac{N}{B} \log B \log^* B)$ space solution that answers queries in $\mathcal{O}(\log_B + \nicefrac{K}{B} + \mathcal{IL}^*(B))$, where $\mathcal{IL^*}(x)$ denotes the number of times $\log^*$ must be applied before the result becomes $\leq 2$.
 
 
-\chapter{Page faults with large buffer size}
+\chapter{Page faults with large buffer sizes}
 \label{app:page_faults_for_large_buffer_size}
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=1\textwidth]{../src/experiments/gerth_buffer_size_experiment_results/2016-05-03.13_51_54/pfs}
-\caption{The measured number of page faults when inserting 5Gb of data in the External Memory Buffered Priority Search Tree. We see that a buffer size of 32Mb will generate page faults}
+\caption{The measured number of page faults when inserting 5Gb of data in the External Memory Buffered Priority Search Tree. We see that a buffer size of 32Mb will generate page faults.}
 \label{fig:page_faults_gerth_buffer_size}
 \end{figure}
 
