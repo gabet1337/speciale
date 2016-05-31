@@ -519,7 +519,7 @@ The place-holder elements ensures we are always only in the process of handling 
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.45\textwidth]{../figures/buffer_tree_fuse}
+	\includegraphics[width=1\textwidth]{../figures/buffer_tree_fuse_v2}
 	\caption{Buffer tree fusing. (a) node $v$ already have an empty buffer guaranteed by the \textit{leaf-emptying invariant}, but no such guarantee is given for the sibling node $v'$, so we have to start a buffer-emptying process on $v'$ (b) The buffer emptying of $v'$ might cause a leaf-node split which is handled before we fuse $v$ and $v'$ (c) After the buffer-emptying process of $v'$ and rebalancing has finished we perform the actual fuse of nodes. This is done as in a normal B-Tree.}
 	\label{fig:buffer_tree_fuse}
 \end{figure}
