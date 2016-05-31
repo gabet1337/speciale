@@ -1414,8 +1414,8 @@ As the machines run on a 32 bit operating systems it is very important to define
 \label{chp:experimental_setup}
 Running experiments on I/O algorithms is extremely time consuming. In order to compare I/O efficient algorithms against internal memory algorithms we need input sizes that force the internal memory algorithms to store and load data to and from the disk (swapping). The input size to the algorithms can be severely minimized if run on machines with a small amount of internal memory which in turn decrease the running time severely as well.
 
-It is important to mention some considerations when it comes to choice of persistent storage media. In recent years solid state drives have grown increasingly more desirably in terms of price per gigabyte and storage size, but there is still a significant gap in price between SSD's and HDD's. Disregarding this gap in price, solid state drives clearly outperforms the hard disk in every notable aspect. Solid state drives allow random access to blocks and diminish the seek time which is considered to be the culprit of the mechanical disks due to the rotational latency.
-The rotational latency makes it very important to store data on the disk in consecutive blocks as scattering data across the disk would be detrimental to the performance as each block would have to wait for the rotational latency. As long as the mechanical disk is still as widespread as it is, these culprits of the mechanical disk have to be taken in consideration when designing I/O efficient algorithms.
+It is important to mention some considerations when it comes to choice of persistent storage media. In recent years solid state drives (SSD's) have grown increasingly more desirably in terms of price per gigabyte and storage size, but there is still a significant gap in price between electronic SSD's and mechanical HDD's. Disregarding this gap in price, solid state drives clearly outperforms the mechanical hard disk in every notable aspect. Solid state drives allow random access to blocks and diminish the seek time which is considered to be the culprit of the mechanical disks due to the rotational latency.
+The rotational latency makes it very important to store data on the disk in consecutive blocks as scattering data blocks across the disk would be detrimental to the performance as each block would have to wait for the rotational latency. As long as the mechanical disk is still as widespread as it is, these culprits of the mechanical disk have to be taken in consideration when designing I/O efficient algorithms.
 
 With these considerations in mind we acquired two very old Dell machines with the specifications outlined in Figure~\ref{fig:pc_specs}.
 
@@ -1425,23 +1425,23 @@ We used newer machines for some experiments where it made sense. An example of a
 \centering
 \begin{tabular}{ll}
 CPU & Intel(R) Celeron(R) CPU 3.06GHz \\
-CPU L1 cache & 16KiB \\
-CPU L2 cache & 256KiB \\
-RAM & 512MiB DDR 553MHz \\
+CPU L1 cache & 16Kb \\
+CPU L2 cache & 256Kb \\
+RAM & 512Mb DDR 553MHz \\
 Disk & Seagate ST3160828AS \\
-Disk capacity & 160GiB \\
+Disk capacity & 160Gb \\
 Disk number of disks & 2 \\
 Disk number of heads & 4 \\
 Disk RPM & 7200 \\
 Disk rotation time & 8.33ms \\
 Disk seek time & 8.5ms \\
-Disk buffer size & 8192KiB \\
+Disk buffer size & 8192Kb \\
 Disk sector size & 512bytes \\
 Operating system & 32 bit Ubuntu 14.04 \\
 Kernel version & 4.2.0-27-generic \\
 Compiler & gcc 4.8.4 with optimization level 2
 \end{tabular}
-\caption{Specifications of the two Dell machines used for running experiments}
+\caption{Specifications of the two Dell machines used for running experiments.}
 \label{fig:pc_specs}
 \end{figure}
 
