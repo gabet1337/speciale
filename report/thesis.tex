@@ -368,7 +368,7 @@ The term was coined by Tarjan~\cite{Tarjan85} and describes two views of amortiz
 
 Another view of amortization is that of the physicist. Instead of representing prepaid work as coins the physicist represent work as potential energy which can be released later to pay for future operations.
 
-If we perform $n$ operations, we will start with an initial data structure $D_0$. For each of the operations we let $c_i$ be the cost of operation $i$ and $D_i$ be the data structure that results from that operation on the previous data structure. We define a potential function $\Phi$ to map a data structure $D_i$ to a real number $\Phi(D_i)$. The cost of the $i$th operation becomes
+If we perform $n$ operations, we will start with an initial data structure $D_0$. For each of the operations we let $c_i$ be the cost of operation $i$ and $D_i$ be the data structure that results from that operation on the previous data structure. We define a potential function $\Phi$ to map a data structure $D_i$ to a real number $\Phi(D_i)$. The cost of the $i$'th operation becomes
 $$\hat{c}_i = c_i + \Phi(D_i) - \Phi(D_{i-1})$$
 The total amortized cost becomes
 \begin{align*}
@@ -521,28 +521,6 @@ It is showed in~\cite{ionote} that a $N$-element B-Tree with branching parameter
 
 We conclude that the total cost of a sequence of $N$ update operations on an initially empty Buffer Tree is $\mathcal{O}\left(\frac{N}{B} \log_{\nicefrac{M}{B}} \frac{N}{B}\right)$.
 
-%\section{General Sets of Points}
-%Throughout this thesis we will impose the restriction that no two points have equal $x$- or $y$-coordinate. The restriction is made in order to simplify the description and analysis of the algorithms we introduce. As it is a highly unrealistic restriction we will show that it is easy to remedy. The key observation is that we never assume coordinates to be real numbers. The only thing we assume is that points come from a totally ordered universe such we can compare points. This means we can replace the real-valued coordinates with elements from the \textit{composite-number space} where all elements are defined to be pairs of reals. The \textit{composite number} of two reals $a$ and $b$ is denoted by $(a \mid b)$. We define a total order on the composite-number space by using a lexicographic order. So, for two composite numbers $(a \mid b)$ and $(a' \mid b')$, we have:
-
-%$$ (a \mid b) < (a' \mid b') \Leftrightarrow a < a' \text{ or } (a = a' \text{ and } b < b') $$
-
-%For a given set $P$ of distinct points in the plane we replace point $p \coloneqq (p_x, p_y)$ by a new point $\hat{p} \coloneqq ((p_x \mid p_y),(p_y \mid p_x))$ that has composite numbers as coordinate values. We denote this new point set as $\hat{P}$. It follows trivially that the mapping lets points $\hat{p} \in \hat{P}$ take distinct values for the first and second coordinate. What is left is to transform a query $Q \coloneqq [x_1,x_2] \times [y,\infty]$ to the new composite space. The transformed range $\hat{Q}$ is defined as follows:
-
-%$$ \hat{Q} \coloneqq [(x_1 \mid -\infty), (x_2 \mid +\infty)] \times [(y \mid -\infty),(+\infty \mid +\infty)] $$
-
-%What remains is to prove that the points of $\hat{P}$ that is reported using query $\hat{Q}$ corresponds exactly to the points that is reported from $P$ using query $Q$.
-
-%\begin{lemma}
-%\label{lma:composite_universe_query}
-%Let $p$ be a point and $Q$ a query range. Then
-
-%$$ p \in Q \Leftrightarrow \hat{p} \in \hat{Q} $$
-%\end{lemma}
-
-%\textit{Proof.} Let $Q \coloneqq [x_1, x_2] \times [y, \infty]$ and let $p \coloneqq (p_x,p_y)$. By definition $p$ lies in $Q$ if and only if $x_1 \leq p_x \leq x_2$ and $y \leq p_y \leq \infty$. This is easily seen to hold if and only if $(x_1 \mid -\infty) \leq (p_x \mid p_y) \leq (x_2 \mid +\infty)$ and $(y \mid -\infty) \leq (p_y \mid p_x) \leq (+\infty, +\infty)$, this is, if and only if $\hat{p}$ lies in $\hat{Q}$. $\square$ \\
-
-%From Lemma~\ref{lma:composite_universe_query} is follows that our approach is correct.
-
 \begin{savequote}[0.5\textwidth]
 ``Nanos gigantum humeris insidentes.''
 \qauthor{--- Bernard of Chartres}
@@ -588,8 +566,7 @@ Please refer to Table~\ref{tbl:related_work_summary} for a summary of the result
 \end{table}
 
 \section{Lower bounds}	
-Solving the problem of three-sided range queries is very closely related to that of the 1D-dictionary problem. The 1D-dictionary problem asks us to maintain a dynamic set of keys such that we can answer membership queries, i.e. whether or not a key is contained in the set or not. We can reduce the three-sided range reporting problem to the 1D-dictionary by restricting elements to be of the form $(x,x)$ and test membership by a query of the form $\left[x,x\right] \times \left[-\infty, \infty\right]$.
-%Any solution that solves the three-sided range query problem can solve the 1D-dictionary problem by testing membership of an element $(x,y)$ by reporting all points in the range $\left[x,x\right] \times \left[y, \infty\right]$. 
+Solving the problem of three-sided range queries is very closely related to that of the 1D-dictionary problem. The 1D-dictionary problem asks us to maintain a dynamic set of keys such that we can answer membership queries, i.e. whether or not a key is contained in the set or not. We can reduce the three-sided range reporting problem to the 1D-dictionary by restricting elements to be of the form $(x,x)$ and test membership by a query of the form $\left[x,x\right] \times \left[-\infty, \infty\right]$. 
 By reduction we must have that the lower bounds of the 1D-dictionary problem also applies to that of three-sided range queries.
 
 The 1D-dictionary problem has been a popular topic in the case of internal memory. It has been proved by a simply adversary argument that a query can be forced to cost $\log_2 N$ comparisons no matter the cost of updates, and more generally it has been proved that if an insertion perform at most $\mathcal{O}(k)$ comparisons then queries can be forced to cost at least $\max\left\lbrace \log_2 N, N/2^{\Theta(k)}\right\rbrace$ comparisons~\cite{Borodin81efficientsearching}.
@@ -804,23 +781,23 @@ Let $L$ be the points stored in $\mathcal{L}$ and let $\ell = \lceil \nicefrac{\
 
 \textbf{To construct} blocks $b_{\ell+1},\dots,b_{2\ell}$ we make a vertical sweep over the points in increasing $y$-order. When the sweep line reaches a point in a block $b_i$ that together with an adjacent block, i.e. either $b_{i-1}$ or $b_{i+1}$, contains exactly $B$ points on or above the sweep line, we replace the two blocks by a single block containing the $B$ points on or above the sweep line.  The merged block is denoted $b_{i,j}$ if it contains points from the initial blocks in the range from, and including, $i$ to $j$. The two merged blocks are then excluded from the sweep and the newly created merged block is included in the continued sweep. Every merge of adjacent blocks causes the sweep line to intersect one block less resulting in at most $\ell-1$ blocks being created from the sweep.
 
-A catalog structure stores in $\mathcal{O}(1)$ disk blocks a reference to each of the $2\ell-1$ blocks. For block $b_i$ we store the minimum and maximum $x$-values for the points contained in the block. For a merged block $b_{i,j}$ we store the interval $\left[ i,j\right]$ and the minimum $y$-value of the points in the block. Note, this minimum $y$-value is also the point where the sweep line created the block $b_{i,j}$.
+A catalogue structure stores in $\mathcal{O}(1)$ disk blocks a reference to each of the $2\ell-1$ blocks. For block $b_i$ we store the minimum and maximum $x$-values for the points contained in the block. For a merged block $b_{i,j}$ we store the interval $\left[ i,j\right]$ and the minimum $y$-value of the points in the block. Note, this minimum $y$-value is also the point where the sweep line created the block $b_{i,j}$.
 
 %%%%%%%%%%%%%
 % UPDATES %%%
 %%%%%%%%%%%%%
-\textbf{Insertions and deletions} are stored in $\mathcal{I}$ and $\mathcal{D}$ respectively. When a point is inserted in $\mathcal{I}$ or $\mathcal{D}$ we make sure to remove any existing occurrence of the point in $\mathcal{I}$ and $\mathcal{D}$ such that the new update overrides any previous updates. Whenever $\mathcal{I}$ or $\mathcal{D}$ overflows, i.e. $\vert \mathcal{I} \vert > B$ or $\vert \mathcal{D} \vert > B$, the stored updates are applied to the set of points in $\mathcal{L}$. This is done by scanning $L$ in increasing $x$-order while applying insertions and deletions, i.e. for each point in $L$ we check whether we should insert a new point from $\mathcal{I}$ before it or if the point should be deleted. This process results in a new set of points $L'$ which once again is partitioned into blocks $b_1,\dots,b_{\ell'}$ and a vertical sweep similar to the previously described sweep is performed to rebuild the merged blocks and catalog structure.
+\textbf{Insertions and deletions} are stored in $\mathcal{I}$ and $\mathcal{D}$ respectively. When a point is inserted in $\mathcal{I}$ or $\mathcal{D}$ we make sure to remove any existing occurrence of the point in $\mathcal{I}$ and $\mathcal{D}$ such that the new update overrides any previous updates. Whenever $\mathcal{I}$ or $\mathcal{D}$ overflows, i.e. $\vert \mathcal{I} \vert > B$ or $\vert \mathcal{D} \vert > B$, the stored updates are applied to the set of points in $\mathcal{L}$. This is done by scanning $L$ in increasing $x$-order while applying insertions and deletions, i.e. for each point in $L$ we check whether we should insert a new point from $\mathcal{I}$ before it or if the point should be deleted. This process results in a new set of points $L'$ which once again is partitioned into blocks $b_1,\dots,b_{\ell'}$ and a vertical sweep similar to the previously described sweep is performed to rebuild the merged blocks and catalogue structure.
 This reconstruction is done in $\mathcal{O}(\ell')$ I/O's. As $\ell' \leq \lceil \nicefrac{(\vert L \vert + 1)}{B}\rceil$ it requires $\mathcal{O}(\lceil \nicefrac{\vert L \vert}{B}\rceil) = \mathcal{O}(B^\epsilon)$ I/O's to rebuild $\mathcal{L}$. If we amortize this cost over the $>B$ updates that caused the overflow the cost becomes $\mathcal{O}\left(\nicefrac{B^\epsilon}{B}\right) = \mathcal{O}\left(\nicefrac{1}{B^{1-\epsilon}}\right)$ amortized I/O's per delayed update.
 
 %%%%%%%%%%%%%
 % QUERIES %%%
 %%%%%%%%%%%%%
-\textbf{Queries} are of the form $[x_1,x_2] \times [y,\infty]$ and can be answered by scanning the catalog to find the blocks intersected by the sweep when it was at $y$. This corresponds directly to the $t$ line segments immediately below the line segment imposed by the bottom of the query range. These blocks will contain a superset of the points contained in our query.
+\textbf{Queries} are of the form $[x_1,x_2] \times [y,\infty]$ and can be answered by scanning the catalogue to find the blocks intersected by the sweep when it was at $y$. This corresponds directly to the $t$ line segments immediately below the line segment imposed by the bottom of the query range. These blocks will contain a superset of the points contained in our query.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=1]{../figures/sweep-line-with-query}
-	\caption{The grey area is our query and we should report the points within. This is done by finding the fat line segments which is the segments just below the sweep line at $y$. The segments can be found using the catalog and the blocks can be scanned and relevant points can be reported in $\mathcal{O}(1+\nicefrac{K}{B})$.}
+	\caption{The grey area is our query and we should report the points within. This is done by finding the fat line segments which is the segments just below the sweep line at $y$. The segments can be found using the catalogue and the blocks can be scanned and relevant points can be reported in $\mathcal{O}(1+\nicefrac{K}{B})$.}
 	\label{fig:sweep-line-query}
 \end{figure}
 
@@ -1322,7 +1299,7 @@ In order to reduce the number of I/O's required we make sure to store a detailed
 As both event loop and buffer over-/underflow thresholds depends on whether we are currently global rebuilding, linear constructing, reporting or handling updates, we introduce a \textbf{state switch} that is used throughout our implementation to decide which path the recursion should take.
 
 %%%%%%% General conciderations about the tree.
-The \textbf{general representation} of buffers makes use of Red-Black search trees (\texttt{set<point>} from the C++ standard library) on totally ordered points. This design choice allows us to retrieve the minimum and maximum element in each buffer in constant time using \texttt{iterator} pointers. Furthermore we are able to traverse each buffer in sorted order in linear time which is needed when computing a subset of points to handle on a buffer overflow and underflow. We are aware that using a search tree comes with the price of a space blow-up, as each node needs a pointer for children and parent, giving a total of $32 \cdot N$ bytes extra compared to a \texttt{std::vector<point>} representation. We maintain the point buffer as two separate search trees totally ordered on the $x$-value and $y$-value respectively. This is needed as we frequently need access to the minimum $y$-value when deciding whether we should insert a point into the point buffer or insert buffer. The \textbf{catalog structure} containing information about the children of each node is also represented as a Red-Black search tree on interval-start of the children. In detail each catalog item stores information about the minimum point, minimum $y$-point, maximum $y$-point and node id for each child. In the \textbf{info file} of each node we maintain a bit on whether the node is a leaf, a virtual leaf or an internal node, whether the node currently has an overflowing or underflowing point buffer, overflowing point buffer, insert buffer, delete buffer, and whether the node is currently node degree overflowed. This allow the event loop to identify whether we should fix any broken invariants caused by events in the neighbourhood, using only 1 I/O.
+The \textbf{general representation} of buffers makes use of Red-Black search trees (\texttt{set<point>} from the C++ standard library) on totally ordered points. This design choice allows us to retrieve the minimum and maximum element in each buffer in constant time using \texttt{iterator} pointers. Furthermore we are able to traverse each buffer in sorted order in linear time which is needed when computing a subset of points to handle on a buffer overflow and underflow. We are aware that using a search tree comes with the price of a space blow-up, as each node needs a pointer for children and parent, giving a total of $32 \cdot N$ bytes extra compared to a \texttt{std::vector<point>} representation. We maintain the point buffer as two separate search trees totally ordered on the $x$-value and $y$-value respectively. This is needed as we frequently need access to the minimum $y$-value when deciding whether we should insert a point into the point buffer or insert buffer. The \textbf{catalogue structure} containing information about the children of each node is also represented as a Red-Black search tree on interval-start of the children. In detail each catalogue item stores information about the minimum point, minimum $y$-point, maximum $y$-point and node id for each child. In the \textbf{info file} of each node we maintain a bit on whether the node is a leaf, a virtual leaf or an internal node, whether the node currently has an overflowing or underflowing point buffer, overflowing point buffer, insert buffer, delete buffer, and whether the node is currently node degree overflowed. This allow the event loop to identify whether we should fix any broken invariants caused by events in the neighbourhood, using only 1 I/O.
 
 \section{External Memory Priority Search Tree}
 Drawing from the experiences gained while implementing the External Memory Buffered Priority Search Tree of Section~\ref{sec:impl_main_data_structure} we decided to once again make use of the event loop to handle our recursion allowing for full control of loading and flushing. This choice also allowed for simple adaptation of the caching mechanism previously described.
@@ -1413,7 +1390,7 @@ In Subsection~\ref{subsec:tuning_gerth} we present our tuning parameters for the
 
 \subsection{External Memory Buffered Priority Search Tree}
 \label{subsec:tuning_gerth}
-The experiments on Brodals consisted of inserting 5 Gb of data, i.e. $5 \cdot 1024 \cdot 1024 \cdot 1024 / 8 = 640$ million datapoints. The coordinates of the data points was uniformly distributed among the positive integers. 
+The experiments on Brodals consisted of inserting 5 Gb of data, i.e. $5 \cdot 1024 \cdot 1024 \cdot 1024 / 8 = 640$ million data points. The coordinates of the data points was uniformly distributed among the positive integers. 
 
 \subsubsection*{Buffer size}
 
@@ -1479,7 +1456,7 @@ To support our claims of the measured running time and number of I/O's aligning 
 
 If we zoom in on the measured running time for fanouts 2, 3, 4, 5, and 6 we see minor inconsistencies from what the theory suggests. Comparing the measured running time per update in Figure~\ref{fig:gerth_fanout_experiment_time_zoomed} to the expected number of I/O's per update in Figure~\ref{fig:gerth_fanout_experiment_zoom} we see the tendencies aligns, but the order of the fanouts are inconsistent. For example we would have expected fanout 2 to perform the same as fanout 4, and surely we had expected fanout 3 to perform the best of them all. This is not the case.
 
-We believe these inconsistencies can be explained by the one parameter that is not encapsulated in the I/O model; the amount of internal work done. Theory suggest we see decreasing node degree overflows on increasing fanouts, and in turn we expect less node degree overflows to produce fewer point buffer underflows. These expectations align well with our measures on the total number of point buffer underflows depicted in Figure~\ref{fig:gerth_fanout_experiment_pbu}. But what the I/O model does not account for is the internal work needed for handling the actual point buffer underflow. In fact we regard this exact operation to be the most expensive with regard to internal work. \todo{Any way to substiante claim of internal work. Maybe run a profiler on the code.} Refer to Figure~\ref{fig:brodal_pb_underflow} for a detailed description of the underflow procedure. What we claim is that in the area of fanouts from 2-6, for the smaller of the fanouts, we are dominated by the internal work needed for handling the many point buffer underflows such that we do not benefit from the large $B / B^\epsilon$ fraction of points we pass down on each overflow.
+We believe these inconsistencies can be explained by the one parameter that is not encapsulated in the I/O model; the amount of internal work done. Theory suggest we see decreasing node degree overflows on increasing fanouts, and in turn we expect less node degree overflows to produce fewer point buffer underflows. These expectations align well with our measures on the total number of point buffer underflows depicted in Figure~\ref{fig:gerth_fanout_experiment_pbu}. But what the I/O model does not account for is the internal work needed for handling the actual point buffer underflow. In fact we regard this exact operation to be the most expensive with regard to internal work. \todo{Any way to substantiate claim of internal work. Maybe run a profiler on the code.} Refer to Figure~\ref{fig:brodal_pb_underflow} for a detailed description of the underflow procedure. What we claim is that in the area of fanouts from 2-6, for the smaller of the fanouts, we are dominated by the internal work needed for handling the many point buffer underflows such that we do not benefit from the large $B / B^\epsilon$ fraction of points we pass down on each overflow.
 
 The results would suggest that a fanout of size 5 would give the best performance.
 The results presented was, however, not generated from the machines presented in Chapter~\ref{chp:experimental_setup}. The results of these machines show that with a buffer size of 8 Mb it would be best to use a fanout size of 2. As the rest of the experiments will be run on the machines described in Chapter~\ref{chp:experimental_setup} we will use a fanout of size 2 going forward.
@@ -1527,7 +1504,7 @@ The results presented was, however, not generated from the machines presented in
 
 \begin{figure}[]
 \includegraphics[width=\textwidth]{../src/experiments/gerth_fanout_experiment_results/2016-05-06.11_52_24/time_zoomed}
-\caption{Zoomed-in plot of experimentally measured update time per operation for fanouts $B^\epsilon~\in~\{2,3,4,5,6\}$. Comparing these to the theoretical number of I/O's per update depicted in Figure~\ref{fig:gerth_fanout_experiment_zoom} we see minor divergences. This can be explained by the internal work done on point buffer undeflows.}
+\caption{Zoomed-in plot of experimentally measured update time per operation for fanouts $B^\epsilon~\in~\{2,3,4,5,6\}$. Comparing these to the theoretical number of I/O's per update depicted in Figure~\ref{fig:gerth_fanout_experiment_zoom} we see minor divergences. This can be explained by the internal work done on point buffer underflows.}
 \label{fig:gerth_fanout_experiment_time_zoomed}
 \includegraphics[width=\textwidth]{../src/experiments/gerth_fanout_experiment_results/2016-05-06.11_52_24/pbu}
 \caption{Experimentally measured number of point buffer underflows. Clearly there is a tendency to ever decreasing point buffer underflows for ever increasing fanouts.}
