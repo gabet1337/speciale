@@ -444,6 +444,18 @@ Fusing two nodes require $\mathcal{O}(1)$ I/O's but a fuse can cascade from a le
 
 A B-Tree on $N$ elements are stored in $\mathcal{O}(\nicefrac{N}{B})$ blocks and can be constructed in the sorting bound by building the tree level-by-level bottom-up.
 
+\subsection{Weight-balanced B-Tree}
+A weight balanced B-Tree and a regular B-Tree differ with regards to how and when splitting and fusing of nodes takes place. Constraints are imposed on the \textit{weight} of a node rather than the number of children. The weight of a node $v$ is the number of elements stored in the subtree rooted at $v$. Let $a$ be the branching parameter and $k$ the leaf parameter of the tree. An internal node on level $l$ has weight between $\frac{1}{2}a^lk$ and $2a^lk$ and has at least one child. Inserting in a weight balanced B-Tree is similar to a normal B-Tree and when a leaf splits it might cause the weight of the parent to become too large and recursively split on a path from a leaf to the root.
+
+The strength of the weight-balanced B-Tree is the following crucial property described in the following lemma.
+
+\begin{lemma}
+\label{lma:weight_balanced}
+After a split of a node $v_l$ on level $l$ into two nodes $v_l'$ and $v_l''$, at least $a^lk/2$ inserts have to pass through $v_l'$ (or $v_l''$) to make it split again. After a new root $r$ in a tree containing $N$ items is created, at least $3N$ inserts have to be done before $r$ splits again.
+\end{lemma}
+
+The proof, simply put, states that a node $v$ will not underflow or overflow unless $\Omega(weight(v))$ leaf elements have been inserted or deleted in the subtree of $v$ and similarly when a new root is created above the old. A proof of the lemma can be found in~\cite{arge_vitter_1996}.
+\clearpage
 \section{Buffer Tree}
 \label{sec:prelim_buffer_tree}
 The Buffer Tree of Arge~\cite{Arge:1995:BTN:645930.672850} combines the basic B-Tree described in Section~\ref{sec:prelim_b_tree} with a \textit{buffer-technique} that will be introduced shortly. The result is an external data structure supporting batched operations efficiently in terms of I/O's. The ideas introduced by Arge has proven especially useful when generalizing well-known internal-memory algorithms into efficient I/O algorithms~\cite{Arge:1995:BTN:645930.672850}. The main idea of the buffer-technique is to introduce \textit{laziness} in the update algorithms and utilizing main memory to process a large number of updates simultaneously. For example, when inserting a point we do not search all the way down the tree to find the leaf. Instead, the point is inserted into a buffer of the root. Whenever the size of a buffer exceeds a certain threshold we push elements from the buffer one level down to buffers on the next level of the tree. This process of emptying full buffers is repeated recursively down the tree.
@@ -495,7 +507,7 @@ We can rebalance as in a normal B-Tree using splits as depicted in Figure~\ref{f
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.75\textwidth]{../figures/buffer_tree_split}
+	\includegraphics[width=0.8\textwidth]{../figures/buffer_tree_split}
 	\caption{Split in a Buffer Tree. The \textit{leaf-emptying invariant} guarantees that there are empty buffers on the root to leaf path ensuring splits can be done as in a normal B-Tree.}
 	\label{fig:buffer_tree_split}
 \end{figure}
@@ -520,6 +532,7 @@ By letting the branching parameter equal $\nicefrac{M}{B}$ and the leaf paramete
 It is showed in~\cite{ionote} that a $N$-element B-Tree with branching parameter $b$ and leaf parameter $k = \Omega(B)$ has an amortized number of internal node rebalancing operations (split/fuse) needed after an update equal to $\mathcal{O}\left(\frac{1}{b \cdot k}\log_b \frac{N}{B}\right)$ I/O's. It follows directly that the total number of internal node rebalancing operations performed during $N$ updates is $\mathcal{O}\left(\frac{N}{b \cdot M/B}\log_{M/B} \frac{N}{B}\right)$ Since each operation takes $\mathcal{O}(\nicefrac{M}{B})$ I/O's to empty a non-empty buffer, the total cost of the rebalancing is also $\mathcal{O}\left(\frac{N}{B} \log_{\nicefrac{M}{B}} \frac{N}{B}\right)$.
 
 We conclude that the total cost of a sequence of $N$ update operations on an initially empty Buffer Tree is $\mathcal{O}\left(\frac{N}{B} \log_{\nicefrac{M}{B}} \frac{N}{B}\right)$.
+
 
 \begin{savequote}[0.5\textwidth]
 ``Nanos gigantum humeris insidentes.''
@@ -811,9 +824,7 @@ We have now showed that we are able to construct a dynamic data structure with t
 
 \section{Main structure}
 \label{sec:arge_structure}
-As mentioned earlier, the main structure is a weight-balanced B-Tree~\cite{arge_vitter_1996} on the normal lexicographical ordering of points with regards to $x$. The differences between a weight balanced B-Tree and a regular B-Tree are with the regards to how and when splitting and fusing of nodes takes place. Constraints are imposed on the \textit{weight} of a node rather than the number of children. The weight of a node $v$ is the number of elements stored in the subtree rooted at $v$. Let $a$ be the branching parameter and $k$ the leaf parameter of the tree. An internal node on level $l$ has weight between $\frac{1}{2}a^lk$ and $2a^lk$ and has at least one child. Inserting in a weight balanced B-Tree is similar to a normal B-Tree and when a leaf splits it might cause the weight of the parent to become too large and recursively split on a path from a leaf to the root.
-
-Each internal node of the structure stores an instance of the bootstrapped structure described above for answering three-sided queries on $\Theta(B^2)$ points. Arge et al. denotes this structure the \textit{query data structure} as it allows for fast queries which will be explained later. Points are stored in the query data structure according to the following rules.
+As mentioned earlier, the main structure is a weight-balanced B-Tree~\cite{arge_vitter_1996} on the normal lexicographical ordering of points with regards to $x$. Each internal node of the structure stores an instance of the bootstrapped structure described above for answering three-sided queries on $\Theta(B^2)$ points. Arge et al. denotes this structure the \textit{query data structure} as it allows for fast queries which will be explained later. Points are stored in the query data structure according to the following rules.
 \begin{itemize}
 	\item{An internal node stores at most $B^2$ points in the associated query data structure.}
 	\item{For a child $w$ of internal node $v$ the Y-set of $w$ denoted $Y(w)$ is the points of the query data structure of $v$ that is associated with the range that is associated with $w$. See Figure~\ref{fig:arge_child_strucutre}.}
@@ -873,14 +884,7 @@ Rebalancing the tree after handling a delete is done by adopting global rebuildi
 \subsection{Analysis}
 Inserting in the base tree can be done in $\mathcal{O}(\log_B N)$ I/O's by Section~\ref{sec:prelim_b_tree} and can cause as many splits on the path from a leaf to the root. Each split might cause $B/2$ \textit{bubble-up} operations. Each \textit{bubble-up} at $v$ costs $\mathcal{O}(1)$ I/O's and might recurse all the way to a leaf for a total of $\mathcal{O}(\log_B weight(v))$ where $weight(v)$ is the size of the subtree rooted at $v$. In the worst case $B/2$ of these operations are performed totalling at $\mathcal{O}(B\log_B weight(v)) = \mathcal{O}(weight(v))$ I/O's.
 
-To prove that this gives a cost of $\mathcal{O}(\log_B N)$ I/O's amortized we need the following Lemma from the original paper describing the weight balanced B-tree~\cite{arge_vitter_1996}.
-\begin{lemma}
-\label{lma:weight_balanced}
-After a split of a node $v_l$ on level $l$ into two nodes $v_l'$ and $v_l''$, at least $a^lk/2$ inserts have to pass through $v_l'$ (or $v_l''$) to make it split again. After a new root $r$ in a tree containing $N$ items is created, at least $3N$ inserts have to be done before $r$ splits again.
-\end{lemma}
-
 It follows from Lemma~\ref{lma:weight_balanced} that the cost of splitting a node can be amortized over the insertions and thus each of the $\mathcal{O}(\log_B N)$ splits cost $\mathcal{O}(1)$ I/O's amortized.
-A proof of Lemma~\ref{lma:weight_balanced} can be found in~\cite{arge_vitter_1996}.
 
 Deleting can be done in $\mathcal{O}(\log_B N)$ I/O's as it is just a search for the point in the base tree and query data structure.
 
