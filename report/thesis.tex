@@ -447,14 +447,14 @@ A B-Tree on $N$ elements are stored in $\mathcal{O}(\nicefrac{N}{B})$ blocks and
 \subsection{Weight-balanced B-Tree}
 A weight balanced B-Tree and a regular B-Tree differ with regards to how and when splitting and fusing of nodes takes place. Constraints are imposed on the \textit{weight} of a node rather than the number of children. The weight of a node $v$ is the number of elements stored in the subtree rooted at $v$. Let $a$ be the branching parameter and $k$ the leaf parameter of the tree. An internal node on level $l$ has weight between $\frac{1}{2}a^lk$ and $2a^lk$ and has at least one child. Inserting in a weight balanced B-Tree is similar to a normal B-Tree and when a leaf splits it might cause the weight of the parent to become too large and recursively split on a path from a leaf to the root.
 
-The strength of the weight-balanced B-Tree is the following crucial property described in the following lemma.
+The strength of the weight-balanced B-Tree is the crucial property described in the following lemma.
 
 \begin{lemma}
 \label{lma:weight_balanced}
 After a split of a node $v_l$ on level $l$ into two nodes $v_l'$ and $v_l''$, at least $a^lk/2$ inserts have to pass through $v_l'$ (or $v_l''$) to make it split again. After a new root $r$ in a tree containing $N$ items is created, at least $3N$ inserts have to be done before $r$ splits again.
 \end{lemma}
 
-The proof, simply put, states that a node $v$ will not underflow or overflow unless $\Omega(weight(v))$ leaf elements have been inserted or deleted in the subtree of $v$ and similarly when a new root is created above the old. A proof of the lemma can be found in~\cite{arge_vitter_1996}.
+The proof, simply put, states that a node $v$ will not underflow or overflow unless $\Omega(weight(v))$ leaf elements have been inserted or deleted in the subtree of $v$. A proof of the lemma can be found in~\cite{arge_vitter_1996}.
 \clearpage
 \section{Buffer Tree}
 \label{sec:prelim_buffer_tree}
