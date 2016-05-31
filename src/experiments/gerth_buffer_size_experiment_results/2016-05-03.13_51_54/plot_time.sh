@@ -19,8 +19,9 @@ set xlabel 'N (input size in Mb)'
 set ylabel 'Time (s) / N'
 #set xrange [0:0]
 #set yrange [0:0]
-plot 'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_buffer1MB' u 1:($2/$1) t '1MB' w lp ls 2, \
-'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_buffer2MB' u 1:($2/$1) t '2MB' w lp ls 3, \
-'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_buffer4MB' u 1:($2/$1) t '4MB' w lp ls 4, \
-'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_buffer8MB' u 1:($2/$1) t '8MB' w lp ls 5, \
-'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_buffer16MB' u 1:($2/$1) t '16MB' w lp ls 6
+plot 'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_buffer1MB' u 1:($2/$1) t '1Mb' w lp ls 2, \
+'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_buffer2MB' u 1:($2/$1) t '2Mb' w lp ls 3, \
+'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_buffer4MB' u 1:($2/$1) t '4Mb' w lp ls 4, \
+'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_8Mb' u 1:($2/$1) t '8Mb' w lp ls 5, \
+'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_16Mb' u 1:($2/$1) t '16Mb' w lp ls 6,\
+'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_32Mb' u 1:($2/$1) t '32Mb' w lp ls 7
