@@ -310,11 +310,11 @@ In this thesis we consider the problem of maintaining a dynamic set, $\mathcal{S
 The thesis will present several solutions to this problem, implement, and experimentally compare solutions.
 
 Some of the solutions will not be optimized for usage in external memory and they must pay a hefty price for accessing data not readily available in main memory. This thesis will show the power of the I/O efficient data structures for large data sets and demonstrate what happens when internal memory data structures have to work overtime along with the virtual memory system.
-
+\clearpage
 \section{Outline of thesis}
 This thesis is structured as follows:
 
-In Chapter~\ref{chp:iomodel} we investigate a model of computation that encapsulates performance of the I/O bottleneck.
+In Chapter~\ref{chp:iomodel} we investigate the I/O model -- a model of computation that encapsulates performance of the I/O bottleneck.
 
 In Chapter~\ref{chp:prelims} we give a preliminary overview of some of the techniques used in developing external memory efficient data structures.
 
@@ -327,10 +327,9 @@ Chapter~\ref{chp:arge_pst} presents a result by Arge et al~\cite{arge_samoladas_
 
 The main focus of this thesis, the External Memory Buffered Priority Search Tree of Brodal~\cite{DBLP:journals/corr/Brodal15} is presented in Chapter~\ref{chp:epst}.
 
-Leading up to our experimental Chapter~\ref{chp:experimental_results} we present the other structures included in our experiments in Chapter~\ref{chp:other_structures} and our experimental setup in Chapter~\ref{chp:experimental_setup}.
+Leading up to our presentation of our experimental results in Chapter~\ref{chp:experimental_results} we present other structures included in our experiments in Chapter~\ref{chp:other_structures}, considerations throughout our implementation in Chapter~\ref{chp:implementation}, and our experimental setup in Chapter~\ref{chp:experimental_setup}.
 
-\todo{add more sections!}
-
+We conclude the thesis in Chapter~\ref{chp:conclusion} and present possible future work that could be very interesting to see.
 
 
 \begin{savequote}[0.5\textwidth]
