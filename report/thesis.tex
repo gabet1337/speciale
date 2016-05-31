@@ -106,17 +106,15 @@
 \pagenumbering{roman}
 \addcontentsline{toc}{chapter}{Abstract}
 
-The world is becoming increasingly more data driven and almost everything in our daily lives generate data. The data sets generated are typically larger than what we can store in a normal computers main memory. We therefore need clever techniques to handle and analyse the large data sets in order to make sense of it all. Much of the data that is gathered is spatial in nature, i.e. contains e.g. GPS coordinates. Analysing coordinates require us to solve complicated problems within the field of computational geometry. One of such problems is the problem of three-sided range reporting. In this problem we are asked to maintain a dynamic set of points, $\mathcal{S}$, of $N$ points in $\mathbb{R}^2$. The set can be updated by inserting or deleting points. Any solution to the problem must be able to answer three-sided range queries, i.e. given a range of the type $\left[x_1,x_2\right]\times \left[y,\infty\right]$ we report points in $\mathcal{S} \cap \left[x_1,x_2\right]\times \left[y,\infty\right]$.
+The world is becoming increasingly more data driven and almost anything in our daily lives generate data. The data sets generated are typically larger than what we can store in a normal computers main memory. We therefore need clever techniques to handle and analyse the large data sets in order to make sense of it all. Much of the data that is gathered is spatial in nature, i.e. contains e.g. GPS coordinates. Analysing coordinates require us to solve complicated problems within the field of computational geometry. One of such problems is the problem of three-sided range reporting. In this problem we are asked to maintain a dynamic set of points, $\mathcal{S}$, of $N$ points in $\mathbb{R}^2$. The set can be updated by inserting or deleting points. Any solution to the problem must be able to answer three-sided range queries, i.e. given a range of the type $\left[x_1,x_2\right]\times \left[y,\infty\right]$ we report points in $\mathcal{S} \cap \left[x_1,x_2\right]\times \left[y,\infty\right]$.
 
-This thesis presents, implement, and experiments with several solutions to the problem of three-sided range reporting. The main focus of the thesis will be to show the power of data structures optimized for handling huge data sets by minimising the number of disk accesses.
+This thesis presents, implements, and experiments with several solutions to the problem of three-sided range reporting. The main focus of the thesis will be to show the power of data structures optimized for handling huge data sets by minimising the number of disk accesses.
 
-We have implemented two external memory data structures that solves this problem. The first by Arge et al~\cite{arge_samoladas_vitter_1999} has an $\mathcal{O}(\log_B N)$ I/O update complexity and an $\mathcal{O}(\log_B N + K/B)$ I/O reporting complexity. Here $B$ is a main memory buffer, $N$ the input size, and $K$ is the size of the output. The second by Brodal~\cite{DBLP:journals/corr/Brodal15} improves the update complexity by a significant $B^{1-\epsilon}$ factor while keeping the same asymptotic reporting complexity for $\epsilon$ being a constant between $0$ and $\nicefrac{1}{2}$.
+We have implemented two external memory data structures that solves this problem. The first is by Arge et al~\cite{arge_samoladas_vitter_1999}. The second by Brodal~\cite{DBLP:journals/corr/Brodal15} improves on the result of Arge by adding buffering.
 
 Besides comparing these two structures against each other we also compare them against our own implementation of the Priority Search Tree of McCreight~\cite{DBLP:journals/siamcomp/McCreight85}, MySQL, libspatialindex R*Tree, and Boost R-Tree.
 
 Our results show that \todo{\dots}
-
-\todo{maybe mention the I/O model}
 
 \chapter*{Resum\'e}
 \addcontentsline{toc}{chapter}{Resum\'e}
