@@ -112,7 +112,7 @@ This thesis presents, implement, and experiments with several solutions to the p
 
 We have implemented two external memory data structures that solves this problem. The first by Arge et al.~\cite{arge_samoladas_vitter_1999} has an $\mathcal{O}(\log_B N)$ I/O update complexity and an $\mathcal{O}(\log_B N + K/B)$ I/O reporting complexity. Here $B$ is a main memory buffer, $N$ the input size, and $K$ is the size of the output. The second by Brodal~\cite{DBLP:journals/corr/Brodal15} improves the update complexity by a significant $B^{1-\epsilon}$ factor while keeping the same asymptotic reporting complexity for $\epsilon$ being a constant between $0$ and $\nicefrac{1}{2}$.
 
-Besides comparing these two structures against each other we also compare them against our own implementation of the priority search tree of McCreight~\cite{DBLP:journals/siamcomp/McCreight85}, MySQL, libspatialindex R*Tree, and Boost R-Tree.
+Besides comparing these two structures against each other we also compare them against our own implementation of the Priority Search Tree of McCreight~\cite{DBLP:journals/siamcomp/McCreight85}, MySQL, libspatialindex R*Tree, and Boost R-Tree.
 
 Our results show that \todo{\dots}
 
@@ -323,11 +323,11 @@ In Chapter~\ref{chp:prelims} we give a preliminary overview of some of the techn
 Much work has been done on the three sided range queries and more general range queries. Some of the main ideas leading up to the main focus of this thesis is presented in Chapter~\ref{chp:related_work}.
 
 
-Chapter~\ref{chp:internal_pst} gives a detailed description and analysis of the priority search tree for internal memory by McCreight~\cite{DBLP:journals/siamcomp/McCreight85}.
+Chapter~\ref{chp:internal_pst} gives a detailed description and analysis of the Priority Search Tree for internal memory by McCreight~\cite{DBLP:journals/siamcomp/McCreight85}.
 
 Chapter~\ref{chp:arge_pst} presents a result by Arge et al~\cite{arge_samoladas_vitter_1999} with optimal query bounds.
 
-The main focus of this thesis, the external memory buffered priority search tree of Brodal~\cite{DBLP:journals/corr/Brodal15} is presented in Chapter~\ref{chp:epst}.
+The main focus of this thesis, the External Memory Buffered Priority Search Tree of Brodal~\cite{DBLP:journals/corr/Brodal15} is presented in Chapter~\ref{chp:epst}.
 
 Leading up to our experimental Chapter~\ref{chp:experimental_results} we present the other structures included in our experiments in Chapter~\ref{chp:other_structures} and our experimental setup in Chapter~\ref{chp:experimental_setup}.
 
@@ -552,9 +552,9 @@ We conclude that the total cost of a sequence of $N$ update operations on an ini
 \end{savequote}
 \chapter{Related work}
 \label{chp:related_work}
-McCreight introduced the priority search tree for internal memory in~\cite{DBLP:journals/siamcomp/McCreight85}. The priority search tree is basically a combination of a binary search tree on the $x$-coordinate and a heap on the $y$-coordinate where the root of every subtree stores the maximum $y$-value in that subtree and points are distributed according to the median $x$-value. This allows updates to be done in $\mathcal{O}(\log N)$ time and three-sided range queries to be done in $\mathcal{O}(\log N + K)$ time, where $K$ is the number of points being reported. The internal priority search tree is explained in greater detail in Chapter~\ref{chp:internal_pst}.
+McCreight introduced the Priority Search Tree for internal memory in~\cite{DBLP:journals/siamcomp/McCreight85}. The Priority Search Tree is basically a combination of a binary search tree on the $x$-coordinate and a heap on the $y$-coordinate where the root of every subtree stores the maximum $y$-value in that subtree and points are distributed according to the median $x$-value. This allows updates to be done in $\mathcal{O}(\log N)$ time and three-sided range queries to be done in $\mathcal{O}(\log N + K)$ time, where $K$ is the number of points being reported. The Internal Memory Priority Search Tree is explained in greater detail in Chapter~\ref{chp:internal_pst}.
 
-The study of adapting the priority search tree to external memory was initiated by Icking et al.~\cite{Icking1988}. They achieve a static external priority search tree that uses $\mathcal{O}(\nicefrac{N}{B})$ space and answers three-sided range queries in $\mathcal{O}(\log_B N + \nicefrac{K}{B})$ I/O's. The data structure uses a blocked B-tree with pointers to data buckets full of points. The idea is depicted in Figure~\ref{fig:icking_external_pst}. In order to make the data structure dynamic the underlying B-tree is replaced with a Red-Black tree. This change of underlying search tree results in a solution that answer queries in $\mathcal{O}(\log_2 N + \nicefrac{K}{B})$ I/O's and handle updates in $\mathcal{O}(B \log_2 N)$ I/O's.
+The study of adapting the Priority Search Tree to external memory was initiated by Icking et al.~\cite{Icking1988}. They achieve a static external Priority Search Tree that uses $\mathcal{O}(\nicefrac{N}{B})$ space and answers three-sided range queries in $\mathcal{O}(\log_B N + \nicefrac{K}{B})$ I/O's. The data structure uses a blocked B-tree with pointers to data buckets full of points. The idea is depicted in Figure~\ref{fig:icking_external_pst}. In order to make the data structure dynamic the underlying B-tree is replaced with a Red-Black tree. This change of underlying search tree results in a solution that answer queries in $\mathcal{O}(\log_2 N + \nicefrac{K}{B})$ I/O's and handle updates in $\mathcal{O}(B \log_2 N)$ I/O's.
 
 \begin{figure}[h]
 	\centering
@@ -617,7 +617,7 @@ Ramaswamy and Subramanian continues their work and brings down the space usage i
 
 Arge et al. presented the first linear space dynamic data structure with optimal query bounds and suboptimal update bounds in~\cite{arge_samoladas_vitter_1999}. The data structure supports queries using $\mathcal{O}(\log_B N + \nicefrac{K}{B})$ I/O's and updates using $\mathcal{O}(\log_B N)$ I/O's. Please refer to Chapter~\ref{chp:arge_pst} for a detailed description of the solution.
 
-Brodal~\cite{DBLP:journals/corr/Brodal15} introduced an amortized solution that improves the update bound of~\cite{arge_samoladas_vitter_1999} by a factor $\epsilon B^{1-\epsilon}$ by adding $\epsilon^{-1}$ to the query bound by adopting ideas of the buffer trees of Arge~\cite{Arge:1995:BTN:645930.672850} to the external memory priority search tree of Arge~\cite{arge_samoladas_vitter_1999}. The solution is presented in detail in Chapter~\ref{chp:epst}.
+Brodal~\cite{DBLP:journals/corr/Brodal15} introduced an amortized solution that improves the update bound of~\cite{arge_samoladas_vitter_1999} by a factor $\epsilon B^{1-\epsilon}$ by adding $\epsilon^{-1}$ to the query bound by adopting ideas of the buffer trees of Arge~\cite{Arge:1995:BTN:645930.672850} to the External Memory Priority Search Tree of Arge~\cite{arge_samoladas_vitter_1999}. The solution is presented in detail in Chapter~\ref{chp:epst}.
 
 Please refer to Table~\ref{tbl:related_work_summary} for a summary of the results.
 
@@ -702,8 +702,8 @@ In this chapter we present a static internal memory data structure for the three
 			The Priority Search Tree consists of a root node $v$ where the point \\
 			$p(v) \coloneqq p_{\text{max}}$ and the value $x(v) \coloneqq x_{\text{mid}}$ are stored. Furthermore,
 			\begin{itemize}[label=$\bullet$]
-				\item the left subtree of $v$ is a priority search tree for the set $P_{\text{below}}$
-				\item the right subtree of $v$ is a priority search tree for the set $P_{\text{above}}$
+				\item the left subtree of $v$ is a Priority Search Tree for the set $P_{\text{below}}$
+				\item the right subtree of $v$ is a Priority Search Tree for the set $P_{\text{above}}$
 			\end{itemize}
 \end{itemize}
 
@@ -1442,11 +1442,11 @@ Compiler & gcc 4.8.4 with optimization level 2
 Many experiments were conducted to evaluate the performance of the structures against each other. In this chapter we present and discuss the most interesting results. Some of the experiments are limited to only run for a fixed amount of time. This was a necessary restriction as the internal memory structures are severely limited when data input is greater than the available main memory. This will be very apparent in many of the presented results.
 
 \section{Parameter tuning}
-Both the original and buffered external memory priority search tree by Arge et al.~(Chapter~\ref{chp:arge_pst}) and Brodal (Chapter~\ref{chp:epst}) respectively are parametrised with fanout and buffer size. These parameters are of a very machine dependent nature as larger main memory allows for larger buffer sizes. It is our goal to utilize as much main memory as available in the machine running the data structure. We decided to focus the parameter tuning sorely on the \texttt{insert} operation, since this would allow us to construct data structures with a large amount of data, which again would give rise to interesting experiments for the remaining operations. Put in other words; it is of no interest to achieve a data structure that queries \textit{really} fast if we are unable to construct it with a decent amount of data within a decent amount of time.
+Both the original and buffered external memory Priority Search Tree by Arge et al.~(Chapter~\ref{chp:arge_pst}) and Brodal (Chapter~\ref{chp:epst}) respectively are parametrised with fanout and buffer size. These parameters are of a very machine dependent nature as larger main memory allows for larger buffer sizes. It is our goal to utilize as much main memory as available in the machine running the data structure. We decided to focus the parameter tuning sorely on the \texttt{insert} operation, since this would allow us to construct data structures with a large amount of data, which again would give rise to interesting experiments for the remaining operations. Put in other words; it is of no interest to achieve a data structure that queries \textit{really} fast if we are unable to construct it with a decent amount of data within a decent amount of time.
 
 In Subsection~\ref{subsec:tuning_gerth} we present our tuning parameters for the structure by Brodal, and in Subsection~\ref{subsec:tuning_arge} we present our findings for the structure by Arge et al.
 
-\subsection{External memory buffered priority search tree}
+\subsection{External Memory Buffered Priority Search Tree}
 \label{subsec:tuning_gerth}
 The experiments on Brodals consisted of inserting 5 Gb of data, i.e. $5 \cdot 1024 \cdot 1024 \cdot 1024 / 8 = 640$ million datapoints. The coordinates of the data points was uniformly distributed among the positive integers. 
 
@@ -1566,7 +1566,7 @@ We conclude from our experiments with different fanouts and buffer sizes that in
 
 It is also worth noting that since the experimental results are very much in line with the theoretical results it can be concluded that the data structure is I/O bound.
 
-\subsection{External memory priority search tree}
+\subsection{External Memory Priority Search Tree}
 \label{subsec:tuning_arge}
 
 The experiments on Arges consisted of inserting 50 Mb of data, i.e. $5 \cdot 50 \cdot 1024 \cdot 1024 / 8 = 6.25$ million datapoints. The coordinates of the data points was uniformly distributed among the positive integers. 
@@ -1618,7 +1618,7 @@ Figure~\ref{fig:actual_insert_time} shows the actual running time of inserting a
 The figure is cropped at 3500Mb but it goes all the way to 10000Mb. It was however only MySQL that was able to insert this much data in 24 hours.
 The results are very much in line with our expectations with some exceptions. We see significant increases in running time whenever the internal structures run out of memory which is after just a few hundred Mb's of insertions. The internal R-tree from the Boost library was the most efficient of the internal data structures. We suspect this is due to an efficient memory usage allowing the structure to run for longer while still fitting entirely in main memory.
 
-The results of MySQL and the external memory buffered priority search tree by Brodal align very well with the theoretical bounds, but this is clearly not the case for the structure of Arge et al. 
+The results of MySQL and the External Memory Buffered Priority Search tree by Brodal align very well with the theoretical bounds, but this is clearly not the case for the structure of Arge et al. 
 
 We suspect the bad performance of Arge et al is mainly due to the following reason. A single insert requires $\mathcal{O}(\log_B N)$ I/O's. Each data point is 8 bytes, 4 bytes of each coordinate. This means that in order to insert 50Mb data or equivalently 6553600 points in an initially empty structure with a buffer size of $4Kb$ we need roughly $$\sum\limits_{i=0}^{6553600} \log_{4096}(i) \approx 11.5 \cdot 10^6~\text{I/O's}$$
 If we compare this against the structure of Brodal with the same buffer size and a fanout of size 2, i.e. $\epsilon = \log(2)/\log(4096) = 0.083..$, we get that Brodal's requires roughly:
@@ -1652,7 +1652,7 @@ To collaborate these findings we conducted a single experiment measuring the I/O
 \begin{minipage}{0.48\columnwidth}
   \centering
   \includegraphics[width=\linewidth]{../src/experiments/insert_experiment_results/2016-05-27.12_06_22/time_and_pfs}%
-  \caption{Time and page faults per insert divided by $\log_2(N)$ for the internal priority search tree of McCreight.}
+  \caption{Time and page faults per insert divided by $\log_2(N)$ for the Internal Memory Priority Search Tree of McCreight.}
   \label{fig:time_divided_with_asymptotic_internal}
 \end{minipage}%
 \hfill
@@ -1686,7 +1686,7 @@ In Figure~\ref{fig:time_divided_with_asymptotic_brodal} we see that the time per
 
 In Figure~\ref{fig:time_divided_with_asymptotic_arge} we see that the time per insert and number of I/O's per insert follows the theoretical bound very well up to a point. We investigated this point further and saw that this was the exact moment when the structure went from 2 to 3 layers. Adding another layer significantly increased the amount of I/O's. In terms of I/O's we see that the curve flattens once again which shows that the number of I/O's once again become a constant factor of the theoretical bounds. The same cannot be said for the actual running time which does not follow the same trend. We would have liked to see that it would flatten just as the number of I/O's but this is not the case which suggest that the structure is still heavily CPU bound at this point.
 
-Figure~\ref{fig:time_divided_with_asymptotic_internal} shows that the main memory priority search tree of McCreight performs exactly as expected as long as the structure is contained in main memory. At the exact moment the structure starts to swap out main memory we see a significant increase in running time just as expected.
+Figure~\ref{fig:time_divided_with_asymptotic_internal} shows that the Internal Memory Priority Search Tree of McCreight performs exactly as expected as long as the structure is contained in main memory. At the exact moment the structure starts to swap out main memory we see a significant increase in running time just as expected.
 
 It is almost the same picture for the Boost R-Tree in Figure~\ref{fig:time_divided_with_asymptotic_boost}. The insertion time in an R-Tree heavily depends on heuristics which explains the decreasing graph and far from worst case behaviour. Once again we see the same behaviour when we run out of main memory -- the running time suffers tremendously.
 
@@ -1793,7 +1793,11 @@ The result of the experiment on the \textbf{search} part of the algorithms is de
 \chapter{Conclusion}
 \label{chp:conclusion}
 
-\todo{Conclude this shit!}
+We have implemented three different Priority Search Trees: the Internal Memory Priority Search Tree by McCreight~\cite{DBLP:journals/siamcomp/McCreight85}, the External Memory Priority Search Tree by Arge et al~\cite{arge_samoladas_vitter_1999}, and the External Memory Buffered Priority Search Tree by Brodal~\cite{DBLP:journals/corr/Brodal15}. We have also implemented wrappers around MySQL 5.7.12, Boost R-Tree, and libspatial external memory R*-Tree, such that the implementation match the interface of a Priority Search Tree. All the above structures have been thoroughly described and analysed in the I/O model, and for the internal memory structures we have argued about the complexity in the RAM model and concluded that the complexity can be adopted directly in the I/O model due to the obliviousness and inefficiency of access to data not available in memory.
+
+We have conducted several experiments to compare the structures on the three important operations in the Priority Search Tree interface: \texttt{insert}, \texttt{delete}, and \texttt{query}.
+
+Our results show...\todo{comment on each of the main results one for one}
 
 \section{Future work}
 The structure of Brodal described in Chapter~\ref{chp:epst} is also able to report top-$k$ queries. A top-$k$ query reports the top $k$ points in the query range. The structure does this in $\mathcal{O}(\frac{1}{\epsilon}\log_B N + K/B)$, i.e. in the same bound as three-sided range queries, but here $K$ is the minimum of $k$ and the number of points in the query range. It would have been interesting to see how the structure performs these top-$k$ queries compared to other results.
