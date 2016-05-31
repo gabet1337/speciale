@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70107" creator="Ipe 7.2.2">
-<info created="D:20160503183544" modified="D:20160531155130"/>
+<info created="D:20160503183544" modified="D:20160531155847"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -349,11 +349,8 @@ h
 288 800 m
 288 784 l
 </path>
-<text matrix="1 0 0 1 -177.816 -176.033" transformations="translations" pos="300 788" stroke="black" type="label" width="16.195" height="6.808" depth="2.49" valign="baseline">$D_{c_{1}}$</text>
 <text matrix="1 0 0 1 -148 -84" transformations="translations" pos="284 712" stroke="black" type="label" width="8.781" height="4.294" depth="1.49" valign="baseline">$c_1$</text>
-<text matrix="1 0 0 1 -172 -176" transformations="translations" pos="268 788" stroke="black" type="label" width="12.326" height="6.808" depth="2.49" valign="baseline">$I_{c_{1}}$</text>
 <text matrix="1 0 0 1 -180 -180" transformations="translations" pos="232 792" stroke="black" type="label" width="14.343" height="6.808" depth="2.49" valign="baseline">$P_{c_{1}}$</text>
-<text matrix="1 0 0 1 -204 -84" transformations="translations" pos="284 680" stroke="black" type="label" width="15.067" height="6.808" depth="2.49" valign="baseline">$C_{c_{1}}$</text>
 <path matrix="1.06667 0 0 1.08333 -87.2 -139.667" stroke="black" fill="white">
 232 668 m
 228 668
@@ -381,10 +378,7 @@ h
 288 800 m
 288 784 l
 </path>
-<text matrix="1 0 0 1 -41.674 -176.043" transformations="translations" pos="300 788" stroke="black" type="label" width="16.195" height="6.808" depth="2.49" valign="baseline">$D_{c_{2}}$</text>
-<text matrix="1 0 0 1 -36 -176" transformations="translations" pos="268 788" stroke="black" type="label" width="12.326" height="6.808" depth="2.49" valign="baseline">$I_{c_{2}}$</text>
 <text matrix="1 0 0 1 -44 -180" transformations="translations" pos="232 792" stroke="black" type="label" width="14.343" height="6.808" depth="2.49" valign="baseline">$P_{c_{2}}$</text>
-<text matrix="1 0 0 1 -68 -84" transformations="translations" pos="284 680" stroke="black" type="label" width="15.067" height="6.808" depth="2.49" valign="baseline">$C_{c_{2}}$</text>
 <path matrix="1.06667 0 0 1.08333 48.8 -139.667" stroke="black" fill="white">
 232 668 m
 228 668
@@ -412,10 +406,7 @@ h
 288 800 m
 288 784 l
 </path>
-<text matrix="1 0 0 1 94.0388 -176.076" transformations="translations" pos="300 788" stroke="black" type="label" width="16.195" height="6.808" depth="2.49" valign="baseline">$D_{c_{3}}$</text>
-<text matrix="1 0 0 1 100 -176" transformations="translations" pos="268 788" stroke="black" type="label" width="12.326" height="6.808" depth="2.49" valign="baseline">$I_{c_3}$</text>
 <text matrix="1 0 0 1 92 -180" transformations="translations" pos="232 792" stroke="black" type="label" width="14.343" height="6.808" depth="2.49" valign="baseline">$P_{c_{3}}$</text>
-<text matrix="1 0 0 1 68 -84" transformations="translations" pos="284 680" stroke="black" type="label" width="15.067" height="6.808" depth="2.49" valign="baseline">$C_{c_{3}}$</text>
 <path matrix="1.06667 0 0 1.08333 184.8 -139.667" stroke="black" fill="white">
 232 668 m
 228 668
@@ -443,10 +434,7 @@ h
 288 800 m
 288 784 l
 </path>
-<text matrix="1 0 0 1 230.326 -176.086" transformations="translations" pos="300 788" stroke="black" type="label" width="16.195" height="6.808" depth="2.49" valign="baseline">$D_{c_4}$</text>
-<text matrix="1 0 0 1 236 -176" transformations="translations" pos="268 788" stroke="black" type="label" width="12.326" height="6.808" depth="2.49" valign="baseline">$I_{c_4}$</text>
 <text matrix="1 0 0 1 228 -180" transformations="translations" pos="232 792" stroke="black" type="label" width="14.343" height="6.808" depth="2.49" valign="baseline">$P_{c_4}$</text>
-<text matrix="1 0 0 1 204 -84" transformations="translations" pos="284 680" stroke="black" type="label" width="15.067" height="6.808" depth="2.49" valign="baseline">$C_{c_4}$</text>
 <text matrix="1 0 0 1 -12 -84" transformations="translations" pos="284 712" stroke="black" type="label" width="8.781" height="4.294" depth="1.49" valign="baseline">$c_2$</text>
 <text matrix="1 0 0 1 124 -84" transformations="translations" pos="284 712" stroke="black" type="label" width="8.781" height="4.294" depth="1.49" valign="baseline">$c_3$</text>
 <text matrix="1 0 0 1 260 -84" transformations="translations" pos="284 712" stroke="black" type="label" width="8.781" height="4.294" depth="1.49" valign="baseline">$c_4$</text>
@@ -720,9 +708,6 @@ h
 288 800 m
 288 784 l
 </path>
-<text matrix="1 0 0 1 144 -12" transformations="translations" pos="300 788" stroke="black" type="label" width="12.853" height="6.808" depth="2.85" valign="baseline">$D_p$</text>
-<text matrix="1 0 0 1 150.757 -11.7928" transformations="translations" pos="268 788" stroke="black" type="label" width="8.984" height="6.808" depth="2.85" valign="baseline">$I_{p}$</text>
-<text matrix="1 0 0 1 140 -16" transformations="translations" pos="232 792" stroke="black" type="label" width="11.001" height="6.808" depth="2.85" valign="baseline">$P_{p}$</text>
 <text matrix="1 0 0 1 116 80" transformations="translations" pos="284 680" stroke="black" type="label" width="11.726" height="6.808" depth="2.85" valign="baseline">$C_{p}$</text>
 <path matrix="1.16667 0 0 1 26.667 -80" stroke="black">
 176 784 m
