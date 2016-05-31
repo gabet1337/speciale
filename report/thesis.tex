@@ -573,7 +573,7 @@ Brodal~\cite{DBLP:journals/corr/Brodal15} introduced an amortized solution that 
 
 Please refer to Table~\ref{tbl:related_work_summary} for a summary of the results.
 
-\begin{table}[h]
+\begin{table}[t]
 \centering
 \caption{Previous dynamic external-memory three-sided range reporting data structures. All query bounds except for~\cite{Subramanian:1995:PTN:313651.313769} are optimal. Amortized bounds are marked \textdagger, and $\epsilon$ is satisfying $0 < \epsilon < 1$. All data structures requires $\mathcal{O}(\nicefrac{N}{B})$ space, except for~\cite{Ramaswamy:1994:PCT:182591.182595} requiring space $\mathcal{O}(\nicefrac{N}{B} \log_2 B \log \log B)$. $\mathcal{IL^*}(x)$ denotes the number of times $\log^*$ must be applied before the result becomes $\leq 2$}
 \label{tbl:related_work_summary}
@@ -589,7 +589,7 @@ Please refer to Table~\ref{tbl:related_work_summary} for a summary of the result
 \end{table}
 
 \section{Lower bounds}	
-Solving the problem of three-sided range queries is very closely related to that of the 1D-dictionary problem. We can reduce the three-sided range reporting problem to the 1D-dictionary by restricting elements to be of the form $(x,x)$ and test membership by a query of the form $\left[x,x\right] \times \left[-\infty, \infty\right]$.
+Solving the problem of three-sided range queries is very closely related to that of the 1D-dictionary problem. The 1D-dictionary problem asks us to maintain a dynamic set of keys such that we can answer membership queries, i.e. whether or not a key is contained in the set or not. We can reduce the three-sided range reporting problem to the 1D-dictionary by restricting elements to be of the form $(x,x)$ and test membership by a query of the form $\left[x,x\right] \times \left[-\infty, \infty\right]$.
 %Any solution that solves the three-sided range query problem can solve the 1D-dictionary problem by testing membership of an element $(x,y)$ by reporting all points in the range $\left[x,x\right] \times \left[y, \infty\right]$. 
 By reduction we must have that the lower bounds of the 1D-dictionary problem also applies to that of three-sided range queries.
 
@@ -1418,37 +1418,35 @@ The experiments on Brodals consisted of inserting 5 Gb of data, i.e. $5 \cdot 10
 
 In the experiment conducted on the buffer size we fixed the fanout to two and varied the buffer size. Theoretically the running time should decrease with ever increasing buffer sizes as shown in Figure~\ref{fig:gerth_buffer_size_theory}. We are, however, limited by the main memory size and thus have to be careful not to cause swapping of memory to disk as this greatly decreases performance. 
 
-The results plotted as running time per insert is depicted in Figure~\ref{fig:gerth_buffer_size_experiment}. Clearly the actual running time follows the same tendency as the theoretical number of I/O's per insert. We will focus on the number of I/O's to support this claim. In Figure~\ref{fig:gerth_buffer_size_experiment_ios_per_insert} we plot the actual number of I/O's used per insert. Again it seems we have a good alignment between the actual number and the theoretical number of I/O's. In order to verify the running times to be truly bound by the number of I/O's we plot the actual time per insert divided by the number of I/O's per insert. Please refer to Figure~\ref{fig:gerth_buffer_size_experiment_time_divided_asymptotic}. We expect a close relation between running time and the theoretical number of I/O's to produce a plot with close-to straight lines. For buffers of sizes 1~Mb, 2~Mb, 4~Mb, and 8~Mb, we believe this to be the case. 
+The results plotted as running time per insert is depicted in Figure~\ref{fig:gerth_buffer_size_experiment}. Clearly the actual running time follows the same tendency as the theoretical number of I/O's per insert. We will focus on the number of I/O's to support this claim. In Figure~\ref{fig:gerth_buffer_size_experiment_ios_per_insert} we plot the actual number of I/O's used per insert. Again it seems we have a good alignment between the actual number and the theoretical number of I/O's. In order to verify the running times to be truly bound by the number of I/O's we plot the actual time per insert divided by the theoretical number of I/O's per insert. Please refer to Figure~\ref{fig:gerth_buffer_size_experiment_time_divided_asymptotic}. We expect a close relation between running time and the theoretical number of I/O's to produce a plot with close-to straight lines. For buffers of sizes 1~Mb, 2~Mb, 4~Mb, 8~Mb, 16~Mb we believe this to be the case. 
 
-\todo{we ran experiment again with buffer size 16mb but it didnt swap. It did however swap for 32 mb}
+For buffer size 32 Mb we see more fluctuations and we can hardly argue the plot follows a straight line. We believe this is caused by the limited amount of internal memory forcing us to utilize more than available, which again causes the operating system to swap out internal memory to external memory. 
 
-For buffer size 16 Mb we see more fluctuations and we can hardly argue the plot follows a straight line. We believe this is caused by the limited amount of internal memory forcing us to utilize more than available, which again causes the operating system to swap out internal memory to external memory. 
+We verified this by looking at the measured number of page faults generated, and we could see that, just as suspected, the data structure started to cause a low amount of page faults that can explain the fluctuations. See Appendix~\ref{app:page_faults_for_large_buffer_size} for the measured number of page faults.
 
-\todo{Kasper: say something about why we use so much memory for a buffer size of 32mb when it does not seem like much}
+In Section~\ref{sec:impl_main_data_structure} we argued about the high space overhead of using Red-Black trees as buffers. When we underflow a point buffer we must load 2 child structures along with all of the related buffers giving a huge space blow up. These two facts together explains the relatively low threshold at which we begin to generate page faults.
 
-In order to verify this we repeated the experiment for buffer sizes 8 Mb and 16 Mb, this time measuring the number of major page faults. The result is depicted in Figure \todo{CREATE THIS EXPERIMENT AND EXPLAIN}.
-
-\todo{Kasper: Conclude this section with what we are going to use going forward}
+We conclude that while the buffers fit in memory the running time decreases with larger buffer sizes. The results shown in this section was not generated from the machines described in Chapter~\ref{chp:experimental_setup}, but a similar experiment on those machines showed that a buffer size of 1Mb performed best. Going forward we will stick to using a buffer size of 1Mb.
 
 \begin{figure}[htp]
 \centering
 \includegraphics[width=0.93\textwidth]{../plots/gerth_update_buffer_size/gerth_buffer_size}
-\caption{Theoretical asymptotic update time per operation for buffer sizes \\ $B \in \{1 \text{Mb}, 2 \text{Mb}, 4 \text{Mb}, 8 \text{Mb}, 16 \text{Mb} \}$. Each graph is on the form $f(N) = \frac{1}{\epsilon B^{1-\epsilon}} \log_B N$ for $\epsilon = \log(2) / \log(B)$. An epsilon on this form guarantees a fanout $B^\epsilon = 2$.}
+\caption{Theoretical asymptotic update time per operation for buffer sizes \\ $B \in \{1 \text{Mb}, 2 \text{Mb}, 4 \text{Mb}, 8 \text{Mb}, 16 \text{Mb}, 32\text{Mb} \}$. Each graph is on the form $f(N) = \frac{1}{\epsilon B^{1-\epsilon}} \log_B N$ for $\epsilon = \log(2) / \log(B)$. An epsilon on this form guarantees a fanout $B^\epsilon = 2$.}
 \label{fig:gerth_buffer_size_theory}
 
 \includegraphics[width=\textwidth]{../src/experiments/gerth_buffer_size_experiment_results/2016-05-03.13_51_54/time}
-\caption{Experimentally measured update time per operation for buffer sizes \\ $B \in \{1 \text{Mb}, 2 \text{Mb}, 4 \text{Mb}, 8 \text{Mb}, 16 \text{Mb} \}$ on the data structure of Brodal with fanout $B^\epsilon = 2$. Clearly the tendencies align with the theoretical update bounds depicted in Figure~\ref{fig:gerth_buffer_size_theory}}
+\caption{Experimentally measured update time per operation for buffer sizes \\ $B \in \{1 \text{Mb}, 2 \text{Mb}, 4 \text{Mb}, 8 \text{Mb}, 16 \text{Mb}, 32 \text{Mb} \}$ on the data structure of Brodal with fanout $B^\epsilon = 2$. Clearly the tendencies align with the theoretical update bounds depicted in Figure~\ref{fig:gerth_buffer_size_theory}}
 \label{fig:gerth_buffer_size_experiment}
 \end{figure}
 
 \begin{figure}[htp]
 \centering
 \includegraphics[width=\textwidth]{../src/experiments/gerth_buffer_size_experiment_results/2016-05-03.13_51_54/io_per_insert}
-\caption{Experimentally measured I/O's per insert for buffer sizes \\ $B \in \{1 \text{Mb}, 2 \text{Mb}, 4 \text{Mb}, 8 \text{Mb}, 16 \text{Mb} \}$ on the data structure of Brodal with fanout $B^\epsilon = 2$. Clearly the tendencies align with the theoretical update bounds depicted in Figure~\ref{fig:gerth_buffer_size_theory} and the actual update times depicted in Figure~\ref{fig:gerth_buffer_size_experiment}.}
+\caption{Experimentally measured I/O's per insert for buffer sizes \\ $B \in \{1 \text{Mb}, 2 \text{Mb}, 4 \text{Mb}, 8 \text{Mb}, 16 \text{Mb}, 32 \text{Mb} \}$ on the data structure of Brodal with fanout $B^\epsilon = 2$. Clearly the tendencies align with the theoretical update bounds depicted in Figure~\ref{fig:gerth_buffer_size_theory} and the actual update times depicted in Figure~\ref{fig:gerth_buffer_size_experiment}.}
 \label{fig:gerth_buffer_size_experiment_ios_per_insert}
 
 \includegraphics[width=0.96\textwidth]{../src/experiments/gerth_buffer_size_experiment_results/2016-05-03.13_51_54/time_divided_asymptotic}
-\caption{Actual running time per update divided by the theoretical number of I/O's per update. A straight line suggests a close relation between the two measures. The fluctuations for buffer size $B = 16 \text{Mb}$ can be explained by the operation system starting to swap out main memory.}
+\caption{Actual running time per update divided by the theoretical number of I/O's per update. A straight line suggests a close relation between the two measures. The fluctuations for buffer size $B = 32 \text{Mb}$ can be explained by the operating system starting to swap out main memory.}
 \label{fig:gerth_buffer_size_experiment_time_divided_asymptotic}
 \end{figure}
 
@@ -1855,5 +1853,15 @@ Querying is done by locating the nodes intersecting the left side of the query u
 
 Ramaswamy and Subramanian brings down the space usage in~\cite{Subramanian:1995:PTN:313651.313769}. This is done by building a search tree that divides the points into smaller regions of size $B \log B$ instead of $B$ giving a total of $\nicefrac{N}{B} \log B$ regions. Now a slightly modified caching scheme is used with an additional secondary level structure for each region giving a total space usage of $\mathcal{O}(\nicefrac{N}{B} \log \log B)$. Reusing this idea in a multilevel scheme brings down the data structure to a $\mathcal{O}(\nicefrac{N}{B} \log B \log^* B)$ space solution that answers queries in $\mathcal{O}(\log_B + \nicefrac{K}{B} + \mathcal{IL}^*(B))$, where $\mathcal{IL^*}(x)$ denotes the number of times $\log^*$ must be applied before the result becomes $\leq 2$.
 
+
+\chapter{Page faults with large buffer size}
+\label{app:page_faults_for_large_buffer_size}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1\textwidth]{../src/experiments/gerth_buffer_size_experiment_results/2016-05-03.13_51_54/pfs}
+\caption{The measured number of page faults when inserting 5Gb of data in the External Memory Buffered Priority Search Tree. We see that a buffer size of 32Mb will generate page faults}
+\label{fig:page_faults_gerth_buffer_size}
+\end{figure}
 
 \end{document}
