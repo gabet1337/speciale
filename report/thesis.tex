@@ -554,72 +554,24 @@ McCreight introduced the Priority Search Tree for internal memory in~\cite{DBLP:
 
 The study of adapting the Priority Search Tree to external memory was initiated by Icking et al.~\cite{Icking1988}. They achieve a static external Priority Search Tree that uses $\mathcal{O}(\nicefrac{N}{B})$ space and answers three-sided range queries in $\mathcal{O}(\log_B N + \nicefrac{K}{B})$ I/O's. The data structure uses a blocked B-tree with pointers to data buckets full of points. The idea is depicted in Figure~\ref{fig:icking_external_pst}. In order to make the data structure dynamic the underlying B-tree is replaced with a Red-Black tree. This change of underlying search tree results in a solution that answer queries in $\mathcal{O}(\log_2 N + \nicefrac{K}{B})$ I/O's and handle updates in $\mathcal{O}(B \log_2 N)$ I/O's.
 
-\begin{figure}[h]
+\begin{figure}[b]
 	\centering
-		\includegraphics[width=\textwidth]{../figures/icking_external_pst}
+		\includegraphics[width=0.83\textwidth]{../figures/icking_external_pst}
 	\caption{Illustration of the solution of Icking et al. Blocked B-tree with pointers to full buckets of data points.}
 	\label{fig:icking_external_pst}
 \end{figure}
 
-Kanellakis et al. presents a linear space and partially dynamic solution in~\cite{Kanellakis1996589}. The data structure answers three-sided queries in $\mathcal{O}(\log_B N + \nicefrac{K}{B} + \log_2 B)$ I/O's and supports inserts in $\mathcal{O}(\log_B N + (\log^2_B \nicefrac{N}{B})$ I/O's. The result is fairly involved and is unlikely to perform well in any practical manner. We will omit the full details and only present the overall ideas. As a first step all points are shifted such that they lie above the line $y = x$. The basic building block of the data structure is the \textit{metablock tree}; a B-ary tree of \textit{metablocks}, each of which represents $B^2$ data points. The root represents the $B^2$ data points with the largest $y$-values. The remaining $N - B^2$ data points are divided into $B$ groups of $(N - B^2)/B$ data points each based on the $x$-coordinate. The first group contains the $(N - B^2)/B$ data points with the smallest $x$-values and so on. A recursive tree of the exact same type is constructed for each such group of data points. This process continues until a group has at most $B^2$ data points and can fit into a single metablock. Refer to Figure~\ref{fig:kanellakis_metablock_tree} for an illustration of a metablock tree.
+Kanellakis et al. presents a linear space and partially dynamic solution in~\cite{Kanellakis1996589}. The data structure answers three-sided queries in $\mathcal{O}(\log_B N + \nicefrac{K}{B} + \log_2 B)$ I/O's and supports inserts in $\mathcal{O}(\log_B N + (\log^2_B \nicefrac{N}{B})$ I/O's. The result is fairly involved and is unlikely to perform well in any practical manner. Please refer to Appendix~\ref{chp:kanellakis} for a presentation of the overall ideas of their solution.
 
-\begin{figure}[h]
-	\centering
-		\includegraphics[width=0.5\textwidth]{../figures/kanellakis_metablock_tree}
-	\caption{A metablock tree for $B=3$ and $N=70$. All data points lie above the line $y=x$. Each region represents a metablock. The root is at the top. Note that each nonleaf metablock contains $B^2 = 9$ data points.}
-	\label{fig:kanellakis_metablock_tree}
-\end{figure}
+Ramaswamy and Subramanian presents a suboptimal space data structure that answers three-sided queries with an optimal query bound in \cite{Ramaswamy:1994:PCT:182591.182595}. They use the same basic blocked B-tree with pointers to full buckets of data points as introduced by Icking et al.~\cite{Icking1988} and illustrated in Figure~\ref{fig:icking_external_pst}. In addition they introduce the idea of \textit{path caching}. Please refer to Appendix~\ref{chp:ramaswamy} for a presentation of the main ideas of their solution.
 
-Points from each $metablock$ are copied into new blocks that are both vertically and horizontally oriented as depicted in Figure~\ref{fig:kanellakis_vertical_horizontally_oriented_blocks}. 
-
-\begin{figure}[h]
-	\centering
-		\includegraphics[width=0.5\textwidth]{../figures/kanellakis_vertical_horizontally_oriented_blocks}
-	\caption{Vertically and horizontally oriented blockings of data points. Each rectangle represents a block: (a) vertically oriented; (b) horizontally oriented.}
-	\label{fig:kanellakis_vertical_horizontally_oriented_blocks}
-\end{figure}
-
-Finally, each metablock $M$ contains pointers to B blocks that represents the set $TS(M)$ that is obtained by examining the left siblings of $M$ and taking the $B^2$ largest points according to the $y$-value. Depending on how the query spans the metablock tree we can query the auxiliary data structures in such a way that we can achieve the promised $\mathcal{O}(\log_B N + \nicefrac{K}{B} + log_2 B)$ I/O's. The five different query cases are depicted in Figure~\ref{fig:kanellakis_queries}.
-
-\todo{What is TS(M)? Elaborate or remove as this is not intuitive}
-
-\begin{figure}[h]
-	\centering
-		\includegraphics[width=1\textwidth]{../figures/kanellakis_queries}
-	\caption{The three-sided queries can span the metablock tree in five different ways.}
-	\label{fig:kanellakis_queries}
-\end{figure}
-
-Ramaswamy and Subramanian presents a suboptimal space data structure that answers queries with an optimal query bound in \cite{Ramaswamy:1994:PCT:182591.182595}. They use the same basic blocked B-tree with pointers to full buckets of data points as introduced by Icking et al.~\cite{Icking1988} and illustrated in Figure~\ref{fig:icking_external_pst}. In addition they introduce the idea of \textit{path caching} that we will explain shortly. It can trivially be seen that by using a B-tree we are able to answer two-sided queries in $\mathcal{O}(\log N + \nicefrac{K}{B})$ I/O's by classifying points inside the query into four categories as follows:
-
-\begin{itemize}
-	\item \textit{Corner}: this is the node whose region contains the corner of the query.
-	\item \textit{Ancestors of the corner}: These are nodes whose regions are cut by the left side of the query. There can be at most $\mathcal{O}(\log N)$ such nodes.
-	\item \textit{Right siblings of the corner and the ancestors}: these are nodes whose parents' regions are cut by the left side of the query. There can be at most $ \mathcal{O}(\log N)$ such nodes.
-	\item \textit{Descendants of right siblings}: there can be an unbounded number of them, but for every such node, its parent's region has to be completely contained inside the query. That pays for the cost of looking into these nodes. That is, for every $J$ descendant blocks that are partially cut the query, the will be at least $\nicefrac{J}{2}$ blocks that lie completely inside the query. 
-
-\end{itemize} 
-
-Please refer to Figure~\ref{fig:ramaswamy_query} for an illustration of the categories.
-
-\begin{figure}[h]
-	\centering
-		\includegraphics[width=0.9\textwidth]{../figures/ramaswamy_query}
-	\caption{Binary tree implementation of Priority Search Tree in secondary memory showing a corner, ancestor sibling and sibling's descendant. Here, B is 4.}
-	\label{fig:ramaswamy_query}
-\end{figure}
-
-Querying is done by locating the nodes intersecting the left side of the query using the B-tree. Points from the nodes are reported by examining the associated buckets. Next, right siblings of the nodes and their descendants are examined in a top-down fashion until the bottom boundary of the query is crossed. It is crucial to note that the corner, ancestor, and sibling nodes can cause wasteful I/O's. Thus there are $\mathcal{O}(\log N)$ wasteful nodes as every parent of a visited node would have contributed an useful I/O. From this analysis we can conclude that we can answer two-sided queries in $\mathcal{O}(\log N + \nicefrac{K}{B})$ I/O's. Now, we are able to avoid the wasteful I/O's by caching the data in the ancestor and sibling nodes. By associating two caches with the corner that contain all data in the siblings sorted by $x$-coordinate and $y$-coordinate respectively, we are able to answer queries in $\log_B N + \nicefrac{K}{B}$ I/O's by simply locating the corner in $\mathcal{O}(\log_B N)$ I/O's and report using the cache. The storage use is $\mathcal{O}(\nicefrac{N}{B} \log N)$ disk blocks of size $B$ each. The idea can be extended to handle three-sided queries by adding additional caches that cover point sets sorted from right to left. This gives a space usage of $\mathcal{O}(\nicefrac{N}{B} \log^2 N)$. 
-
-Ramaswamy and Subramanian continues their work and brings down the space usage in~\cite{Subramanian:1995:PTN:313651.313769}. This is done by building a search tree that divides the points into regions of size $B \log B$ instead of $B$ giving a total of $\nicefrac{N}{B} \log B$ regions. Now a slightly modified caching scheme is used with an additional secondary level structure for each region giving a total space usage of $\mathcal{O}(\nicefrac{N}{B} \log \log B)$. Reusing this idea in a multilevel scheme brings down the data structure to a $\mathcal{O}(\nicefrac{N}{B} \log B \log^* B)$ space solution that answers queries in $\mathcal{O}(\log_B + \nicefrac{K}{B} + \mathcal{IL}^*(B))$, where $\mathcal{IL^*}(x)$ denotes the number of times $\log^*$ must be applied before the result becomes $\leq 2$.
+Ramaswamy and Subramanian continues their work and brings down the space usage in~\cite{Subramanian:1995:PTN:313651.313769}. This is done by building a search tree that divides the points into smaller regions and using a slightly modified caching scheme. Further details of the main ideas can be found in Appendix~\ref{sec:ramaswamy_better_space}.
 
 Arge et al. presented the first linear space dynamic data structure with optimal query bounds and suboptimal update bounds in~\cite{arge_samoladas_vitter_1999}. The data structure supports queries using $\mathcal{O}(\log_B N + \nicefrac{K}{B})$ I/O's and updates using $\mathcal{O}(\log_B N)$ I/O's. Please refer to Chapter~\ref{chp:arge_pst} for a detailed description of the solution.
 
-Brodal~\cite{DBLP:journals/corr/Brodal15} introduced an amortized solution that improves the update bound of~\cite{arge_samoladas_vitter_1999} by a factor $\epsilon B^{1-\epsilon}$ by adding $\epsilon^{-1}$ to the query bound by adopting ideas of the buffer trees of Arge~\cite{Arge:1995:BTN:645930.672850} to the External Memory Priority Search Tree of Arge~\cite{arge_samoladas_vitter_1999}. The solution is presented in detail in Chapter~\ref{chp:epst}.
+Brodal~\cite{DBLP:journals/corr/Brodal15} introduced an amortized solution that improves the update bound of~\cite{arge_samoladas_vitter_1999} by a factor $\epsilon B^{1-\epsilon}$ by adding $\epsilon^{-1}$ to the query bound. This gives an solution supporting updates in amortized $\mathcal{O}\left(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N\right)$ and three-sided range queries in amortized $\mathcal{O}\left(\frac{1}{\epsilon}\log_B N + K/B\right)^{\text{\textdagger}}$ for $0 < \epsilon < 1$. The data structure adapts ideas of the buffer trees of Arge~\cite{Arge:1995:BTN:645930.672850} to the External Memory Priority Search Tree of Arge~\cite{arge_samoladas_vitter_1999}. The solution is presented in detail in Chapter~\ref{chp:epst}.
 
 Please refer to Table~\ref{tbl:related_work_summary} for a summary of the results.
-
-\todo{isn't epsilon between 0 and 0.5?}
 
 \begin{table}[h]
 \centering
@@ -1837,5 +1789,73 @@ Many of the structures discussed in this thesis also describes a construction al
 \clearpage
 \addcontentsline{toc}{chapter}{Bibliography}
 \bibliography{references}
+
+\clearpage
+
+\appendix
+
+\chapter{Kanellakis et. al}
+\label{chp:kanellakis}
+
+Kanellakis et al. presents a linear space and partially dynamic solution in~\cite{Kanellakis1996589}. The data structure answers three-sided queries in $\mathcal{O}(\log_B N + \nicefrac{K}{B} + \log_2 B)$ I/O's and supports inserts in $\mathcal{O}(\log_B N + (\log^2_B \nicefrac{N}{B})$ I/O's. The result is fairly involved and is unlikely to perform well in any practical manner.
+
+We will omit the full details and only present the overall ideas. As a first step all points are shifted such that they lie above the line $y = x$. The basic building block of the data structure is the \textit{metablock tree}; a B-ary tree of \textit{metablocks}, each of which represents $B^2$ data points. The root represents the $B^2$ data points with the largest $y$-values. The remaining $N - B^2$ data points are divided into $B$ groups of $(N - B^2)/B$ data points each based on the $x$-coordinate. The first group contains the $(N - B^2)/B$ data points with the smallest $x$-values and so on. A recursive tree of the exact same type is constructed for each such group of data points. This process continues until a group has at most $B^2$ data points and can fit into a single metablock. Refer to Figure~\ref{fig:kanellakis_metablock_tree} for an illustration of a metablock tree.
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=0.5\textwidth]{../figures/kanellakis_metablock_tree}
+	\caption{A metablock tree for $B=3$ and $N=70$. All data points lie above the line $y=x$. Each region represents a metablock. The root is at the top. Note that each nonleaf metablock contains $B^2 = 9$ data points.}
+	\label{fig:kanellakis_metablock_tree}
+\end{figure}
+
+Points from each $metablock$ are copied into new blocks that are both vertically and horizontally oriented as depicted in Figure~\ref{fig:kanellakis_vertical_horizontally_oriented_blocks}. 
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=0.5\textwidth]{../figures/kanellakis_vertical_horizontally_oriented_blocks}
+	\caption{Vertically and horizontally oriented blockings of data points. Each rectangle represents a block: (a) vertically oriented; (b) horizontally oriented.}
+	\label{fig:kanellakis_vertical_horizontally_oriented_blocks}
+\end{figure}
+
+Finally, each metablock $M$ contains pointers to B blocks that represents the set $TS(M)$ that is obtained by examining the left siblings of $M$ and taking the $B^2$ largest points according to the $y$-value. Depending on how the query spans the metablock tree we can query the auxiliary data structures in such a way that we can achieve the promised $\mathcal{O}(\log_B N + \nicefrac{K}{B} + log_2 B)$ I/O's. The five different query cases are depicted in Figure~\ref{fig:kanellakis_queries}.
+
+\todo{What is TS(M)? Elaborate or remove as this is not intuitive}
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=1\textwidth]{../figures/kanellakis_queries}
+	\caption{The three-sided queries can span the metablock tree in five different ways.}
+	\label{fig:kanellakis_queries}
+\end{figure}
+
+\chapter{Path Caching}
+\label{chp:ramaswamy}
+
+Ramaswamy and Subramanian presents a suboptimal space data structure that answers three-sided queries with an optimal query bound in \cite{Ramaswamy:1994:PCT:182591.182595}. They use the same basic blocked B-tree with pointers to full buckets of data points as introduced by Icking et al.~\cite{Icking1988} and illustrated in Figure~\ref{fig:icking_external_pst}. In addition they introduce the idea of \textit{path caching} that we will explain shortly. It can trivially be seen that by using a B-tree we are able to answer two-sided queries in $\mathcal{O}(\log N + \nicefrac{K}{B})$ I/O's by classifying points inside the query into four categories as follows:
+
+\begin{itemize}
+	\item \textit{Corner}: this is the node whose region contains the corner of the query.
+	\item \textit{Ancestors of the corner}: These are nodes whose regions are cut by the left side of the query. There can be at most $\mathcal{O}(\log N)$ such nodes.
+	\item \textit{Right siblings of the corner and the ancestors}: these are nodes whose parents' regions are cut by the left side of the query. There can be at most $ \mathcal{O}(\log N)$ such nodes.
+	\item \textit{Descendants of right siblings}: there can be an unbounded number of them, but for every such node, its parent's region has to be completely contained inside the query. That pays for the cost of looking into these nodes. That is, for every $J$ descendant blocks that are partially cut the query, the will be at least $\nicefrac{J}{2}$ blocks that lie completely inside the query. 
+
+\end{itemize} 
+
+Please refer to Figure~\ref{fig:ramaswamy_query} for an illustration of the categories.
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=0.9\textwidth]{../figures/ramaswamy_query}
+	\caption{Binary tree implementation of Priority Search Tree in secondary memory showing a corner, ancestor sibling and sibling's descendant. Here, B is 4.}
+	\label{fig:ramaswamy_query}
+\end{figure}
+
+Querying is done by locating the nodes intersecting the left side of the query using the B-tree. Points from the nodes are reported by examining the associated buckets. Next, right siblings of the nodes and their descendants are examined in a top-down fashion until the bottom boundary of the query is crossed. It is crucial to note that the corner, ancestor, and sibling nodes can cause wasteful I/O's. Thus there are $\mathcal{O}(\log N)$ wasteful nodes as every parent of a visited node would have contributed an useful I/O. From this analysis we can conclude that we can answer two-sided queries in $\mathcal{O}(\log N + \nicefrac{K}{B})$ I/O's. Now, we are able to avoid the wasteful I/O's by caching the data in the ancestor and sibling nodes. By associating two caches with the corner that contain all data in the siblings sorted by $x$-coordinate and $y$-coordinate respectively, we are able to answer queries in $\log_B N + \nicefrac{K}{B}$ I/O's by simply locating the corner in $\mathcal{O}(\log_B N)$ I/O's and report using the cache. The storage use is $\mathcal{O}(\nicefrac{N}{B} \log N)$ disk blocks of size $B$ each. The idea can be extended to handle three-sided queries by adding additional caches that cover point sets sorted from right to left. This gives a space usage of $\mathcal{O}(\nicefrac{N}{B} \log^2 N)$. 
+
+\section{Better space bounds}
+\label{sec:ramaswamy_better_space}
+
+Ramaswamy and Subramanian brings down the space usage in~\cite{Subramanian:1995:PTN:313651.313769}. This is done by building a search tree that divides the points into smaller regions of size $B \log B$ instead of $B$ giving a total of $\nicefrac{N}{B} \log B$ regions. Now a slightly modified caching scheme is used with an additional secondary level structure for each region giving a total space usage of $\mathcal{O}(\nicefrac{N}{B} \log \log B)$. Reusing this idea in a multilevel scheme brings down the data structure to a $\mathcal{O}(\nicefrac{N}{B} \log B \log^* B)$ space solution that answers queries in $\mathcal{O}(\log_B + \nicefrac{K}{B} + \mathcal{IL}^*(B))$, where $\mathcal{IL^*}(x)$ denotes the number of times $\log^*$ must be applied before the result becomes $\leq 2$.
+
 
 \end{document}
