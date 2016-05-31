@@ -110,7 +110,7 @@ The world is becoming increasingly more data driven and almost everything in our
 
 This thesis presents, implement, and experiments with several solutions to the problem of three-sided range reporting. The main focus of the thesis will be to show the power of data structures optimized for handling huge data sets by minimising the number of disk accesses.
 
-We have implemented two external memory data structures that solves this problem. The first by Arge et al~\cite{arge_samoladas_vitter_1999} has an $\mathcal{O}(\log_B N)$ I/O update complexity and an $\mathcal{O}(\log_B N + K/B)$ I/O reporting complexity. Here $B$ is a main memory buffer, $N$ the input size, and $K$ is the size of the output. The second by Brodal~\cite{DBLP:journals/corr/Brodal15} improves the update complexity by a significant $B^{1-\epsilon}$ factor while keeping the same asymptotic reporting complexity for $\epsilon$ being a constant between $0$ and $\nicefrac{1}{2}$.
+We have implemented two external memory data structures that solves this problem. The first by Arge et al.~\cite{arge_samoladas_vitter_1999} has an $\mathcal{O}(\log_B N)$ I/O update complexity and an $\mathcal{O}(\log_B N + K/B)$ I/O reporting complexity. Here $B$ is a main memory buffer, $N$ the input size, and $K$ is the size of the output. The second by Brodal~\cite{DBLP:journals/corr/Brodal15} improves the update complexity by a significant $B^{1-\epsilon}$ factor while keeping the same asymptotic reporting complexity for $\epsilon$ being a constant between $0$ and $\nicefrac{1}{2}$.
 
 Besides comparing these two structures against each other we also compare them against our own implementation of the priority search tree of McCreight~\cite{DBLP:journals/siamcomp/McCreight85}, MySQL, libspatialindex R*Tree, and Boost R-Tree.
 
@@ -916,8 +916,14 @@ Inserting a point in the structure involves two steps. The first is to insert th
 	\label{fig:arge_split_2}
 \end{figure}
 
-After inserting in the base tree and appropriate reorganization we need to insert the point in the correct query data structure. The search starts in the root. The child $w$ responsible for the $x$-range which the points belongs to is found and its Y-set is found by a degenerate query on the form  $\left[ x\text{-range of }w \right] \times \left[ - \infty, \infty \right]$ to the query data structure of the root. If the number of points is $\geq B/2$ and the point is below all of them the point is recursively inserted into the found child. Otherwise the point joins the query data structure of the root. If the $Y$-set of the found child is now too large we recursively insert the lowest of these points into the child's query data structure.
-If we reach a leaf we simply insert the point into the query data structure of the leaf.
+After inserting in the base tree and appropriate reorganization we need to insert the point in the correct query data structure. The search starts in the root. The child $w$ responsible for the $x$-range which the points belongs to is found and its Y-set is found by a degenerate query on the form  $\left[ x\text{-range of }w \right] \times \left[ - \infty, \infty \right]$ to the query data structure of the root. If the number of points is $\geq B/2$ and the point is below all of them the point is recursively inserted into the found child. Otherwise the point joins the query data structure of the root. If the $Y$-set of the found child is now too large we recursively insert the lowest of these points into the child's query data structure. If we reach a leaf we simply insert the point into the query data structure of the leaf. See Figure ???.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\textwidth]{../figures/arge_split_2}
+	\caption{Too small $Y$-sets are remedied by promoting the topmost points from the children.}
+	\label{fig:arge_split_2}
+\end{figure}
 
 \subsection{Deletion}
 Rebalancing the tree after handling a delete is done by adopting global rebuilding instead of using fusion of nodes. To delete a point we search down in the base tree for the point and mark it as deleted without actually removing the point. The next step is to remove the point from the query data structure that it resides in. This is done similar to finding the query data structure to insert the point into. The $Y$-set is recursively found on the search path of the point and if the $Y$-set contains the point, then the point is removed. If the $Y$-set becomes too small as a result we perform a \textit{bubble-up} operation.
