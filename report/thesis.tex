@@ -1422,12 +1422,11 @@ The results plotted as running time per insert is depicted in Figure~\ref{fig:ge
 
 For buffer size 32 Mb we see more fluctuations and we can hardly argue the plot follows a straight line. We believe this is caused by the limited amount of internal memory forcing us to utilize more than available, which again causes the operating system to swap out internal memory to external memory. 
 
-We verified this by looking at the measured number of page faults generated, and we could see that, just as suspected, the data structure started to cause a low amount of page faults that can explain the fluctuations. See Appendix~\ref{appendix:
-\todo{Kasper: say something about why we use so much memory for a buffer size of 32mb when it does not seem like much}
+We verified this by looking at the measured number of page faults generated, and we could see that, just as suspected, the data structure started to cause a low amount of page faults that can explain the fluctuations. See Appendix~\ref{app:page_faults_for_large_buffer_size} for the measured number of page faults.
 
-In order to verify this we repeated the experiment for buffer sizes 8 Mb and 16 Mb, this time measuring the number of major page faults. The result is depicted in Figure \todo{CREATE THIS EXPERIMENT AND EXPLAIN}.
+In Section~\ref{sec:impl_main_data_structure} we argued about the high space overhead of using Red-Black trees as buffers. When we underflow a point buffer we must load 2 child structures along with all of the related buffers giving a huge space blow up. These two facts together explains the relatively low threshold at which we begin to generate page faults.
 
-\todo{Kasper: Conclude this section with what we are going to use going forward}
+We conclude that while the buffers fit in memory the running time decreases with larger buffer sizes. The results shown in this section was not generated from the machines described in Chapter~\ref{chp:experimental_setup}, but a similar experiment on those machines showed that a buffer size of 1Mb performed best. Going forward we will stick to using a buffer size of 1Mb.
 
 \begin{figure}[htp]
 \centering
@@ -1856,5 +1855,15 @@ Querying is done by locating the nodes intersecting the left side of the query u
 
 Ramaswamy and Subramanian brings down the space usage in~\cite{Subramanian:1995:PTN:313651.313769}. This is done by building a search tree that divides the points into smaller regions of size $B \log B$ instead of $B$ giving a total of $\nicefrac{N}{B} \log B$ regions. Now a slightly modified caching scheme is used with an additional secondary level structure for each region giving a total space usage of $\mathcal{O}(\nicefrac{N}{B} \log \log B)$. Reusing this idea in a multilevel scheme brings down the data structure to a $\mathcal{O}(\nicefrac{N}{B} \log B \log^* B)$ space solution that answers queries in $\mathcal{O}(\log_B + \nicefrac{K}{B} + \mathcal{IL}^*(B))$, where $\mathcal{IL^*}(x)$ denotes the number of times $\log^*$ must be applied before the result becomes $\leq 2$.
 
+
+\chapter{Page faults with large buffer size}
+\label{app:page_faults_for_large_buffer_size}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1\textwidth]{../src/experiments/gerth_buffer_size_experiment_results/2016-05-03.13_51_54/pfs}
+\caption{The measured number of page faults when inserting 5Gb of data in the External Memory Buffered Priority Search Tree. We see that a buffer size of 32Mb will generate page faults}
+\label{fig:page_faults_gerth_buffer_size}
+\end{figure}
 
 \end{document}
