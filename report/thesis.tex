@@ -977,7 +977,7 @@ We will in the following look at each step individually and argue their complexi
 	\begin{figure}[htp!]
 		\centering
 		\includegraphics[width=0.9\textwidth]{../figures/pigeon_hole2}
-		\caption{Pigeon hole principle. Each cross represents a deletion stored in the deletion buffer of $v$. Here $\nicefrac{B}{4} = 16$ and $\epsilon = \nicefrac{1}{3}$. This gives $B^{\epsilon} = 4$. By the pigeon hole principle we must have that at least one of the x-ranges contains at least $\nicefrac{B}{B^{\epsilon}}$ points that can be sent down to the child that is responsible. Here the child $c_3$ will receive a subset of the deletions.}
+		\caption{Pigeon hole principle. Each cross represents a deletion stored in the deletion buffer of $v$. Here $\nicefrac{B}{4} = B' = 16$ and $\epsilon = \nicefrac{1}{3}$. This gives $B^{\epsilon} = 4$. By the pigeon hole principle we must have that at least one of the x-ranges contains at least $\nicefrac{B'}{B^{\epsilon}}$ points that can be sent down to the child that is responsible. Here the child $c_3$ will receive a subset of the deletions.}
 		\label{fig:pigeon_hole}
 	\end{figure}
 	
@@ -1053,7 +1053,7 @@ We will in the following look at each step individually and argue their complexi
 \clearpage
 
 \subsubsection*{Analysis}
-The tree grows in height during insertions by splitting leafs and internal nodes. We stay balanced during these insertions since we only increase in height whenever the root splits which causes every path from root to leaf to increase by one. In the B-Tree we handle rebalancing using fusion of nodes. We do not apply this method here but instead apply global rebuilding when a linear number of updates have been performed. By~\ref{update:pbo} it follows that the total number of leafs created during $N$ insertions can be at most $\mathcal{O}(N/B)$ implying that at most $\mathcal{O}(\frac{N}{\Delta B})$ internal nodes can be created by splitting internal nodes. From this it follows that the tree has height $\mathcal{O}(\log_\Delta \frac{N}{B}) = \mathcal{O}(\frac{1}{\epsilon} \log_B N)$.
+The tree stays balanced during insertions since we only increase in height whenever the root splits, which causes every path from root to leaf to increase by one. In the B-Tree we handle rebalancing using fusion of nodes. We do not apply this method here. Instead we apply global rebuilding when a linear number of updates have been performed. By~\ref{update:pbo} it follows that the total number of leafs created during $N$ insertions can be at most $\mathcal{O}(N/B)$ implying that at most $\mathcal{O}(\frac{N}{\Delta B})$ internal nodes can be created by splitting internal nodes. From this it follows that the tree has height $\mathcal{O}(\log_\Delta \frac{N}{B}) = \mathcal{O}(\frac{1}{\epsilon} \log_B N)$.
 
 We can now argue that every update in~\ref{update:del} and~\ref{update:ins} requires amortized $\mathcal{O}(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N)$ I/O's. As every $\Theta (B/\Delta)$ update require $\mathcal{O}(1)$ I/O's on every layer of the tree we get the correct amortized bound:
 \begin{align*}
