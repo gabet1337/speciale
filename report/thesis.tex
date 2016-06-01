@@ -1140,9 +1140,9 @@ Handling the overflowing update buffers and underflowing point buffers are also 
 This all adds up to a total amortized cost of $\mathcal{O}(\frac{1}{\epsilon} \log_B N + K/B)$ I/O's for a three-sided range query.
 
 \subsection{Construction}
-The structure can be initialized with a set of $N$ points using just $\mathcal{O}(\text{Sort}(N))$ I/O's. If the points are sorted on $x$ we only need $\mathcal{O}(\text{Scan}(N))$. For the remainder of this section we assume that the points are initially sorted with regards to $x$.
+The structure can be initialized with a set of $N$ points using $\mathcal{O}(\text{Sort}(N))$ I/O's. If the points are sorted on the $x$-coordinate we only need $\mathcal{O}(\text{Scan}(N))$. For the remainder of this section we assume that the points are initially sorted with regards to the $x$-coordinate.
 
-The first step of the construction is to construct a B-Tree with each internal node having a degree of $\Delta/2$ over the $x$-values such that each leaf stores $B/2$ points with the exception of the rightmost leaf which might contain less than $B/2$ points and the rightmost internal nodes having a degree less than $\Delta/2$.
+The first step of the construction is to construct a B-Tree over the $x$-values. We let each internal node have a degree of $\Delta/2$ and each leaf stores $B/2$ points, with the exception of the rightmost leaf which might contain less than $B/2$ points, and the rightmost internal nodes having a degree less than $\Delta/2$.
 
 The point buffers of the internal nodes are now filled bottom up pulling the top $B/2$ highest $y$-value points up. If this results in a child having an underflowing point buffer we recursively fill that child before proceeding. In a second iteration we do the same but in a top-down fashion.
 
@@ -1153,7 +1153,7 @@ This construction algorithm could also have been used for global rebuilding givi
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{../figures/gerth_construction}
-	\caption{A B-Tree with each internal node having a degree of $\Delta/2$. Each leaf stores $B/2$ points with the exception of the rightmost. The bold points are the top $B/2$ points that is pulled up from the leafs into the layer above.}
+	\caption{A B-Tree with each internal node having a degree of $\Delta/2$. Each leaf stores $B/2$ points with the possible exception of the rightmost. The bold points are the top $B/2$ points that is pulled up from the leafs into the layer above.}
 	\label{fig:gerth_construction}
 \end{figure}
 
