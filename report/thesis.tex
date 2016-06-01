@@ -1073,9 +1073,8 @@ This argument ignores the fact that when pulling up points some points might swa
 Another fact that we ignore is what happens if we are not able to pull up $B/2$ points from the children. This is solved by a simple amortization argument. We double charge the operation responsible for pushing points to a child. This way we can ensure each node with non-empty point buffers always has saved an I/O for being emptied by a recursive pull up.
 
 \subsection{Global rebuilding}
-As we do not fuse nodes with too low node degree we might end up with an unbalanced tree. We use global rebuilding as described in Section~\ref{sec:prelim_global_rebuilding} to guarantee that the tree is rebalanced implying that our amortized bounds hold.
-Updates are partitioned into epochs. After a rebuild a new epoch begins and if the data structure at this points stores $\bar{N}$ points, then the next epoch will begin after $\bar{N}/2$ updates, i.e. a global rebuild will be performed.
-Having a new epoch after every $\bar{N}/2$ updates ensures that our tree does not grow higher than $\mathcal{O}\left(\frac{1}{\epsilon}\log_B\frac{3\bar{N}}{2}\right) = \mathcal{O}\left(\frac{1}{\epsilon}\log_B N\right)$ as the size is $\frac{1}{2}\bar{N} \leq N \leq \frac{3}{2}\bar{N}$.
+Since we do not fuse nodes with too low node degree we might end up with an unbalanced tree. We use global rebuilding as described in Section~\ref{sec:prelim_global_rebuilding} to guarantee the tree never gets \textit{too} unbalanced disproving that our amortized bounds hold. This is done by partitioning updates into epochs. After a rebuild a new epoch begins and if the data structure at this points stores $\bar{N}$ points, then the next epoch will begin after $\bar{N}/2$ updates, i.e. a global rebuild will be performed.
+Having a new epoch after every $\bar{N}/2$ updates ensures that the tree does not grow higher than $\mathcal{O}\left(\frac{1}{\epsilon}\log_B\frac{3\bar{N}}{2}\right) = \mathcal{O}\left(\frac{1}{\epsilon}\log_B N\right)$ as the size is $\frac{1}{2}\bar{N} \leq N \leq \frac{3}{2}\bar{N}$.
 
 Global rebuilding works by constructing an empty structure and then reinserting all the points of the old structure that has not been deleted.
 
@@ -1102,7 +1101,7 @@ By summing over all layers of the tree we get the total cost of flushing all buf
 
 This gives an amortized cost of $\mathcal{O}(1/B)$ per update to flush all buffers.
 
-The $\mathcal{O}(\bar{N})$ reinsertions into the new initially empty tree can be done in amortized $\mathcal{O}(\frac{\bar{N}}{\epsilon B^{1-\epsilon}}\log_B\bar{N})$ I/O's which is paid by the $\bar{N}/2$ updates during the epoch.
+The $\mathcal{O}(\bar{N})$ reinsertions into the new, initially empty, tree can be done in amortized $\mathcal{O}(\frac{\bar{N}}{\epsilon B^{1-\epsilon}}\log_B\bar{N})$ I/O's which is paid by the $\bar{N}/2$ updates during the epoch.
 
 \subsection{Three sided range queries}
 \label{subsec:brodal_3_sided}
