@@ -1128,14 +1128,14 @@ After all points have been reported we might have some buffers that have tempora
 
 \subsubsection*{Analysis}
 
-Assume we during a query visit $V$ nodes not on the search paths for $x_1$ or $x_2$ and $\mathcal{O}(\frac{1}{\epsilon}\log_B N)$ nodes on the search paths. We know that the $V$ nodes must have at least $VB/2$ points in their point buffers before updates are pushed down. The number of deletions we push down to visited nodes can at most be $(V + \mathcal{O}(\frac{1}{\epsilon}\log_B N))B/4$. It now follows that the number of points we report, $K$, must be at least the number of points in the point buffers before pushing down minus the deletions that we push down: $VB/2 - (V + \mathcal{O}(\frac{1}{\epsilon}\log_B N))B/4 = VB/4 - \mathcal{O}(\frac{B}{\epsilon}\log_B N) = K$. By isolating $V$ it follows that $V = \mathcal{O}(\frac{1}{\epsilon}\log_B N + K/B)$.
+Assume we during a query visit $V$ nodes not on the search paths for $x_1$ or $x_2$ and $\mathcal{O}(\frac{1}{\epsilon}\log_B N)$ nodes on the search paths. We know that the $V$ nodes must have at least $VB/2$ points in their point buffers before updates are pushed down. The number of deletions we push down to visited nodes can at most be $(V + \mathcal{O}(\frac{1}{\epsilon}\log_B N))B/4$. It now follows that the number of points we report, $K$, must be at least the number of points in the point buffers before pushing down minus the deletions we push down: $VB/2 - (V + \mathcal{O}(\frac{1}{\epsilon}\log_B N))B/4 = VB/4 - \mathcal{O}(\frac{B}{\epsilon}\log_B N) = K$. By isolating $V$ it follows that $V = \mathcal{O}(\frac{1}{\epsilon}\log_B N + K/B)$.
 
 The worst case bound now becomes the sum of visiting the $V$ nodes, the nodes on the search paths for $x_1$ and $x_2$, and the output: $\mathcal{O}(V+\frac{1}{\epsilon}\log_B N + K/B) = \mathcal{O}(\frac{1}{\epsilon}\log_B N + K/B)$.
 On top of this comes the cost of pushing down update buffer elements and handling overflowing update buffers and overflowing point buffers.
 
 This cost of pushing $\Omega(B/\Delta)$ points to a child is however already paid for by the update operations and is thus covered by the analysis of Subsection~\ref{subsec:gerth_updates}. It is only when we push down $\mathcal{O}(B/\Delta)$ updates to a child, with an amortized cost of $\mathcal{O}(1)$ that this cost is covered by the cost of visiting the child.
 
-Handling the overflowing update buffers and underflowing point buffers is also paid by the update operations and thus the analysis in Subsection~\ref{subsec:gerth_updates}.
+Handling the overflowing update buffers and underflowing point buffers are also paid by the update operations described in Subsection~\ref{subsec:gerth_updates}.
 
 This all adds up to a total amortized cost of $\mathcal{O}(\frac{1}{\epsilon} \log_B N + K/B)$ I/O's for a three-sided range query.
 
