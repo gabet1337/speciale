@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70107" creator="Ipe 7.2.2">
-<info created="D:20160506222515" modified="D:20160515204941"/>
+<info created="D:20160506222515" modified="D:20160601150608"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -523,13 +523,13 @@ h
 <use name="mark/disk(sx)" pos="476 476" size="small" stroke="black"/>
 <use name="mark/disk(sx)" pos="492 464" size="small" stroke="black"/>
 <use name="mark/disk(sx)" pos="476 492" size="small" stroke="black"/>
-<path stroke="black">
+<path stroke="black" dash="dotted">
 120 592 m
 17.8885 0 0 -17.8885 104 600 88 592 a
 </path>
 <text matrix="1 0 0 1 -60 -8" transformations="translations" pos="128 596" stroke="black" type="label" width="18.265" height="7.473" depth="2.49" valign="baseline">$\Delta / 2$</text>
-<text matrix="1 0 0 1 380 -4" transformations="translations" pos="128 596" stroke="black" type="label" width="28.781" height="7.473" depth="2.49" valign="baseline">$&lt; \Delta / 2$</text>
-<path stroke="black">
+<text matrix="1 0 0 1 380 -4" transformations="translations" pos="128 596" stroke="black" type="label" width="28.781" height="7.473" depth="2.49" valign="baseline">$\leq \Delta / 2$</text>
+<path matrix="1.02001 0 0 1.09469 -10.0849 -55.1195" stroke="black" dash="dotted">
 504 592 m
 17.8885 0 0 -17.8885 488 600 472 592 a
 </path>
