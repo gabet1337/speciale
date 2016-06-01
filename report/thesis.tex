@@ -977,7 +977,7 @@ We will in the following look at each step individually and argue their complexi
 	\begin{figure}[htp!]
 		\centering
 		\includegraphics[width=0.9\textwidth]{../figures/pigeon_hole2}
-		\caption{Pigeon hole principle. Each cross represents a deletion stored in the deletion buffer of $v$. Here $\nicefrac{B}{4} = 16$ and $\epsilon = \nicefrac{1}{3}$. This gives $B^{\epsilon} = 4$. By the pigeon hole principle we must have that at least one of the x-ranges contains at least $\nicefrac{B}{B^{\epsilon}}$ points that can be sent down to the child that is responsible. Here the child $c_3$ will receive a subset of the deletions.}
+		\caption{Pigeon hole principle. Each cross represents a deletion stored in the deletion buffer of $v$. Here $\nicefrac{B}{4} = B' = 16$ and $\epsilon = \nicefrac{1}{3}$. This gives $B^{\epsilon} = 4$. By the pigeon hole principle we must have that at least one of the x-ranges contains at least $\nicefrac{B'}{B^{\epsilon}}$ points that can be sent down to the child that is responsible. Here the child $c_3$ will receive a subset of the deletions.}
 		\label{fig:pigeon_hole}
 	\end{figure}
 	
@@ -1053,7 +1053,7 @@ We will in the following look at each step individually and argue their complexi
 \clearpage
 
 \subsubsection*{Analysis}
-The tree grows in height during insertions by splitting leafs and internal nodes. We stay balanced during these insertions since we only increase in height whenever the root splits which causes every path from root to leaf to increase by one. In the B-Tree we handle rebalancing using fusion of nodes. We do not apply this method here but instead apply global rebuilding when a linear number of updates have been performed. By~\ref{update:pbo} it follows that the total number of leafs created during $N$ insertions can be at most $\mathcal{O}(N/B)$ implying that at most $\mathcal{O}(\frac{N}{\Delta B})$ internal nodes can be created by splitting internal nodes. From this it follows that the tree has height $\mathcal{O}(\log_\Delta \frac{N}{B}) = \mathcal{O}(\frac{1}{\epsilon} \log_B N)$.
+The tree stays balanced during insertions since we only increase in height whenever the root splits, which causes every path from root to leaf to increase by one. In the B-Tree we handle rebalancing using fusion of nodes. We do not apply this method here. Instead we apply global rebuilding when a linear number of updates have been performed. By~\ref{update:pbo} it follows that the total number of leafs created during $N$ insertions can be at most $\mathcal{O}(N/B)$ implying that at most $\mathcal{O}(\frac{N}{\Delta B})$ internal nodes can be created by splitting internal nodes. From this it follows that the tree has height $\mathcal{O}(\log_\Delta \frac{N}{B}) = \mathcal{O}(\frac{1}{\epsilon} \log_B N)$.
 
 We can now argue that every update in~\ref{update:del} and~\ref{update:ins} requires amortized $\mathcal{O}(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N)$ I/O's. As every $\Theta (B/\Delta)$ update require $\mathcal{O}(1)$ I/O's on every layer of the tree we get the correct amortized bound:
 \begin{align*}
@@ -1073,9 +1073,8 @@ This argument ignores the fact that when pulling up points some points might swa
 Another fact that we ignore is what happens if we are not able to pull up $B/2$ points from the children. This is solved by a simple amortization argument. We double charge the operation responsible for pushing points to a child. This way we can ensure each node with non-empty point buffers always has saved an I/O for being emptied by a recursive pull up.
 
 \subsection{Global rebuilding}
-As we do not fuse nodes with too low node degree we might end up with an unbalanced tree. We use global rebuilding as described in Section~\ref{sec:prelim_global_rebuilding} to guarantee that the tree is rebalanced implying that our amortized bounds hold.
-Updates are partitioned into epochs. After a rebuild a new epoch begins and if the data structure at this points stores $\bar{N}$ points, then the next epoch will begin after $\bar{N}/2$ updates, i.e. a global rebuild will be performed.
-Having a new epoch after every $\bar{N}/2$ updates ensures that our tree does not grow higher than $\mathcal{O}\left(\frac{1}{\epsilon}\log_B\frac{3\bar{N}}{2}\right) = \mathcal{O}\left(\frac{1}{\epsilon}\log_B N\right)$ as the size is $\frac{1}{2}\bar{N} \leq N \leq \frac{3}{2}\bar{N}$.
+Since we do not fuse nodes with too low node degree we might end up with an unbalanced tree. We use global rebuilding as described in Section~\ref{sec:prelim_global_rebuilding} to guarantee the tree never gets \textit{too} unbalanced disproving that our amortized bounds hold. This is done by partitioning updates into epochs. After a rebuild a new epoch begins and if the data structure at this points stores $\bar{N}$ points, then the next epoch will begin after $\bar{N}/2$ updates, i.e. a global rebuild will be performed.
+Having a new epoch after every $\bar{N}/2$ updates ensures that the tree does not grow higher than $\mathcal{O}\left(\frac{1}{\epsilon}\log_B\frac{3\bar{N}}{2}\right) = \mathcal{O}\left(\frac{1}{\epsilon}\log_B N\right)$ as the size is $\frac{1}{2}\bar{N} \leq N \leq \frac{3}{2}\bar{N}$.
 
 Global rebuilding works by constructing an empty structure and then reinserting all the points of the old structure that has not been deleted.
 
@@ -1102,17 +1101,23 @@ By summing over all layers of the tree we get the total cost of flushing all buf
 
 This gives an amortized cost of $\mathcal{O}(1/B)$ per update to flush all buffers.
 
-The $\mathcal{O}(\bar{N})$ reinsertions into the new initially empty tree can be done in amortized $\mathcal{O}(\frac{\bar{N}}{\epsilon B^{1-\epsilon}}\log_B\bar{N})$ I/O's which is paid by the $\bar{N}/2$ updates during the epoch.
+The $\mathcal{O}(\bar{N})$ reinsertions into the new, initially empty, tree can be done in amortized $\mathcal{O}(\frac{\bar{N}}{\epsilon B^{1-\epsilon}}\log_B\bar{N})$ I/O's which is paid by the $\bar{N}/2$ updates during the epoch.
 
 \subsection{Three sided range queries}
 \label{subsec:brodal_3_sided}
-Reporting a query $Q = \left[ x_1,x_2 \right] \times \left[y, \infty \right]$ consists of three steps. Namely, identifying the nodes to visit, push down delayed insertions and deletions between the identified nodes, and finally reporting the points in $Q$.
+Reporting a three-sided query $Q = \left[ x_1,x_2 \right] \times \left[y, \infty \right]$ consists of three steps. Namely, identifying the nodes to visit, push down delayed insertions and deletions between the identified nodes, and finally reporting the points contained in $Q$.
 
 We identify the nodes to visit in a breadth first manner.
-Starting from the root we identify, from the query's $x$-range, the children that are relevant to the query and push all insertions and deletions in the root to the identified children without handling possible overflows. After having done this we know that the point buffers of the children do not change further and we can thus report all points in the query range from the child structure and the point buffer of the root. The children worth visiting are added to the back of the breadth first search queue. We can decide whether a child is worth visiting without reading the node by comparing $y$ with the minimum $y$-value of that child's point buffer. This value is stored in the parent.
+Starting from the root we identify, from the query's $x$-range, the children that are relevant to the query and push all insertions and deletions in the root to the identified children. This is done without handling possible overflows. After having done this we know that the point buffers of the children do not change further and we can thus report all points in the query range from the child structure and the point buffer of the root. The children worth visiting are added to the back of the breadth first search queue. We can decide whether a child is worth visiting without reading the node by comparing $y$ with the minimum $y$-value of that child's point buffer. This follows from the heap-order of point buffers. If the query-$y$ lies above the minimum $y$-point of a child, then by the heap-order invariant, we know that no relevant points are to be found in the subtree rooted at that child. The minimum $y$-value for every child is stored in the parent.
 All nodes except for the root do not need to report from their point buffers as the parent of the node has already reported the relevant points from the child structure.
 
-After all points have been reported we might have some buffers that have temporarily overflowed. This is now handled in a bottom up fashion using the update operations described in Subsection~\ref{subsec:gerth_updates}. We will handle a single subtree at a time and make sure that the entire subtree has no broken invariants, i.e. buffers that overflow or underflow or any nodes with a too high node degree. We do this by the update operations~\ref{update:del}-\ref{update:deg} and at the same time we disallow that any recursion leaves the subtree, i.e. no splits may recursively split nodes outside of the subtree. When the entire subtree has no overflows or underflows we can remedy a potential underflowed point buffer using update operation~\ref{update:pbu} and continue to the next subtree one level higher in the tree. See Figure~\ref{fig:gerth_fixup}.
+After all points have been reported we might have some buffers that have temporarily overflowed. This is now handled in a bottom up fashion using the update operations described in Subsection~\ref{subsec:gerth_updates}. We will handle a single subtree at a time and make sure that the entire subtree has no broken invariants, i.e. buffers that overflow or underflow or any nodes with a too high node degree. We do this by applying the update operations~\ref{update:del}-\ref{update:deg}\footnote{\begin{inlinelist}
+	\item handle overflowing deletion buffers
+	\item handle overflowing insertion buffers
+	\item split leafs with overflowing point buffers
+	\item split nodes of degree $\Delta+1$
+\end{inlinelist}
+} while we disallow any recursion leaving the subtree, i.e. no splits may recursively split nodes outside of the subtree. Only when the entire subtree has no overflows or underflows we can remedy a potential underflowed point buffer using update operation~\ref{update:pbu}\footnote{(v) fill underflowing point buffers}, and only then are we allowed to continue to the next subtree one level higher in the tree. See Figure~\ref{fig:gerth_fixup}. This way of handling the fixup procedure ensures we never get interleaving update operations interfering with each other.
 
 \begin{figure}
 \centering
@@ -1123,14 +1128,14 @@ After all points have been reported we might have some buffers that have tempora
 
 \subsubsection*{Analysis}
 
-Assume we during a query visit $V$ nodes not on the search paths for $x_1$ or $x_2$ and $\mathcal{O}(\frac{1}{\epsilon}\log_B N)$ nodes on the search paths. We know that the $V$ nodes must have at least $VB/2$ points in their point buffers before updates are pushed down. The number of deletions we push down to visited nodes can at most be $(V + \mathcal{O}(\frac{1}{\epsilon}\log_B N))B/4$. It now follows that the number of points we report, $K$, must be at least the number of points in the point buffers before pushing down minus the deletions that we push down: $VB/2 - (V + \mathcal{O}(\frac{1}{\epsilon}\log_B N))B/4 = VB/4 - \mathcal{O}(\frac{B}{\epsilon}\log_B N) = K$. By isolating $V$ it follows that $V = \mathcal{O}(\frac{1}{\epsilon}\log_B N + K/B)$.
+Assume we during a query visit $V$ nodes not on the search paths for $x_1$ or $x_2$ and $\mathcal{O}(\frac{1}{\epsilon}\log_B N)$ nodes on the search paths. We know that the $V$ nodes must have at least $VB/2$ points in their point buffers before updates are pushed down. The number of deletions we push down to visited nodes can at most be $(V + \mathcal{O}(\frac{1}{\epsilon}\log_B N))B/4$. It now follows that the number of points we report, $K$, must be at least the number of points in the point buffers before pushing down minus the deletions we push down: $VB/2 - (V + \mathcal{O}(\frac{1}{\epsilon}\log_B N))B/4 = VB/4 - \mathcal{O}(\frac{B}{\epsilon}\log_B N) = K$. By isolating $V$ it follows that $V = \mathcal{O}(\frac{1}{\epsilon}\log_B N + K/B)$.
 
 The worst case bound now becomes the sum of visiting the $V$ nodes, the nodes on the search paths for $x_1$ and $x_2$, and the output: $\mathcal{O}(V+\frac{1}{\epsilon}\log_B N + K/B) = \mathcal{O}(\frac{1}{\epsilon}\log_B N + K/B)$.
 On top of this comes the cost of pushing down update buffer elements and handling overflowing update buffers and overflowing point buffers.
 
 This cost of pushing $\Omega(B/\Delta)$ points to a child is however already paid for by the update operations and is thus covered by the analysis of Subsection~\ref{subsec:gerth_updates}. It is only when we push down $\mathcal{O}(B/\Delta)$ updates to a child, with an amortized cost of $\mathcal{O}(1)$ that this cost is covered by the cost of visiting the child.
 
-Handling the overflowing update buffers and underflowing point buffers is also paid by the update operations and thus the analysis in Subsection~\ref{subsec:gerth_updates}.
+Handling the overflowing update buffers and underflowing point buffers are also paid by the update operations described in Subsection~\ref{subsec:gerth_updates}.
 
 This all adds up to a total amortized cost of $\mathcal{O}(\frac{1}{\epsilon} \log_B N + K/B)$ I/O's for a three-sided range query.
 
