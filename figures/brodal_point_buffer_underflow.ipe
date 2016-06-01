@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70107" creator="Ipe 7.2.2">
-<info created="D:20160503183544" modified="D:20160531160404"/>
+<info created="D:20160503183544" modified="D:20160601101247"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -709,17 +709,6 @@ h
 288 784 l
 </path>
 <text matrix="1 0 0 1 116 80" transformations="translations" pos="284 680" stroke="black" type="label" width="11.726" height="6.808" depth="2.85" valign="baseline">$C_{p}$</text>
-<path matrix="1.16667 0 0 1 26.667 -80" stroke="black">
-176 784 m
-176 752 l
-272 752 l
-272 784 l
-h
-</path>
-<path matrix="1.16667 0 0 1 -29.333 -96" stroke="black">
-224 784 m
-320 784 l
-</path>
 <path matrix="1 0 0 1 32 -96" stroke="black">
 256 800 m
 256 784 l
@@ -887,6 +876,24 @@ h
 464 552 m
 464 604 l
 464 604 l
+</path>
+<path matrix="3.5 0 0 1 50 64" fill="darkgray">
+76 624 m
+76 608 l
+84 608 l
+84 624 l
+h
+</path>
+<path matrix="1.16667 0 0 1 26.667 -80" stroke="black">
+176 784 m
+176 752 l
+272 752 l
+272 784 l
+h
+</path>
+<path matrix="1.16667 0 0 1 -29.333 -96" stroke="black">
+224 784 m
+320 784 l
 </path>
 <path matrix="2.28571 0 0 1 -503.429 0" stroke="black" dash="dotted">
 324 708 m
