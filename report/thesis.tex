@@ -936,16 +936,18 @@ The structure is a slightly modified version of the B-Tree over the $x$-values o
 
 Each node $v$ stores three buffers containing $\mathcal{O}(B)$ points each, namely a point buffer $P_v$, an insertion buffer $I_v$, and a deletion buffer $D_v$ which purpose will be described shortly.
 
-As in the Internal Memory Priority Search Tree of McCreight~\cite{DBLP:journals/siamcomp/McCreight85} described in Chapter~\ref{chp:internal_pst}, the points with highest $y$-value resides in the top of the tree, i.e. we have a heap ordering among the nodes of the tree on the $y$-value. This means that for a node $v$, no child $c$ of $v$ stores an element in $P_c$ with a larger $y$-value than the minimum $y$-value in $P_v$.
-The buffers $I_v$ and $D_v$ stores delayed insertions and deletions on their way down to a point buffer of a descendent. Using the basic ideas of the Buffer Tree of Arge~\cite{Arge:1995:BTN:645930.672850} described in Section~\ref{sec:prelim_buffer_tree}, buffers are handled recursively whenever an overflow occurs.
+As in the Internal Memory Priority Search Tree of McCreight~\cite{DBLP:journals/siamcomp/McCreight85} described in Chapter~\ref{chp:internal_pst}, the points with highest $y$-value resides in the top of the tree, i.e. we have a heap ordering among the nodes of the tree on the $y$-value. This means that for a child $c$ of $v$, there is no elements in the point buffer $P_c$ of the child with larger $y$-value than the minimum $y$-value in the point buffer $P_v$ of $v$.
 
-For each internal node, $v$, we also store an instance of the child structure, $C_v$, containing the elements $P_c$ for every child $c$ of $v$. See Figure~\ref{fig:gerth_tree}.
+The buffers $I_v$ and $D_v$ stores delayed insertions and deletions on their way down to a point buffer of a descendent. Using the basic ideas of the Buffer Tree of Arge~\cite{Arge:1995:BTN:645930.672850} described in Section~\ref{sec:prelim_buffer_tree}, buffers are handled recursively whenever an invariant is broken. We will introduce the invariants in Section~\ref{subsec:brodal_invariants}.
 
-Finally, for each internal node, $v$, we store, in $\mathcal{O}(1)$ blocks, information about the minimum $y$-value of the points of each of $v$'s children or $\infty$ if the child does not store any points.
+For each internal node $v$ we also store an instance of the child structure $C_v$ containing a copy of all points stored in the point buffers $P_c$ of every child $c$ of $v$. See Figure~\ref{fig:gerth_tree}.
+
+Finally, for each internal node, $v$, we store, in $\mathcal{O}(1)$ blocks, information about the minimum $y$-value of the points of each of $v$'s children. If a child is empty we will mark this by storing $\infty$ as the minimum $y$-value.
 
 All information at the root is kept in internal memory except for the child structure.
 
 \subsection{Invariants}
+\label{subsec:brodal_invariants}
 For a node $v$ in the main data structure the following invariants must be true:
 \begin{itemize}
 	\item $P_v$, $I_v$, and $D_v$ are disjoint and points in the buffers have $x$-values spanned by the subtree at $v$.
@@ -957,7 +959,7 @@ For a node $v$ in the main data structure the following invariants must be true:
 
 \subsection{Updates}
 \label{subsec:gerth_updates}
-We update the structure with insertions and deletions by adding points to either the insertion or deletion buffer respectively of the root, while maintaining the above invariants.
+We update the structure with insertions and deletions by adding points to the root's insertion or deletion buffer respectively, while maintaining the above invariants.
 During an update the insertion or deletion buffers might overflow, i.e get size larger than $B$ or $B/4$ respectively. This is handled in the following five steps:
 \begin{inlinelist}
 	\item handle overflowing deletion buffers
@@ -974,7 +976,7 @@ We will in the following look at each step individually and argue their complexi
 	
 	\begin{figure}[htp!]
 		\centering
-		\includegraphics[width=1\textwidth]{../figures/pigeon_hole2}
+		\includegraphics[width=0.9\textwidth]{../figures/pigeon_hole2}
 		\caption{Pigeon hole principle. Each cross represents a deletion stored in the deletion buffer of $v$. Here $\nicefrac{B}{4} = 16$ and $\epsilon = \nicefrac{1}{3}$. This gives $B^{\epsilon} = 4$. By the pigeon hole principle we must have that at least one of the x-ranges contains at least $\nicefrac{B}{B^{\epsilon}}$ points that can be sent down to the child that is responsible. Here the child $c_3$ will receive a subset of the deletions.}
 		\label{fig:pigeon_hole}
 	\end{figure}
@@ -983,23 +985,23 @@ We will in the following look at each step individually and argue their complexi
 
 	\begin{figure}[t]
 		\centering
-		\includegraphics[width=0.8\textwidth]{../figures/brodal_deletion_buffer_overflow}
+		\includegraphics[width=0.77\textwidth]{../figures/brodal_deletion_buffer_overflow}
 		\caption{Deletion buffer overflow. A total of $B/B^\epsilon$ deletions are moved from $D_v$ to $\mathcal{U}$. Deletions larger than the smallest $y$-value in $P_c$ are removed from $\mathcal{U}$ since they cannot cancel points further down because of the heap order of the tree. Finally all points in $\mathcal{U}$ are removed from $P_c$, $I_c$, $D_c$ and $Cv$ before $\mathcal{U}$ is inserted into $D_c$.}
 		\label{fig:brodal_deletion_buffer_overflow}
 	\end{figure}
 	
-	If $v$ is a leaf we do not need to do more. If not, the remaining points in $U$ are inserted in $D_c$ which might recursively overflow. In the worst case we might recursively overflow along a path from the root to a leaf each time causing $\mathcal{O}(\lceil \vert B \vert / \Delta \rceil)$ deletes to be pushed one level down. Updating $C_v$ with $\mathcal{O}(\lceil \vert B \vert / \Delta \rceil)$ updates takes amortized $\mathcal{O}(1+ (B/\Delta) / B^{1-\epsilon}) = \mathcal{O}(1)$ I/O's.
+	If $v$ is a leaf we do not need to do more. If not, the remaining points in $U$ are inserted in $D_c$ which might recursively overflow. In the worst case we might recursively overflow along a path from the root to a leaf each time causing $\mathcal{O}(\lceil B / \Delta \rceil)$ deletes to be pushed one level down. Updating $C_v$ with $\mathcal{O}(\lceil B / \Delta \rceil)$ updates takes amortized $\mathcal{O}(1+ (B/\Delta) / B^{1-\epsilon}) = \mathcal{O}(1)$ I/O's.
 	
 	\item\label{update:ins} An insertion buffer at $v$ overflows when $\vert I_v \vert > B$. Similar to handling a deletion buffer overflow we find a child $c$ such that we can push $U \subseteq I_v$ of $\lceil \vert D_v \vert / \Delta \rceil$ insertions to $c$. Points in $U$ are removed from $I_v$, $I_c$, $D_c$, $P_c$, and $C_v$.
 	Any point $p$ in $U$ lexicographically larger than the minimum point in $P_c$ (w.r.t. $y$) is removed from $U$ and inserted into $P_c$ and $C_v$.
 	If $P_c$ overflows, the lexicographically smallest points w.r.t. $y$ are moved from $P_c$ to $U$ and removed from $C_v$ until $P_c$ no longer overflows.
 	If $c$ is a leaf then all points are inserted into $P_c$ and $U$ is now empty.
-	Otherwise, the remaining points in $U$ are added to $I_c$ which might overflow and cause a similar overflow along a path from the root to a leaf in the worst case as in the case of the deletion buffer overflow. See Figure~\ref{fig:brodal_insert_buffer_overflow}.
+	Otherwise, the remaining points in $U$ are added to $I_c$ which might overflow and cause a similar overflow along a path from the root to a leaf in the worst case as in the case of the deletion buffer overflow. See Figure~\ref{fig:brodal_insert_buffer_overflow}. The analysis and bounds follows directly from that of deletion buffer overflow.
 	
 	\begin{figure}[b]
 		\centering
-		\includegraphics[width=0.8\textwidth]{../figures/brodal_insert_buffer_overflow}
-		\caption{Insert buffer overflow. A total of $B/B^\epsilon$ points are moved from $I_v$ to $\mathcal{U}$. All points from $\mathcal{U}$ are removed from $D_c$ since they cancel the deletions. Points larger than the smallest $y$-value in $P_c$ are inserted into $P_c$ and points smaller than the smallest $y$-value in $P_c$ are inserted into $I_c$. This ensures the invariant of the tree being heap ordered. Finally the newly added points to $P_c$ are also inserted into $C_v$ to ensure that $C_v$ contains a valid copy of all points in $P_c$.}
+		\includegraphics[width=0.77\textwidth]{../figures/brodal_insert_buffer_overflow}
+		\caption{Insert buffer overflow. A total of $B/B^\epsilon$ points are moved from $I_v$ to $\mathcal{U}$. All points from $\mathcal{U}$ are removed from $D_c$ since they cancel the deletions. Points larger than the smallest $y$-value in $P_c$ are inserted into $P_c$ and points smaller than the smallest $y$-value in $P_c$ are inserted into $I_c$. This ensures the invariant of the tree being heap ordered. Finally the newly added points to $P_c$ are also inserted into $C_v$ to ensure that $C_v$ contains a copy of all points in $P_c$.}
 		\label{fig:brodal_insert_buffer_overflow}
 	\end{figure}		
 	
@@ -1012,22 +1014,22 @@ We will in the following look at each step individually and argue their complexi
 		\label{fig:brodal_point_buffer_overflow}
 	\end{figure}	
 	
-	\item\label{update:deg} An internal node $v$ with a degree larger than $\Delta$ is split into two new nodes $v'$ and $v''$. $I_v$, $D_v$, and $P_v$ are distributed among $v'$ and $v''$ according to the $x$-value. Finally the child structures of $v'$ and $v''$ are rebuilt from the children's point buffers. The split might cause the parent of $v$ to have a degree overflow and in the worst case we need to split along a path from a leaf to the root. The splitting of a single node costs $\mathcal{O}(\Delta)$ I/O's due to the reconstruction of the child structures.
+	\item\label{update:deg} An internal node $v$ with a degree larger than $\Delta$ is split into two new nodes $v'$ and $v''$. $I_v$, $D_v$, and $P_v$ are distributed among $v'$ and $v''$ according to the $x$-value. Finally the child structures of $v'$ and $v''$ are rebuilt from the children's point buffers. See Figure~\ref{fig:brodal_node_degree_overflow}. The split might cause the parent of $v$ to have a degree overflow and in the worst case we need to split along a path from a leaf to the root. The splitting of a single node costs $\mathcal{O}(\Delta)$ I/O's due to the reconstruction of the child structures.
 	
 	
 	\begin{figure}[h]
 		\centering
 		\includegraphics[width=1\textwidth]{../figures/brodal_node_degree_overflow}
 		\caption{Node degree overflow. The buffers $I_v$, $D_v$, and $P_v$ are distributed to the to new nodes $v'$ and $v''$. After the split we have to ensure the child structures mirrors the points in the point buffers of the children.}
-		\label{fig:brodal_point_buffer_overflow}
+		\label{fig:brodal_node_degree_overflow}
 	\end{figure}		
 	
 	\item\label{update:pbu} A point buffer underflows at $v$ when $\vert P_v \vert < B/2$. In that case we try to \textit{pull up} the highest $B/2$ points from the children of $v$ into $P_v$. If $v$'s subtree does not store any points then we remove all points from $D_v$ and move points from $I_v$ to $P_v$ until $\vert P_v \vert = B$ or $I_v = \emptyset$.
-	Otherwise we use $\mathcal{O}(\Delta)$ I/O's to identify the set $X$ of the top $B/2$ points from the children of $v$ and remove the identified points from the point buffers of the children and the child structure of $v$.
+	Otherwise we use $\mathcal{O}(\Delta)$ I/O's to identify the set $X$ of the top $B/2$ points from the children of $v$ and remove the identified points from the point buffers of the children and the child structure $C_v$ of $v$.
 
 	If a point buffer of a child becomes empty before having identified all of the top $B/2$ points we have to recursively fill that child as the subtree might contain points with larger $y$-value than the remaining children of $v$. After this is done we can continue to grab points from the children.
 	
-	All points in $X \cap D_v$ are removed from $X$. This might cause $\lvert X \rvert < B/2 - \lvert P_v \rvert$ resulting in a repeated run of the procedure to guarantee $X$ contains enough points to ensure $P_v$ is no longer underflowed.
+	All points in $X \cap D_v$ are then removed from $X$. This might cause $\lvert X \rvert < B/2 - \lvert P_v \rvert$ resulting in a repeated run of the procedure to guarantee $X$ contains enough points to ensure $P_v$ is no longer underflowed.
 	
 	The remaining points of $X$ are inserted into $P_v$ and the child structure of the parent of $v$. Please refer to Figure~\ref{fig:brodal_pb_underflow} for an illustration of the main ideas of the pull up procedure.
 	
@@ -1042,7 +1044,7 @@ We will in the following look at each step individually and argue their complexi
 	\begin{figure}[h]
 		\centering
 		\includegraphics[width=0.9\textwidth]{../figures/brodal_point_buffer_underflow}
-		\caption{Point buffer underflow. Here $B = 32$, $\epsilon = 2/5$ giving $B^\epsilon = 4$. The point buffer $P_v$ contains less than $B/2$ points, i.e. it is underflowed. The point buffers of the children are considered and the top $B/2$ points are added to $X$. Now deletions from $D_v$ cancels points in $X$ and the remaining of $X$ is inserted into $P_v$ and the child structure of the parent $C_p$. Finally the heap order is maintained by swapping points between $P_v$ and $I_v$ and reflecting the changes in $C_p$.}
+		\caption{Point buffer underflow. Here $B = 32$, $\epsilon = 2/5$ giving $B^\epsilon = 4$. The point buffer $P_v$ contains less than $B/2$ points, i.e. it is underflowed. The point buffers of the children are considered and the top $B/2$ points are added to $X$. Now deletions from $D_v$ cancels points in $X$ and the remaining of $X$ is inserted into $P_v$ and the child structure of the parent $C_p$. Finally the heap order is maintained by swapping points between $P_v$ and $I_v$, and by reflecting these changes in $C_p$.}
 		\label{fig:brodal_pb_underflow}
 	\end{figure}
 	
