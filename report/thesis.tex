@@ -999,7 +999,7 @@ We will in the following look at each step individually and argue their complexi
 	\begin{figure}[b]
 		\centering
 		\includegraphics[width=0.8\textwidth]{../figures/brodal_insert_buffer_overflow}
-		\caption{Insert buffer overflow. A total of $B/B^\epsilon$ points are moved from $P_v$ to $\mathcal{U}$. All points from $\mathcal{U}$ are removed from $D_c$ since they cancel the deletions. Points larger than the smallest $y$-value in $P_c$ are inserted into $P_c$ and points smaller than the smallest $y$-value in $P_c$ are inserted into $I_c$. This ensures the invariant of the tree being heap ordered. Finally the newly added points to $P_c$ are also inserted into $C_v$ to ensure that $C_v$ contains a valid copy of all points in $P_c$.}
+		\caption{Insert buffer overflow. A total of $B/B^\epsilon$ points are moved from $I_v$ to $\mathcal{U}$. All points from $\mathcal{U}$ are removed from $D_c$ since they cancel the deletions. Points larger than the smallest $y$-value in $P_c$ are inserted into $P_c$ and points smaller than the smallest $y$-value in $P_c$ are inserted into $I_c$. This ensures the invariant of the tree being heap ordered. Finally the newly added points to $P_c$ are also inserted into $C_v$ to ensure that $C_v$ contains a valid copy of all points in $P_c$.}
 		\label{fig:brodal_insert_buffer_overflow}
 	\end{figure}		
 	
@@ -1008,7 +1008,7 @@ We will in the following look at each step individually and argue their complexi
 	\begin{figure}[h]
 		\centering
 		\includegraphics[width=1\textwidth]{../figures/brodal_point_buffer_overflow}
-		\caption{Missing}
+		\caption{Point buffer overflow. The point buffer $P_v$ is evenly distributed between to new nodes $v'$ and $v''$. After the split we have to ensure the parent is not node degree overflowed.}
 		\label{fig:brodal_point_buffer_overflow}
 	\end{figure}	
 	
@@ -1018,7 +1018,7 @@ We will in the following look at each step individually and argue their complexi
 	\begin{figure}[h]
 		\centering
 		\includegraphics[width=1\textwidth]{../figures/brodal_node_degree_overflow}
-		\caption{Missing}
+		\caption{Node degree overflow. The buffers $I_v$, $D_v$, and $P_v$ are distributed to the to new nodes $v'$ and $v''$. After the split we have to ensure the child structures mirrors the points in the point buffers of the children.}
 		\label{fig:brodal_point_buffer_overflow}
 	\end{figure}		
 	
