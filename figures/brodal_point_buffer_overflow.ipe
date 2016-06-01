@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70107" creator="Ipe 7.2.2">
-<info created="D:20160503183544" modified="D:20160531191407"/>
+<info created="D:20160503183544" modified="D:20160601112857"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -286,7 +286,7 @@ h
 288 800 m
 288 784 l
 </path>
-<text matrix="0.664586 0 0 0.763466 237.587 162.782" transformations="translations" pos="284 712" stroke="black" type="label" width="7.094" height="6.134" depth="0" valign="baseline" size="footnote">$v&apos;$</text>
+<text matrix="0.664586 0 0 0.763466 205.587 162.782" transformations="translations" pos="284 712" stroke="black" type="label" width="7.094" height="6.134" depth="0" valign="baseline" size="footnote">$v&apos;$</text>
 <text matrix="0.664586 0 0 0.763466 213.07 91.2003" transformations="translations" pos="232 792" stroke="black" type="label" width="13.027" height="6.132" depth="1.39" valign="baseline" size="small">$P_{v&apos;}$</text>
 <path matrix="0.443058 0 0 0.620316 301.12 275.005" stroke="black">
 404 772 m
@@ -303,7 +303,7 @@ h
 468 708 l
 468 708 l
 </path>
-<path matrix="1.32917 0 0 0.763466 281.533 228.624" fill="darkgray">
+<path matrix="1.32917 0 0 0.763466 281.533 228.624" fill="seagreen">
 76 624 m
 76 608 l
 84 608 l
@@ -352,9 +352,9 @@ h
 288 800 m
 288 784 l
 </path>
-<text matrix="0.664586 0 0 0.763466 328.353 162.835" transformations="translations" pos="284 712" stroke="black" type="label" width="9.28" height="6.134" depth="0" valign="baseline" size="footnote">$v&apos;&apos;$</text>
+<text matrix="0.664586 0 0 0.763466 296.353 162.835" transformations="translations" pos="284 712" stroke="black" type="label" width="9.28" height="6.134" depth="0" valign="baseline" size="footnote">$v&apos;&apos;$</text>
 <text matrix="0.664586 0 0 0.763466 303.126 91.2003" transformations="translations" pos="232 792" stroke="black" type="label" width="15.224" height="6.132" depth="1.39" valign="baseline" size="small">$P_{v&apos;&apos;}$</text>
-<path matrix="1.33317 0 0 0.763466 374.239 228.624" fill="darkgray">
+<path matrix="1.33317 0 0 0.763466 374.239 228.624" fill="seagreen">
 76 624 m
 76 608 l
 84 608 l
@@ -408,7 +408,7 @@ h
 288 800 m
 288 784 l
 </path>
-<text matrix="0.664586 0 0 0.763466 20.1867 164.274" transformations="translations" pos="284 712" stroke="black" type="label" width="4.798" height="3.861" depth="0" valign="baseline" size="small">$v$</text>
+<text matrix="0.664586 0 0 0.763466 -15.8133 164.274" transformations="translations" pos="284 712" stroke="black" type="label" width="4.798" height="3.861" depth="0" valign="baseline" size="small">$v$</text>
 <text matrix="0.664586 0 0 0.763466 -12.1957 91.0398" transformations="translations" pos="232 792" stroke="black" type="label" width="10.332" height="6.133" depth="0.99" valign="baseline" size="small">$P_{v}$</text>
 <path matrix="3.54446 0 0 0.620316 -1239.03 274.844" stroke="black" dash="dashed">
 404 772 m
@@ -498,7 +498,7 @@ h
 84 624 l
 h
 </path>
-<text matrix="0.664586 0 0 0.763467 39.2315 225.351" transformations="translations" pos="284 712" stroke="black" type="label" width="4.626" height="3.864" depth="1.74" valign="baseline" size="small">$p$</text>
+<text matrix="0.664586 0 0 0.763467 3.2315 225.351" transformations="translations" pos="284 712" stroke="black" type="label" width="4.626" height="3.864" depth="1.74" valign="baseline" size="small">$p$</text>
 <path matrix="0.775354 0 0 0.763467 19.255 167.387" stroke="black">
 176 784 m
 176 752 l
@@ -554,7 +554,7 @@ h
 84 624 l
 h
 </path>
-<text matrix="0.664586 0 0 0.763467 326.413 225.511" transformations="translations" pos="284 712" stroke="black" type="label" width="4.626" height="3.864" depth="1.74" valign="baseline" size="small">$p$</text>
+<text matrix="0.664586 0 0 0.763467 290.413 225.511" transformations="translations" pos="284 712" stroke="black" type="label" width="4.626" height="3.864" depth="1.74" valign="baseline" size="small">$p$</text>
 <path matrix="0.775354 0 0 0.763467 306.437 167.546" stroke="black">
 176 784 m
 176 752 l
