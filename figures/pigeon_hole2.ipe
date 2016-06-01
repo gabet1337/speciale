@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70107" creator="Ipe 7.2.2">
-<info created="D:20160503183544" modified="D:20160531152035"/>
+<info created="D:20160503183544" modified="D:20160601132735"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -325,9 +325,9 @@ h
 <use name="mark/cross(sx)" pos="352 768" size="large" stroke="black"/>
 <use name="mark/cross(sx)" pos="408 788" size="large" stroke="black"/>
 <text matrix="-0.255982 0.722425 -5.30345 -0.00770917 4041.24 742.469" pos="92 684" stroke="black" type="label" width="12.394" height="18.587" depth="6.2" valign="baseline" size="Huge">\}</text>
-<text matrix="1 0 0 1 -12 -12" transformations="translations" pos="352 828" stroke="black" type="label" width="35.429" height="7.473" depth="2.49" valign="baseline">$\geq B/B^\epsilon$</text>
+<text matrix="1 0 0 1 -12 -12" transformations="translations" pos="352 828" stroke="black" type="label" width="38.224" height="7.49" depth="2.49" valign="baseline">$\geq B&apos;/B^\epsilon$</text>
 <text matrix="-0.987259 0.722425 -20.4541 -0.00770917 14506.22 678.469" pos="92 684" stroke="black" type="label" width="12.394" height="18.587" depth="6.2" valign="baseline" size="Huge">\{</text>
-<text matrix="1 0 0 1 0 -4" transformations="translations" pos="292 732" stroke="black" type="label" width="8.057" height="6.808" depth="0" valign="baseline">$B$</text>
+<text matrix="1 0 0 1 0 -4" transformations="translations" pos="292 732" stroke="black" type="label" width="10.852" height="7.49" depth="0" valign="baseline">$B&apos;$</text>
 <path matrix="1.06667 0 0 1.08333 -19.2 -59.6667" stroke="black" fill="white">
 232 668 m
 228 668
