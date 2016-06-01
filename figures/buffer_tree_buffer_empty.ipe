@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70107" creator="Ipe 7.2.2">
-<info created="D:20160518121350" modified="D:20160519150218"/>
+<info created="D:20160518121350" modified="D:20160601170729"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -432,19 +432,7 @@ h
 300 748
 300 748 c
 </path>
-<path matrix="1 0 0 1 4 0" stroke="black" pen="heavier">
-288 760 m
-288 672 l
-288 672 l
-288 672 l
-</path>
-<path matrix="1 0 0 1 104 0" stroke="black" pen="heavier">
-288 760 m
-288 672 l
-288 672 l
-288 672 l
-</path>
-<text matrix="1 0 0 1 148 128" transformations="translations" pos="256 580" stroke="black" type="label" width="22.485" height="7.49" depth="0" valign="baseline">$= K&apos;$</text>
+<text matrix="1 0 0 1 59.6475 80" transformations="translations" pos="256 580" stroke="black" type="label" width="52.705" height="7.49" depth="0" valign="baseline">$K&apos;$ elements</text>
 <path stroke="black" dash="dashed" rarrow="farc/normal">
 356 756 m
 356 780
@@ -484,22 +472,22 @@ h
 </path>
 <text matrix="-0.403788 0.388763 -8.36571 -0.00414858 5976.17 638.888" pos="92 684" stroke="black" type="label" width="12.394" height="18.587" depth="6.2" valign="baseline" size="Huge">\{</text>
 <text matrix="1 0 0 1 -4 0" transformations="translations" pos="160 660" stroke="black" type="label" width="9.174" height="6.808" depth="0" valign="baseline">$K$</text>
-<text matrix="1 0 0 1 -56 -16" transformations="translations" pos="148 612" stroke="black" type="label" width="40.515" height="7.49" depth="0" valign="baseline">$K&apos; = K$ :</text>
-<use matrix="1 0 0 1 -156 -116" name="mark/disk(sx)" pos="312 704" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -116" name="mark/disk(sx)" pos="324 720" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -116" name="mark/disk(sx)" pos="308 736" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -116" name="mark/disk(sx)" pos="344 748" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -116" name="mark/disk(sx)" pos="356 712" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -116" name="mark/disk(sx)" pos="344 696" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -116" name="mark/disk(sx)" pos="352 736" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -116" name="mark/disk(sx)" pos="372 728" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -116" name="mark/disk(sx)" pos="376 700" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -116" name="mark/disk(sx)" pos="372 748" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -116" name="mark/disk(sx)" pos="344 724" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -116" name="mark/disk(sx)" pos="328 740" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -116" name="mark/disk(sx)" pos="320 688" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -116" name="mark/disk(sx)" pos="316 748" size="normal" stroke="black"/>
-<path matrix="1 0 0 1 -156 -116" stroke="black" dash="dashed">
+<text matrix="1 0 0 1 -54.2575 4" transformations="translations" pos="148 612" stroke="black" type="label" width="40.515" height="7.49" depth="0" valign="baseline">$K&apos; = K$ :</text>
+<use matrix="1 0 0 1 -228 -148" name="mark/disk(sx)" pos="312 704" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -228 -148" name="mark/disk(sx)" pos="324 720" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -228 -148" name="mark/disk(sx)" pos="308 736" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -228 -148" name="mark/disk(sx)" pos="344 748" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -228 -148" name="mark/disk(sx)" pos="356 712" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -228 -148" name="mark/disk(sx)" pos="344 696" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -228 -148" name="mark/disk(sx)" pos="352 736" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -228 -148" name="mark/disk(sx)" pos="372 728" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -228 -148" name="mark/disk(sx)" pos="376 700" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -228 -148" name="mark/disk(sx)" pos="372 748" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -228 -148" name="mark/disk(sx)" pos="344 724" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -228 -148" name="mark/disk(sx)" pos="328 740" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -228 -148" name="mark/disk(sx)" pos="320 688" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -228 -148" name="mark/disk(sx)" pos="316 748" size="normal" stroke="black"/>
+<path matrix="1 0 0 1 -228 -148" stroke="black" dash="dashed">
 300 748 m
 300 756
 308 756
@@ -524,32 +512,19 @@ h
 300 748
 300 748 c
 </path>
-<path matrix="1 0 0 1.06667 0 -41.6" stroke="black" dash="dashed" rarrow="farc/normal">
-56 684 m
-48 684
-44 684
-44 680
-44 680
-44 628
-44 624
-48 624
-48 624
-144 624
-144 624 c
-</path>
-<text matrix="1 0 0 1 -56 -108" transformations="translations" pos="148 612" stroke="black" type="label" width="40.515" height="7.489" depth="0.39" valign="baseline">$K&apos; &lt; K$ :</text>
-<use matrix="1 0 0 1 -156 -208" name="mark/disk(sx)" pos="312 704" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -208" name="mark/disk(sx)" pos="324 720" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -208" name="mark/disk(sx)" pos="308 736" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -208" name="mark/disk(sx)" pos="344 748" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -208" name="mark/disk(sx)" pos="356 712" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -208" name="mark/disk(sx)" pos="352 736" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -208" name="mark/disk(sx)" pos="372 728" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -208" name="mark/disk(sx)" pos="376 700" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -208" name="mark/disk(sx)" pos="372 748" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -208" name="mark/disk(sx)" pos="328 740" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -208" name="mark/disk(sx)" pos="316 748" size="normal" stroke="black"/>
-<path matrix="1 0 0 1 -156 -208" stroke="black" dash="dashed">
+<text matrix="1 0 0 1 49.7425 4" transformations="translations" pos="148 612" stroke="black" type="label" width="40.515" height="7.489" depth="0.39" valign="baseline">$K&apos; &lt; K$ :</text>
+<use matrix="1 0 0 1 -124 -148" name="mark/disk(sx)" pos="312 704" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -124 -148" name="mark/disk(sx)" pos="324 720" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -124 -148" name="mark/disk(sx)" pos="308 736" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -124 -148" name="mark/disk(sx)" pos="344 748" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -124 -148" name="mark/disk(sx)" pos="356 712" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -124 -148" name="mark/disk(sx)" pos="352 736" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -124 -148" name="mark/disk(sx)" pos="372 728" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -124 -148" name="mark/disk(sx)" pos="376 700" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -124 -148" name="mark/disk(sx)" pos="372 748" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -124 -148" name="mark/disk(sx)" pos="328 740" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -124 -148" name="mark/disk(sx)" pos="316 748" size="normal" stroke="black"/>
+<path matrix="1 0 0 1 -124 -148" stroke="black" dash="dashed">
 300 748 m
 300 756
 308 756
@@ -574,39 +549,23 @@ h
 300 748
 300 748 c
 </path>
-<path stroke="black" dash="dashed">
-56 688 m
-36 688
-32 688
-36 688
-32 688
-32 684
-32 684
-32 536
-32 536
-32 532
-36 532
-36 532
-144 532
-144 532 c
-</path>
-<use name="mark/circle(sx)" pos="180 496" size="normal" stroke="black"/>
-<use name="mark/circle(sx)" pos="172 480" size="normal" stroke="black"/>
-<use name="mark/circle(sx)" pos="196 476" size="normal" stroke="black"/>
-<use name="mark/circle(sx)" pos="204 488" size="normal" stroke="black"/>
-<text matrix="1 0 0 1 -56 -200" transformations="translations" pos="148 612" stroke="black" type="label" width="40.515" height="7.489" depth="0.39" valign="baseline">$K&apos; &gt; K$ :</text>
-<use matrix="1 0 0 1 -156 -300" name="mark/disk(sx)" pos="312 704" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -300" name="mark/disk(sx)" pos="324 720" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -300" name="mark/disk(sx)" pos="308 736" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -300" name="mark/disk(sx)" pos="344 748" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -300" name="mark/disk(sx)" pos="356 712" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -300" name="mark/disk(sx)" pos="352 736" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -300" name="mark/disk(sx)" pos="372 728" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -300" name="mark/disk(sx)" pos="376 700" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -300" name="mark/disk(sx)" pos="372 748" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -300" name="mark/disk(sx)" pos="328 740" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -156 -300" name="mark/disk(sx)" pos="316 748" size="normal" stroke="black"/>
-<path matrix="1 0 0 1 -156 -300" stroke="black" dash="dashed">
+<use matrix="1 0 0 1 32 60" name="mark/circle(sx)" pos="180 496" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 32 60" name="mark/circle(sx)" pos="172 480" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 32 60" name="mark/circle(sx)" pos="196 476" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 32 60" name="mark/circle(sx)" pos="204 488" size="normal" stroke="black"/>
+<text matrix="1 0 0 1 153.743 4" transformations="translations" pos="148 612" stroke="black" type="label" width="40.515" height="7.489" depth="0.39" valign="baseline">$K&apos; &gt; K$ :</text>
+<use matrix="1 0 0 1 -20 -148" name="mark/disk(sx)" pos="312 704" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -20 -148" name="mark/disk(sx)" pos="324 720" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -20 -148" name="mark/disk(sx)" pos="308 736" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -20 -148" name="mark/disk(sx)" pos="344 748" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -20 -148" name="mark/disk(sx)" pos="356 712" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -20 -148" name="mark/disk(sx)" pos="352 736" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -20 -148" name="mark/disk(sx)" pos="372 728" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -20 -148" name="mark/disk(sx)" pos="376 700" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -20 -148" name="mark/disk(sx)" pos="372 748" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -20 -148" name="mark/disk(sx)" pos="328 740" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -20 -148" name="mark/disk(sx)" pos="316 748" size="normal" stroke="black"/>
+<path matrix="1 0 0 1 -20 -148" stroke="black" dash="dashed">
 300 748 m
 300 756
 308 756
@@ -631,14 +590,14 @@ h
 300 748
 300 748 c
 </path>
-<use matrix="1 0 0 1 0 -92" name="mark/disk(sx)" pos="180 496" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 0 -92" name="mark/disk(sx)" pos="172 480" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 0 -92" name="mark/disk(sx)" pos="196 476" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 0 -92" name="mark/disk(sx)" pos="204 488" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -164 -292" name="mark/disk(sx)" pos="356 712" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -176 -284" name="mark/disk(sx)" pos="356 712" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 -196 -324" name="mark/disk(sx)" pos="356 712" size="normal" stroke="black"/>
-<path stroke="black" dash="dotted">
+<use matrix="1 0 0 1 136 60" name="mark/disk(sx)" pos="180 496" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 136 60" name="mark/disk(sx)" pos="172 480" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 136 60" name="mark/disk(sx)" pos="196 476" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 136 60" name="mark/disk(sx)" pos="204 488" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -28 -140" name="mark/disk(sx)" pos="356 712" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -40 -132" name="mark/disk(sx)" pos="356 712" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -60 -172" name="mark/disk(sx)" pos="356 712" size="normal" stroke="black"/>
+<path matrix="1 0 0 1 136 152" stroke="black" dash="dotted">
 148 448 m
 148 452
 152 452
@@ -658,21 +617,6 @@ h
 148 412
 148 448
 148 448 c
-</path>
-<path matrix="1 0 0 0.984615 0 6.64615" stroke="black" dash="dashed" rarrow="farc/normal">
-56 692 m
-24 692
-24 692
-20 692
-20 688
-20 688
-20 436
-20 436
-20 432
-24 432
-24 432
-148 432
-148 432 c
 </path>
 </page>
 </ipe>
