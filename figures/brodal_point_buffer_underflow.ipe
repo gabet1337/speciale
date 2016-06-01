@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70107" creator="Ipe 7.2.2">
-<info created="D:20160503183544" modified="D:20160601101247"/>
+<info created="D:20160503183544" modified="D:20160601194138"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -646,42 +646,42 @@ h
 <use name="mark/disk(sx)" pos="516 516" size="normal" stroke="black"/>
 <use name="mark/disk(sx)" pos="524 508" size="normal" stroke="black"/>
 <use name="mark/disk(sx)" pos="532 516" size="normal" stroke="black"/>
-<path matrix="0.5 0 0 1 42 0" fill="darkgray">
+<path matrix="0.5 0 0 1 42 0" fill="red">
 76 624 m
 76 608 l
 84 608 l
 84 624 l
 h
 </path>
-<path matrix="1 0 0 1 136 0" fill="darkgray">
+<path matrix="1 0 0 1 136 0" fill="red">
 76 624 m
 76 608 l
 84 608 l
 84 624 l
 h
 </path>
-<path matrix="1 0 0 1 272 0" fill="darkgray">
+<path matrix="1 0 0 1 272 0" fill="red">
 76 624 m
 76 608 l
 84 608 l
 84 624 l
 h
 </path>
-<path matrix="1 0 0 1 408 0" fill="darkgray">
+<path matrix="1 0 0 1 408 0" fill="red">
 76 624 m
 76 608 l
 84 608 l
 84 624 l
 h
 </path>
-<path matrix="3.5 0 0 1 -6 80" fill="darkgray">
+<path matrix="3.5 0 0 1 -6 80" fill="seagreen">
 76 624 m
 76 608 l
 84 608 l
 84 624 l
 h
 </path>
-<path matrix="3.5 0 0 1 166 148" fill="darkgray">
+<path matrix="3.5 0 0 1 166 148" fill="seagreen">
 76 624 m
 76 608 l
 84 608 l
@@ -877,7 +877,7 @@ h
 464 604 l
 464 604 l
 </path>
-<path matrix="3.5 0 0 1 50 64" fill="darkgray">
+<path matrix="3.5 0 0 1 50 64" fill="red">
 76 624 m
 76 608 l
 84 608 l
