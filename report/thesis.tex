@@ -914,7 +914,7 @@ The External Memory Buffered Priority Search Tree is a combination of the Extern
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{../figures/gerth_tree}
-	\caption{External Memory Priority Search Tree with buffers. The point buffers of the children is in the child structure of the parent allowing for fast queries.}
+	\caption{External Memory Priority Search Tree with buffers. The points stored in the point buffers $P_{c_i}$ of the children are also stored in the child structure $C_v$ of the parent. This allows for fast queries.}
 	\label{fig:gerth_tree}
 \end{figure}
 
@@ -932,11 +932,9 @@ This section presents the main data structure achieving the results of Theorem~\
 An external memory data structure exists supporting insertion and deletion of points in amortized $\mathcal{O}(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N)$ I/O's and three sided range queries in amortized $\mathcal{O}(\frac{1}{\epsilon} \log_B N + \nicefrac{K}{B})$, where $\epsilon$ is a constant, $0 < \epsilon \leq 1$, $N$ is the number of points in the structure, and $K$ is the size of the output. The structure can be constructed in amortized $\mathcal{O}(\nicefrac{N}{B})$ I/O's on an x-sorted set of points and stored in $\mathcal{O}(\nicefrac{N}{B})$ blocks.
 \end{theorem}
 
-The structure is a slightly modified version of the B-Tree. Each internal node, except for the root, has a node degree between $\nicefrac{\Delta}{2}$ and $\Delta$, with $\Delta = \lceil B^\epsilon \rceil$. The root has node degree between $2$ and $\Delta$.
+The structure is a slightly modified version of the B-Tree over the $x$-values of points. Each internal node, except for the root, has a node degree between $\Delta/2$ and $\Delta$, with $\Delta = \lceil B^\epsilon \rceil$. The root has node degree between $2$ and $\Delta$.
 
 Each node $v$ stores three buffers containing $\mathcal{O}(B)$ points each, namely a point buffer $P_v$, an insertion buffer $I_v$, and a deletion buffer $D_v$ which purpose will be described shortly.
-
-The subtree at node $v$ contains points in the range spanned by the points in the point buffer $P_v$, i.e. the structure is a search tree on the points in $P_v$ w.r.t. to the normal lexicographical ordering of points.
 
 As in the Internal Memory Priority Search Tree of McCreight~\cite{DBLP:journals/siamcomp/McCreight85} described in Chapter~\ref{chp:internal_pst}, the points with highest $y$-value resides in the top of the tree, i.e. we have a heap ordering among the nodes of the tree on the $y$-value. This means that for a node $v$, no child $c$ of $v$ stores an element in $P_c$ with a larger $y$-value than the minimum $y$-value in $P_v$.
 The buffers $I_v$ and $D_v$ stores delayed insertions and deletions on their way down to a point buffer of a descendent. Using the basic ideas of the Buffer Tree of Arge~\cite{Arge:1995:BTN:645930.672850} described in Section~\ref{sec:prelim_buffer_tree}, buffers are handled recursively whenever an overflow occurs.
@@ -952,7 +950,7 @@ For a node $v$ in the main data structure the following invariants must be true:
 \begin{itemize}
 	\item $P_v$, $I_v$, and $D_v$ are disjoint and points in the buffers have $x$-values spanned by the subtree at $v$.
 	\item All points in $I_v \cup D_v$ have $y$-value less than the points in $P_v$.
-	\item An update in a buffer at $v$ is more recent and should eventually overwrite any update in a descendent of $v$ with the same point.
+	\item An update in a buffer at $v$ is more recent than updates in descendants of $v$ with equal points, and thus, should overwrite any updates in descendent of $v$ with equal points.
 	\item A leaf in the tree has empty insertion and deletion buffers and the size of its point buffer is less than $B/2$.
 	\item An internal node in the tree has $B/2 \leq \vert P_v \vert \leq B$, $\vert D_v \vert \leq B/4$, and $\vert I_v \vert \leq B$.
 \end{itemize}
@@ -976,17 +974,19 @@ We will in the following look at each step individually and argue their complexi
 	
 	\begin{figure}[htp!]
 		\centering
-		\includegraphics[width=0.9\textwidth]{../figures/pigeon_hole2}
+		\includegraphics[width=1\textwidth]{../figures/pigeon_hole2}
 		\caption{Pigeon hole principle. Each cross represents a deletion stored in the deletion buffer of $v$. Here $\nicefrac{B}{4} = 16$ and $\epsilon = \nicefrac{1}{3}$. This gives $B^{\epsilon} = 4$. By the pigeon hole principle we must have that at least one of the x-ranges contains at least $\nicefrac{B}{B^{\epsilon}}$ points that can be sent down to the child that is responsible. Here the child $c_3$ will receive a subset of the deletions.}
 		\label{fig:pigeon_hole}
 	\end{figure}
 	
-	\begin{figure}[htp!]
+\clearpage	
+
+	\begin{figure}[t]
 		\centering
-		\includegraphics[width=0.9\textwidth]{../figures/brodal_deletion_buffer_overflow}
+		\includegraphics[width=0.8\textwidth]{../figures/brodal_deletion_buffer_overflow}
 		\caption{Deletion buffer overflow. A total of $B/B^\epsilon$ deletions are moved from $D_v$ to $\mathcal{U}$. Deletions larger than the smallest $y$-value in $P_c$ are removed from $\mathcal{U}$ since they cannot cancel points further down because of the heap order of the tree. Finally all points in $\mathcal{U}$ are removed from $P_c$, $I_c$, $D_c$ and $Cv$ before $\mathcal{U}$ is inserted into $D_c$.}
 		\label{fig:brodal_deletion_buffer_overflow}
-	\end{figure}	
+	\end{figure}
 	
 	If $v$ is a leaf we do not need to do more. If not, the remaining points in $U$ are inserted in $D_c$ which might recursively overflow. In the worst case we might recursively overflow along a path from the root to a leaf each time causing $\mathcal{O}(\lceil \vert B \vert / \Delta \rceil)$ deletes to be pushed one level down. Updating $C_v$ with $\mathcal{O}(\lceil \vert B \vert / \Delta \rceil)$ updates takes amortized $\mathcal{O}(1+ (B/\Delta) / B^{1-\epsilon}) = \mathcal{O}(1)$ I/O's.
 	
@@ -996,16 +996,31 @@ We will in the following look at each step individually and argue their complexi
 	If $c$ is a leaf then all points are inserted into $P_c$ and $U$ is now empty.
 	Otherwise, the remaining points in $U$ are added to $I_c$ which might overflow and cause a similar overflow along a path from the root to a leaf in the worst case as in the case of the deletion buffer overflow. See Figure~\ref{fig:brodal_insert_buffer_overflow}.
 	
-	\begin{figure}[htp!]
+	\begin{figure}[b]
 		\centering
-		\includegraphics[width=0.9\textwidth]{../figures/brodal_insert_buffer_overflow}
+		\includegraphics[width=0.8\textwidth]{../figures/brodal_insert_buffer_overflow}
 		\caption{Insert buffer overflow. A total of $B/B^\epsilon$ points are moved from $P_v$ to $\mathcal{U}$. All points from $\mathcal{U}$ are removed from $D_c$ since they cancel the deletions. Points larger than the smallest $y$-value in $P_c$ are inserted into $P_c$ and points smaller than the smallest $y$-value in $P_c$ are inserted into $I_c$. This ensures the invariant of the tree being heap ordered. Finally the newly added points to $P_c$ are also inserted into $C_v$ to ensure that $C_v$ contains a valid copy of all points in $P_c$.}
 		\label{fig:brodal_insert_buffer_overflow}
 	\end{figure}		
 	
-	\item\label{update:pbo} A point buffer overflows at a leaf $v$ when $\vert P_v \vert > B/2$. If this is the case then we split the leaf into two nodes and evenly distribute the points in $P_v$ among the two new nodes using $\mathcal{O}(1)$ I/O's. The splitting of the node might cause the parent to get a degree of $\Delta+1$.
+	\item\label{update:pbo} A point buffer overflows at a leaf $v$ when $\vert P_v \vert > B/2$. If this is the case then we split the leaf into two nodes and evenly distribute the points in $P_v$ among the two new nodes $v'$ and $v''$ using $\mathcal{O}(1)$ I/O's. See Figure~\ref{fig:brodal_point_buffer_overflow}. The splitting of the node might cause the parent to get a degree of $\Delta+1$.
+	
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=1\textwidth]{../figures/brodal_point_buffer_overflow}
+		\caption{Missing}
+		\label{fig:brodal_point_buffer_overflow}
+	\end{figure}	
 	
 	\item\label{update:deg} An internal node $v$ with a degree larger than $\Delta$ is split into two new nodes $v'$ and $v''$. $I_v$, $D_v$, and $P_v$ are distributed among $v'$ and $v''$ according to the $x$-value. Finally the child structures of $v'$ and $v''$ are rebuilt from the children's point buffers. The split might cause the parent of $v$ to have a degree overflow and in the worst case we need to split along a path from a leaf to the root. The splitting of a single node costs $\mathcal{O}(\Delta)$ I/O's due to the reconstruction of the child structures.
+	
+	
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=1\textwidth]{../figures/brodal_node_degree_overflow}
+		\caption{Missing}
+		\label{fig:brodal_point_buffer_overflow}
+	\end{figure}		
 	
 	\item\label{update:pbu} A point buffer underflows at $v$ when $\vert P_v \vert < B/2$. In that case we try to \textit{pull up} the highest $B/2$ points from the children of $v$ into $P_v$. If $v$'s subtree does not store any points then we remove all points from $D_v$ and move points from $I_v$ to $P_v$ until $\vert P_v \vert = B$ or $I_v = \emptyset$.
 	Otherwise we use $\mathcal{O}(\Delta)$ I/O's to identify the set $X$ of the top $B/2$ points from the children of $v$ and remove the identified points from the point buffers of the children and the child structure of $v$.
@@ -1016,19 +1031,24 @@ We will in the following look at each step individually and argue their complexi
 	
 	The remaining points of $X$ are inserted into $P_v$ and the child structure of the parent of $v$. Please refer to Figure~\ref{fig:brodal_pb_underflow} for an illustration of the main ideas of the pull up procedure.
 	
-	\begin{figure}[htp!]
-		\centering
-		\includegraphics[width=0.9\textwidth]{../figures/brodal_point_buffer_underflow}
-		\caption{Point buffer underflow. Here $B = 32$, $\epsilon = 2/5$ giving $B^\epsilon = 4$. The point buffer $P_v$ contains less than $B/2$ points, i.e. it is underflowed. The point buffers of the children are considered and the top $B/2$ points are added to $X$. Now deletions from $D_v$ cancels points in $X$ and the remaining of $X$ is inserted into $P_v$ and the child structure of the parent $C_p$. Finally the heap order is maintained by swapping points between $P_v$ and $I_v$ and reflecting the changes in $C_p$.}
-		\label{fig:brodal_pb_underflow}
-	\end{figure}
+
 	
 	The points of $X$ now inserted into $P_v$ might have a smaller $y$ value than the points in $I_v$. We solve this problem by swapping the highest point in $I_v$ with the lowest point in $P_v$ while there exists a point in $I_v$ that is higher than a point in $P_v$, and make sure to maintain the child structure of the parent to reflect the changes made to the insert and point buffer.
 	
 	If the subtree of $v$ becomes empty as a result of pulling points up to $v$ we must remove all points of $D_v$ and move points from $I_v$ to $P_v$. This might cause $P_v$ to overflow which is handled recursively.
 	
 	Finally, after having pulled points from the children, we check if any of the children's point buffers underflows and should be refilled.
+	
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.9\textwidth]{../figures/brodal_point_buffer_underflow}
+		\caption{Point buffer underflow. Here $B = 32$, $\epsilon = 2/5$ giving $B^\epsilon = 4$. The point buffer $P_v$ contains less than $B/2$ points, i.e. it is underflowed. The point buffers of the children are considered and the top $B/2$ points are added to $X$. Now deletions from $D_v$ cancels points in $X$ and the remaining of $X$ is inserted into $P_v$ and the child structure of the parent $C_p$. Finally the heap order is maintained by swapping points between $P_v$ and $I_v$ and reflecting the changes in $C_p$.}
+		\label{fig:brodal_pb_underflow}
+	\end{figure}
+	
 \end{enumerate}
+
+\clearpage
 
 \subsubsection*{Analysis}
 The tree grows in height during insertions by splitting leafs and internal nodes. We stay balanced during these insertions since we only increase in height whenever the root splits which causes every path from root to leaf to increase by one. In the B-Tree we handle rebalancing using fusion of nodes. We do not apply this method here but instead apply global rebuilding when a linear number of updates have been performed. By~\ref{update:pbo} it follows that the total number of leafs created during $N$ insertions can be at most $\mathcal{O}(N/B)$ implying that at most $\mathcal{O}(\frac{N}{\Delta B})$ internal nodes can be created by splitting internal nodes. From this it follows that the tree has height $\mathcal{O}(\log_\Delta \frac{N}{B}) = \mathcal{O}(\frac{1}{\epsilon} \log_B N)$.
@@ -1837,13 +1857,13 @@ Querying is done by locating the nodes intersecting the left side of the query u
 Ramaswamy and Subramanian brings down the space usage in~\cite{Subramanian:1995:PTN:313651.313769}. This is done by building a search tree that divides the points into smaller regions of size $B \log B$ instead of $B$ giving a total of $\nicefrac{N}{B} \log B$ regions. Now a slightly modified caching scheme is used with an additional secondary level structure for each region giving a total space usage of $\mathcal{O}(\nicefrac{N}{B} \log \log B)$. Reusing this idea in a multilevel scheme brings down the data structure to a $\mathcal{O}(\nicefrac{N}{B} \log B \log^* B)$ space solution that answers queries in $\mathcal{O}(\log_B + \nicefrac{K}{B} + \mathcal{IL}^*(B))$, where $\mathcal{IL^*}(x)$ denotes the number of times $\log^*$ must be applied before the result becomes $\leq 2$.
 
 
-\chapter{Page faults with large buffer size}
+\chapter{Page faults with large buffer sizes}
 \label{app:page_faults_for_large_buffer_size}
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=1\textwidth]{../src/experiments/gerth_buffer_size_experiment_results/2016-05-03.13_51_54/pfs}
-\caption{The measured number of page faults when inserting 5Gb of data in the External Memory Buffered Priority Search Tree. We see that a buffer size of 32Mb will generate page faults}
+\caption{The measured number of page faults when inserting 5Gb of data in the External Memory Buffered Priority Search Tree. We see that a buffer size of 32Mb will generate page faults.}
 \label{fig:page_faults_gerth_buffer_size}
 \end{figure}
 
