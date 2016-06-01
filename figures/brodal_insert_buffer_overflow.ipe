@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70107" creator="Ipe 7.2.2">
-<info created="D:20160503183544" modified="D:20160601100048"/>
+<info created="D:20160503183544" modified="D:20160601112331"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -307,18 +307,11 @@ h
 288 784 l
 </path>
 <text matrix="1 0 0 1 26.4912 -96" transformations="translations" pos="300 788" stroke="black" type="label" width="12.982" height="6.812" depth="1.49" valign="baseline">$D_v$</text>
-<text matrix="1 0 0 1 -52 -4" transformations="translations" pos="284 712" stroke="black" type="label" width="5.187" height="4.289" depth="0" valign="baseline">$v$</text>
+<text matrix="1 0 0 1 0 -4" transformations="translations" pos="284 712" stroke="black" type="label" width="5.187" height="4.289" depth="0" valign="baseline">$v$</text>
 <text matrix="1 0 0 1 22.0182 -96.1366" transformations="translations" pos="268 788" stroke="black" type="label" width="9.113" height="6.812" depth="1.49" valign="baseline">$I_{v}$</text>
 <text matrix="1 0 0 1 24 -100" transformations="translations" pos="232 792" stroke="black" type="label" width="11.13" height="6.812" depth="1.49" valign="baseline">$P_{v}$</text>
 <text matrix="1 0 0 1 0 -4" transformations="translations" pos="284 680" stroke="black" type="label" width="11.854" height="6.812" depth="1.49" valign="baseline">$C_{v}$</text>
-<path matrix="2 0 0 1 -368 0" fill="darkgray">
-344 704 m
-344 688 l
-336 688 l
-336 704 l
-h
-</path>
-<path matrix="0.5 0 0 1 172 -16" fill="darkgray">
+<path matrix="2 0 0 1 -368 0" fill="red">
 344 704 m
 344 688 l
 336 688 l
@@ -350,25 +343,18 @@ h
 </path>
 <text matrix="1 0 0 1 -180 -180" transformations="translations" pos="232 792" stroke="black" type="label" width="10.455" height="6.812" depth="1.49" valign="baseline">$P_c$</text>
 <text matrix="1 0 0 1 -180 -176" transformations="translations" pos="300 788" stroke="black" type="label" width="12.307" height="6.812" depth="1.49" valign="baseline">$D_{c}$</text>
-<path fill="darkgray">
+<path fill="red">
 140 624 m
 140 608 l
 136 608 l
 136 624 l
 h
 </path>
-<path fill="darkgray">
+<path fill="seagreen">
 116 624 m
 116 608 l
 108 608 l
 108 624 l
-h
-</path>
-<path matrix="0.5 0 0 1 42 0" fill="darkgray">
-84 624 m
-84 608 l
-76 608 l
-76 624 l
 h
 </path>
 <text matrix="1 0 0 1 -204 -84" transformations="translations" pos="284 712" stroke="black" type="label" width="4.311" height="4.289" depth="0" valign="baseline">$c$</text>
@@ -502,14 +488,14 @@ in $P_c$
 56 692
 56 692 c
 </path>
-<path matrix="1 0 0 1 -4 0" fill="lightgreen">
+<path matrix="1.5 0 0 1 -42 0" fill="seagreen">
 84 624 m
 84 608 l
 76 608 l
 76 624 l
 h
 </path>
-<path matrix="1 0 0 1 256 64" fill="lightgreen">
+<path matrix="1.5 0 0 1 218 64" fill="seagreen">
 84 624 m
 84 608 l
 76 608 l
