@@ -814,7 +814,7 @@ This reconstruction is done in $\mathcal{O}(\ell')$ I/O's. As $\ell' \leq \lceil
 	\label{fig:sweep-line-query}
 \end{figure}
 
-We know from construction that the blocks intersected contains $B$ points on or above the sweep line. The left most and right most of these blocks are not necessarily fully contained in the query range and do not necessarily contain any points to report. We know that the blocks must contain at least $B\lfloor \nicefrac{(t-2)}{2}\rfloor$ points since two adjacent blocks in the query range at the sweep line would otherwise have been merged to a single block containing just $B$ points, i.e. if we force merge all adjacent blocks two and two we would end up with $\nicefrac{(t-2)}{2}$ blocks each with at least $B$ points on or above the sweep line. It follows that the output is at least $K \geq B\lfloor \nicefrac{(t-2)}{2}\rfloor$.
+We know from construction that the blocks intersected contains $B$ points on or above the sweep line. The left most and right most of these blocks are not necessarily fully contained in the query range and do not necessarily contain any points to report. We know that blocks must contain at least $B\lfloor \nicefrac{(t-2)}{2}\rfloor$ points since two adjacent blocks in the query range at the sweep line would otherwise have been merged to a single block containing just $B$ points, i.e. if we force merge all adjacent blocks two and two we would end up with $\nicefrac{(t-2)}{2}$ blocks each with at least $B$ points on or above the sweep line. It follows that the output is at least $K \geq B\lfloor \nicefrac{(t-2)}{2}\rfloor$.
 
 The $t$ relevant blocks are scanned and the points contained in the query are reported. The total number of I/O's required becomes $\mathcal{O}(1+t) = \mathcal{O}(1+\nicefrac{K}{B})$ as $t \leq 2\frac{K}{B}-2$ from the previous observation.
 
@@ -892,7 +892,7 @@ Rebalancing of the tree is done using global rebuilding. After $\Theta(N)$ delet
 \section{Query}
 \label{sec:arge_query}
 Querying the data structure with $Q = \left[ x_1, x_2 \right] \times \left[ y, \infty \right]$ consists of two steps. The first step is to identify which nodes to visit and the second consists of reporting points in $Q$ from the query data structures of the identified nodes. 
-We identify which nodes to visit by searching on a path from the root to leaf along paths corresponding to $x_1$ and $x_2$ and visit nodes in between the two paths. As the tree is a search tree on the $x$-coordinate we know that nodes in between the search paths for $x_1$ and $x_2$ will be in the query range of $Q$.
+We identify which nodes to visit by searching on a path from the root to leaf along paths corresponding to $x_1$ and $x_2$ and by visiting nodes in between the two paths. As the tree is a search tree on the $x$-coordinate we know that nodes in between the search paths for $x_1$ and $x_2$ will be in the query range of $Q$.
 We will only proceed to visit a child of $v$ if we report all points from the query data structure of $v$ in the $Y$-set of that child, with the exception of the leftmost and rightmost paths which are always visited all the way to a leaf.
 We report all points in $Q$, since, by the rules, a point in $Q$ cannot be in an unvisited subtree as this would have been visited if all points were reported and no points in the subtree has lower $y$-values.
 
