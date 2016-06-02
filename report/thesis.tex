@@ -1479,7 +1479,7 @@ Let $B^\epsilon = 4$:
 	\end{split}
 \end{equation}
 
-What Equation~\ref{eq:equal_fanouts_2_4_1} and Equation~\ref{eq:equal_fanouts_2_4_2} essential states is that we expect no performance gain when recursively sending half as many points from root to leaf in a tree of double the height.
+What Equation~\ref{eq:equal_fanouts_2_4_1} and Equation~\ref{eq:equal_fanouts_2_4_2} essential states is that we expect no performance gain when recursively sending half as many points from root to leaf in a tree of double the height.\todo{reformulate this sentence. It is not correct.}
 
 The results showing the experimentally measured update time per insert on varying fanout is depicted in Figure~\ref{fig:gerth_fanout_experiment_time}. Clearly the actual running time aligns with what the theoretical number of I/O's per update from Figure~\ref{fig:gerth_fanout_experiment} suggests. Being truly I/O bound we expect the theoretical number of I/O's and the actual running time to align well with with the actual number of I/Os per update. We are pleased to see this is in fact the case in Figure~\ref{fig:gerth_fanout_experiment_ios}.
 
@@ -1564,7 +1564,7 @@ The results of the experiment measuring running time per update is depicted in F
 \begin{minipage}[t]{0.48\columnwidth}
   \centering
   \includegraphics[width=\linewidth]{../plots/arge_complexities/arge_complexity}
-  \caption{Theoretical asymptotic update time per operation for buffer sizes $B~\in~\{4\text{Kb},8\text{Kb},16\text{Kb},32\text{Kb}\}$ for Arges structure. Each graph is on the form $f(N) = \log_B N$.}
+  \caption{Theoretical asymptotic update time per operation for buffer sizes $B~\in~\{4\text{Kb},8\text{Kb},16\text{Kb},32\text{Kb}\}$ for Arges structure. Each graph is on the form $f(N) = \log_B N$.\todo{FIX THIS}}
   \label{fig:arge_buffer_size_theory}
 \end{minipage}
 \hfill
