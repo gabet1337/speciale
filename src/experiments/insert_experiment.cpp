@@ -17,7 +17,7 @@ class insert_experiment : public base_experiment {
     ull print_interval = 1024 * 64;
     test::clock exp_time;
     exp_time.start();
-    long long one_day = 5;
+    long long one_day = 24*60*60;
     restart_timers();
     while (!data.eof()) {
       point p = data.read();
