@@ -26,6 +26,7 @@ namespace internal {
     void remove(const point &p);
     void report(int x1, int x2, int y, const std::string &output_file);
     void print();
+    void create_index();
   private:
     std::string get_values(const std::vector<point> &buffer);
     void flush_insert_buffer();
@@ -47,7 +48,7 @@ namespace internal {
     delete con;
     //create a table for use:
     stmt->execute("DROP TABLE IF EXISTS test");
-    stmt->execute("CREATE TABLE test(x int, y int, PRIMARY KEY (x, y)) ENGINE=MYISAM;");
+    stmt->execute("CREATE TABLE test(x int, y int) ENGINE=MYISAM;");
     stmt->execute("ALTER TABLE test MAX_ROWS=1000000000;");
   }
   
@@ -120,6 +121,10 @@ namespace internal {
 
   void mysql_pst::print() {
 
+  }
+
+  void mysql_pst::create_index() {
+    stmt->execute("ALTER TABLE test ADD PRIMARY KEY (x,y);");
   }
 
 
