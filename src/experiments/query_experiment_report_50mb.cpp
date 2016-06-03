@@ -35,7 +35,7 @@ class query_experiment_report_50mb : public base_experiment {
       if (data_read % print_interval == 0) {
         std::cout << "inserted " << data_read/(1024*1024) << "Mb" << std::endl;
       }
-      if (data_read > 50*1024*1024) {
+      if (data_read > 1024*1024*1024) {
         std::cout << "INSERTED " << data_read/(1024*1024) << "Mb. TIMES UP!" << std::endl;
         break;
       }
