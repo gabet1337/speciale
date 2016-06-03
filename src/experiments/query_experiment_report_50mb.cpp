@@ -40,8 +40,10 @@ class query_experiment_report_50mb : public base_experiment {
         break;
       }
     }
-
+    std::cout << "creating index..." << std::endl;
     pst->create_index();
+    std::cout << "done..." << std::endl;
+    mkdir("../data/test", 0700);
     util::remove_directory("../data/test/query_result_1");
     pst->report(-INF, INF, -INF, "../data/test/query_result_1");
     util::remove_directory("../data/test/query_result_1");
