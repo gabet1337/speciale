@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
-<ipe version="70005" creator="Ipe 7.1.4">
-<info created="D:20160412211239" modified="D:20160513154111"/>
+<ipe version="70107" creator="Ipe 7.2.2">
+<info created="D:20160412211239" modified="D:20160531112452"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -233,56 +233,42 @@ h
 <layer name="alpha"/>
 <view layers="alpha" active="alpha"/>
 <use layer="alpha" matrix="1 0 0 1 -48 64" name="mark/disk(sx)" pos="192 592" size="normal" stroke="black"/>
-<path matrix="1 0 0 3 -112 -1523" stroke="black" dash="dotted" pen="fat" join="1">
+<path matrix="1 0 0 1.55639 -112 -466.278" stroke="black" dash="dotted" pen="fat" join="1">
 240 732 m
 240 688 l
 240 688 l
 </path>
-<path matrix="1 0 0 3 -16 -1523" stroke="black" dash="dotted" pen="fat" join="1">
+<path matrix="1 0 0 1.55639 -16 -466.278" stroke="black" dash="dotted" pen="fat" join="1">
 240 732 m
 240 688 l
 240 688 l
 </path>
-<path matrix="1 0 0 3 -88 -1523" stroke="black" dash="dotted" join="1">
+<path matrix="1 0 0 1.55639 -88 -466.278" stroke="black" dash="dotted" join="1">
 240 732 m
 240 688 l
 240 688 l
 </path>
-<path matrix="1 0 0 3 -72 -1523" stroke="black" dash="dotted" join="1">
+<path matrix="1 0 0 1.55639 -72 -466.278" stroke="black" dash="dotted" join="1">
 240 732 m
 240 688 l
 240 688 l
 </path>
-<path matrix="1 0 0 3 -56 -1523" stroke="black" dash="dotted" pen="fat" join="1">
+<path matrix="1 0 0 1.55639 -56 -466.278" stroke="black" dash="dotted" pen="fat" join="1">
 240 732 m
 240 688 l
 240 688 l
 </path>
-<path matrix="1 0 0 3 -40 -1523" stroke="black" dash="dotted" join="1">
+<path matrix="1 0 0 1.55639 -40 -466.278" stroke="black" dash="dotted" join="1">
 240 732 m
 240 688 l
 240 688 l
 </path>
-<use matrix="1 0 0 1 -28 -32" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
-<use matrix="1 0 0 1 -16 -28" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
-<use matrix="1 0 0 1 -24 -20" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
-<use matrix="1 0 0 1 -28 16" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
 <use matrix="1 0 0 1 -28 36" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
-<use matrix="1 0 0 1 -8 -12" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
-<use matrix="1 0 0 1 -4 12" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
 <use matrix="1 0 0 1 -8 28" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
-<use matrix="1 0 0 1 16 -8" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
-<use matrix="1 0 0 1 8 8" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
-<use matrix="1 0 0 1 12 8" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
 <use matrix="1 0 0 1 16 24" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
 <use matrix="1 0 0 1 8 44" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
-<use matrix="1 0 0 1 24 -32" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
-<use matrix="1 0 0 1 24 0" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
 <use matrix="1 0 0 1 32 28" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
 <use matrix="1 0 0 1 28 48" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
-<use matrix="1 0 0 1 52 -32" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
-<use matrix="1 0 0 1 44 -16" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
-<use matrix="1 0 0 1 48 20" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
 <use matrix="1 0 0 1 52 40" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
 <use matrix="1 0 0 1 44 56" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
 <use matrix="1 0 0 1 40 68" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
@@ -290,63 +276,49 @@ h
 <use matrix="1 0 0 1 -28 64" name="mark/disk(sx)" pos="192 592" size="normal" stroke="black"/>
 <use matrix="1 0 0 1 16 72" name="mark/disk(sx)" pos="192 592" size="normal" stroke="black"/>
 <use matrix="1 0 0 1 112 64" name="mark/disk(sx)" pos="192 592" size="normal" stroke="black"/>
-<path matrix="1 0 0 3 48 -1523" stroke="black" dash="dotted" pen="fat" join="1">
+<path matrix="1 0 0 1.55639 48 -466.278" stroke="black" dash="dotted" pen="fat" join="1">
 240 732 m
 240 688 l
 240 688 l
 </path>
-<path matrix="1 0 0 3 144 -1523" stroke="black" dash="dotted" pen="fat" join="1">
+<path matrix="1 0 0 1.55639 144 -466.278" stroke="black" dash="dotted" pen="fat" join="1">
 240 732 m
 240 688 l
 240 688 l
 </path>
-<path matrix="1 0 0 3 72 -1523" stroke="black" dash="dotted" join="1">
+<path matrix="1 0 0 1.55639 72 -466.278" stroke="black" dash="dotted" join="1">
 240 732 m
 240 688 l
 240 688 l
 </path>
-<path matrix="1 0 0 3 88 -1523" stroke="black" dash="dotted" join="1">
+<path matrix="1 0 0 1.55639 88 -466.278" stroke="black" dash="dotted" join="1">
 240 732 m
 240 688 l
 240 688 l
 </path>
-<path matrix="1 0 0 3 104 -1523" stroke="black" dash="dotted" pen="fat" join="1">
+<path matrix="1 0 0 1.55639 104 -466.278" stroke="black" dash="dotted" pen="fat" join="1">
 240 732 m
 240 688 l
 240 688 l
 </path>
-<path matrix="1 0 0 3 120 -1523" stroke="black" dash="dotted" join="1">
+<path matrix="1 0 0 1.55639 120 -466.278" stroke="black" dash="dotted" join="1">
 240 732 m
 240 688 l
 240 688 l
 </path>
-<use matrix="1 0 0 1 132 -32" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
-<use matrix="1 0 0 1 144 -28" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
-<use matrix="1 0 0 1 136 -20" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
-<use matrix="1 0 0 1 132 16" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
 <use matrix="1 0 0 1 132 36" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
-<use matrix="1 0 0 1 152 -12" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
-<use matrix="1 0 0 1 156 12" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
 <use matrix="1 0 0 1 152 28" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
-<use matrix="1 0 0 1 176 -8" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
-<use matrix="1 0 0 1 168 8" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
-<use matrix="1 0 0 1 172 8" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
 <use matrix="1 0 0 1 176 24" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
 <use matrix="1 0 0 1 168 44" name="mark/disk(sx)" pos="164 584" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 184 -32" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
-<use matrix="1 0 0 1 184 0" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
 <use matrix="1 0 0 1 192 28" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
 <use matrix="1 0 0 1 188 48" name="mark/disk(sx)" pos="164 584" size="normal" stroke="black"/>
-<use matrix="1 0 0 1 212 -32" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
-<use matrix="1 0 0 1 204 -16" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
-<use matrix="1 0 0 1 208 20" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
 <use matrix="1 0 0 1 212 40" name="mark/disk(sx)" pos="164 584" size="tiny" stroke="black"/>
 <use matrix="1 0 0 1 204 56" name="mark/disk(sx)" pos="164 584" size="normal" stroke="black"/>
 <use matrix="1 0 0 1 200 68" name="mark/disk(sx)" pos="164 584" size="normal" stroke="black"/>
 <use matrix="1 0 0 1 112 72" name="mark/disk(sx)" pos="192 592" size="normal" stroke="black"/>
 <use matrix="1 0 0 1 132 64" name="mark/disk(sx)" pos="192 592" size="normal" stroke="black"/>
 <use matrix="1 0 0 1 176 72" name="mark/disk(sx)" pos="192 592" size="normal" stroke="black"/>
-<path matrix="1 0 0 1 -16 -128" stroke="black" fill="black" arrow="normal/normal">
+<path matrix="1 0 0 1 -16 -96" stroke="black" fill="black" arrow="normal/normal">
 256 736 m
 288 736 l
 </path>

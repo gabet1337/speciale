@@ -17,7 +17,7 @@ class insert_experiment : public base_experiment {
     ull print_interval = 1024 * 64;
     test::clock exp_time;
     exp_time.start();
-    long long one_day = 60*60*24;
+    long long one_day = 24*60*60;
     restart_timers();
     while (!data.eof()) {
       point p = data.read();
@@ -38,7 +38,7 @@ class insert_experiment : public base_experiment {
         std::cout << data_read/1024 << "Kb" << std::endl;
       }
     }
-    delete pst;
+    // delete pst;
   }
 
 };
@@ -46,7 +46,7 @@ class insert_experiment : public base_experiment {
 int main() {
   
   insert_experiment ie("insert_experiment");
-  // ie.add(1, "Gerth", common::PST_VARIANT::GERTH, ARGE_BUFFER_SIZE, log(2.5)/log(ARGE_BUFFER_SIZE));
+  //ie.add(1, "Gerth", common::PST_VARIANT::GERTH, 4096, log(16.5)/log(4096));
   //ie.add(2, "Arge", common::PST_VARIANT::ARGE, ARGE_BUFFER_SIZE, ARGE_EPSILON);
   ie.add(3, "Internal", common::PST_VARIANT::INTERNAL, INTERNAL_BUFFER_SIZE, INTERNAL_EPSILON);
   ie.add(4, "Boost R-tree", common::PST_VARIANT::RTREE, RTREE_BUFFER_SIZE, RTREE_EPSILON);

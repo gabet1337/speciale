@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70107" creator="Ipe 7.2.2">
-<info created="D:20160503183544" modified="D:20160515182746"/>
+<info created="D:20160503183544" modified="D:20160601132735"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -325,10 +325,10 @@ h
 <use name="mark/cross(sx)" pos="352 768" size="large" stroke="black"/>
 <use name="mark/cross(sx)" pos="408 788" size="large" stroke="black"/>
 <text matrix="-0.255982 0.722425 -5.30345 -0.00770917 4041.24 742.469" pos="92 684" stroke="black" type="label" width="12.394" height="18.587" depth="6.2" valign="baseline" size="Huge">\}</text>
-<text matrix="1 0 0 1 -12 -12" transformations="translations" pos="352 828" stroke="black" type="label" width="35.429" height="7.473" depth="2.49" valign="baseline">$\geq B/B^\epsilon$</text>
+<text matrix="1 0 0 1 -12 -12" transformations="translations" pos="352 828" stroke="black" type="label" width="38.224" height="7.49" depth="2.49" valign="baseline">$\geq B&apos;/B^\epsilon$</text>
 <text matrix="-0.987259 0.722425 -20.4541 -0.00770917 14506.22 678.469" pos="92 684" stroke="black" type="label" width="12.394" height="18.587" depth="6.2" valign="baseline" size="Huge">\{</text>
-<text matrix="1 0 0 1 0 -4" transformations="translations" pos="292 732" stroke="black" type="label" width="8.057" height="6.808" depth="0" valign="baseline">$B$</text>
-<path matrix="1.06667 0 0 1 -19.2 0" stroke="black" fill="white">
+<text matrix="1 0 0 1 0 -4" transformations="translations" pos="292 732" stroke="black" type="label" width="10.852" height="7.49" depth="0" valign="baseline">$B&apos;$</text>
+<path matrix="1.06667 0 0 1.08333 -19.2 -59.6667" stroke="black" fill="white">
 232 668 m
 228 668
 228 672
@@ -372,9 +372,9 @@ h
 </path>
 <text matrix="1 0 0 1 28 -96" transformations="translations" pos="300 788" stroke="black" type="label" width="12.982" height="6.812" depth="1.49" valign="baseline">$D_v$</text>
 <text matrix="1 0 0 1 0 -4" transformations="translations" pos="284 712" stroke="black" type="label" width="5.187" height="4.289" depth="0" valign="baseline">$v$</text>
-<text matrix="1 0 0 1 32 -96" transformations="translations" pos="268 788" stroke="darkgray" type="label" width="9.113" height="6.812" depth="1.49" valign="baseline">$I_{v}$</text>
-<text matrix="1 0 0 1 24 -100" transformations="translations" pos="232 792" stroke="darkgray" type="label" width="11.13" height="6.812" depth="1.49" valign="baseline">$P_{v}$</text>
-<text matrix="1 0 0 1 0 -4" transformations="translations" pos="284 680" stroke="darkgray" type="label" width="11.854" height="6.812" depth="1.49" valign="baseline">$C_{v}$</text>
+<text matrix="1 0 0 1 32 -96" transformations="translations" pos="268 788" stroke="black" type="label" width="9.113" height="6.812" depth="1.49" valign="baseline">$I_{v}$</text>
+<text matrix="1 0 0 1 24 -100" transformations="translations" pos="232 792" stroke="black" type="label" width="11.13" height="6.812" depth="1.49" valign="baseline">$P_{v}$</text>
+<text matrix="1 0 0 1 0 -4" transformations="translations" pos="284 680" stroke="black" type="label" width="11.854" height="6.812" depth="1.49" valign="baseline">$C_{v}$</text>
 <path stroke="black" dash="dashed">
 324 708 m
 320 708
@@ -421,7 +421,7 @@ h
 28 788
 28 788 c
 </path>
-<path matrix="-0.89769 -0.530462 1.11003 -0.434548 -273.208 1094.88" stroke="black" dash="dotted">
+<path matrix="-0.89769 -0.530462 1.11003 -0.434548 -273.208 1090.33" stroke="black" dash="dotted">
 264 644 m
 62.6099 0 0 62.6099 208 672 190.009 731.969 a
 </path>
@@ -429,18 +429,18 @@ h
 <path stroke="black" fill="white">
 23.3238 0 0 23.3238 84 608 e
 </path>
-<text transformations="translations" pos="80 608" stroke="black" type="label" width="8.781" height="4.294" depth="1.49" valign="baseline">$c_1$</text>
+<text matrix="1 0 0 1 0.414352 -2.48611" transformations="translations" pos="80 608" stroke="black" type="label" width="8.781" height="4.294" depth="1.49" valign="baseline">$c_1$</text>
 <path matrix="1 0 0 1 136 0" stroke="black" fill="white">
 23.3238 0 0 23.3238 84 608 e
 </path>
-<text matrix="1 0 0 1 136 0" transformations="translations" pos="80 608" stroke="black" type="label" width="8.781" height="4.294" depth="1.49" valign="baseline">$c_2$</text>
+<text matrix="1 0 0 1 136.414 -2.48611" transformations="translations" pos="80 608" stroke="black" type="label" width="8.781" height="4.294" depth="1.49" valign="baseline">$c_2$</text>
 <path matrix="1 0 0 1 268 0" stroke="black" fill="white">
 23.3238 0 0 23.3238 84 608 e
 </path>
-<text matrix="1 0 0 1 268 0" transformations="translations" pos="80 608" stroke="black" type="label" width="8.781" height="4.294" depth="1.49" valign="baseline">$c_3$</text>
+<text matrix="1 0 0 1 268.414 -2.48611" transformations="translations" pos="80 608" stroke="black" type="label" width="8.781" height="4.294" depth="1.49" valign="baseline">$c_3$</text>
 <path matrix="1 0 0 1 408 0" stroke="black" fill="white">
 23.3238 0 0 23.3238 84 608 e
 </path>
-<text matrix="1 0 0 1 408 0" transformations="translations" pos="80 608" stroke="black" type="label" width="8.781" height="4.294" depth="1.49" valign="baseline">$c_4$</text>
+<text matrix="1 0 0 1 408.414 -2.48611" transformations="translations" pos="80 608" stroke="black" type="label" width="8.781" height="4.294" depth="1.49" valign="baseline">$c_4$</text>
 </page>
 </ipe>

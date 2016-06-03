@@ -14,6 +14,7 @@ namespace common {
     virtual void remove(const point &p) = 0;
     virtual void report(int x1, int x2, int y, const std::string &output_file) = 0;
     virtual void print() = 0;
+    virtual void create_index() {};
   };
 
 };

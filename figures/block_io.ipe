@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
-<ipe version="70005" creator="Ipe 7.1.4">
-<info created="D:20160421140330" modified="D:20160421142944"/>
+<ipe version="70107" creator="Ipe 7.2.2">
+<info created="D:20160421140330" modified="D:20160529121440"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -283,7 +283,7 @@ h
 208 704 l
 208 704 l
 </path>
-<text matrix="1 0 0 1 4 -4" transformations="translations" pos="288 656" stroke="black" type="label" width="36.217" height="5.98" depth="1.99" valign="baseline" size="footnote">block I/O</text>
+<text matrix="1 0 0 1 4 -4.48925" transformations="translations" pos="288 656" stroke="black" type="label" width="36.217" height="5.98" depth="1.99" valign="baseline" size="footnote">block I/O</text>
 <text matrix="1 0 0 1 -4 4" transformations="translations" pos="196 560" stroke="black" type="label" width="61.872" height="5.535" depth="1.55" valign="baseline" size="footnote">Internal memory</text>
 <text matrix="1 0 0 1 8 -12" transformations="translations" pos="212 692" stroke="black" type="label" width="8.057" height="6.808" depth="0" valign="baseline">$B$</text>
 <path matrix="0.9 0 0 1 -32.8 0" stroke="black" fill="white" rarrow="normal/normal">
@@ -291,7 +291,7 @@ h
 272 684 l
 272 684 l
 </path>
-<path matrix="-0.9 -0 0 -1 480.8 1368" stroke="black" fill="white" rarrow="normal/normal">
+<path matrix="-0.9 0 0 -1 480.8 1368" stroke="black" fill="white" rarrow="normal/normal">
 232 684 m
 272 684 l
 272 684 l
@@ -387,12 +387,12 @@ h
 116 600 l
 116 600 l
 </path>
-<path matrix="-1 0 -0 -1 328 1316" stroke="black" fill="white" rarrow="normal/normal">
+<path matrix="-1 0 0 -1 328 1316" stroke="black" fill="white" rarrow="normal/normal">
 164 644 m
 164 672 l
 164 668 l
 </path>
-<path matrix="1 0 -0 1 0 -68" stroke="black" fill="white" rarrow="normal/normal">
+<path matrix="1 0 0 1 0 -68" stroke="black" fill="white" rarrow="normal/normal">
 164 644 m
 164 672 l
 164 668 l
