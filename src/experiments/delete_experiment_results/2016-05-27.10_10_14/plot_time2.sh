@@ -15,7 +15,7 @@ set style line 6 lc rgb '#00ced1' pt 5 ps 1 lt 1 lw 2 # --- darkturquoise
 set style line 7 lc rgb '#ff00ff' pt 7 ps 1 lt 1 lw 2 # --- magenta
 set style line 8 lc rgb '#87ceeb' pt 8 ps 1 lt 1 lw 2 # --- skyblue
 set key center center
-set xlabel 'N (input size in Mb)'
+set xlabel 'N (non-deleted data in Mb)'
 set ylabel 'Time (s) per deleted Mb'
 set xtics ('50' 1,'45' 6,'40' 11,'35' 16,'30' 21,'25' 26,'20' 31,'15' 36, '10' 41, '5' 46, '0' 50) 
 #set format x "50-%g"
@@ -32,10 +32,13 @@ delta_4(x) = (r = next_4 - x, next_4 = x, r)
 next_4 = NaN
 delta_5(x) = (r = next_5 - x, next_5 = x, r)
 next_5 = NaN
+delta_6(x) = (r = next_6 - x, next_6 = x, r)
+next_6 = NaN
 
 plot 'delete_experiment_results/2016-05-27.10_10_14/gerth_Gerth' u (50-$1):(delta_1($2)) t 'Brodal' w lp ls 2 , \
      'delete_experiment_results/2016-05-27.10_10_14/internal_Internal' u (50-$1):(delta_2($2)) t 'Internal PST' w lp ls 5, \
      'delete_experiment_results/2016-05-27.10_10_14/rtree_Boost R-tree' u (50-$1):(delta_3($2)) t 'Boost R-tree' w lp ls 3, \
      'delete_experiment_results/2016-05-27.10_10_14/spatial_libspatial' u (60-$1):(delta_4($2)) t 'Libspatial R*-Tree' w lp ls 6, \
-     'delete_experiment_results/2016-05-27.10_10_14/mysql_MySQL' u (50-$1):(delta_5($2)) t 'MySQL (no index)' w lp ls 4
+     'delete_experiment_results/2016-05-27.10_10_14/mysql_MySQL' u (50-$1):(delta_5($2)) t 'MySQL (no index)' w lp ls 4, \
+    'delete_experiment_results/2016-05-27.10_10_14/mysql_MySQL_index' u (50-$1):($2) t 'MySQL (with index)' w lp ls 7
 
