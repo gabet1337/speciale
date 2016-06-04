@@ -1,6 +1,6 @@
 #!/usr/bin/gnuplot
 set terminal postscript eps enhanced color font 'Verdana,11'
-set output 'delete_experiment_results/2016-05-27.10_10_14/pbu.eps'
+set output 'delete_experiment_results/2016-05-27.10_10_14/statistics.eps'
 set style line 11 lc rgb '#808080' lt 1
 set border 3 back ls 11
 set tics nomirror
@@ -18,7 +18,7 @@ set key top left
 set xlabel 'N (input size in Mb)'
 set ylabel 'point buffer underflows'
 #set xrange [0:0]
-#set yrange [0:0]
+set yrange [0:16]
 
 delta_1(x) = (r = next_1 - x, next_1 = x, r)
 next_1 = NaN
@@ -33,10 +33,7 @@ next_5 = NaN
 delta_6(x) = (r = next_6 - x, next_6 = x, r)
 next_6 = NaN
 
-plot 'delete_experiment_results/2016-05-27.10_10_14/gerth_Gerth' u (50-$1):(delta_1($9)) t 'Brodal' w lp ls 2
-
-#plot 'delete_experiment_results/2016-05-27.10_10_14/gerth_Gerth' u 1:9 t 'Gerth' w lp ls 2, \
-#'delete_experiment_results/2016-05-27.10_10_14/internal_Internal' u 1:9 t 'Internal' w lp ls 5, \
-#'delete_experiment_results/2016-05-27.10_10_14/rtree_Boost R-tree' u 1:9 t 'Boost R-tree' w lp ls 3, \
-#'delete_experiment_results/2016-05-27.10_10_14/spatial_libspatial' u 1:9 t 'libspatial' w lp ls 6, \
-#'delete_experiment_results/2016-05-27.10_10_14/mysql_MySQL' u 1:9 t 'MySQL' w lp ls 4
+plot 'delete_experiment_results/2016-05-27.10_10_14/gerth_Gerth' u (50-$1):(delta_1($9)) t 'point buffer underflow' w lp ls 1, \
+    'delete_experiment_results/2016-05-27.10_10_14/gerth_Gerth' u (50-$1):(delta_2($7)) t 'delete buffer overflow' w lp ls 2, \
+    'delete_experiment_results/2016-05-27.10_10_14/gerth_Gerth' u (50-$1):(delta_3($8)) t 'insert buffer overflow' w lp ls 3, \
+    'delete_experiment_results/2016-05-27.10_10_14/gerth_Gerth' u (50-$1):(delta_4($10)) t 'node degree overflow' w lp ls 4
