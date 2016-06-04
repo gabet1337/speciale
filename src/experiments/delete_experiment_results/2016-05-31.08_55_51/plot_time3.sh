@@ -14,13 +14,13 @@ set style line 5 lc rgb '#000000' pt 4 ps 1 lt 1 lw 2 # --- black
 set style line 6 lc rgb '#00ced1' pt 5 ps 1 lt 1 lw 2 # --- darkturquoise
 set style line 7 lc rgb '#ff00ff' pt 7 ps 1 lt 1 lw 2 # --- magenta
 set style line 8 lc rgb '#87ceeb' pt 8 ps 1 lt 1 lw 2 # --- skyblue
-set key center center
+set key top left
 set xlabel 'N (non-deleted data in Mb)'
 set ylabel 'Time (s) per deleted Mb'
 #set xtics ('50' 1,'45' 6,'40' 11,'35' 16,'30' 21,'25' 26,'20' 31,'15' 36, '10' 41, '5' 46, '0' 50) 
 #set format x "50-%g"
 #set xrange [0:52]
-#set yrange [0:100]
+set yrange [0:500]
 
 delta_1(x) = (r = next_1 - x, next_1 = x, r)
 next_1 = NaN
