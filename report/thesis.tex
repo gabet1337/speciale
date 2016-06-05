@@ -1582,9 +1582,10 @@ The results of the experiment measuring running time per update is depicted in F
 
 \section{Insertion}
 \label{src:insertion}
-The goal of this experiment is to ascertain how our different structures compare against each other when it comes to pure insertions. The experiment will consist of inserting as much data as possible in 24 hours with an upper limit of 10Gb. The data is uniformly random in the positive integer range.
+The goal of this experiment is to ascertain how our different structures compare against each other when it comes to just insertions. The experiment will consist of inserting as much data as possible in 24 hours with an upper limit of 10Gb. The data is uniformly random in the positive integer range.
 
-Figure~\ref{fig:theory_insert_complexity} shows the theoretical complexities of inserting an element into the different structures for different $N$. We expect the actual running times to be very similar to these. If the non-I/O efficient data structures fill out the internal memory we expect to see a significant increase in running time at that point as the structures will be forced to use the virtual memory to swap out memory.
+Figure~\ref{fig:theory_insert_complexity} shows the theoretical complexities of inserting an element into the different structures for different $N$. We expect the actual running times to be very similar to these. That is, we expect the data structures not optimized for external memory to perform very well while being completely contained in main memory. We expect, as soon as the internal memory data structures are forced to utilize the virtual memory mechanism of the operating system and thus swap out memory to disk, to see a significant decrease in performance, and an amount of page faults close to the theoretical asymptotic complexity of the structures in the RAM model.
+% If the non-I/O efficient data structures fill out the internal memory we expect to see a significant increase in running time at that point as the structures will be forced to use the virtual memory to swap out memory.
 
 \begin{figure}[htp!]
 \includegraphics[width=\textwidth]{../plots/insert_complexities/insert_complexity}
@@ -1602,11 +1603,13 @@ Figure~\ref{fig:theory_insert_complexity} shows the theoretical complexities of 
 \label{fig:actual_insert_time_zoomed}
 \end{figure}
 
-Figure~\ref{fig:actual_insert_time} shows the actual running time of inserting an element into the different structures for different input sizes. 
-The figure is cropped at 3500Mb but it goes all the way to 10000Mb. It was however only MySQL that was able to insert this much data in 24 hours.
-The results are very much in line with our expectations with some exceptions. We see significant increases in running time whenever the internal structures run out of memory which is after just a few hundred Mb's of insertions. The internal R-tree from the Boost library was the most efficient of the internal data structures. We suspect this is due to an efficient memory usage allowing the structure to run for longer while still fitting entirely in main memory.
+\todo{explain the results.}
 
-The results of MySQL and the External Memory Buffered Priority Search tree by Brodal align very well with the theoretical bounds, but this is clearly not the case for the structure of Arge et al. 
+%Figure~\ref{fig:actual_insert_time} shows the actual running time of inserting an element into the different structures for different input sizes. 
+%The figure is cropped at 3500Mb but it goes all the way to 10000Mb. It was however only MySQL that was able to insert this much data in 24 hours.
+%The results are very much in line with our expectations with some exceptions. We see significant increases in running time whenever the internal structures run out of memory which is after just a few hundred Mb's of insertions. The internal R-tree from the Boost library was the most efficient of the internal data structures. We suspect this is due to an efficient memory usage allowing the structure to run for longer while still fitting entirely in main memory.
+
+%The results of MySQL and the External Memory Buffered Priority Search tree by Brodal align very well with the theoretical bounds, but this is clearly not the case for the structure of Arge et al. 
 
 We suspect the bad performance of Arge et al is mainly due to the following reason. A single insert requires $\mathcal{O}(\log_B N)$ I/O's. Each data point is 8 bytes, 4 bytes of each coordinate. This means that in order to insert 50Mb data or equivalently 6553600 points in an initially empty structure with a buffer size of $4Kb$ we need roughly $$\sum\limits_{i=0}^{6553600} \log_{4096}(i) \approx 11.5 \cdot 10^6~\text{I/O's}$$
 If we compare this against the structure of Brodal with the same buffer size and a fanout of size 2, i.e. $\epsilon = \log(2)/\log(4096) = 0.083..$, we get that Brodal's requires roughly:
@@ -1614,7 +1617,7 @@ $$\sum\limits_{i=0}^{6553600} \frac{1}{\epsilon \cdot 4096^{1-\epsilon}} \log_{4
 The calculations shows that in order to insert 50Mb of data, we would need to load/store $11.5 \cdot 10^6 \cdot 4096 = 47.1Gb$ in the case of Arge, and $67.8\cdot 10^3 \cdot 4096 = 0.278Gb$ in the case of Brodal. This gives a relatively difference of $\approx 170$ times fewer I/O's performed in Brodal's over Arge's.
 To collaborate these findings we conducted a single experiment measuring the I/O's and a replicated scenario of the above described. The results can be found in Figure~\ref{fig:arge_brodal_ios}. The results clearly shows that the amount of I/O's performed is substantially larger for Arge's than for Brodal's. The results show that in order to insert 50Mb we must perform I/O's equal to $\approx 1Tb$ and $\approx 13Gb$ in Arge's and Brodal's respectively. This is a relative difference of $\approx 81$ times fewer I/O's in Brodal's than Arge's. This result is close to what we would suspect from our theoretical reasoning above, however with a large constant factor between theory and reality.
 
-\begin{figure}
+\begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{../src/experiments/insert_experiment_results/2016-05-21.14_06_50/ios}
 \caption{Missing}
@@ -1661,7 +1664,7 @@ To collaborate these findings we conducted a single experiment measuring the I/O
 \begin{minipage}{0.48\columnwidth}
   \centering
   \includegraphics[width=\linewidth]{../src/experiments/insert_experiment_results/2016-05-06.14_11_08/time_divided_with_asymptotic_mysql}%
-  \caption{Time and page faults per insert divided by $1$ for MySQL.}
+  \caption{Time and page faults per insert divided by $1$ for MySQL.\todo{add with index}}
   \label{fig:time_divided_with_asymptotic_mysql}
 \end{minipage}
 \end{figure}
