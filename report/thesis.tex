@@ -641,7 +641,7 @@ In this chapter we present a static internal memory data structure for the three
 			Let $x_{\text{mid}}$ be the median of the $x$-coordinates of the remaining points.
 			
 			Now let
-			$$ P_\text{below} \coloneqq \{p \in P \setminus \{p_\text{max} \} : p_x < x_\text{mid} \}$$
+			$$ P_\text{below} \coloneqq \{p \in P \setminus \{p_\text{max} \} : p_x \leq x_\text{mid} \}$$
 			$$ P_\text{above} \coloneqq \{p \in P \setminus \{p_\text{max} \} : p_x > x_\text{mid} \}$$
 			
 			The Priority Search Tree consists of a root node $v$ where the point \\
@@ -1481,8 +1481,6 @@ Let $B^\epsilon = 4$:
 	\end{split}
 \end{equation}
 
-%What Equation~\ref{eq:equal_fanouts_2_4_1} and Equation~\ref{eq:equal_fanouts_2_4_2} essential states is that we expect no performance gain when recursively sending half as many points from root to leaf in a tree of double the height.\todo{reformulate this sentence. It is not correct.}
-
 What Equation~\ref{eq:equal_fanouts_2_4_1} and Equation~\ref{eq:equal_fanouts_2_4_2} essential states is that the amortized cost of sending half as many points down per overflow in a tree of double the height remains the same. Drawing from this conclusion we expect the performance of fanout 2 to be equal to fanout 4.
 
 The results showing the experimentally measured update time per insert on varying fanout is depicted in Figure~\ref{fig:gerth_fanout_experiment_time}. Clearly the actual running time aligns with what the theoretical number of I/O's per update from Figure~\ref{fig:gerth_fanout_experiment} suggests. Being truly I/O bound we expect the theoretical number of I/O's and the actual running time to align well with with the actual number of I/Os per update. We are pleased to see this is in fact the case in Figure~\ref{fig:gerth_fanout_experiment_ios}.
@@ -1690,7 +1688,7 @@ The libspatial external R*-Tree depicted in Figure~\ref{fig:time_divided_with_as
 \todo{MYSQL!!!!}
 
 \section{Deletion}
-It was difficult to come up with a good way to test the different structures against each other when it comes to deletion. In order to delete data we need to first insert it, and we need to insert equally much in all structures in order to compare fairly. As described in the previous section it was not possible to insert much data in the internal structures as well as the structure by Arge et al. To somewhat come around this problem we decided to insert nothing more than 50 megabytes worth of uniformly distributed points in all the structures. We could then completely empty the structures again while measuring for each megabyte. This way we hoped we could exclude some structures from further analysis.
+It was difficult to come up with a good way to test the different structures against each other when it comes to deletion. In order to delete data we need to insert it first, and we need to insert equally much in all structures in order to compare fairly. As described in the previous section it was not possible to insert much data in the internal structures as well as the structure by Arge et al. To somewhat come around this problem we decided to insert nothing more than 50 megabytes worth of uniformly distributed points in all the structures. We could then completely empty the structures again while measuring for each megabyte. This way we hoped we could exclude structures from further analysis.
 
 \begin{figure}[htp!]
 \includegraphics[width=\textwidth]{../plots/delete_complexities/delete_complexity}
