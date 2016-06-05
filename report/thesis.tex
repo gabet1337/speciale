@@ -117,7 +117,9 @@ We have implemented two external memory data structures that solves this problem
 
 Besides comparing these two structures against each other we also compare them against our own implementation of the Priority Search Tree of McCreight~\cite{DBLP:journals/siamcomp/McCreight85}, and wrappers around MySQL, libspatialindex R*Tree, and Boost R-Tree.
 
-Our results show that \todo{\dots}
+Our results show that the External Memory Buffered Priority Search Tree outperforms all of the other compared structures as soon as the structures have to handle more data than the internal memory capacity. MySQL without an index was significantly faster at inserting but as both the experiments with deletion and querying showed, the cost of not having an index on the table is too high. The Boost R-Tree proved to be the fastest of the internal memory data structures.
+
+\todo{conclude more?}
 
 \chapter*{Resum\'e}
 \addcontentsline{toc}{chapter}{Resum\'e}
@@ -1845,7 +1847,15 @@ We have implemented three different Priority Search Trees: the Internal Memory P
 
 We have conducted several experiments to compare the structures on the three important operations in the Priority Search Tree interface: \texttt{insert}, \texttt{delete}, and \texttt{query}.
 
-Our results show...\todo{comment on each of the main results one for one}
+Our results show that the External Memory Buffered Priority Search Tree outperforms all other structures except for MySQL without an index when it comes to inserting uniformly random data. Of the other structures it is worth mentioning that the Boost R-Tree performed best due to its efficient use of space.
+
+When we looked at deleting uniformly random data, MySQL without an index expectedly fell short, and as soon as the structures not optimized for external memory had to operate outside of main memory we saw that the External Memory Buffered Priority Search Tree outperformed all other structures significantly.
+
+We experimented with querying in two different ways to encapsulate the fact that the asymptotic complexity depends on both search and reporting. We isolated the search part by fixing 5 query windows of different height with 5Mb data each and then insert uniformly random data around to add noise. The results shows that the internal memory once again perform very well while still contained in main memory, but as soon as we leave main memory the only real contestant to the External Memory Buffered Priority Search is MySQL with an index which is once again outperformed for large enough input size.
+
+\todo{conclude on focus on reporting part of experiments}
+
+Our experiments also showed that our implementation of the External Memory Priority Search Tree proved inferior in all aspects which we explain by the large number of I/O and heavy internal work.
 
 \section{Future work}
 The structure of Brodal described in Chapter~\ref{chp:epst} is also able to report top-$k$ queries. A top-$k$ query reports the top $k$ points in the query range. The structure does this in $\mathcal{O}(\frac{1}{\epsilon}\log_B N + K/B)$, i.e. in the same bound as three-sided range queries, but here $K$ is the minimum of $k$ and the number of points in the query range. It would have been interesting to see how the structure performs these top-$k$ queries compared to other results.
