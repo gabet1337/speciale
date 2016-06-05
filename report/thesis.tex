@@ -1561,7 +1561,7 @@ Going forward we will use a buffer size of 8Mb together with a fanout of 2.
 
 The experiments on Arge's consisted of inserting 50 Mb of data, i.e. $5 \cdot 50 \cdot 1024 \cdot 1024 / 8 = 6.25$ million datapoints. The coordinates of the data points was uniformly distributed among the positive integers. 
 
-The results of the experiment measuring running time per update is depicted in Figure~\ref{fig:arge_buffer_size_experiment}. Clearly we are very far away from the expected update time per operation depicted in Figure~\ref{fig:arge_buffer_size_theory}. The main reason behind this is most likely that more data is needed in the structure for the theoretical $\mathcal{O}(\log_B N)$ I/O per update to be apparent. It would seem we are dominated by the fact we need to load and store $B$ data points on each node visited in order to handle an update. Since the experiments on Arge was very time consuming, we decided to elect the buffer size of 4 Kb as the winning buffer size. We will elaborate more on the main bottlenecks of Arge's structure in the insert experiment found in Section~\ref{src:insertion}.
+The results of the experiment measuring running time per update is depicted in Figure~\ref{fig:arge_buffer_size_experiment}. Clearly we are very far away from the expected update time per operation depicted in Figure~\ref{fig:arge_buffer_size_theory}. The main reason behind this is most likely that more data is needed in the structure for the theoretical $\mathcal{O}(\log_B N)$ I/O per update to be apparent. It would seem we are dominated by the fact we need to load and store $B$ data points on each node visited in order to handle an update. Since the experiments on Arge was very time consuming, we decided to elect the buffer size of 4 Kb as the winning buffer size. We will elaborate more on the main bottlenecks of Arge's structure in the insert experiment found in Section~\ref{sec:insertion}.
 
 \begin{figure}[h]
 \centering
@@ -1583,7 +1583,7 @@ The results of the experiment measuring running time per update is depicted in F
 \clearpage
 
 \section{Insertion}
-\label{src:insertion}
+\label{sec:insertion}
 The goal of this experiment is to ascertain how our different structures compare against each other when it comes to just insertions. The experiment will consist of inserting as much data as possible in 24 hours with an upper limit of 10Gb. The data is uniformly random in the positive integer range.
 
 Figure~\ref{fig:theory_insert_complexity} shows the theoretical complexities of inserting an element into the different structures for different input sizes. We expect the actual running times to be very similar to these. That is, we expect the data structures not optimized for external memory to perform very well while being completely contained in main memory. We expect, as soon as the internal memory data structures are forced to utilize the virtual memory mechanism of the operating system and thus swap out memory to disk, to see a significant decrease in performance, and an amount of page faults close to the theoretical asymptotic complexity of the structures in the RAM model.
@@ -1690,12 +1690,12 @@ The libspatial external R*-Tree depicted in Figure~\ref{fig:time_divided_with_as
 \clearpage
 
 \section{Deletion}
-It was difficult to come up with a good way to test the different structures against each other when it comes to deletion. In order to delete data we need to insert it first, and we need to insert equally much in all structures in order to compare fairly. As described in the previous section it was not possible to insert much data in the internal structures as well as the structure by Arge et al. To somewhat come around this problem we decided to insert nothing more than 50 megabytes worth of uniformly distributed points in all the structures. We could then completely empty the structures again while measuring for each megabyte. This way we hoped we could exclude structures from further analysis.
+It was difficult to come up with a good way to test the different structures against each other when it comes to deletion. In order to delete data we need to insert it first, and we need to insert equally much in all structures in order to compare fairly. As described in the previous section it was not possible to insert much data in the internal structures as well as the structure of Arge et al. To come around this problem we decided to insert nothing more than 50 megabytes worth of uniformly distributed points in all the structures. We could then completely empty the structures again while measuring for each megabyte. This way we hoped we could exclude structures from further analysis.
 
 \begin{figure}[htp!]
 \centering
 \includegraphics[width=0.75\textwidth]{../plots/delete_complexities/delete_complexity}
-\caption{Theoretical asymptotic delete time for all tested structures. Here $B$ is fixed to 8. Brodal is on the form $f(N) = \frac{1}{B^1-\epsilon} \log_B N$ for $\epsilon = \log(B) / \log(2)$. Arge and MySQL (with index) is on the form $f(N) = \log_B N$. The Internal PST is on the form $f(N) = \log_2 N$. The MySQL (no index), Boost R-Tree and Libspatial R*-Tree is on the form $f(N) = N$.}
+\caption{Theoretical asymptotic delete time for all tested structures. Brodal is on the form $f(N) = \frac{1}{B^1-\epsilon} \log_B N$ for $\epsilon = \log(B) / \log(2)$. Arge and MySQL (with index) is on the form $f(N) = \log_B N$. The Internal PST is on the form $f(N) = \log_2 N$. The MySQL (no index), Boost R-Tree and Libspatial R*-Tree is on the form $f(N) = N$.}
 \label{fig:theory_delete_complexity}
 \end{figure}
 
@@ -1703,17 +1703,17 @@ Figure~\ref{fig:theory_delete_complexity} shows the theoretical complexity for d
 
 \subsection*{First results}
 
-The results of the initial experiment on inserting 50Mb and then completely emptying the data structure is depicted in Figure~\ref{fig:delete_complexity_result}. We have left out the results from the structure of Arge since we were able to delete less than 2Mb worth of data within 24 hours, and thus concluded it would be infeasible to finish the experiment within reasonable time. We believe the poor performance of Arge's structure is due to \todo{Why????}.
+The results of the initial experiment where we inserted 50Mb and then completely emptied the data structure is depicted in Figure~\ref{fig:delete_complexity_result}. We have left out the results from the structure of Arge since we were able to delete less than 2Mb worth of data within 24 hours, and thus concluded it would be infeasible to finish the experiment within reasonable time. We believe the poor performance of Arge's structure is due to similar reasons as described in Section~\ref{sec:insertion} where we explained how a huge amount of I/O's and a significant amount of internal work slowed down the structure.
 
-In Figure~\ref{fig:delete_complexity_result} we see some, at first sight, strange behaviour on the running time of the internal memory Priority Search Tree. It seems we are achieving ever increasing running times on the first 9Mb worth of deletions, and then, after seeing a significant spike, we are suddenly achieving very good running times on the emptying of the rest of the data structure. This is, however, not as surprising at it might seem. Remember, we are making use of global rebuilding in our implementation of the internal memory Priority Search Tree. We do this by \textit{marking} any deleted place holder, instead of \textit{removing} the actual place holder from the data structure. This is also known as a \textit{weak} delete of an element. Only when we initiate a global rebuild on the non-deleted points are we freeing the occupied memory of deleted elements~\footnote{We could, without having broken correctness of the implementation, have deleted place holders, but that was an observation made in hindsight, and we did not have the time to make this change in code.}. So what we are seeing is measures on an ever decreasing data structure in terms of non-deleted data. But the data is still part of the tree, and thus it affects space usage, and again running time of our delete procedure. Since we initiate a global rebuild after having processed $\bar{N} / 2$ update operations, where $\bar{N}$ is the number of non-deleted points in our data structure at the start of an epoch, we are global rebuilding exactly around the spike at the 41Mb mark. We claim that the internal Priority Search Tree on 50Mb is data is unable to fit in main memory, and what we see is the affect of the swapping of main memory to disk. Only when we global rebuild to a data structure holding around 40Mb worth of data are we able to process the data structure entirely in main memory. We believe Figure~\ref{fig:delete_page_faults} depicting the number of measured page faults support this claim.
+In Figure~\ref{fig:delete_complexity_result} we see some, at first sight, strange behaviour on the running time of the Internal Memory Priority Search Tree. It seems we are achieving ever increasing running times on the first 9Mb worth of deletions, and then, after seeing a significant spike, we are suddenly achieving very good running times on the emptying of the rest of the data structure. This is, however, not as surprising at it might seem. Remember, we are making use of global rebuilding in our implementation of the Internal Memory Priority Search Tree. We do this by \textit{marking} any deleted place-holder, instead of \textit{removing} the actual place-holder from the data structure. This is also known as a \textit{weak} delete of an element. Only when we initiate a global rebuild on the non-deleted points are we freeing the occupied memory of deleted elements~\footnote{We could, without having broken correctness of the implementation, have deleted place-holders, but that was an observation made in hindsight, and we did not have the time to make this change in code.}. So what we are seeing are measures on an ever decreasing data structure in terms of non-deleted data. But the data is still part of the tree, and thus it affects space usage, and again running time of our delete procedure. Since we initiate a global rebuild after having processed $\bar{N} / 2$ update operations, where $\bar{N}$ is the number of non-deleted points in our data structure at the start of an epoch, we are global rebuilding exactly around the spike at the 41Mb mark. We claim that the Internal Memory Priority Search Tree on 50Mb data is unable to fit in main memory, and what we see is the effect of the swapping of main memory to disk. Only when we global rebuild to a data structure holding around 40Mb worth of data are we able to process the data structure entirely in main memory. We believe Figure~\ref{fig:delete_page_faults} depicting the number of measured page faults supports this claim.
 
 \subsection*{Narrowing the field}
 
-Clearly Arge's structure, the Libspatial R*-Tree, and the internal memory Priority Search Tree performs the worst of all data structures when it comes to handling deletions. Excluding these gives rise to Figure~\ref{fig:delete_complexity_result_zoomed}. It is obvious that, even with a index on coordinates, the MySQL implementations is performing much worse than the Boost R-Tree and the data structure of Brodal. We suspect the good performance of the Boost R-Tree is due to the data structure is able to process the deletions entirely in main memory. In order to verify this, we re-ran the experiment only on Brodal's data structure and the Boost R-Tree.
+Clearly Arge's structure, the Libspatial R*-Tree, and the Internal Memory Priority Search Tree performs the worst of all data structures when it comes to handling deletions. Excluding these gives rise to Figure~\ref{fig:delete_complexity_result_zoomed}. It is obvious that, even with an index on coordinates, the MySQL implementations is performing much worse than the Boost R-Tree and the data structure of Brodal. We suspect the good performance of the Boost R-Tree is due to the effective space-usage and thus the data structure is able to process the deletions entirely in main memory. In order to verify this, we re-ran the experiment only on Brodal's data structure and the Boost R-Tree.
 
 \subsection*{Finding the winning data structure}
 
-The result of emptying Brodal's and the Boost R-Tree from a size of 400 Mb downto a size of 350Mb worth of data is depicted in Figure~\ref{fig:delete_complexity_result_400Mb}. Clearly we now see the data structure of Brodal's handling deletions several orders of magnitude faster than the data structure of Boost R-Tree. We claim this is caused by the fact that the Boost R-Tree can not fit into the main memory, and thus have to rely on the operating system handling swapping of data. We believe Figure~\ref{fig:page_faults_boost_r_tree} of the number of page faults for the experiment supports this claim.
+The result of emptying Brodal's and the Boost R-Tree from a size of 400 Mb downto a size of 350Mb worth of data is depicted in Figure~\ref{fig:delete_complexity_result_400Mb}. Clearly we now see the data structure of Brodal's handling deletions several orders of magnitude faster than the Boost R-Tree. We claim this is caused by the fact that the Boost R-Tree cannot fit into main memory, and thus have to rely on the operating system handling swapping of data. We believe Figure~\ref{fig:page_faults_boost_r_tree} depicting the number of page faults for the experiment supports this claim.
 
 \subsection*{Explaining fluctuations}
 
@@ -1722,20 +1722,20 @@ Finally we zoom in on the result of completely emptying Brodal's data structure 
 \begin{figure}[htp!]
 \centering
 \includegraphics[width=\textwidth]{../src/experiments/delete_experiment_results/2016-05-27.10_10_14/time2}
-\caption{Experimentally measured running time for deleting 1 Mb worth of data in a data structure holding N Mb non-deleted data.}
+\caption{Experimentally measured running time when deleting 1 Mb worth of data as a function of the remaining data in the structure going from 50Mb to 0Mb.}
 \label{fig:delete_complexity_result}
 \includegraphics[width=\textwidth]{../src/experiments/delete_experiment_results/2016-05-27.10_10_14/pfs2}
-\caption{Experimentally measured number of page faults for deleting 1 Mb worth of data in a data structure holding N Mb non-deleted data.}
+\caption{Experimentally measured page faults when deleting 1 Mb worth of data as a function of the remaining data in the structure going from 50Mb to 0Mb.}
 \label{fig:delete_page_faults}
 \end{figure}
 
 \begin{figure}[htp!]
 \centering
 \includegraphics[width=\textwidth]{../src/experiments/delete_experiment_results/2016-05-27.10_10_14/time4}
-\caption{Experimentally measured running time for deleting 1 Mb worth of data in a data structure holding N Mb non-deleted data. The data structure initially holds 50 Mb worth of data. Clearly the Boost R-Tree performs the best since it can handle all deletions in main memory (see Figure~\ref{fig:page_faults_boost_r_tree}).}
+\caption{Experimentally measured running time when deleting 1 Mb worth of data in a data structure holding from 50Mb to 0Mb non-deleted data. Clearly the Boost R-Tree performs the best as it can handle all deletions in main memory.}
 \label{fig:delete_complexity_result_zoomed}
 \includegraphics[width=\textwidth]{../src/experiments/delete_experiment_results/2016-05-31.08_55_51/time2}
-\caption{Experimentally measured running time for deleting 1 Mb worth of data in a data structure holding N Mb non-deleted data. The data structure initially holds 400 Mb worth of data. Clearly the Boost R-Tree now suffers from swapping of data.}
+\caption{Experimentally measured running time when deleting 1 Mb worth of data in a data structure holding from 400Mb to 350Mb of non-deleted data. Clearly the Boost R-Tree now suffers from swapping of data (see Figure~\ref{fig:page_faults_boost_r_tree}).}
 \label{fig:delete_complexity_result_400Mb}
 \end{figure}
 
@@ -1743,7 +1743,7 @@ Finally we zoom in on the result of completely emptying Brodal's data structure 
 \centering
 
 \includegraphics[width=0.98\textwidth]{../src/experiments/delete_experiment_results/2016-05-31.08_55_51/time3}
-\caption{Experimentally measured running time for emptying Brodal's from a size of 400 Mb data. Clearly we see fluctuations in the running time. These are perfectly explained by the number of point buffer underflows depicted in Figure~\ref{fig:delete_pbu_time_result_brodal_400mb} and the number of delete buffer overflows depicted in Figure~\ref{fig:delete_dbo_time_result_brodal_400mb}.}
+\caption{Experimentally measured running time when emptying Brodal's from a size of 400 Mb data. Clearly we see fluctuations in the running time. These are perfectly explained by the number of point buffer underflows depicted in Figure~\ref{fig:delete_pbu_time_result_brodal_400mb} and the number of delete buffer overflows depicted in Figure~\ref{fig:delete_dbo_time_result_brodal_400mb}.}
 \label{fig:delete_complexity_result_brodal_400mb}
 
 \includegraphics[width=0.98\linewidth]{../src/experiments/delete_experiment_results/2016-05-31.08_55_51/pbu_time}
