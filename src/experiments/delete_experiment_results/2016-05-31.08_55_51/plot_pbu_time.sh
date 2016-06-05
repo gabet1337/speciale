@@ -37,7 +37,7 @@ next_5 = NaN
 delta_6(x) = (r = next_6 - x, next_6 = x, r)
 next_6 = NaN
 
-plot 'delete_experiment_results/2016-05-31.08_55_51/gerth_Gerth' u (400-$1):(delta_4($2)) t 'Running time' w lp ls 2 axes x1y1, \
+plot 'delete_experiment_results/2016-05-31.08_55_51/gerth_Gerth' u (400-$1):(delta_4($2)) t 'Brodal running time' w lp ls 2 axes x1y1, \
 'delete_experiment_results/2016-05-31.08_55_51/gerth_Gerth' u (400-$1):(delta_1($9)) t 'point buffer underflow' w lp ls 1 axes x1y2 #, \
 #    'delete_experiment_results/2016-05-31.08_55_51/gerth_Gerth' u (400-$1):(delta_2($7)) t 'delete buffer overflow' w lp ls 4 axes x1y2 #, \
     #'delete_experiment_results/2016-05-31.08_55_51/gerth_Gerth' u (400-$1):(delta_3($8)) t 'insert buffer overflow' w lp ls 3 axes x1y2
