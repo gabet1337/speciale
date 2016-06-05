@@ -17,7 +17,7 @@ set style line 8 lc rgb '#87ceeb' pt 8 ps 1 lt 1 lw 2 # --- skyblue
 set key center center
 set xlabel 'N (non-deleted data in Mb)'
 set ylabel 'Time (s) per deleted Mb'
-#set xtics ('50' 1,'45' 6,'40' 11,'35' 16,'30' 21,'25' 26,'20' 31,'15' 36, '10' 41, '5' 46, '0' 50) 
+set xtics ('400' 1,'390' 10,'380' 20,'370' 30,'360' 40,'350' 50) 
 #set format x "50-%g"
 set xrange [0:52]
 #set yrange [0:100]

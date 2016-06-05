@@ -1,13 +1,13 @@
 #!/usr/bin/gnuplot
-set terminal postscript eps size 7,2.62 enhanced color font 'Verdana,22'
+set terminal postscript eps size 7,2.62 enhanced color font 'Verdana,16'
 set output 'delete_experiment_results/2016-05-31.08_55_51/pbu_time.eps'
 set style line 11 lc rgb '#000000' lt 1
 set border 3 back ls 11
 set tics nomirror
 set style line 12 lc rgb '#000000' lt 0 lw 1
 set grid back ls 12
-set style line 1 lc rgb '#8b1a0e' pi 1 pt 1 ps 2 lt 1 lw 2 # --- red
-set style line 2 lc rgb '#5e9c36' pi 1 pt 6 ps 2 lt 1 lw 2 # --- green
+set style line 1 lc rgb '#8b1a0e' pi 1 pt 1 ps 1.4 lt 1 lw 2 # --- red
+set style line 2 lc rgb '#5e9c36' pi 1 pt 6 ps 1.4 lt 1 lw 2 # --- green
 set style line 3 lc rgb '#88419d' pt 2 ps 1 lt 1 lw 2 # --- purple
 set style line 4 lc rgb '#225ea8' pt 3 ps 1 lt 1 lw 2 # --- blue
 set style line 5 lc rgb '#000000' pt 4 ps 1 lt 1 lw 2 # --- black
@@ -19,7 +19,7 @@ set xlabel 'N (non-deleted data size in Mb)'
 set ylabel 'Time (s) per deleted Mb'
 set y2label "Number of PBUs"
 set y2tics
-
+set xtics ('400' 1,'350' 50,'300' 100, '250' 150, '200' 200, '150' 250, '100' 300, '50' 350, '0' 400)
 #set xrange [0:0]
 set yrange [0:500]
 set y2range [0:60]
