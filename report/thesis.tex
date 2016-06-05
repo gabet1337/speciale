@@ -1687,16 +1687,24 @@ The libspatial external R*-Tree depicted in Figure~\ref{fig:time_divided_with_as
 
 \todo{MYSQL!!!!}
 
+\clearpage
+
 \section{Deletion}
 It was difficult to come up with a good way to test the different structures against each other when it comes to deletion. In order to delete data we need to insert it first, and we need to insert equally much in all structures in order to compare fairly. As described in the previous section it was not possible to insert much data in the internal structures as well as the structure by Arge et al. To somewhat come around this problem we decided to insert nothing more than 50 megabytes worth of uniformly distributed points in all the structures. We could then completely empty the structures again while measuring for each megabyte. This way we hoped we could exclude structures from further analysis.
 
 \begin{figure}[htp!]
 \includegraphics[width=\textwidth]{../plots/delete_complexities/delete_complexity}
-\caption{Theoretical delete time for all tested structures.}
+\caption{Theoretical asymptotic delete time for all tested structures. Here $B$ is fixed to 8. Brodal is on the form $f(N) = \frac{1}{B^1-\epsilon} \log_B N$ for $\epsilon = \log(B) / \log(2)$. Arge and MySQL (with index) is on the form $f(N) = \log_B N$. The Internal PST is on the form $f(N) = \log_2 N$. The MySQL (no index), Boost R-Tree and Libspatial R*-Tree is on the form $f(N) = N$.}
 \label{fig:theory_delete_complexity}
 \end{figure}
 
 Figure~\ref{fig:theory_delete_complexity} shows the theoretical complexity for deletion in the structures. We expect the internal memory algorithms to outperform the external structures significantly while still in main memory. As soon as we leave main memory we expect them to become obsolete. In external memory we expect the structure by Brodal to be the best due to the effective buffering of deletes.
+
+The results of the initial experiment on inserting 50Mb and then completely emptying the data structure is depicted in Figure~\ref{fig:delete_complexity_result}. We have left out the results from the structure of Arge since we were able to delete less than 2Mb worth of data within 24 hours, and thus concluded it would be infeasible to finish the experiment within reasonable time. We believe the poor performance of Arge's structure is due to ?????.
+
+In Figure~\ref{fig:delete_complexity_result} we see some, at first sight, strange behaviour on the running time of the internal memory Priority Search Tree. It seems we are achieving ever increasing running times on the first 9Mb worth of deletions, and then, after seeing a significant spike, we are suddenly achieving very good running times on the emptying of the rest of the data structure. This is, however, not as surprising at it might seem. Remember, we are making use of global rebuilding in our implementation of the internal memory Priority Search Tree. We do this by \textit{marking} any deleted place holder, instead of \textit{removing} the actual place holder from the data structure. This is also known as a \textit{weak} delete of an element. Only when we initiate a global rebuild on the non-deleted points are we freeing the occupied memory of deleted elements~\footnote{We could, without having broken correctness of the implementation, have deleted place holders, but that was an observation made in hindsight, and we did not have the time to make this change in code.}. So what we are seeing is measures on an ever decreasing data structure in terms of non-deleted data. But the data is still part of the tree, and thus it affects space usage, and again running time of our delete procedure. Since we initiate a global rebuild after having processed $\bar{N} / 2$ update operations, where $\bar{N}$ is the number of non-deleted points in our data structure at the start of an epoch, we are global rebuilding exactly around the spike on a data structure of size around 39Mb. We claim that we are ????
+
+
 
 \begin{figure}[htp!]
 \centering
@@ -1705,19 +1713,19 @@ Figure~\ref{fig:theory_delete_complexity} shows the theoretical complexity for d
 \label{fig:delete_complexity_result}
 \includegraphics[width=\textwidth]{../src/experiments/delete_experiment_results/2016-05-27.10_10_14/pfs2}
 \caption{Missing}
-\label{fig:delete_complexity_result}
+\label{fig:missing}
 \end{figure}
 
 \begin{figure}[htp!]
 \includegraphics[width=\textwidth]{../src/experiments/delete_experiment_results/2016-05-27.10_10_14/time4}
 \caption{Missing}
-\label{fig:delete_complexity_result}
+\label{fig:missing}
 \end{figure}
 
 \begin{figure}[htp!]
 \includegraphics[width=\textwidth]{../src/experiments/delete_experiment_results/2016-05-31.08_55_51/time2}
 \caption{Missing}
-\label{fig:delete_complexity_result}
+\label{fig:missing}
 \end{figure}
 
 \begin{figure}[h]
@@ -1725,7 +1733,7 @@ Figure~\ref{fig:theory_delete_complexity} shows the theoretical complexity for d
 
 \includegraphics[width=\textwidth]{../src/experiments/delete_experiment_results/2016-05-31.08_55_51/time3}
 \caption{Missing}
-\label{fig:delete_complexity_result}
+\label{fig:missing}
 
 \includegraphics[width=\linewidth]{../src/experiments/delete_experiment_results/2016-05-31.08_55_51/pbu_time}
 \caption{Missing}
