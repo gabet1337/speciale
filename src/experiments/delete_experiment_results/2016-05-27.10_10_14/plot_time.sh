@@ -14,15 +14,16 @@ set style line 5 lc rgb '#000000' pt 4 ps 1 lt 1 lw 2 # --- black
 set style line 6 lc rgb '#00ced1' pt 5 ps 1 lt 1 lw 2 # --- darkturquoise
 set style line 7 lc rgb '#ff00ff' pt 7 ps 1 lt 1 lw 2 # --- magenta
 set style line 8 lc rgb '#87ceeb' pt 8 ps 1 lt 1 lw 2 # --- skyblue
-set key at 15,2150
+set key c
 set xlabel 'N (input size in Mb)'
-set ylabel 'Time (s)'
-set xtics ('50' 1,'45' 6,'40' 11,'35' 16,'30' 21,'25' 26,'20' 31,'15' 36, '10' 41, '5' 46, '0' 50) 
+set ylabel 'Time (s) / delete 1Mb in structure of size N (in Mb)'
+#set xtics ('50' 1,'45' 6,'40' 11,'35' 16,'30' 21,'25' 26,'20' 31,'15' 36, '10' 41, '5' 46, '0' 50) 
 #set format x "50-%g"
 #set xrange [0:0]
 #set yrange [0:100]
-plot 'delete_experiment_results/2016-05-27.10_10_14/gerth_Gerth' u (50-$1):($2/(50-$1)) t 'Brodal' w lp ls 2, \
-'delete_experiment_results/2016-05-27.10_10_14/internal_Internal' u (50-$1):($2/(50-$1)) t 'Internal PST' w lp ls 5, \
-'delete_experiment_results/2016-05-27.10_10_14/rtree_Boost R-tree' u (50-$1):($2/(50-$1)) t 'Boost R-tree' w lp ls 3, \
-'delete_experiment_results/2016-05-27.10_10_14/spatial_libspatial' u (60-$1):($2/(50-$1)) t 'Libspatial R*-Tree' w lp ls 6, \
-'delete_experiment_results/2016-05-27.10_10_14/mysql_MySQL' u (50-$1):($2/(50-$1)) t 'MySQL (no index)' w lp ls 4
+plot 'delete_experiment_results/2016-05-27.10_10_14/gerth_Gerth' u (50-$1):($2/$1) t 'Brodal' w lp ls 2, \
+'delete_experiment_results/2016-05-27.10_10_14/internal_Internal' u (50-$1):($2/$1) t 'Internal PST' w lp ls 5, \
+'delete_experiment_results/2016-05-27.10_10_14/rtree_Boost R-tree' u (50-$1):($2/$1) t 'Boost R-tree' w lp ls 3, \
+'delete_experiment_results/2016-05-27.10_10_14/spatial_libspatial' u (60-$1):($2/$1) t 'Libspatial R*-Tree' w lp ls 6, \
+'delete_experiment_results/2016-05-27.10_10_14/mysql_MySQL' u (50-$1):($2/$1) t 'MySQL (no index)' w lp ls 4 #, \
+#'delete_experiment_results/2016-05-27.10_10_14/mysql_MySQL_index' every ::149::199 u ($1):($2) t 'MySQL (with index)' w lp ls 7
