@@ -1,12 +1,12 @@
 #!/usr/bin/gnuplot
-set terminal postscript eps enhanced color font 'Verdana,12'
+set terminal postscript eps enhanced size 5,1.75 color font 'Verdana,12'
 set output 'insert_complexity.eps'
 set style line 11 lc rgb '#000000' lt 1
 set border 3 back ls 11
 set tics nomirror
 set style line 12 lc rgb '#000000' lt 0 lw 1
 set grid back ls 12
-set style line 1 lc rgb '#8b1a0e' pi 5 pt 1 ps 1 lt 1 lw 2 # --- red
+set style line 1 lc rgb '#8b1a0e' pi 6 pt 1 ps 1.4 lt 1 lw 2 # --- red
 set style line 2 lc rgb '#5e9c36' pi 5 pt 6 ps 1 lt 1 lw 2 # --- green
 set style line 3 lc rgb '#88419d' pi 5 pt 2 ps 1 lt 1 lw 2 # --- purple
 set style line 4 lc rgb '#225ea8' pi 5 pt 3 ps 1 lt 1 lw 2 # --- blue
@@ -26,7 +26,8 @@ internal(x) = log(x)/log(2)
 arge(x,B) = log(x)/log(B)
 rtree(x) = 0.8*x
 rstar(x) = x
-mysql(x) = log(x)/log(buffer_size)+0.05
+mysql(x) = log(x)/log(buffer_size)+0.09
+mysql_no_index(x) = 0.1
 unset ytics
 unset xtics
 
@@ -35,6 +36,7 @@ plot brodal(x,buffer_size) with linespoint title sprintf("Brodal") ls 2,\
      internal(x) with linespoint title sprintf("Internal PST") ls 5,\
      rtree(x) with linespoint title sprintf("Boost RTree") ls 3,\
      rstar(x) with linespoint title sprintf("libspatial R*Tree") ls 6,\
-     mysql(x) with linespoint title sprintf("MySQL") ls 4
+     mysql(x) with linespoint title sprintf("MySQL (with index)") ls 4,\
+     mysql_no_index(x) with linespoint title sprintf("MySQL (no index)") ls 7
 
 
