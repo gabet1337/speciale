@@ -93,11 +93,11 @@
 \vspace*{\fill}\noindent{\rule{\linewidth}{1mm}\\[4ex]
 {\Huge\sf Three-sided Range Reporting in\\External Memory}\\[2ex]
 {\huge\sf Peter Gabrielsen, 20114179}\\[2ex]
-{\huge\sf Christoffer Holb\ae k Hansen, 20114637}\\[2ex]
+{\huge\sf Christoffer Holb{\ae}k Hansen, 20114637}\\[2ex]
 \noindent\rule{\linewidth}{1mm}\\[4ex]
 \noindent{\Large\sf Master's Thesis, Computer Science\\[1ex] 
 \monthname\ \the\year  \\[1ex] Project Advisor: Kasper Green Larsen
-\\[1ex] Formal Advisor: Gerth St\o lting Brodal\\[15ex]}\\[\fill]}
+\\[1ex] Formal Advisor: Gerth St{\o}lting Brodal\\[15ex]}\\[\fill]}
 \epsfig{file=logo.eps}\clearpage
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -159,14 +159,14 @@ After more than a month of intense experimenting, documentation, and \LaTeX'ing 
 \todo{More people to thank?}
 
 A number of people have been part to giving this thesis its life. First and foremost we would like to thank our primary advisor, Kasper Larsen, for our weekly meetings, constructive feedback, enthusiasm, and engagement in the project.
-We would also like to thank our formal advisor, Gerth St\o lting Brodal, for his great work on the data structure we have implemented in this thesis and sparring when we were in doubt.
+We would also like to thank our formal advisor, Gerth St{\o}lting Brodal, for his great work on the data structure we have implemented in this thesis and sparring when we were in doubt.
 In more general terms we would like to thank Aarhus University for giving us 5 years worth of great courses and preparing us for the life to come within the field of Computer Science.
 
 We have really enjoyed working on this thesis and we sincerely hope you enjoy reading it as much as we have enjoyed writing it!
 
 \vspace{2ex}
 \begin{flushright}
-  \emph{Peter Gabrielsen and Christoffer Holb\ae k Hansen}\\
+  \emph{Peter Gabrielsen and Christoffer Holb{\ae}k Hansen}\\
   \emph{Aarhus, \today.}
 \end{flushright}
 
@@ -891,7 +891,7 @@ After inserting in the base tree and appropriate reorganization we need to inser
 \begin{figure}[t]
 	\centering
 	\includegraphics[width=1\textwidth]{../figures/arge_bubble_down}
-	\caption{Bubble down. First a degenerate query on the form $\left[ x\text{-range of }w \right] \times \left[ - \infty, \infty \right]$ is done for the found child $w$ resulting in a set of points with size $K$ (a) If $K \leq B/2$ then we simply insert the point (here marked as a circle) (b) If $K \geq B/2$ and the point is \textit{larger} than the \textit{smallest} $y$-value then the point is inserted and the smallest $y$-value is recursively sent down (c) If $K \geq B/2$ and the point is \textit{smaller} than the \textit{smallest} $y$-value then the point itself is sent recursively down.}
+	\caption{Bubble down. First a degenerate query on the form $\left[ x\text{-range of }w \right] \times \left[ - \infty, \infty \right]$ is done for the found child $w$ resulting in a set of points with size $K$ (a) If $K < B/2$ then we simply insert the point (here marked as a circle) (b) If $K \geq B/2$ and the point is \textit{larger} than the \textit{smallest} $y$-value then the point is inserted and the smallest $y$-value is recursively sent down (c) If $K \geq B/2$ and the point is \textit{smaller} than the \textit{smallest} $y$-value then the point itself is sent recursively down.}
 	\label{fig:arge_bubble_down}
 \end{figure}
 
@@ -1003,7 +1003,7 @@ We will in the following look at each step individually and argue their complexi
 	\begin{figure}[t]
 		\centering
 		\includegraphics[width=0.77\textwidth]{../figures/brodal_deletion_buffer_overflow}
-		\caption{Deletion buffer overflow. A total of $\lceil \lvert D_v \rvert /B^\epsilon \rceil$ deletions are moved from $D_v$ to $\mathcal{U}$. Deletions larger than the smallest $y$-value in $P_c$ are removed from $\mathcal{U}$ since they cannot cancel points further down because of the heap order of the tree. Finally all points in $\mathcal{U}$ are removed from $P_c$, $I_c$, $D_c$, and $Cv$ before $\mathcal{U}$ is inserted into $D_c$.}
+		\caption{Deletion buffer overflow. A total of $\lceil \lvert D_v \rvert /B^\epsilon \rceil$ deletions are moved from $D_v$ to $\mathcal{U}$. Deletions larger than the smallest $y$-value in $P_c$ are removed from $\mathcal{U}$ since they cannot cancel points further down because of the heap order of the tree. Finally all points in $\mathcal{U}$ are removed from $P_c$, $I_c$, $D_c$, and $C_v$ before $\mathcal{U}$ is inserted into $D_c$.}
 		\label{fig:brodal_deletion_buffer_overflow}
 	\end{figure}
 	
@@ -1018,7 +1018,7 @@ We will in the following look at each step individually and argue their complexi
 	\begin{figure}[b]
 		\centering
 		\includegraphics[width=0.77\textwidth]{../figures/brodal_insert_buffer_overflow}
-		\caption{Insert buffer overflow. A total of $\lceil \lvert I_v \rvert /B^\epsilon \rceil$ points are moved from $I_v$ to $\mathcal{U}$. All points from $\mathcal{U}$ are removed from $D_c$ since they cancel the deletions. Points larger than the smallest $y$-value in $P_c$ are inserted into $P_c$ and points smaller than the smallest $y$-value in $P_c$ are inserted into $I_c$. This ensures the invariant of the tree being heap ordered. Finally the newly added points to $P_c$ are also inserted into $C_v$ to ensure that $C_v$ contains a copy of all points in $P_c$.}
+		\caption{Insert buffer overflow. A total of $\lceil \lvert I_v \rvert /B^\epsilon \rceil$ points are moved from $I_v$ to $\mathcal{U}$. All points from $\mathcal{U}$ are removed from $D_c$ since they cancel the deletions. Points larger than the smallest $y$-value in $P_c$ are inserted into $P_c$ and points smaller than the smallest $y$-value in $P_c$ are inserted into $I_c$. This ensures the invariant that the tree is heap ordered. Finally the newly added points to $P_c$ are also inserted into $C_v$ to ensure that $C_v$ contains a copy of all points in $P_c$.}
 		\label{fig:brodal_insert_buffer_overflow}
 	\end{figure}		
 	
@@ -1037,7 +1037,7 @@ We will in the following look at each step individually and argue their complexi
 	\begin{figure}[h]
 		\centering
 		\includegraphics[width=1\textwidth]{../figures/brodal_node_degree_overflow}
-		\caption{Node degree overflow. The buffers $I_v$, $D_v$, and $P_v$ are distributed to the to new nodes $v'$ and $v''$. After the split we have to ensure the child structures contains a copy of all points from the point buffers of the children.}
+		\caption{Node degree overflow. The buffers $I_v$, $D_v$, and $P_v$ are distributed to the new nodes $v'$ and $v''$. After the split we have to ensure the child structures contains a copy of all points from the point buffers of the children.}
 		\label{fig:brodal_node_degree_overflow}
 	\end{figure}		
 	
