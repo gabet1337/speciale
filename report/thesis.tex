@@ -1597,12 +1597,9 @@ Figure~\ref{fig:theory_insert_complexity} shows the theoretical complexities of 
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{../plots/insert_complexities/insert_complexity}
-\caption{Theoretical insert time for all tested structures.}
+\caption{Theoretical asymptotic insert time for all tested structures. Brodal is on the form $f(N) = \frac{1}{B^{1-\epsilon}} \log_B N$ for $\epsilon = \frac{\log(B)}{\log(2)}$. Arge and MySQL (with index) is on the form $f(N) = \log_B N$. The Internal Memory Priority Search Tree is on the form $f(N) = \log_2 N$. The MySQL (no index), Boost R-Tree and Libspatial R*-Tree are on the form $f(N) = N$.}
 \label{fig:theory_insert_complexity}
-\end{figure}
 
-\begin{figure}[b]
-\centering
 \includegraphics[width=\textwidth]{../src/experiments/insert_experiment_results/combined_results/time_over_asymptotic}
 \caption{Actual running time when inserting into the tested structures. The figure shows the running time per insert cropped to the first 600Mb.}
 \label{fig:actual_insert_time}
