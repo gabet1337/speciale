@@ -109,22 +109,32 @@
 \pagenumbering{roman}
 \addcontentsline{toc}{chapter}{Abstract}
 
-The world is becoming increasingly data driven and almost anything in our daily lives generate data. The data sets generated are typically larger than what we can store in a normal computer's main memory. We therefore need clever techniques to handle and analyse the large data sets in order to make sense of it all. Much of the data that is gathered is spatial in nature, i.e. contains e.g. GPS coordinates. Analysing coordinates require us to solve complicated problems within the field of computational geometry. One of such problems is the problem of three-sided range reporting. In this problem we are asked to maintain a dynamic set, $\mathcal{S}$, of $N$ points in $\mathbb{R}^2$. The set can be updated by inserting or deleting points. Any solution to the problem must be able to answer three-sided range queries, i.e. given a range of the type $\left[x_1,x_2\right]\times \left[y,\infty\right]$ we report points in $\mathcal{S} \cap \left[x_1,x_2\right]\times \left[y,\infty\right]$.
+The world is becoming increasingly data driven and almost anything in our daily lives generate data. The generated data sets are typically larger than what we can store in a normal computer's main memory. We therefore need clever techniques to handle and analyse the large data sets in order to make sense of it all. Much of the data that is gathered is spatial in nature, i.e. contains e.g. GPS coordinates. Analysing coordinates require us to solve complicated problems within the field of computational geometry. One of such problems is the problem of three-sided range reporting. In this problem we are asked to maintain a dynamic set, $\mathcal{S}$, of $N$ points in $\mathbb{R}^2$. The set can be updated by inserting or deleting points. Any solution to the problem must be able to answer three-sided range queries, i.e. given a range of the type $\left[x_1,x_2\right]\times \left[y,\infty\right]$ we report points in $\mathcal{S} \cap \left[x_1,x_2\right]\times \left[y,\infty\right]$.
 
 This thesis presents, implements, and experiments with several solutions to the problem of three-sided range reporting. The main focus of the thesis will be to show the power of data structures optimized for handling huge data sets by minimising the number of disk accesses.
 
-We have implemented two external memory data structures that solves this problem. The first is by Arge et al~\cite{arge_samoladas_vitter_1999}. The second by Brodal~\cite{DBLP:journals/corr/Brodal15} improves on the result of Arge by adding buffering.
+We have implemented two external memory data structures that solves this problem: The External Memory Priority Search Tree by Arge et al.~\cite{arge_samoladas_vitter_1999} and the External Memory \textit{Buffered} Priority Search Tree by Brodal~\cite{DBLP:journals/corr/Brodal15}.
 
 Besides comparing these two structures against each other we also compare them against our own implementation of the Priority Search Tree of McCreight~\cite{DBLP:journals/siamcomp/McCreight85}, and wrappers around MySQL, libspatialindex R*Tree, and Boost R-Tree.
 
-Our results show that the External Memory Buffered Priority Search Tree outperforms all of the other compared structures as soon as the structures have to handle more data than the internal memory capacity. MySQL without an index was significantly faster at inserting but as both the experiments with deletion and querying showed, the cost of not having an index on the table is too high. The Boost R-Tree proved to be the fastest of the internal memory data structures.
+Our results show that the External Memory Buffered Priority Search Tree outperforms all of the other structures as soon as the structures have to handle more data than the main memory capacity. MySQL without an index was significantly faster at inserting but as both the experiments with deletion and querying showed, the cost of not having an index on the table is too high. The Boost R-Tree proved to be the fastest of the internal memory data structures.
 
 \todo{conclude more?}
 
 \chapter*{Resum\'e}
 \addcontentsline{toc}{chapter}{Resum\'e}
 
-\todo{in Danish\dots}
+Flere og flere hverdagsapparater bliver koblet p{\aa} internettet. Dette har til form{\aa}l at personligg{\o}re og for at bedre kunne m{\aa}lrette produkter til forbrugeren. Det skaber samtidig k{\ae}mpe m{\ae}ngder af data --- st{\o}rre m{\ae}ngder end en almindelig computer kan klare i dens interne hukommelse. Vi har derfor brug for teknikker og redskaber til at finde hoved og hale i alt det genereret data. Meget af det genererede data indeholder information omkring vores position i form af GPS koordinater. For at h{\aa}ndtere GPS koordinater skal man typisk l{\o}se komplicerede problemer indenfor algoritmisk geometri. Et s{\aa}dan problem kunne eksempelvis v{\ae}re det tre-sidede interval rapporterings problem. Dette problem g{\aa}r ud p{\aa} at vedligeholde en dynamisk m{\ae}ngde, $\mathcal{S}$, indeholdende $N$ punkter i $\mathbb{R}^2$. M{\ae}ngden kan modificeres ved at inds{\ae}tte eller slette punkter. En l{\o}sning p{\aa} dette problem skal v{\ae}re i stand til at svare p{\aa} foresp{\o}rgsler af typen $[x_1,x_2] \times [y,\infty]$, dvs. rapportere alle punkter i $\mathcal{S} \cap [x_1,x_2] \times [y,\infty]$.
+
+Vi vil i dette speciale pr{\ae}sentere, implementere og eksperimentere med mange forskellige l{\o}sninger til dette problem. Hovedfokuset bliver at vise hvor stor forskel der er p{\aa} strukturer optimeret til at h{\aa}ndtere store datam{\ae}ngder og strukturer der er optimeret til at kunne v{\ae}re i intern hukommelse ved at sammenligne dem eksperimentielt.
+
+Vi har igennem specialet implementeret to strukturer optimeret til ekstern hukommelse: Det Eksterne Hukommelses Prioritets S{\o}ge Tr{\ae} af Arge et al.~\cite{arge_samoladas_vitter_1999} og det Eksterne Hukommelses \textit{Bufferet} Prioritets S{\o}ge Tr{\ae} af Brodal~\cite{DBLP:journals/corr/Brodal15}.
+
+Vi har derudover implementeret et Internt Hukommelses Prioritets S{\o}ge Tr{\ae} af McCreight~\cite{DBLP:journals/siamcomp/McCreight85}, og lavet omslag til MySQL, libspatialindex R*Tr{\ae} og Boost R-Tr{\ae}.
+
+Resultater fra eksperimenter viser at det Eksterne Hukommelses Prioritets S{\o}ge Tr{\ae} sl{\aa}r alle de andre data strukturer s{\aa} snart de skal h{\aa}ndtere mere data end der er plads til i computerens interne hukommelse. MySQL uden et tilh{\o}rende indeks var den eneste struktur der kunne hamle op n{\aa}r det kommer til at inds{\ae}tte i strukturen. Denne struktur m{\aa}tte dog betale dyrt for de hurtige inds{\ae}ttelser i form af langsomme slettelser og foresp{\o}rgsler. Det var Boost R-Tr{\ae}et der viste sig at v{\ae}re den hurtigste af de interne hukommelses strukturer.
+
+\todo{conclude more?}
 
 \tableofcontents
 
