@@ -19,8 +19,24 @@ set xlabel 'N (input size in Mb)'
 set ylabel 'point buffer underflows'
 #set xrange [0:0]
 #set yrange [0:0]
-plot 'delete_experiment_results/2016-05-27.10_10_14/gerth_Gerth' u 1:9 t 'Gerth' w lp ls 2, \
-'delete_experiment_results/2016-05-27.10_10_14/internal_Internal' u 1:9 t 'Internal' w lp ls 5, \
-'delete_experiment_results/2016-05-27.10_10_14/rtree_Boost R-tree' u 1:9 t 'Boost R-tree' w lp ls 3, \
-'delete_experiment_results/2016-05-27.10_10_14/spatial_libspatial' u 1:9 t 'libspatial' w lp ls 6, \
-'delete_experiment_results/2016-05-27.10_10_14/mysql_MySQL' u 1:9 t 'MySQL' w lp ls 4
+
+delta_1(x) = (r = next_1 - x, next_1 = x, r)
+next_1 = NaN
+delta_2(x) = (r = next_2 - x, next_2 = x, r)
+next_2 = NaN
+delta_3(x) = (r = next_3 - x, next_3 = x, r)
+next_3 = NaN
+delta_4(x) = (r = next_4 - x, next_4 = x, r)
+next_4 = NaN
+delta_5(x) = (r = next_5 - x, next_5 = x, r)
+next_5 = NaN
+delta_6(x) = (r = next_6 - x, next_6 = x, r)
+next_6 = NaN
+
+plot 'delete_experiment_results/2016-05-27.10_10_14/gerth_Gerth' u (50-$1):(delta_1($9)) t 'Brodal' w lp ls 2
+
+#plot 'delete_experiment_results/2016-05-27.10_10_14/gerth_Gerth' u 1:9 t 'Gerth' w lp ls 2, \
+#'delete_experiment_results/2016-05-27.10_10_14/internal_Internal' u 1:9 t 'Internal' w lp ls 5, \
+#'delete_experiment_results/2016-05-27.10_10_14/rtree_Boost R-tree' u 1:9 t 'Boost R-tree' w lp ls 3, \
+#'delete_experiment_results/2016-05-27.10_10_14/spatial_libspatial' u 1:9 t 'libspatial' w lp ls 6, \
+#'delete_experiment_results/2016-05-27.10_10_14/mysql_MySQL' u 1:9 t 'MySQL' w lp ls 4
