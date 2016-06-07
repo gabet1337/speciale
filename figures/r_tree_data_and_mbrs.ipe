@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70107" creator="Ipe 7.2.2">
-<info created="D:20160428150624" modified="D:20160529111321"/>
+<info created="D:20160428150624" modified="D:20160607193515"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -509,8 +509,8 @@ h
 384 800 l
 h
 </path>
-<text matrix="1 0 0 1 112 -104" transformations="translations" pos="340 792" stroke="black" type="label" width="8.964" height="4.294" depth="1.49" valign="baseline">$r_6$</text>
-<text matrix="1 0 0 1 112 -108" transformations="translations" pos="356 796" stroke="black" type="label" width="8.964" height="4.294" depth="1.49" valign="baseline">$r_7$</text>
+<text matrix="1 0 0 1 112 -104" transformations="translations" pos="340 792" stroke="black" type="label" width="8.964" height="4.294" depth="1.49" valign="baseline">$r_3$</text>
+<text matrix="1 0 0 1 112 -108" transformations="translations" pos="356 796" stroke="black" type="label" width="8.964" height="4.294" depth="1.49" valign="baseline">$r_4$</text>
 <text matrix="1 0 0 1 108 -108" transformations="translations" pos="324 796" stroke="black" type="label" width="10.173" height="4.294" depth="1.49" valign="baseline">$u_7$</text>
 <path matrix="1 0 0 1 -16 -72" stroke="black">
 424 788 m
@@ -683,6 +683,8 @@ h
 <text matrix="1 0 0 1 -48 -144" transformations="translations" pos="356 796" stroke="black" type="label" width="9.482" height="4.297" depth="1.93" valign="baseline">$p_3$</text>
 <text matrix="1 0 0 1 8 -144" transformations="translations" pos="356 796" stroke="black" type="label" width="9.482" height="4.297" depth="1.93" valign="baseline">$p_6$</text>
 <text matrix="1 0 0 1 72 -144" transformations="translations" pos="356 796" stroke="black" type="label" width="9.482" height="4.297" depth="1.93" valign="baseline">$p_9$</text>
-<text matrix="1 0 0 1 128 -108" transformations="translations" pos="356 796" stroke="black" type="label" width="8.964" height="4.294" depth="1.49" valign="baseline">$r_7$</text>
+<text matrix="1 0 0 1 128 -108" transformations="translations" pos="356 796" stroke="black" type="label" width="8.964" height="4.294" depth="1.49" valign="baseline">$r_5$</text>
+<text matrix="0.730985 0 0 0.727273 92.8014 166.181" transformations="translations" pos="124 708" stroke="black" type="label" width="8.964" height="4.294" depth="1.49" valign="baseline">$r_7$</text>
+<text matrix="0.730985 0 0 0.727273 47.087 203.065" transformations="translations" pos="124 708" stroke="black" type="label" width="8.964" height="4.294" depth="1.49" valign="baseline">$r_6$</text>
 </page>
 </ipe>
