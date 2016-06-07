@@ -1594,14 +1594,14 @@ The goal of this experiment is to ascertain how our different structures compare
 
 Figure~\ref{fig:theory_insert_complexity} shows the theoretical complexities of inserting an element into the different structures for different input sizes. We expect the actual running times to be very similar to these. That is, we expect the data structures not optimized for external memory to perform very well while being completely contained in main memory. We expect, as soon as the internal memory data structures are forced to utilize the virtual memory mechanism of the operating system and thus swap out memory to disk, to see a significant decrease in performance, and an amount of page faults close to the theoretical asymptotic complexity of the structures in the RAM model.
 
-\begin{figure}[t]
+\begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{../plots/insert_complexities/insert_complexity}
 \caption{Theoretical insert time for all tested structures.}
 \label{fig:theory_insert_complexity}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[b]
 \centering
 \includegraphics[width=\textwidth]{../src/experiments/insert_experiment_results/combined_results/time_over_asymptotic}
 \caption{Actual running time when inserting into the tested structures. The figure shows the running time per insert cropped to the first 600Mb.}
