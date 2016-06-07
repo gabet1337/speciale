@@ -17,8 +17,9 @@ set style line 8 lc rgb '#87ceeb' pt 8 ps 1 lt 1 lw 2 # --- skyblue
 set key top left
 set xlabel 'N (non-deleted data in Mb)'
 set ylabel 'page faults per deleted Mb'
+set xtics ('400' 1,'390' 10,'380' 20,'370' 30,'360' 40,'350' 50) 
 set xrange [0:52]
-#set yrange [0:0]
+set yrange [0:700000]
 #plot 'delete_experiment_results/2016-05-31.08_55_51/gerth_Gerth' u 1:4 t 'Gerth' w lp ls 2, \
 
 delta_1(x) = (r = next_1 - x, next_1 = x, r)
@@ -34,4 +35,4 @@ next_5 = NaN
 delta_6(x) = (r = next_6 - x, next_6 = x, r)
 next_6 = NaN
 
-plot 'delete_experiment_results/2016-05-31.08_55_51/rtree_Boost R-tree' u (400-$1):(delta_1($4)) t 'Boost R-tree' w lp ls 3
+plot 'delete_experiment_results/2016-05-31.08_55_51/rtree_Boost R-tree' u (400-$1):(delta_1($4)) t 'Boost R-tree page faults' w lp ls 3
