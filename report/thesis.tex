@@ -1635,13 +1635,13 @@ The internal memory data structures performs very well while contained in memory
 
 %The results of MySQL and the External Memory Buffered Priority Search tree by Brodal align very well with the theoretical bounds, but this is clearly not the case for the structure of Arge et al. 
 
-It is obvious that the data structure of Arge performs the worst of all data structures when it comes to inserting data. We believe this is due to the huge amount of data we need to load and store for inserting just a single point. We will argue this in a more precise manner. It follows from the theory that a single insert requires $\mathcal{O}(\log_B N)$ I/O's. Each data point uses 8 bytes of space, 4 bytes of each coordinate. This means that in order to insert 50Mb data or equivalently 6,553,600 points in an initially empty structure with a buffer size of $4Kb$ we need roughly $$\sum\limits_{i=0}^{6553600} \log_{4096}(i) \approx 11.5 \cdot 10^6~\text{I/O's}$$
+It is obvious that the data structure of Arge performs the worst of all the data structures when it comes to inserting data. We believe this is due to the huge amount of data we need to load and store for inserting just a single point. We will argue this in a more precise manner. It follows from the theory that a single insert requires $\mathcal{O}(\log_B N)$ I/O's. Each data point uses 8 bytes of space, 4 bytes of each coordinate. This means that in order to insert 50Mb data or equivalently 6,553,600 points in an initially empty structure with a buffer size of $4Kb$ we need roughly $$\sum\limits_{i=0}^{6553600} \log_{4096}(i) \approx 11.5 \cdot 10^6~\text{I/O's}$$
 Comparing this against the structure of Brodal with the same buffer size and a fanout of size 2, we get that Brodal's requires roughly:
 $$\sum\limits_{i=0}^{6553600} \frac{1}{\epsilon \cdot 4096^{1-\epsilon}} \log_{4096}(i) = 67.8\cdot 10^3~\text{I/O's}$$
 
 The calculations shows that in order to insert 50Mb of data, we need to load/store $11.5 \cdot 10^6 \cdot 4096 = 47.1Gb$ in the case of Arge, and $67.8\cdot 10^3 \cdot 4096 = 0.278Gb$ in the case of Brodal. This gives a relatively difference of $\approx 170$ times fewer I/O's performed in Brodal's over Arge's.
 
-To collaborate these observations we conducted a single experiment measuring the I/O's used when inserting 50Mb of data. The results can be found in Figure~\ref{fig:arge_brodal_ios}. The results clearly shows that the amount of I/O's performed is substantially larger for Arge's than for Brodal's. The results show that in order to insert 50Mb we must perform I/O's equal to $\approx 1Tb$ and $\approx 13Gb$ in Arge's and Brodal's respectively. This is a relative difference of $\approx 81$ times fewer I/O's in Brodal's than Arge's. This result is close to what we would suspect from our theoretical reasoning above, however with a large constant factor between theory and reality.
+To collaborate these observations we conducted a single experiment measuring the I/O's used when inserting 50Mb of data. The results can be found in Figure~\ref{fig:arge_brodal_ios}. The results clearly shows that the amount of I/O's performed is substantially larger for Arge's than for Brodal's. In fact we can see that in order to insert 50Mb we must perform I/O's equal to moving around $1Tb$ and around $13Gb$ of data in Arge's and Brodal's respectively. This is a relative difference of $\approx 81$ times fewer I/O's in Brodal's compared with that of Arge's. This result is close to what we would suspect from the theoretical reasoning above, however with a large constant factor between theory and reality.
 
 \begin{figure}[t]
 \centering
@@ -1695,9 +1695,19 @@ To collaborate these observations we conducted a single experiment measuring the
 \end{minipage}
 \end{figure}
 
-Figure~\ref{fig:time_divided_with_asymptotic_brodal}-\ref{fig:time_divided_with_asymptotic_mysql} shows the time per insert divided by the theoretical asymptotic bound of each of our tested structures. The external memory structures also shows the number of I/O's per insert divided by the theoretical asymptotic bound while the main memory structures shows the page faults per insert divided by the theoretical asymptotic bound. 
+Figure~\ref{fig:time_divided_with_asymptotic_brodal}-\ref{fig:time_divided_with_asymptotic_mysql} shows the time per insert divided by the theoretical asymptotic bound of each of the tested structures. In addition we also display the number of I/O's per insert divided by the theoretical asymptotic bound for the internal memory data structures while the results of the main memory structures also include the page faults per insert divided by the theoretical asymptotic bound. 
 
-If the actual running time match the theoretical bounds we would like to see that the graphs are horizontal lines with a factor as close to 1 as possible. The caveat is that the main memory algorithms will start to swap out memory when they run empty which will severely increase the running time. If this holds we will see a significant increase in time together with a increase in page faults.
+If the actual running time match the theoretical bounds then we would like to see that the graphs forming horizontal lines. The caveat is that the internal memory data structures will start to swap out data when they have no more free main memory to use, which again causes the running time to increase severely. If we see a spike in both running time and number of page faults at the same mark then we feel confident that the to measures are closely related.
+
+
+
+
+
+
+
+
+
+
 
 In Figure~\ref{fig:time_divided_with_asymptotic_brodal} we see that the time per insert in the structure of Brodal comes closer and closer to the theoretical bound. This can be seen by the flattening of the graph as the input size goes up. This would suggest that the structure becomes more and more I/O bound as the input size goes up. The structure follows the same trend in terms of I/O which further strengthens this hypothesis.
 
