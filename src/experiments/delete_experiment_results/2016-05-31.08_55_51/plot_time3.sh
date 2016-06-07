@@ -1,5 +1,5 @@
 #!/usr/bin/gnuplot
-set terminal postscript eps enhanced color font 'Verdana,12'
+set terminal postscript eps enhanced color size 5,3.0 font 'Verdana,12'
 set output 'delete_experiment_results/2016-05-31.08_55_51/time3.eps'
 set style line 11 lc rgb '#000000' lt 1
 set border 3 back ls 11
