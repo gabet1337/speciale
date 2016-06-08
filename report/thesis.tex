@@ -93,11 +93,11 @@
 \vspace*{\fill}\noindent{\rule{\linewidth}{1mm}\\[4ex]
 {\Huge\sf Three-sided Range Reporting in\\External Memory}\\[2ex]
 {\huge\sf Peter Gabrielsen, 20114179}\\[2ex]
-{\huge\sf Christoffer Holb\ae k Hansen, 20114637}\\[2ex]
+{\huge\sf Christoffer Holb{\ae}k Hansen, 20114637}\\[2ex]
 \noindent\rule{\linewidth}{1mm}\\[4ex]
 \noindent{\Large\sf Master's Thesis, Computer Science\\[1ex] 
 \monthname\ \the\year  \\[1ex] Project Advisor: Kasper Green Larsen
-\\[1ex] Formal Advisor: Gerth St\o lting Brodal\\[15ex]}\\[\fill]}
+\\[1ex] Formal Advisor: Gerth St{\o}lting Brodal\\[15ex]}\\[\fill]}
 \epsfig{file=logo.eps}\clearpage
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -109,22 +109,32 @@
 \pagenumbering{roman}
 \addcontentsline{toc}{chapter}{Abstract}
 
-The world is becoming increasingly data driven and almost anything in our daily lives generate data. The data sets generated are typically larger than what we can store in a normal computer's main memory. We therefore need clever techniques to handle and analyse the large data sets in order to make sense of it all. Much of the data that is gathered is spatial in nature, i.e. contains e.g. GPS coordinates. Analysing coordinates require us to solve complicated problems within the field of computational geometry. One of such problems is the problem of three-sided range reporting. In this problem we are asked to maintain a dynamic set, $\mathcal{S}$, of $N$ points in $\mathbb{R}^2$. The set can be updated by inserting or deleting points. Any solution to the problem must be able to answer three-sided range queries, i.e. given a range of the type $\left[x_1,x_2\right]\times \left[y,\infty\right]$ we report points in $\mathcal{S} \cap \left[x_1,x_2\right]\times \left[y,\infty\right]$.
+The world is becoming increasingly data driven and almost anything in our daily lives generate data. The generated data sets are typically larger than what we can store in a normal computer's main memory. We therefore need clever techniques to handle and analyse the large data sets in order to make sense of it all. Much of the data that is gathered is spatial in nature, i.e. contains e.g. GPS coordinates. Analysing coordinates require us to solve complicated problems within the field of computational geometry. One of such problems is the problem of three-sided range reporting. In this problem we are asked to maintain a dynamic set, $\mathcal{S}$, of $N$ points in $\mathbb{R}^2$. The set can be updated by inserting or deleting points. Any solution to the problem must be able to answer three-sided range queries, i.e. given a range of the type $\left[x_1,x_2\right]\times \left[y,\infty\right]$ we report points in $\mathcal{S} \cap \left[x_1,x_2\right]\times \left[y,\infty\right]$.
 
 This thesis presents, implements, and experiments with several solutions to the problem of three-sided range reporting. The main focus of the thesis will be to show the power of data structures optimized for handling huge data sets by minimising the number of disk accesses.
 
-We have implemented two external memory data structures that solves this problem. The first is by Arge et al~\cite{arge_samoladas_vitter_1999}. The second by Brodal~\cite{DBLP:journals/corr/Brodal15} improves on the result of Arge by adding buffering.
+We have implemented two external memory data structures that solves this problem: The External Memory Priority Search Tree by Arge et al.~\cite{arge_samoladas_vitter_1999} and the External Memory \textit{Buffered} Priority Search Tree by Brodal~\cite{DBLP:journals/corr/Brodal15}.
 
 Besides comparing these two structures against each other we also compare them against our own implementation of the Priority Search Tree of McCreight~\cite{DBLP:journals/siamcomp/McCreight85}, and wrappers around MySQL, libspatialindex R*Tree, and Boost R-Tree.
 
-Our results show that the External Memory Buffered Priority Search Tree outperforms all of the other compared structures as soon as the structures have to handle more data than the internal memory capacity. MySQL without an index was significantly faster at inserting but as both the experiments with deletion and querying showed, the cost of not having an index on the table is too high. The Boost R-Tree proved to be the fastest of the internal memory data structures.
+Our results show that the External Memory Buffered Priority Search Tree outperforms all of the other structures as soon as the structures have to handle more data than the main memory capacity. MySQL without an index was significantly faster at inserting but as both the experiments with deletion and querying showed, the cost of not having an index on the table is too high. The Boost R-Tree proved to be the fastest of the internal memory data structures.
 
 \todo{conclude more?}
 
 \chapter*{Resum\'e}
 \addcontentsline{toc}{chapter}{Resum\'e}
 
-\todo{in Danish\dots}
+Flere og flere hverdagsapparater bliver koblet p{\aa} internettet. Dette har til form{\aa}l at personligg{\o}re og for at bedre kunne m{\aa}lrette produkter til forbrugeren. Det skaber samtidig k{\ae}mpe m{\ae}ngder af data --- st{\o}rre m{\ae}ngder end en almindelig computer kan klare i dens interne hukommelse. Vi har derfor brug for teknikker og redskaber til at finde hoved og hale i alt det genereret data. Meget af det genererede data indeholder information omkring vores position i form af GPS koordinater. For at h{\aa}ndtere GPS koordinater skal man typisk l{\o}se komplicerede problemer indenfor algoritmisk geometri. Et s{\aa}dan problem kunne eksempelvis v{\ae}re det tre-sidede interval rapporterings problem. Dette problem g{\aa}r ud p{\aa} at vedligeholde en dynamisk m{\ae}ngde, $\mathcal{S}$, indeholdende $N$ punkter i $\mathbb{R}^2$. M{\ae}ngden kan modificeres ved at inds{\ae}tte eller slette punkter. En l{\o}sning p{\aa} dette problem skal v{\ae}re i stand til at svare p{\aa} foresp{\o}rgsler af typen $[x_1,x_2] \times [y,\infty]$, dvs. rapportere alle punkter i $\mathcal{S} \cap [x_1,x_2] \times [y,\infty]$.
+
+Vi vil i dette speciale pr{\ae}sentere, implementere og eksperimentere med mange forskellige l{\o}sninger til dette problem. Hovedfokuset bliver at vise hvor stor forskel der er p{\aa} strukturer optimeret til at h{\aa}ndtere store data\-m{\ae}ngder og strukturer der er optimeret til at kunne v{\ae}re i intern hukommelse ved at sammenligne dem eksperimentielt.
+
+Vi har igennem specialet implementeret to strukturer optimeret til ekstern hukommelse: Det Eksterne Hukommelses Prioritets S{\o}ge Tr{\ae} af Arge et al.~\cite{arge_samoladas_vitter_1999} og det Eksterne Hukommelses \textit{Bufferet} Prioritets S{\o}ge Tr{\ae} af Brodal~\cite{DBLP:journals/corr/Brodal15}.
+
+Vi har derudover implementeret et Internt Hukommelses Prioritets S{\o}ge Tr{\ae} af McCreight~\cite{DBLP:journals/siamcomp/McCreight85}, og lavet omslag til MySQL, libspatialindex R*Tr{\ae} og Boost R-Tr{\ae}.
+
+Resultater fra eksperimenter viser at det Eksterne Hukommelses Prioritets S{\o}ge Tr{\ae} sl{\aa}r alle de andre data strukturer s{\aa} snart de skal h{\aa}ndtere mere data end der er plads til i computerens interne hukommelse. MySQL uden et tilh{\o}rende indeks var den eneste struktur der kunne hamle op n{\aa}r det kommer til at inds{\ae}tte i strukturen. Denne struktur m{\aa}tte dog betale dyrt for de hurtige inds{\ae}ttelser i form af langsomme slettelser og foresp{\o}rgsler. Det var Boost R-Tr{\ae}et der viste sig at v{\ae}re den hurtigste af de interne hukommelses strukturer.
+
+\todo{conclude more?}
 
 \tableofcontents
 
@@ -144,19 +154,19 @@ The experiments often ran for more than a week at a time and in order for us to 
 
 Another perk of The Imperial March was the ability to scare the crap out of Christoffer. Peter would be able to sit comfortably at home and randomly start the cacophony which would make Christoffer jump out of his seat and generally become very anxious about when the next sound would come.
 
-After over a month of intense experimenting, documentation, and \LaTeX'ing we concluded with a small out-of-sight victory dance, shut down our faithful test machines, and with all our new knowledge and insight we could finally have our happily ever after.
+After more than a month of intense experimenting, documentation, and \LaTeX'ing we concluded with a small out-of-sight victory dance, shut down our faithful test machines, and with all our new knowledge and insight we could finally have our happily ever after.
 
 \todo{More people to thank?}
 
 A number of people have been part to giving this thesis its life. First and foremost we would like to thank our primary advisor, Kasper Larsen, for our weekly meetings, constructive feedback, enthusiasm, and engagement in the project.
-We would also like to thank our formal advisor, Gerth St\o lting Brodal, for his great work on the data structure we have implemented in this thesis and sparring when we were in doubt.
+We would also like to thank our formal advisor, Gerth St{\o}lting Brodal, for his great work on the data structure we have implemented in this thesis and sparring when we were in doubt.
 In more general terms we would like to thank Aarhus University for giving us 5 years worth of great courses and preparing us for the life to come within the field of Computer Science.
 
 We have really enjoyed working on this thesis and we sincerely hope you enjoy reading it as much as we have enjoyed writing it!
 
 \vspace{2ex}
 \begin{flushright}
-  \emph{Peter Gabrielsen and Christoffer Holb\ae k Hansen}\\
+  \emph{Peter Gabrielsen and Christoffer Holb{\ae}k Hansen}\\
   \emph{Aarhus, \today.}
 \end{flushright}
 
@@ -168,6 +178,8 @@ We have really enjoyed working on this thesis and we sincerely hope you enjoy re
 \tikzstyle{every path}=[draw]
 \matrix [column sep={1em,between origins},row sep=\lineskip]
 {
+\commit{45b7bbd}{08.Jun}{All Makefile targets are updated and README changed} & \\
+\commit{701f7a9}{07.Jun}{Query experiment results come in} & \\
 \commit{52d4e39}{25.May}{Brodal buffer size experiment documented} & \\
 \commit{1da6e4b}{10.May}{Preface added} & \\
 \commit{47b00ae}{29.Apr}{libspatialindex PST added} & \\
@@ -230,13 +242,15 @@ We have really enjoyed working on this thesis and we sincerely hope you enjoy re
 \connect{ed54a60}{47b00ae};
 \connect{47b00ae}{1da6e4b};
 \connect{1da6e4b}{52d4e39};
+\connect{52d4e39}{701f7a9};
+\connect{701f7a9}{45b7bbd};
 \end{tikzpicture}
 \caption{Excerpt of the git history for the entire project. The figure is read bottom up.}
 \label{fig:git_history}
 \end{figure}
 
 \begin{savequote}[0.7\textwidth]
-``The difference in speed between modern CPU and disk technologies is  analogous to the difference in speed in sharpening a pencil using a sharpener on one's desk or by taking an airplane to the other side of the world and using a sharpener on someone else's desk.''
+``The difference in speed between modern CPU and disk technologies is analogous to the difference in speed in sharpening a pencil using a sharpener on one's desk or by taking an airplane to the other side of the world and using a sharpener on someone else's desk.''
 \qauthor{--- D. Comer}
 \end{savequote}
 \chapter{Introduction}
@@ -879,7 +893,7 @@ After inserting in the base tree and appropriate reorganization we need to inser
 \begin{figure}[t]
 	\centering
 	\includegraphics[width=1\textwidth]{../figures/arge_bubble_down}
-	\caption{Bubble down. First a degenerate query on the form $\left[ x\text{-range of }w \right] \times \left[ - \infty, \infty \right]$ is done for the found child $w$ resulting in a set of points with size $K$ (a) If $K \leq B/2$ then we simply insert the point (here marked as a circle) (b) If $K \geq B/2$ and the point is \textit{larger} than the \textit{smallest} $y$-value then the point is inserted and the smallest $y$-value is recursively sent down (c) If $K \geq B/2$ and the point is \textit{smaller} than the \textit{smallest} $y$-value then the point itself is sent recursively down.}
+	\caption{Bubble down. First a degenerate query on the form $\left[ x\text{-range of }w \right] \times \left[ - \infty, \infty \right]$ is done for the found child $w$ resulting in a set of points with size $K$ (a) If $K < B/2$ then we simply insert the point (here marked as a circle) (b) If $K \geq B/2$ and the point is \textit{larger} than the \textit{smallest} $y$-value then the point is inserted and the smallest $y$-value is recursively sent down (c) If $K \geq B/2$ and the point is \textit{smaller} than the \textit{smallest} $y$-value then the point itself is sent recursively down.}
 	\label{fig:arge_bubble_down}
 \end{figure}
 
@@ -991,7 +1005,7 @@ We will in the following look at each step individually and argue their complexi
 	\begin{figure}[t]
 		\centering
 		\includegraphics[width=0.77\textwidth]{../figures/brodal_deletion_buffer_overflow}
-		\caption{Deletion buffer overflow. A total of $\lceil \lvert D_v \rvert /B^\epsilon \rceil$ deletions are moved from $D_v$ to $\mathcal{U}$. Deletions larger than the smallest $y$-value in $P_c$ are removed from $\mathcal{U}$ since they cannot cancel points further down because of the heap order of the tree. Finally all points in $\mathcal{U}$ are removed from $P_c$, $I_c$, $D_c$, and $Cv$ before $\mathcal{U}$ is inserted into $D_c$.}
+		\caption{Deletion buffer overflow. A total of $\lceil \lvert D_v \rvert /B^\epsilon \rceil$ deletions are moved from $D_v$ to $\mathcal{U}$. Deletions larger than the smallest $y$-value in $P_c$ are removed from $\mathcal{U}$ since they cannot cancel points further down because of the heap order of the tree. Finally all points in $\mathcal{U}$ are removed from $P_c$, $I_c$, $D_c$, and $C_v$ before $\mathcal{U}$ is inserted into $D_c$.}
 		\label{fig:brodal_deletion_buffer_overflow}
 	\end{figure}
 	
@@ -1006,7 +1020,7 @@ We will in the following look at each step individually and argue their complexi
 	\begin{figure}[b]
 		\centering
 		\includegraphics[width=0.77\textwidth]{../figures/brodal_insert_buffer_overflow}
-		\caption{Insert buffer overflow. A total of $\lceil \lvert I_v \rvert /B^\epsilon \rceil$ points are moved from $I_v$ to $\mathcal{U}$. All points from $\mathcal{U}$ are removed from $D_c$ since they cancel the deletions. Points larger than the smallest $y$-value in $P_c$ are inserted into $P_c$ and points smaller than the smallest $y$-value in $P_c$ are inserted into $I_c$. This ensures the invariant of the tree being heap ordered. Finally the newly added points to $P_c$ are also inserted into $C_v$ to ensure that $C_v$ contains a copy of all points in $P_c$.}
+		\caption{Insert buffer overflow. A total of $\lceil \lvert I_v \rvert /B^\epsilon \rceil$ points are moved from $I_v$ to $\mathcal{U}$. All points from $\mathcal{U}$ are removed from $D_c$ since they cancel the deletions. Points larger than the smallest $y$-value in $P_c$ are inserted into $P_c$ and points smaller than the smallest $y$-value in $P_c$ are inserted into $I_c$. This ensures the invariant that the tree is heap ordered. Finally the newly added points to $P_c$ are also inserted into $C_v$ to ensure that $C_v$ contains a copy of all points in $P_c$.}
 		\label{fig:brodal_insert_buffer_overflow}
 	\end{figure}		
 	
@@ -1025,7 +1039,7 @@ We will in the following look at each step individually and argue their complexi
 	\begin{figure}[h]
 		\centering
 		\includegraphics[width=1\textwidth]{../figures/brodal_node_degree_overflow}
-		\caption{Node degree overflow. The buffers $I_v$, $D_v$, and $P_v$ are distributed to the to new nodes $v'$ and $v''$. After the split we have to ensure the child structures contains a copy of all points from the point buffers of the children.}
+		\caption{Node degree overflow. The buffers $I_v$, $D_v$, and $P_v$ are distributed to the new nodes $v'$ and $v''$. After the split we have to ensure the child structures contains a copy of all points from the point buffers of the children.}
 		\label{fig:brodal_node_degree_overflow}
 	\end{figure}		
 	
@@ -1368,9 +1382,9 @@ We developed an extensive framework for running experiments in order to automate
 
 Figure~\ref{fig:experimental_setup2} depicts the flow of an experiment from thought to result. In order to achieve this flow we wrote a framework that would do all the hard work for us such that all we had to do for each experiment was to describe the actual experiment. As an example, to test the time it takes to insert in all the structures all we would have to do was to tell the framework to insert into the Priority Search Tree and measure for each 10 megabytes. The framework would then automatically run the experiment on all the structures one at a time, measure time, I/O's, page faults, and other data structure specific statistics (overflows, splits, etc.), plot all the gathered data as a function of the input size, and finally play a small tune to signal that the experiment had finished. To make sure that no experiment leaves any ungathered memory behind we start each experiment in its own thread such that the memory would be automatically recollected upon termination of the thread and all caches are dropped between each experiment.
 
-The running time was measured using the \texttt{high\_resolution\_clock} from the \texttt{chrono} library. It was measured in both seconds and milliseconds to make sure we had all the required data. In most cases it suffices to measure in seconds.
+The running time was measured using the \texttt{chrono} library's \texttt{high\_resolution\_clock}. It was measured in both seconds and milliseconds to make sure we had all the required data. In most cases it suffices to measure in seconds.
 
-In order to obtain a deeper understanding of the results we chose to measure the number of major page faults generated by running the algorithms. This was done using \texttt{perf} - a performance analysis tool for Linux. We also measured the number of I/O's required by our programs by extending our custom stream with a counter on calls to \texttt{read} and \texttt{write}.
+In order to obtain a deeper understanding of the results we chose to measure the number of major page faults generated when using the data structures. This was done using \texttt{perf} - a performance analysis tool for Linux. Finally we measured the number of I/O's by extending our stream with a counter on calls to \texttt{read} and \texttt{write}.
 
 As the machines run on a 32 bit operating systems it is very important to define \texttt{\_FILE\_OFFSET\_BITS=64}. This forces the system to use 64 bit pointers when seeking in files allowing us to handle data sets larger than $2^{32}$ on the machines.
 
@@ -1438,7 +1452,7 @@ The results plotted as running time per insert is depicted in Figure~\ref{fig:ge
 
 For buffer size 32 Mb we see more fluctuations and we can hardly argue the plot follows a horizontal line. We believe this is caused by the limited amount of internal memory forcing us to utilize more than available, which again causes the operating system to swap out internal memory to external memory. 
 
-We verified this by looking at the measured number of page faults generated, and we could see that, just as suspected, the data structure started to cause a low amount of page faults that can explain the fluctuations. See Appendix~\ref{app:page_faults_for_large_buffer_size} for the measured number of page faults.
+We verified this by looking at the measured number of page faults generated, and we could see that, just as suspected, the data structure started to cause a low amount of page faults that can explain the fluctuations. See Figure~\ref{fig:page_faults_for_large_buffer_size} in Appendix~\ref{app:data} for the measured number of page faults.
 
 In Section~\ref{sec:impl_main_data_structure} we argued about the high space overhead of using Red-Black trees as buffers. When we underflow a point buffer we must load 2 child structures along with all of the related buffers giving a huge space blow up. These two facts together explains the relatively low threshold at which we begin to generate page faults.
 
@@ -1495,8 +1509,7 @@ To support our claims of the measured running time and number of I/O's aligning 
 If we zoom in on the measured running time for fanouts 2, 3, 4, 5, and 6 we see minor inconsistencies from what the theory suggests. Comparing the measured running time per update in Figure~\ref{fig:gerth_fanout_experiment_time_zoomed} to the expected number of I/O's per update in Figure~\ref{fig:gerth_fanout_experiment_zoom} we see the tendencies aligns, but the order of the fanouts are inconsistent. For example we would have expected fanout 2 to perform the same as fanout 4, and surely we had expected fanout 3 to perform the best of them all. This is not the case.
 
 We believe these inconsistencies can be explained by the one parameter that is not encapsulated in the I/O model; the amount of internal work done. Theory suggest we see decreasing node degree overflows on increasing fanouts, and in turn we expect less node degree overflows to produce fewer point buffer underflows. These expectations align well with our measures on the total number of point buffer underflows depicted in Figure~\ref{fig:gerth_fanout_experiment_pbu}. But what the I/O model does not account for is the internal work needed for handling the actual point buffer underflow. In fact we regard this exact operation to be the most expensive with regard to internal work. 
-Running a profiler on the structure for different fanouts showed us the exact distribution of time spent in different functions of the code. The profiler showed that for smaller fanouts we spent more time doing point buffer underflows than we do for larger fanouts.
-\todo{Any way to substantiate claim of internal work. Maybe run a profiler on the code.} Refer to Figure~\ref{fig:brodal_pb_underflow} for a detailed description of the underflow procedure. What we claim is that in the area of fanouts from 2-6, for the smaller of the fanouts, we are dominated by the internal work needed for handling the many point buffer underflows such that we do not benefit from the large $B / B^\epsilon$ fraction of points we pass down on each overflow.
+Running a profiler on the structure for different fanouts showed us the exact distribution of time spent in different functions of the code. The profiler showed that for smaller fanouts we spent more time doing point buffer underflows, relative to the other operations, than we do for larger fanouts. Refer to Figure~\ref{fig:brodal_pb_underflow} for a detailed description of the underflow procedure. What we claim is that in the area of fanouts from 2-6, for the smaller of the fanouts, we are dominated by the internal work needed for handling the many point buffer underflows such that we do not benefit from the large $B / B^\epsilon$ fraction of points we pass down on each overflow.
 
 The results would suggest that a fanout of size 5 would give the best performance.
 The results presented was, however, not generated from the machines presented in Chapter~\ref{chp:experimental_setup}. The results of these machines show that with a buffer size of 8 Mb it would be best to use a fanout size of 2. As the rest of the experiments will be run on the machines described in Chapter~\ref{chp:experimental_setup} we will use a fanout of size 2 going forward.
@@ -1589,45 +1602,47 @@ The results of the experiment measuring running time per update is depicted in F
 
 \section{Insertion}
 \label{sec:insertion}
-The goal of this experiment is to ascertain how our different structures compare against each other when it comes to just insertions. The experiment will consist of inserting as much data as possible in 24 hours with an upper limit of 10Gb. The data is uniformly random in the positive integer range.
+The goal of this experiment is to ascertain how the different structures compare against each other when it comes to inserting points. The experiment consist of inserting as much data as possible within 24 hours. The data is uniformly randomly distributed in the positive integer range.
 
-Figure~\ref{fig:theory_insert_complexity} shows the theoretical complexities of inserting an element into the different structures for different input sizes. We expect the actual running times to be very similar to these. That is, we expect the data structures not optimized for external memory to perform very well while being completely contained in main memory. We expect, as soon as the internal memory data structures are forced to utilize the virtual memory mechanism of the operating system and thus swap out memory to disk, to see a significant decrease in performance, and an amount of page faults close to the theoretical asymptotic complexity of the structures in the RAM model.
-% If the non-I/O efficient data structures fill out the internal memory we expect to see a significant increase in running time at that point as the structures will be forced to use the virtual memory to swap out memory.
-
-\begin{figure}[htp!]
-\includegraphics[width=\textwidth]{../plots/insert_complexities/insert_complexity}
-\caption{Theoretical insert time for all tested structures.}
-\label{fig:theory_insert_complexity}
-
-\includegraphics[width=\textwidth]{../src/experiments/insert_experiment_results/2016-05-06.14_11_08/time}
-\caption{Actual running time when inserting into the tested structures. The figure shows the running time per insert.}
-\label{fig:actual_insert_time}
-\end{figure}
-
-\begin{figure}[htp!]
-\includegraphics[width=\textwidth]{../src/experiments/insert_experiment_results/2016-05-06.14_11_08/time_zoom}
-\caption{Actual running time when inserting into the tested structures. The figure shows the running time per insert zoomed in on the first hundred Mb.}
-\label{fig:actual_insert_time_zoomed}
-\end{figure}
-
-\todo{explain the results.}
-
-%Figure~\ref{fig:actual_insert_time} shows the actual running time of inserting an element into the different structures for different input sizes. 
-%The figure is cropped at 3500Mb but it goes all the way to 10000Mb. It was however only MySQL that was able to insert this much data in 24 hours.
-%The results are very much in line with our expectations with some exceptions. We see significant increases in running time whenever the internal structures run out of memory which is after just a few hundred Mb's of insertions. The internal R-tree from the Boost library was the most efficient of the internal data structures. We suspect this is due to an efficient memory usage allowing the structure to run for longer while still fitting entirely in main memory.
-
-%The results of MySQL and the External Memory Buffered Priority Search tree by Brodal align very well with the theoretical bounds, but this is clearly not the case for the structure of Arge et al. 
-
-We suspect the bad performance of Arge et al is mainly due to the following reason. A single insert requires $\mathcal{O}(\log_B N)$ I/O's. Each data point is 8 bytes, 4 bytes of each coordinate. This means that in order to insert 50Mb data or equivalently 6553600 points in an initially empty structure with a buffer size of $4Kb$ we need roughly $$\sum\limits_{i=0}^{6553600} \log_{4096}(i) \approx 11.5 \cdot 10^6~\text{I/O's}$$
-If we compare this against the structure of Brodal with the same buffer size and a fanout of size 2, i.e. $\epsilon = \log(2)/\log(4096) = 0.083..$, we get that Brodal's requires roughly:
-$$\sum\limits_{i=0}^{6553600} \frac{1}{\epsilon \cdot 4096^{1-\epsilon}} \log_{4096}(i) = 67.8\cdot 10^3~\text{I/O's}$$
-The calculations shows that in order to insert 50Mb of data, we would need to load/store $11.5 \cdot 10^6 \cdot 4096 = 47.1Gb$ in the case of Arge, and $67.8\cdot 10^3 \cdot 4096 = 0.278Gb$ in the case of Brodal. This gives a relatively difference of $\approx 170$ times fewer I/O's performed in Brodal's over Arge's.
-To collaborate these findings we conducted a single experiment measuring the I/O's and a replicated scenario of the above described. The results can be found in Figure~\ref{fig:arge_brodal_ios}. The results clearly shows that the amount of I/O's performed is substantially larger for Arge's than for Brodal's. The results show that in order to insert 50Mb we must perform I/O's equal to $\approx 1Tb$ and $\approx 13Gb$ in Arge's and Brodal's respectively. This is a relative difference of $\approx 81$ times fewer I/O's in Brodal's than Arge's. This result is close to what we would suspect from our theoretical reasoning above, however with a large constant factor between theory and reality.
+Figure~\ref{fig:theory_insert_complexity} shows the theoretical complexities of inserting an element into the different structures for different input sizes. We expect the data structures not optimized for external memory to align close to the theoretical bounds while they are completely contained in main memory. Only when the operating system is forced to swap data between internal and external memory, do we expect a significant decrease in performance. When the data structures are no longer able to fit into main memory, and since they all rely on scattered data access, we expect an amount of page faults close to the theoretical asymptotic complexity. For the external memory data structures we expect the MySQL implementation without an index to outperform all of the other structures, since inserting essentially appends points to a single stream. We expect the effective buffering of points in the External Memory Buffered Priority Search Tree by Brodal to outperform the R-Tree variants and MySQL with an index on coordinates.
 
 \begin{figure}[h]
 \centering
+\includegraphics[width=\textwidth]{../plots/insert_complexities/insert_complexity}
+\caption{Theoretical asymptotic insert time for all tested structures. Brodal is on the form $f(N) = \frac{1}{B^{1-\epsilon}} \log_B N$ for $\epsilon = \frac{\log(B)}{\log(2)}$. Arge and MySQL (with index) is on the form $f(N) = \log_B N$. The Internal Memory Priority Search Tree is on the form $f(N) = \log_2 N$. The MySQL (no index), Boost R-Tree and Libspatial R*-Tree are on the form $f(N) = N$.}
+\label{fig:theory_insert_complexity}
+\end{figure}
+
+Figure~\ref{fig:actual_insert_time} shows the actual running time per inserted megabyte in all of the tested structures. The figure is cropped at $N = 600$ to better present the relation between the internal memory and the external memory structures. MySQL without an index was able to insert more than 10Gb in less than 3 hours. We decided to stop the experiment prior to the time limit since there was no change in running time per inserted megabyte. The External Memory Buffered Priorty Search Tree by Brodal was able to insert around 3.5Gb worth of data within the time limit.
+
+The internal memory data structures performs very well while contained in memory. It can be seen in Figure~\ref{fig:insert_page_faults}, depicting the number of page faults generated by the internal data structures, that there is a close relation between the running time and the number of page faults. Clearly we see the running time start to increase significantly at the same input size as where the number of page faults increases.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{../src/experiments/insert_experiment_results/combined_results/time_over_asymptotic}
+\caption{Actual running time when inserting into the tested structures. The figure shows the running time per insert for the first 600Mb.}
+\label{fig:actual_insert_time}
+\end{figure}
+
+\begin{figure}[b]
+\centering
+\includegraphics[width=\textwidth]{../src/experiments/insert_experiment_results/combined_results/pfs}
+\caption{Number of page faults generated by the internal memory data structures when inserting points.}
+\label{fig:insert_page_faults}
+\end{figure} 
+
+It is obvious that the data structure of Arge performs the worst of all the data structures when it comes to inserting data. We believe this is due to the huge amount of data we need to load and store for inserting just a single point. We will argue this in a more precise manner. It follows from the theory that a single insert requires $\mathcal{O}(\log_B N)$ I/O's. Each data point uses 8 bytes of space, 4 bytes of each coordinate. This means that in order to insert 50Mb data or equivalently 6,553,600 points in an initially empty structure with a buffer of size $4Kb$ we need roughly $$\sum\limits_{i=0}^{6553600} \log_{4096}(i) \approx 11.5 \cdot 10^6~\text{I/O's}$$
+Comparing this against the structure of Brodal with the same buffer size and a fanout of size 2, we get that Brodal's requires roughly:
+$$\sum\limits_{i=0}^{6553600} \frac{1}{\epsilon \cdot 4096^{1-\epsilon}} \log_{4096}(i) \approx 67.8\cdot 10^3~\text{I/O's}$$
+
+The calculations shows that in order to insert 50Mb of data, we need to load/store $11.5 \cdot 10^6 \cdot 4096 = 47.1Gb$ in the case of Arge, and $67.8\cdot 10^3 \cdot 4096 = 0.278Gb$ in the case of Brodal. This gives a relatively difference of $\approx 170$ times fewer I/O's performed in Brodal's over Arge's.
+
+To collaborate these observations we conducted a single experiment measuring the I/O's used when inserting 50Mb of data. The results can be found in Figure~\ref{fig:arge_brodal_ios}. The results clearly shows that the amount of I/O's performed is substantially larger for Arge's than for Brodal's. In fact we can see that in order to insert 50Mb we must perform I/O's equal to moving around $1Tb$ of data in Arges' and around $13Gb$ of data in Brodal's. This is a relative difference of $\approx 81$ times fewer I/O's in Brodal's compared to that of Arge's. This result is close to what we would suspect from the theoretical reasoning above, however with a large constant factor between theory and reality.
+
+\begin{figure}[t]
+\centering
 \includegraphics[width=\textwidth]{../src/experiments/insert_experiment_results/2016-05-21.14_06_50/ios}
-\caption{Missing}
+\caption{The number of I/O's for the structure of Arge and Brodal respectively. The y-axis on the right shows the relative difference in terms of I/O's between Arge's and Brodal's. It shows that Arge's generates 81 times more I/O's than Brodal's when inserting 50Mb.}
 \label{fig:arge_brodal_ios}
 \end{figure}
 
@@ -1657,40 +1672,40 @@ To collaborate these findings we conducted a single experiment measuring the I/O
 \begin{minipage}{0.48\columnwidth}
   \centering
   \includegraphics[width=\linewidth]{../src/experiments/insert_experiment_results/2016-05-27.10_58_31/time_and_pfs}%
-  \caption{Time and page faults per insert divided by $N$ for the Boost R-Tree.}
+  \caption{Time and page faults per insert divided by $N$ for the Boost R-Tree. \\}
   \label{fig:time_divided_with_asymptotic_boost}
 \end{minipage}
 
 \begin{minipage}{0.48\columnwidth}
   \centering
   \includegraphics[width=\linewidth]{../src/experiments/insert_experiment_results/2016-05-27.13_39_38/time_and_pfs}%
-  \caption{Time and page faults per insert divided by $N$ for the libspatial external R*-Tree.}
+  \caption{Time and page faults per insert divided by $N$ for the libspatial external R*-Tree. \\}
   \label{fig:time_divided_with_asymptotic_libspatial}
 \end{minipage}%
 \hfill
 \begin{minipage}{0.48\columnwidth}
   \centering
-  \includegraphics[width=\linewidth]{../src/experiments/insert_experiment_results/2016-05-06.14_11_08/time_divided_with_asymptotic_mysql}%
-  \caption{Time and page faults per insert divided by $1$ for MySQL.\todo{add with index}}
+  \includegraphics[width=\linewidth]{../src/experiments/insert_experiment_results/combined_results/time_with_and_without_mysql}%
+  \caption{Time per insert divided by $1$ for MySQL without an index and time per insert divided by $\log_B N$ for MySQL with an index.}
   \label{fig:time_divided_with_asymptotic_mysql}
 \end{minipage}
 \end{figure}
 
-Figure~\ref{fig:time_divided_with_asymptotic_brodal}-\ref{fig:time_divided_with_asymptotic_mysql} shows the time per insert divided by the theoretical asymptotic bound of each of our tested structures. The external memory structures also shows the number of I/O's per insert divided by the theoretical asymptotic bound while the main memory structures shows the page faults per insert divided by the theoretical asymptotic bound. 
+Figure~\ref{fig:time_divided_with_asymptotic_brodal}-\ref{fig:time_divided_with_asymptotic_mysql} shows the time per insert divided by the theoretical asymptotic bound of each of the tested structures. For the external memory data structures we also display the number of I/O's per insert divided by the theoretical asymptotic bound and for the internal memory structures we include the page faults per insert divided by the theoretical asymptotic bound. 
 
-If the actual running time match the theoretical bounds we would like to see that the graphs are horizontal lines with a factor as close to 1 as possible. The caveat is that the main memory algorithms will start to swap out memory when they run empty which will severely increase the running time. If this holds we will see a significant increase in time together with a increase in page faults.
+If the actual running time align with the theoretical bounds then we expect to see that the graphs form horizontal lines. The caveat is that the internal memory data structures will start to swap out data when they have no more free main memory to use, which again causes the running time to increase severely. If we see a spike in both running time and number of page faults at the same mark then we feel confident that the two measures are closely related.
 
-In Figure~\ref{fig:time_divided_with_asymptotic_brodal} we see that the time per insert in the structure of Brodal comes closer and closer to the theoretical bound. This can be seen by the flattening of the graph as the input size goes up. This would suggest that the structure becomes more and more I/O bound as the input size goes up. The structure follows the same trend in terms of I/O which further strengthens this hypothesis.
+In Figure~\ref{fig:time_divided_with_asymptotic_brodal} we see that the time per insert in the structure of Brodal aligns with the theoretical bound. This can be seen by the flattening of the graph as the input size goes up, which again suggests that the structure becomes more and more I/O bound on increasing input size. Clearly the structure follows the same trend in terms of I/O's which further strengthens this hypothesis.
 
-In Figure~\ref{fig:time_divided_with_asymptotic_arge} we see that the time per insert and number of I/O's per insert follows the theoretical bound very well up to a point. We investigated this point further and saw that this was the exact moment when the structure went from 2 to 3 layers. Adding another layer significantly increased the amount of I/O's. In terms of I/O's we see that the curve flattens once again which shows that the number of I/O's once again become a constant factor of the theoretical bounds. The same cannot be said for the actual running time which does not follow the same trend. We would have liked to see that it would flatten just as the number of I/O's but this is not the case which suggest that the structure is still heavily CPU bound at this point.
+In Figure~\ref{fig:time_divided_with_asymptotic_arge} we see that the time per insert and number of I/O's per insert follows the theoretical bound very well up to the $N = 30$ mark. We investigated this further and found this was the exact moment when the structure went from a B-Tree of height 2 to one of height 3. It would seem that adding a layer significantly increased the amount of I/O's. Further investigating the trends for I/O's we see the graph flattening again after the $N = 30$ mark, which provides evidence for the number of I/O's once again becomes a constant factor of the theoretical bounds. The same cannot be concluded for the actual running time. We would have expected a flattening along the same lines as for the number of I/O's but this is clearly not the case. We claim this suggest that the structure is heavily CPU bound. \todo{Maybe elaborate on this??}
 
 Figure~\ref{fig:time_divided_with_asymptotic_internal} shows that the Internal Memory Priority Search Tree of McCreight performs exactly as expected as long as the structure is contained in main memory. At the exact moment the structure starts to swap out main memory we see a significant increase in running time just as expected.
 
-It is almost the same picture for the Boost R-Tree in Figure~\ref{fig:time_divided_with_asymptotic_boost}. The insertion time in an R-Tree heavily depends on heuristics which explains the decreasing graph and far from worst case behaviour. Once again we see the same behaviour when we run out of main memory -- the running time suffers tremendously.
+It is almost the same situation for the results of the Boost R-Tree depicted in Figure~\ref{fig:time_divided_with_asymptotic_boost}. The insertion time in a R-Tree heavily depends on heuristics which explains the decreasing graph and far from worst case behaviour. Again we see the same behaviour as for the structure by McCreight when we run out of main memory -- the running time suffers tremendously.
 
-The libspatial external R*-Tree depicted in Figure~\ref{fig:time_divided_with_asymptotic_libspatial} shows that the running time follows the expected theoretical bounds very well. We would have liked to measure the number of I/O's for this structure but since it is a library implementation we have not been able to do this. The good news is that it does not generate any page faults.
+The results for the libspatial external R*-Tree depicted in Figure~\ref{fig:time_divided_with_asymptotic_libspatial} shows the running time follows the expected theoretical bounds very well. We would have liked to measure the number of I/O's for this structure but since it is a library implementation this was infeasible. We are pleased to see that the implementation does not generate any page faults. This is what we would expect from a sound external memory data structure.
 
-\todo{MYSQL!!!!}
+Figure~\ref{fig:time_divided_with_asymptotic_mysql} shows both the running time of MySQL with an index and that without and index both divided by the asymptotic running time, which for the case of the indexed version is $\mathcal{O}(\log_B N)$ and the non-indexed version is $\mathcal{O}(1)$. The results shows that MySQL without an index follows the asymptotic running time very closely while the indexed version becomes steeper and steeper. Digging into the MySQL implementation of how indices and B-Tree's are handled we found that MySQL uses a Red-Black tree to store data in main memory and then bulk insert the sorted data into a B-Tree whenever the Red-Black tree overgrows main memory. We believe the increases in running time is caused by this bulk unloading into a B-Tree\footnote{\url{https://dev.mysql.com/doc/internals/en/bulk-insert.html}}. We deemed it out of scope for this thesis to look closer into the inner workings of the MySQL index structure.
 
 \clearpage
 
@@ -1699,7 +1714,7 @@ It was difficult to come up with a good way to test the different structures aga
 
 \begin{figure}[htp!]
 \centering
-\includegraphics[width=0.75\textwidth]{../plots/delete_complexities/delete_complexity}
+\includegraphics[width=1\textwidth]{../plots/delete_complexities/delete_complexity}
 \caption{Theoretical asymptotic delete time for all tested structures. Brodal is on the form $f(N) = \frac{1}{B^{1-\epsilon}} \log_B N$ for $\epsilon = \frac{\log(B)}{\log(2)}$. Arge and MySQL (with index) is on the form $f(N) = \log_B N$. The Internal Memory Priority Search Tree is on the form $f(N) = \log_2 N$. The MySQL (no index), Boost R-Tree and Libspatial R*-Tree are on the form $f(N) = N$.}
 \label{fig:theory_delete_complexity}
 \end{figure}
@@ -1714,11 +1729,11 @@ In Figure~\ref{fig:delete_complexity_result} we see some, at first glance, stran
 
 \subsection*{Narrowing the field}
 
-Clearly Arge's structure, the Libspatial R*-Tree, and the Internal Memory Priority Search Tree performs the worst of all the data structures when it comes to handling deletions. Excluding these gives rise to Figure~\ref{fig:delete_complexity_result_zoomed}. It is obvious that, even with an index on coordinates, the MySQL implementations are performing much worse than the Boost R-Tree and the data structure of Brodal. We suspect the good performance of the Boost R-Tree is due to the effective space-usage and thus the data structure is able to process the deletions entirely in main memory. In order to verify this, we re-ran the experiment only on Brodal's data structure and the Boost R-Tree.
+Clearly Arge's structure, the Libspatial R*-Tree, and the Internal Memory Priority Search Tree performs the worst of all the data structures when it comes to handling deletions. Excluding these gives rise to Figure~\ref{fig:delete_complexity_result_zoomed}. It is obvious that, even with an index on coordinates, the MySQL implementations are performing much worse than the Boost R-Tree and the data structure of Brodal. We suspect the good performance of the Boost R-Tree is due to the effective space-usage and thus the data structure is able to process the deletions entirely in main memory. In order to verify this, we re-ran the experiment only on Brodal's data structure and the Boost R-Tree on larger input.
 
 \subsection*{Finding the winning data structure}
 
-The result of emptying Brodal's and the Boost R-Tree from a size of 400 Mb down to a size of 350Mb worth of data is depicted in Figure~\ref{fig:delete_complexity_result_400Mb}. Clearly we now see the data structure of Brodal's handling deletions several orders of magnitude faster than the Boost R-Tree. We claim this is caused by the fact that the Boost R-Tree cannot fit into main memory, and thus have to rely on the operating system handling swapping of data. We believe Figure~\ref{fig:page_faults_boost_r_tree} depicting the number of page faults for the experiment supports this claim.
+The result of emptying Brodal's and the Boost R-Tree from a size of 400 Mb down to a size of 350Mb worth of data is depicted in Figure~\ref{fig:delete_complexity_result_400Mb}. Clearly we now see the data structure of Brodal's handling deletions several orders of magnitude faster than the Boost R-Tree. We claim this is caused by the fact that the Boost R-Tree cannot fit into main memory, and thus have to rely on the operating system handling swapping of data. We believe Figure~\ref{fig:page_faults_boost_r_tree} in Appendix~\ref{app:data} depicting the number of page faults for the experiment supports this claim.
 
 \subsection*{Explaining fluctuations}
 
@@ -1936,22 +1951,20 @@ Querying is done by locating the nodes intersecting the left side of the query u
 Ramaswamy and Subramanian brings down the space usage in~\cite{Subramanian:1995:PTN:313651.313769}. This is done by building a search tree that divides the points into smaller regions of size $B \log B$ instead of $B$ giving a total of $\nicefrac{N}{B} \log B$ regions. Now a slightly modified caching scheme is used with an additional secondary level structure for each region giving a total space usage of $\mathcal{O}(\nicefrac{N}{B} \log \log B)$. Reusing this idea in a multilevel scheme brings down the data structure to a $\mathcal{O}(\nicefrac{N}{B} \log B \log^* B)$ space solution that answers queries in $\mathcal{O}(\log_B + \nicefrac{K}{B} + \mathcal{IL}^*(B))$, where $\mathcal{IL^*}(x)$ denotes the number of times $\log^*$ must be applied before the result becomes $\leq 2$.
 
 
-\chapter{Page faults with large buffer sizes}
-\label{app:page_faults_for_large_buffer_size}
+\chapter{Data}
+\label{app:data}
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=1\textwidth]{../src/experiments/gerth_buffer_size_experiment_results/2016-05-03.13_51_54/pfs}
 \caption{The measured number of page faults when inserting 5Gb of data in the External Memory Buffered Priority Search Tree. We see that a buffer size of 32Mb will generate page faults.}
-\label{fig:page_faults_gerth_buffer_size}
+\label{fig:page_faults_for_large_buffer_size}
 \end{figure}
-
-\chapter{Page faults on Boost R-Tree}
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=1\textwidth]{../src/experiments/delete_experiment_results/2016-05-31.08_55_51/pfs}
-\caption{Missing}
+\caption{Experimentally measured number of page faults when deleting points in the Boost R-Tree from a size of 400Mb down to a size of 350Mb.}
 \label{fig:page_faults_boost_r_tree}
 \end{figure}
 
