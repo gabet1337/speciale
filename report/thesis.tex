@@ -1699,17 +1699,7 @@ To collaborate these observations we conducted a single experiment measuring the
 
 Figure~\ref{fig:time_divided_with_asymptotic_brodal}-\ref{fig:time_divided_with_asymptotic_mysql} shows the time per insert divided by the theoretical asymptotic bound of each of the tested structures. In addition we also display the number of I/O's per insert divided by the theoretical asymptotic bound for the internal memory data structures while the results of the main memory structures also include the page faults per insert divided by the theoretical asymptotic bound. 
 
-If the actual running time match the theoretical bounds then we would like to see that the graphs forming horizontal lines. The caveat is that the internal memory data structures will start to swap out data when they have no more free main memory to use, which again causes the running time to increase severely. If we see a spike in both running time and number of page faults at the same mark then we feel confident that the to measures are closely related.
-
-
-
-
-
-
-
-
-
-
+If the actual running time match the theoretical bounds then we would like to see that the graphs form horizontal lines. The caveat is that the internal memory data structures will start to swap out data when they have no more free main memory to use, which again causes the running time to increase severely. If we see a spike in both running time and number of page faults at the same mark then we feel confident that the two measures are closely related.
 
 In Figure~\ref{fig:time_divided_with_asymptotic_brodal} we see that the time per insert in the structure of Brodal comes closer and closer to the theoretical bound. This can be seen by the flattening of the graph as the input size goes up. This would suggest that the structure becomes more and more I/O bound as the input size goes up. The structure follows the same trend in terms of I/O which further strengthens this hypothesis.
 
