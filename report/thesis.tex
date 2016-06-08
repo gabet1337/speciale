@@ -178,6 +178,7 @@ We have really enjoyed working on this thesis and we sincerely hope you enjoy re
 \tikzstyle{every path}=[draw]
 \matrix [column sep={1em,between origins},row sep=\lineskip]
 {
+\commit{45b7bbd}{08.Jun}{All Makefile targets are updated and README changed} & \\
 \commit{701f7a9}{07.Jun}{Query experiment results come in} & \\
 \commit{52d4e39}{25.May}{Brodal buffer size experiment documented} & \\
 \commit{1da6e4b}{10.May}{Preface added} & \\
@@ -242,6 +243,7 @@ We have really enjoyed working on this thesis and we sincerely hope you enjoy re
 \connect{47b00ae}{1da6e4b};
 \connect{1da6e4b}{52d4e39};
 \connect{52d4e39}{701f7a9};
+\connect{701f7a9}{45b7bbd};
 \end{tikzpicture}
 \caption{Excerpt of the git history for the entire project. The figure is read bottom up.}
 \label{fig:git_history}
@@ -1602,7 +1604,7 @@ The results of the experiment measuring running time per update is depicted in F
 \label{sec:insertion}
 The goal of this experiment is to ascertain how the different structures compare against each other when it comes to inserting points. The experiment consist of inserting as much data as possible within 24 hours. The data is uniformly randomly distributed in the positive integer range.
 
-Figure~\ref{fig:theory_insert_complexity} shows the theoretical complexities of inserting an element into the different structures for different input sizes. We expect the data structures not optimized for external memory to align close to the theoretical bounds while they are completely contained in main memory. Only when the operating system is forced to swap data between internal and external memory do we expect a significant decrease in performance. When the data structures are no longer able to fit into main memory, and since they all rely on scattered data access, we expect an amount of page faults close to the theoretical asymptotic complexity. For the external memory data structures we expect the MySQL implementation without any index to outperform all of the other structures since inserting essentially appends points to a single stream. We expect the effective buffering of points in the External Memory Priority Search Tree by Brodal to outperform the R-Tree variants and MySQL with an index on coordinates.
+Figure~\ref{fig:theory_insert_complexity} shows the theoretical complexities of inserting an element into the different structures for different input sizes. We expect the data structures not optimized for external memory to align close to the theoretical bounds while they are completely contained in main memory. Only when the operating system is forced to swap data between internal and external memory, do we expect a significant decrease in performance. When the data structures are no longer able to fit into main memory, and since they all rely on scattered data access, we expect an amount of page faults close to the theoretical asymptotic complexity. For the external memory data structures we expect the MySQL implementation without any index to outperform all of the other structures, since inserting essentially appends points to a single stream. We expect the effective buffering of points in the External Memory Buffered Priority Search Tree by Brodal to outperform the R-Tree variants and MySQL with an index on coordinates.
 
 \begin{figure}[h]
 \centering
@@ -1646,7 +1648,7 @@ To collaborate these observations we conducted a single experiment measuring the
 \begin{figure}[t]
 \centering
 \includegraphics[width=\textwidth]{../src/experiments/insert_experiment_results/2016-05-21.14_06_50/ios}
-\caption{Missing}
+\caption{The number of I/O's for the structure of Arge and Brodal respectively. The y-axis on the right shows the relative difference in terms of I/O's between Arge and Brodal. It shows that Arge does 81 times more I/O's than Brodal when inserting 50Mb.}
 \label{fig:arge_brodal_ios}
 \end{figure}
 
@@ -1697,7 +1699,8 @@ To collaborate these observations we conducted a single experiment measuring the
 
 Figure~\ref{fig:time_divided_with_asymptotic_brodal}-\ref{fig:time_divided_with_asymptotic_mysql} shows the time per insert divided by the theoretical asymptotic bound of each of the tested structures. For the external memory data structures we also display the number of I/O's per insert divided by the theoretical asymptotic bound and for the internal memory structures we include the page faults per insert divided by the theoretical asymptotic bound. 
 
-If the actual running time align with the theoretical bounds then we expect to see that the graphs forming horizontal lines. The caveat is that the internal memory data structures will start to swap out data when they have no more free main memory to use, which again causes the running time to increase severely. If we see a spike in both running time and number of page faults at the same mark then we feel confident that the to measures are closely related.
+If the actual running time align with the theoretical bounds then we expect to see that the graphs forming horizontal lines. The caveat is that the internal memory data structures will start to swap out data when they have no more free main memory to use, which again causes the running time to increase severely. If we see a spike in both running time and number of page faults at the same mark then we feel confident that the two measures are closely related.
+
 
 
 

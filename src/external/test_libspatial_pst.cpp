@@ -153,9 +153,9 @@ void test_duplicates() {
 
 int main() {
   cout << "\033[0;33m\e[4mSTARTING TEST OF LIBSPATIAL R-TREE\e[24m\033[0m" << endl;
-  // test_insert();
-  // test_report();
-  // test_remove_report();
+  test_insert();
+  test_report();
+  test_remove_report();
 
   //test_report_random_1gb(4096, 0);
 
