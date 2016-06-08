@@ -54,9 +54,6 @@ libspatial_tree: $(STREAM) $(UTILITIES) $(DEFINITIONS) $(POINT) external/libspat
 testlib: $(TEST_LIB) common/test_test_lib.cpp
 	$(CC) $(LFLAGS) common/test_test_lib.cpp -o testlib
 
-testexp : $(TEST_LIB) experiments/base_experiment.hpp experiments/test_base.cpp experiments/result.hpp
-	$(CC) $(LFLAGS) -I/usr/include/cppconn experiments/test_base.cpp -L/usr/lib -lmysqlcppconn -o testexp
-
 testall : clean	stream_test ctest epst
 	./stream_test && ./ctest && ./epst
 

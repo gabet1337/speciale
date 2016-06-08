@@ -5,6 +5,7 @@
 #include <boost/geometry/index/rtree.hpp>
 #include <boost/function_output_iterator.hpp>
 #include "../common/pst_interface.hpp"
+#include "../common/definitions.hpp"
 #include "../common/point.hpp"
 #include <string>
 #include "../stream/stream.hpp"

@@ -1,46 +1,59 @@
-LINKS
-=====
-- External Memory Three-Sided Range Reporting and Top-k Queries with Sublogarithmic Updates∗
-  http://arxiv.org/pdf/1509.08240v1.pdf
+DEPENDENCIES:
+=============
 
-BOOKS
-=====
-- Computational Geometry - Algorithms and Applications Third Edition
-  by Mark de Berg et al.
+- Linux machine (tested on ubuntu)
+- [Boost 1.60 or newer](http://www.boost.org/users/history/version_1_60_0.html)
+- [libspatialindex](https://github.com/libspatialindex/libspatialindex/wiki/1.-Getting-Started)
+- [MySQL 5.7 or newer](http://dev.mysql.com/doc/refman/5.7/en/installing.html)
+  - There must be a table called TESTDB to run tests: 'CREATE DATABASE IF NOT EXISTS TESTDB'
+- libmysqlcppconn-dev (can be installed using 'sudo apt-get install libmysqlcppconn-dev')
+- gcc c++ compiler (tested on 5.3.1-14 but might work on older)
 
-- Introduction to Algorithms by Cormen et al. Pages 484-504 on B-trees
+HOW TO COMPILE UNIT TESTS:
+==========================
 
-VIDEOS
-===== 
-- NPTEL lecture on internal orthogonal range searching
-  https://www.youtube.com/watch?v=WMKoe_b3IDE
-  
-- NPTEL lecture on internal PST
-  https://www.youtube.com/watch?v=KO5r0BSRmF4
+Use the Makefile located in src/ folder.
 
-NOTES
-=====
-- Use tournament tree as pq
-- Use O(B^{1+e}) as Cv in Arge
-- Ask Kenn & Færgemand about top-k selection in linear time
-- Meassure I/O's atomically
-- Cache-Grind
-- Rolf Fagerberg, External buffered B-tree by master's students
-- Use sorted vector as pq
-- xfig, ipe, tex from arxiv
-- Decorator pattern: Test individual methods
-- Look into comparing against a R-tree.
+Targets:
+--------
 
-ERRORS IN ARTICLE
-=================
-- Report
-  - (Pv U Iv) \cap Q . (Pv should have been reported in Cv, except for root)
-  - (Cv \cap Q) \ Dv (Dv should not contain any relevant points on path)
-- Remove all points in Dv with y-value larger than the smallest y-value in X as these cannot cancel any updates further above.
-- min_y should be max_y at some places
-- Deletions might cause node to remain underflowed after siftup.
-- Inserts and deletes should not cancel each other before they hit a point buffer
-- Spelling mistake of construction in 5. Global rebuilding
-- Weird sentence: To be able to filter out deleted points etc., we maintain the buffer Pv, Iv and Dv in lexicographically sorted. Section 5.
-- When does a leaf's point buffer overflow? B or B/2?
-- Point buffer of children can go empty during underflowing point buffer handling. Child should be refilled before continuing.
+all targets should me made with DOFF= to avoid debugging output
+
+- stream_test (unit test of the stream implementation)
+- ctest includes:
+  - ctest1 (unit test of the child structure/query data structure)
+  - ctest2 (unit test of the child structure stub)
+
+- epst (test of the External Memory Buffered Priority Search Tree by Brodal)
+- apst (test of the External Memory Priority Search Tree by Arge et al.)
+- mpst (test of the MySQL Priority Search Tree)
+- dpst (test of the Internal Memory Priority Search Tree by McCreight)
+- rtree (test of the Boost R-Tree)
+- libspatial_tree (test of the libspatialindex R*Tree)
+- testlib (test of the test library)
+
+HOW TO COMPILE EXPERIMENTS:
+===========================
+
+Use the Makefile located in src/experiments folder
+
+It is important that you generate necessary test data before hand:
+Compile and run the programs located in src/data with -std=c++11
+
+There is a shell script called delfol.sh you can run if you feel like you have too many folders.
+
+Targets:
+--------
+
+The target are somewhat self explanatory
+
+- insert_experiment
+- delete_experiment
+- query_experiment
+- query_experiment_report_50mb
+- arge_buffer_size_experiment
+- gerth_buffer_size_experiment
+- gerth_fanout_experiment
+- gerth_query_fanout_experiment
+- stream_input_speed_experiment
+- stream_output_speed_experiment
