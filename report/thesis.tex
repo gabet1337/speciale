@@ -1783,11 +1783,12 @@ Finally we zoom in on the result of completely emptying Brodal's data structure 
 Since the analysis of the theoretical query bounds are done using the method of filtering, we conduct experiments that focuses on both the \textit{search} and the \textit{report} part of the algorithms. Please refer to Section~\ref{sec:filtering} for a description of the method of filtering.
 
 \subsection{Focus on searching}
-The experiment on the \textbf{search} part of the algorithms was conducted by first inserting data \textit{inside} 5 fixed query windows of 5 Mb data each, i.e. each query window contains 655.360 points. This was followed by inserting uniformly randomly distributed data \textit{outside} the fixed query windows. For insertion of every 10 Mb of data we report all points inside the fixed query windows giving a total of 25 Mb reported data. The experiment was time limited to run for exactly 24 hours for each of the implementations. We make sure to use query windows such that we report on both small and large ranges and high and low in the tree. The idea is to focus the experiment on measuring \textit{searching} by fixing the output to a constant number of points. Please refer to Figure~\ref{fig:experiment_query_uniform} for an illustration of the query ranges.
+\subsubsection*{First experiment}
+The first experiment on the \textbf{search} part of the algorithms was conducted by first inserting data \textit{inside} 5 fixed query windows of 5 Mb data each, i.e. each query window contains 655.360 points. This was followed by inserting uniformly randomly distributed data \textit{outside} the fixed query windows. For insertion of every 10 Mb of data we report all points inside the fixed query windows giving a total of 25 Mb reported data. The experiment was time limited to run for exactly 24 hours for each of the implementations. We make sure to use query windows such that we report on both small and large ranges and high and low in the tree. The idea is to focus the experiment on measuring \textit{searching} by fixing the output to a constant number of points. Please refer to Figure~\ref{fig:experiment_query_uniform} for an illustration of the query ranges.
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.80\textwidth]{../figures/query_uniform}
+	\includegraphics[width=0.75\textwidth]{../figures/query_uniform}
 	\caption{Distribution of points for the uniform reporting experiment (search). The gray areas (a) - (e) contains 5 Mb data each. Points are distributed uniformly random. The query window (a) spans 5\% of the $x$-axis and 100\% of the $y$-axis (b) spans 17\% of the $x$-axis and 20\% of the $y$-axis (c) spans 11\% of the $x$-axis and 60\% of the $y$-axis (d) spans 14\% of the $x$-axis and 40\% of the $y$-axis (e) spans 8\% of the $x$-axis and 80\% of the $y$-axis.}
 	\label{fig:experiment_query_uniform}
 \end{figure}
@@ -1795,7 +1796,7 @@ The experiment on the \textbf{search} part of the algorithms was conducted by fi
 All queries are performed once before the actual measuring is done. This is to remove fluctuations on the internal data structures and to remove the amortization from fixing up Brodals. We make sure to stop all clocks when inserting such that our measures only reflect the actual query time.
 
 %Please note that the plot is only intended to show tendencies isolated to each of the data structures, meaning no relative tendencies  are explained by the plot.
-The theoretical search times on each of the data structures are depicted in Figure~\ref{fig:theory_query_complexity}. Even though the theoretical asymptotic bound suggests the R*-Tree to be linear in the size of the input, we expect it to have an actual average running time closer to $\mathcal{O}(\log_B N)$ guaranteed when no bounding boxes overlap each other. We expect the external memory data structures to perform much better than the internal memory data structures when the operating system starts swapping of main memory. \todo{ALSO RUN EXPERIMENT ON ASTERIX FOR INDEXED MYSQL}
+The theoretical search times on each of the data structures are depicted in Figure~\ref{fig:theory_query_complexity}. Even though the theoretical asymptotic bound suggests the R*-Tree to be linear in the size of the input, we expect it to have an actual average running time closer to $\mathcal{O}(\log_B N)$ guaranteed when no bounding boxes overlap each other. We expect the external memory data structures to perform much better than the internal memory data structures when the operating system starts swapping of main memory.
 
 \begin{figure}[h]
 \centering
@@ -1817,7 +1818,7 @@ Clearly both the Internal Memory Priority Search Tree and the Boost R-Tree suffe
 
 We decided to run a separate experiment on various fanouts on Brodals, since theory claims the data structure to search ever faster on ever increasing fanouts.
 Note that we ran this experiment on a different machine. This is not a problem since we are aiming at experimenting on the relative performance between different fanouts opposed to the relative performance between different data structures. The results of these experiments is depicted in Figure~\ref{fig:gerth_query_fanout_experiment}.
-Clearly we see a tendency of faster searches on increasing fanouts. \todo{RERUN THIS EXPERIMENT ON ASTERIX}.
+Clearly we see a tendency of faster searches on increasing fanouts.
 
 \begin{figure}[h]
 \centering
@@ -1836,10 +1837,10 @@ Clearly we see a tendency of faster searches on increasing fanouts. \todo{RERUN 
 
 \clearpage
 
-\subsection{Focus on reporting}
+\subsubsection*{Second experiment}
 
-The experiment on the \textbf{report} part of the algorithms was conducted by fixing $x_1$, $x_2$ and $y_1, \cdots y_n$ and inserting data points such that there is exactly 
-1 Mb data points in the range $[x_1, x_2] \times [y_i, y_{i+1}]$. In the range outside  $[x_1, x_2] \times [- \infty, \infty]$ we distribute data points uniformly at random. Now we report points in ranges $[x_1, x_2] \times [y_1, \infty]$, $[x_1, x_2] \times [y_2, \infty]$ $\cdots$ $[x_1, x_2] \times [y_n, \infty]$. The idea is that the number of reported points $K$ grows with 1 Mb when reporting in the range $[x_1, x_2] \times [y_i, y_{i+1}]$ compared to reporting in the range $[x_1, x_2] \times [y_i, y_{i}]$.
+The second experiment on the \textbf{search} part of the algorithms was conducted by fixing $x_1$, $x_2$ and $y_1, \cdots y_n$ and inserting data points such that there is exactly 
+1 Mb data points in the range $[x_1, x_2] \times [y_i, y_{i+1}]$. In the range outside  $[x_1, x_2] \times [- \infty, \infty]$ we distribute data points uniformly at random. Now we report points in ranges $[x_1, x_2] \times [y_1, \infty]$, $[x_1, x_2] \times [y_2, \infty]$ $\cdots$ $[x_1, x_2] \times [y_n, \infty]$. The idea is that the number of reported points $K$ only grows with 1 Mb when reporting in the range $[x_1, x_2] \times [y_{i+1}, \infty]$ compared to reporting in the range $[x_1, x_2] \times [y_i, \infty]$.
 
 \begin{figure}[h]
 	\centering
@@ -1848,24 +1849,32 @@ The experiment on the \textbf{report} part of the algorithms was conducted by fi
 	\label{fig:experiment_query_uniform_fix_x}
 \end{figure}
 
-%The expected query bounds for searching is depicted in Figure~\ref{fig:theory_query_complexity}.
-
-The result of the experiment on the \textbf{search} part of the algorithms is depicted in Figure~\ref{fig:result_query_search_complexity}. Arge's structure is limited by the ???
+We first conducted the experiment with 50Mb data distributed \textit{inside} the query windows and an additional 50Mb data distributed \textit{outside} the query windows. The result of this experiment is depicted in Figure~\ref{fig:query_report_100mb}. Clearly we see the Internal Memory Priority Search Tree of McCreight suffers severely from swapping of memory, and so we rule this data structure out after having deleted only 2Mb worth of data. Also, it is obvious that the Boost R-Tree is still able to fit entirely in internal memory which achieves a superior running time.
+Based on this observation did we add an additional 300Mb data \textit{outside} the query windows giving a total of 400Mb data. The results of running this experiment on the remaining data structures is depicted in Figure~\ref{fig:query_report_400mb}. It is obvious that the Boost R-Tree can no longer fit into internal memory which results in much worse running times than achieved by the external memory data structures. What is also clear is that MySQL using no index is still superior compared to the data structure of Brodal.
+The last experiment conducted was by adding an additional 2100Mb data \textit{outside} the query windows yielding a data structure of a total of 2500Mb worth of data. The experiment was then run on MySQL with no index and the data structure by Brodal with a fanout of 2 and 4 respectively. The result of this experiment is depicted in Figure~\ref{fig:query_report_2500mb}. It is obvious that the data structure of Brodal now outperforms MySQL which is probably explained by the fact it is able to exclude searching in the parts of the tree with no interest based the $y$-query. Again, we see a clear tendency of increasing performance on query when the fanout goes up. This aligns well with the theoretical analysis.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{../src/experiments/query_experiment_report_50mb_results/Final_100mb/time}
 \caption{missing}
-\label{missing}
+\label{fig:query_report_100mb}
 \centering
 \includegraphics[width=\textwidth]{../src/experiments/query_experiment_report_50mb_results/2016-05-21.20_07_54/time}
 \caption{missing}
-\label{missing}
+\label{fig:query_report_400mb}
 \centering
 \includegraphics[width=\textwidth]{../src/experiments/query_experiment_report_50mb_results/2016-06-07.14_30_08/time}
 \caption{missing}
-\label{missing}
+\label{fig:query_report_2500mb}
 \end{figure}
+
+\clearpage
+
+\section{Focus on reporting}
+
+Lirum Lorem
+
+\clearpage
 
 \section{Construction}
 An interesting feature of the External Memory Buffered Priority Search Tree is the construction in $\mathcal{O}(Scan)$ on sorted input. As a small extra experiment we decided to compare this linear construction method on $N$ elements to the insertion of $N$ elements. As we mention in Subsection~\ref{subsec:gerth_construction} we could use this linear construction method together with a $\mathcal{O}(Sort)$ algorithm to global rebuild the structure. Our hopes for this experiment is to get an indication of which method is best in terms of global rebuilding.
