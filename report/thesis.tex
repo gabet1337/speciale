@@ -109,15 +109,15 @@
 \pagenumbering{roman}
 \addcontentsline{toc}{chapter}{Abstract}
 
-The world is becoming increasingly data driven and almost anything in our daily lives generate data. The generated data sets are typically larger than what we can store in a normal computer's main memory. We therefore need clever techniques to handle and analyse the large data sets in order to make sense of it all. Much of the data that is gathered is spatial in nature, i.e. contains e.g. GPS coordinates. Analysing coordinates require us to solve complicated problems within the field of computational geometry. One of such problems is the problem of three-sided range reporting. In this problem we are asked to maintain a dynamic set, $\mathcal{S}$, of $N$ points in $\mathbb{R}^2$. The set can be updated by inserting or deleting points. Any solution to the problem must be able to answer three-sided range queries, i.e. given a range of the type $\left[x_1,x_2\right]\times \left[y,\infty\right]$ we report points in $\mathcal{S} \cap \left[x_1,x_2\right]\times \left[y,\infty\right]$.
+The world has become increasingly data driven and almost anything in our daily lives generate data. The generated data sets are typically larger than we can fit in a normal computer's main memory. We therefore need clever techniques to handle and analyse the large data sets in order to extrapolate information. Much of the data that is gathered is spatial in nature, i.e. contains e.g. GPS coordinates. Analysing coordinates require us to solve complicated problems within the field of computational geometry. One such problem is that of three-sided range reporting. In this problem we are asked to maintain a dynamic set, $\mathcal{S}$, of $N$ points in $\mathbb{R}^2$. The set can be updated by inserting or deleting points. Any solution to the problem must be able to answer three-sided range queries, i.e. given a range of the type $\left[x_1,x_2\right]\times \left[y,\infty\right]$ we report points in $\mathcal{S} \cap \left[x_1,x_2\right]\times \left[y,\infty\right]$.
 
-This thesis presents, implements, and experiments with several solutions to the problem of three-sided range reporting. The main focus of the thesis will be to show the power of data structures optimized for handling huge data sets by minimising the number of disk accesses.
+This thesis presents, implements, and experiments with several solutions to the problem of three-sided range reporting. The main focus will be to experimentally provide evidence that the three-side range reporting problem on huge data sets are best solved using data structures optimized for external memory.
 
-We have implemented two external memory data structures that solves this problem: The External Memory Priority Search Tree by Arge et al.~\cite{arge_samoladas_vitter_1999} and the External Memory \textit{Buffered} Priority Search Tree by Brodal~\cite{DBLP:journals/corr/Brodal15}.
+We have implemented two external memory data structures that solves the problem: The External Memory Priority Search Tree by Arge et al.~\cite{arge_samoladas_vitter_1999} and the External Memory \textit{Buffered} Priority Search Tree by Brodal~\cite{DBLP:journals/corr/Brodal15}.
 
-Besides comparing these two structures against each other we also compare them against our own implementation of the Priority Search Tree of McCreight~\cite{DBLP:journals/siamcomp/McCreight85}, and wrappers around MySQL, libspatialindex R*Tree, and Boost R-Tree.
+Besides comparing these structures against each other we also compare them against our own implementation of the Priority Search Tree of McCreight~\cite{DBLP:journals/siamcomp/McCreight85}, and wrappers around MySQL, libspatialindex R*Tree, and Boost R-Tree.
 
-Our results show that the External Memory Buffered Priority Search Tree outperforms all of the other structures as soon as the structures have to handle more data than the main memory capacity. MySQL without an index was significantly faster at inserting but as both the experiments with deletion and querying showed, the cost of not having an index on the table is too high. The Boost R-Tree proved to be the fastest of the internal memory data structures.
+Our results show that the External Memory Buffered Priority Search Tree outperforms all other structures as soon as data exceeds main memory capacity. MySQL without an index was significantly faster at inserting but as both the experiments with deletion and querying showed, the cost of not having an index on the table is too high. The Boost R-Tree proved to be the fastest of the internal memory data structures.
 
 \todo{conclude more?}
 
@@ -1796,6 +1796,20 @@ All queries are performed once before the actual measuring is done. This is to r
 %Please note that the plot is only intended to show tendencies isolated to each of the data structures, meaning no relative tendencies  are explained by the plot.
 The theoretical search times on each of the data structures are depicted in Figure~\ref{fig:theory_query_complexity}. Even though the theoretical asymptotic bound suggests the R*-Tree to be linear in the size of the input, we expect it to have an actual average running time closer to $\mathcal{O}(\log_B N)$ guaranteed when no bounding boxes overlap each other. We expect the external memory data structures to perform much better than the internal memory data structures when the operating system starts swapping of main memory. \todo{ALSO RUN EXPERIMENT ON ASTERIX FOR INDEXED MYSQL}
 
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.94\textwidth]{../plots/query_complexities/query_complexity}
+\caption{Theoretical search times for the query operation on all structures. Brodals is on the form $f(N) = \frac{1}{\epsilon}\log_B N$ for $\epsilon = \log(fanout) / \log(B)$ and $B = 32$. The data structure of Arge is on the form $f(N) = log_B N$ for $B = 32$. The Internal Memory Priority Search Tree is on the form $f(N) = \log_2 N$. Both the Boost R-Tree, the non-indexed MySQL implementation and the Libspatial R*-Tree are worst case linear in the size of the input, i.e. $f(N) = N$.}
+\label{fig:theory_query_complexity}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{../src/experiments/query_experiment_results/final2/time}
+\caption{Experimentally measured running time for querying according to Figure~\ref{fig:experiment_query_uniform} on all data structures of size $N$.}
+\label{fig:result_query_search_complexity}
+\end{figure}
+
 The result of conducting the experiment focusing on the search part of query on the data structures is depicted in Figure~\ref{fig:result_query_search_complexity}.
 
 Clearly both the Internal Memory Priority Search Tree and the Boost R-Tree suffers when data cannot fit into main memory. We will argue the rest of our observations according to the zoomed-in plot depicted in Figure~\ref{fig:result_query_search_complexity_zoom}. We believe the libspatial R*-Tree follows our expectations of an average $\mathcal{O}(\log_B N)$ search time. Clearly Arge's performs best of all structures, but since we are unable to insert more than around 70 Mb data in the data structure within 24 hours, we must conclude the implementation to be of no practical use when querying large data sets. Clearly the non-indexed MySQL implementation is linear in the input as expected. It is interesting to see the data structure of Brodal perform very well even for a small fanout. The data structure very much aligns with the tendencies suggested by the theory except for minor fluctuations. These are, however, perfectly explained by the insert buffer overflow, node degree overflow, and point buffer underflow needed during fixup. See Figure~\ref{fig:result_query_search_fixup}.
@@ -1804,19 +1818,7 @@ We decided to run a separate experiment on various fanouts on Brodals, since the
 Note that we ran this experiment on a different machine. This is not a problem since we are aiming at experimenting on the relative performance between different fanouts opposed to the relative performance between different data structures. The results of these experiments is depicted in Figure~\ref{fig:gerth_query_fanout_experiment}.
 Clearly we see a tendency of faster searches on increasing fanouts. \todo{RERUN THIS EXPERIMENT ON ASTERIX}.
 
-\clearpage
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.94\textwidth]{../plots/query_complexities/query_complexity}
-\caption{Theoretical search times for the query operation on all structures. Brodals is on the form $f(N) = \frac{1}{\epsilon}\log_B N$ for $\epsilon = \log(fanout) / \log(B)$ and $B = 32$. The data structure of Arge is on the form $f(N) = log_B N$ for $B = 32$. The Internal Memory Priority Search Tree is on the form $f(N) = \log_2 N$. Both the Boost R-Tree, the non-indexed MySQL implementation and the Libspatial R*-Tree are worst case linear in the size of the input, i.e. $f(N) = N$.}
-\label{fig:theory_query_complexity}
-\includegraphics[width=\textwidth]{../src/experiments/query_experiment_results/final2/time}
-\caption{Experimentally measured running time for querying according to Figure~\ref{fig:experiment_query_uniform} on all data structures of size $N$.}
-\label{fig:result_query_search_complexity}
-\end{figure}
-
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{../src/experiments/query_experiment_results/final2/time_zoom}
 \caption{Zoomed-in version of the experimentally measured running time for querying according to Figure~\ref{fig:experiment_query_uniform} on all data structures of size $N$.}
@@ -1824,10 +1826,6 @@ Clearly we see a tendency of faster searches on increasing fanouts. \todo{RERUN 
 \includegraphics[width=\textwidth]{../src/experiments/query_experiment_results/final2/all_operations}
 \caption{Experimentally measured number of insert buffer overflows, node degree overflows, and point buffer underflows on the data structure of Brodal with fanout 2 depicted in Figure~\ref{fig:result_query_search_complexity_zoom}}
 \label{fig:result_query_search_fixup}
-\end{figure}
-
-\begin{figure}[htp!]
-\centering
 \includegraphics[width=\textwidth]{../src/experiments/gerth_query_fanout_experiment_results/2016-05-19.19_04_49/time}
 \caption{Experimentally measured running time for querying according to Figure~\ref{fig:experiment_query_uniform} on fanouts $B^\epsilon \in \{4, 16, 32 \}$.}
 \label{fig:gerth_query_fanout_experiment}
@@ -1851,31 +1849,31 @@ The experiment on the \textbf{report} part of the algorithms was conducted by fi
 
 The result of the experiment on the \textbf{search} part of the algorithms is depicted in Figure~\ref{fig:result_query_search_complexity}. Arge's structure is limited by the ???
 
-\begin{savequote}[0.4\textwidth]
+\begin{savequote}[0.45\textwidth]
 ``To succeed, jump as quickly at opportunities as you do at conclusions.''
 \qauthor{--- Benjamin Franklin}
 \end{savequote}
 \chapter{Conclusion}
 \label{chp:conclusion}
 
-We have implemented three different Priority Search Trees: the Internal Memory Priority Search Tree by McCreight~\cite{DBLP:journals/siamcomp/McCreight85}, the External Memory Priority Search Tree by Arge et al~\cite{arge_samoladas_vitter_1999}, and the External Memory Buffered Priority Search Tree by Brodal~\cite{DBLP:journals/corr/Brodal15}. We have also implemented wrappers around MySQL 5.7.12, Boost R-Tree, and libspatial external memory R*-Tree, such that the implementation match the interface of a Priority Search Tree. All the above structures have been thoroughly described and analysed in the I/O model, and for the internal memory structures we have argued about the complexity in the RAM model and concluded that the complexity can be adopted directly in the I/O model due to the obliviousness and inefficiency of access to data not available in memory.
+We have implemented three different data structures for solving the three-sided range reporting problem: The Internal Memory Priority Search Tree by McCreight~\cite{DBLP:journals/siamcomp/McCreight85}, the External Memory Priority Search Tree by Arge et al.~\cite{arge_samoladas_vitter_1999}, and the External Memory \textit{Buffered} Priority Search Tree by Brodal~\cite{DBLP:journals/corr/Brodal15}. We have also implemented wrappers around MySQL 5.7.12, Boost R-Tree, and libspatial external memory R*-Tree, such that the implementation match the interface of a Priority Search Tree. All structures have been thoroughly described and analysed in the I/O model, and for the internal memory structures we have argued that the complexity in the RAM model can be adopted directly to the I/O model due to the oblivious and inefficient access to data not available in internal memory.
 
-We have conducted several experiments to compare the structures on the three important operations in the Priority Search Tree interface: \texttt{insert}, \texttt{delete}, and \texttt{query}.
+We have conducted several experiments to compare the structures on the operations of the Priority Search Tree interface: \texttt{insert}, \texttt{delete}, and \texttt{query}.
 
-Our results show that the External Memory Buffered Priority Search Tree outperforms all other structures except for MySQL without an index when it comes to inserting uniformly random data. Of the other structures it is worth mentioning that the Boost R-Tree performed best due to its efficient use of space.
+Our results show that the External Memory Buffered Priority Search Tree outperforms all other structures except for MySQL without an index when it comes to inserting uniformly random data. We found the Boost R-Tree performing the best in internal memory due to its efficient use of space.
 
-When we looked at deleting uniformly random data, MySQL without an index expectedly fell short, and as soon as the structures not optimized for external memory had to operate outside of main memory we saw that the External Memory Buffered Priority Search Tree outperformed all other structures significantly.
+When we looked at deleting uniformly random data, MySQL without an index expectedly fell short, and as soon as the structures not optimized for external memory had to operate outside of internal memory we saw that the External Memory Buffered Priority Search Tree outperformed all other structures significantly.
 
-We experimented with querying in two different ways to encapsulate the fact that the asymptotic complexity depends on both search and reporting. We isolated the search part by fixing 5 query windows of different height with 5Mb data each and then insert uniformly random data around to add noise. The results shows that the internal memory once again perform very well while still contained in main memory, but as soon as we leave main memory the only real contestant to the External Memory Buffered Priority Search is MySQL with an index which is once again outperformed for large enough input size.
+We experimented with querying in two different ways to encapsulate the fact that the asymptotic complexity depends on both search and reporting. We isolated the search part by fixing 5 query windows of different size with 5Mb data each and then inserted uniformly random data outside the windows. The results shows that the internal memory data structures once again perform very well while still contained in internal memory, but as soon as we outgrow internal memory the only real contestant to the External Memory Buffered Priority Search is MySQL with an index, which is once again outperformed for large enough input sizes.
 
 \todo{conclude on focus on reporting part of experiments}
 
-Our experiments also showed that our implementation of the External Memory Priority Search Tree proved inferior in all aspects which we explain by the large number of I/O and heavy internal work.
+Our experiments also showed that our implementation of the External Memory Priority Search Tree by Arge et al. proved inferior in all aspects which we explain by the large number of I/O's and heavy internal work.
 
 \section{Future work}
-The structure of Brodal described in Chapter~\ref{chp:epst} is also able to report top-$k$ queries. A top-$k$ query reports the top $k$ points in the query range. The structure does this in $\mathcal{O}(\frac{1}{\epsilon}\log_B N + K/B)$, i.e. in the same bound as three-sided range queries, but here $K$ is the minimum of $k$ and the number of points in the query range. It would have been interesting to see how the structure performs these top-$k$ queries compared to other results.
+The structure of Brodal described in Chapter~\ref{chp:epst} is able to report top-$k$ queries. A top-$k$ query reports the top $k$ points in the query range. The structure does this in $\mathcal{O}(\frac{1}{\epsilon}\log_B N + K/B)$, i.e. in the same bound as three-sided range queries, but here $K$ is the minimum of $k$ and the number of points in the query range. It would have been interesting to see how the structure performs these top-$k$ queries compared to other results.
 
-Many of the structures discussed in this thesis also describes a construction algorithm. In future work it could interesting to see how the structures compare in terms of construction time.
+Many of the structures discussed in this thesis also describes a construction algorithm. In future work it could be interesting to see how the structures compare in terms of construction time.
 
 \todo{replace std::set}
 
