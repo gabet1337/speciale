@@ -1,5 +1,5 @@
 #!/usr/bin/gnuplot
-set terminal postscript eps enhanced color font 'Verdana,12'
+set terminal postscript eps enhanced color size 5.0,2.0 font 'Verdana,12'
 set output 'query_experiment_report_50mb_results/2016-06-07.14_30_08/time.eps'
 set style line 11 lc rgb '#000000' lt 1
 set border 3 back ls 11
@@ -15,9 +15,11 @@ set style line 6 lc rgb '#00ced1' pt 5 ps 1 lt 1 lw 2 # --- darkturquoise
 set style line 7 lc rgb '#ff00ff' pt 7 ps 1 lt 1 lw 2 # --- magenta
 set style line 8 lc rgb '#87ceeb' pt 8 ps 1 lt 1 lw 2 # --- skyblue
 set style line 9 lc rgb '#660066' pt 9 ps 1 lt 1 lw 2 # --- dunno
-set key top left
-set xlabel 'N (input size in Mb)'
+set key bottom right
+set xlabel 'N (reported data in Mb)'
 set ylabel 'Time (s)'
 #set xrange [0:0]
-#set yrange [0:0]
-plot 'query_experiment_report_50mb_results/2016-06-07.14_30_08/mysql_MySQL' u 1:2 t 'MySQL' w lp ls 4
+set yrange [0:120]
+plot 'query_experiment_report_50mb_results/2016-06-07.14_30_08/mysql_MySQL' u 1:2 t 'MySQL' w lp ls 4, \
+    'query_experiment_report_50mb_results/2016-06-07.14_30_08/gerth_Gerth_fanout2' u 1:2 t 'Brodal with fanout 2' w lp ls 2, \
+    'query_experiment_report_50mb_results/2016-06-07.14_30_08/gerth_Gerth_fanout4' u 1:2 t 'Brodal with fanout 4' w lp ls 8
