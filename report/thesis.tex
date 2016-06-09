@@ -1851,20 +1851,20 @@ The second experiment on the \textbf{search} part of the algorithms was conducte
 
 We first conducted the experiment with 50Mb data distributed \textit{inside} the query windows and an additional 50Mb data distributed \textit{outside} the query windows. The result of this experiment is depicted in Figure~\ref{fig:query_report_100mb}. Clearly we see the Internal Memory Priority Search Tree of McCreight suffers severely from swapping of memory, and so we rule this data structure out after having deleted only 2Mb worth of data. Also, it is obvious that the Boost R-Tree is still able to fit entirely in internal memory which achieves a superior running time.
 Based on this observation did we add an additional 300Mb data \textit{outside} the query windows giving a total of 400Mb data. The results of running this experiment on the remaining data structures is depicted in Figure~\ref{fig:query_report_400mb}. It is obvious that the Boost R-Tree can no longer fit into internal memory which results in much worse running times than achieved by the external memory data structures. What is also clear is that MySQL using no index is still superior compared to the data structure of Brodal.
-The last experiment conducted was by adding an additional 2100Mb data \textit{outside} the query windows yielding a data structure of a total of 2500Mb worth of data. The experiment was then run on MySQL with no index and the data structure by Brodal with a fanout of 2 and 4 respectively. The result of this experiment is depicted in Figure~\ref{fig:query_report_2500mb}. It is obvious that the data structure of Brodal now outperforms MySQL which is probably explained by the fact it is able to exclude searching in the parts of the tree with no interest based the $y$-query. Again, we see a clear tendency of increasing performance on query when the fanout goes up. This aligns well with the theoretical analysis.
+The last experiment conducted was by adding an additional 2100Mb data \textit{outside} the query windows yielding a data structure of a total of 2,500Mb worth of data. The experiment was then run on MySQL with no index and the data structure by Brodal with a fanout of 2 and 4 respectively. The result of this experiment is depicted in Figure~\ref{fig:query_report_2500mb}. It is obvious that the data structure of Brodal now outperforms MySQL which is probably explained by the fact it is able to exclude searching in the parts of the tree with no interest based the $y$-query. Again, we see a clear tendency of increasing performance on query when the fanout goes up. This aligns well with the theoretical analysis.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{../src/experiments/query_experiment_report_50mb_results/Final_100mb/time}
-\caption{missing}
+\caption{Reporting as depicted in Figure~\ref{fig:experiment_query_uniform_fix_x} on a data structure of size 100Mb. The Internal Priority Search Tree of McCreight suffers from swapping of memory.}
 \label{fig:query_report_100mb}
 \centering
 \includegraphics[width=\textwidth]{../src/experiments/query_experiment_report_50mb_results/2016-05-21.20_07_54/time}
-\caption{missing}
+\caption{Reporting as depicted in Figure~\ref{fig:experiment_query_uniform_fix_x} on a data structure of size 400Mb. Here the Boost R-Tree suffers from swapping of memory.}
 \label{fig:query_report_400mb}
 \centering
 \includegraphics[width=\textwidth]{../src/experiments/query_experiment_report_50mb_results/2016-06-07.14_30_08/time}
-\caption{missing}
+\caption{Reporting as depicted in Figure~\ref{fig:experiment_query_uniform_fix_x} on a data structure of size 2,500Mb. The data structure of Brodal's clearly outperforms MySQL with no index.}
 \label{fig:query_report_2500mb}
 \end{figure}
 
