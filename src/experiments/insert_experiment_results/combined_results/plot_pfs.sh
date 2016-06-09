@@ -15,16 +15,13 @@ set style line 6 lc rgb '#00ced1' pi 10 pt 5 ps 1 lt 1 lw 2 # --- darkturquoise
 set style line 7 lc rgb '#ff00ff' pi 10 pt 7 ps 1 lt 1 lw 2 # --- magenta
 set style line 8 lc rgb '#87ceeb' pi 10 pt 8 ps 1 lt 1 lw 2 # --- skyblue
 set style line 9 lc rgb '#660066' pi 10 pt 9 ps 1 lt 1 lw 2 # --- dunno
-set key top center
+set key at 260,2**25
 set xlabel 'N (input size in Mb)'
 set ylabel 'page faults'
+set logscale y 2
+set format y "2^{%L}"
 #set xrange [0:0]
 #set yrange [0:0]
 plot 'insert_experiment_results/combined_results/internal_Internal' u 1:4 t 'Internal' w lp ls 5, \
      'insert_experiment_results/combined_results/rtree_Boost R-tree' u 1:4 t 'Boost R-tree' w lp ls 3, \
-     'insert_experiment_results/combined_results/mysql_MySQL_with_index' u 1:4 t 'MySQL (with index)' w lp ls 4 #,\
-     #'insert_experiment_results/combined_results/spatial_libspatial' u 1:4 t 'libspatial' w lp ls 6, \
-
-#     'insert_experiment_results/combined_results/arge_Arge' u 1:4 t 'Arge' w lp ls 1 #,\
-#     'insert_experiment_results/combined_results/gerth_Gerth' u 1:4 t 'Brodal' w lp ls 2 #,\
-#     'insert_experiment_results/combined_results/mysql_MySQL_no_index' u 1:2 t 'MySQL (no index)' w lp ls 7
+     'insert_experiment_results/combined_results/mysql_MySQL_with_index' u 1:4 t 'MySQL (with index)' w lp ls 4
