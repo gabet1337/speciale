@@ -1520,7 +1520,7 @@ The results presented was, however, not generated from the machines presented in
   \centering
   \includegraphics[width=\linewidth]{../plots/gerth_update_epsilon/gerth_epsilon}
   \caption{Theoretical asymptotic update time per operation for fanouts $B^\epsilon~\in~\{2, 3, 4, 5, 6, 8, 16, 32, 64\}$. Each graph is on the form $f(N)~=~\frac{1}{\epsilon B^{1-\epsilon}} \log_B N$ for $\epsilon~=~\log(fanout) / \log(B)$. An epsilon on this form guarantees the desired fanout.}
-  \label{fig:gerth_fanout_experiment}
+  \label{fig:gerth_fanout_experiment}Many
 \end{minipage}
 \hfill
 \begin{minipage}[t]{0.48\columnwidth}
@@ -1697,7 +1697,7 @@ If the actual running time align with the theoretical bounds then we expect to s
 
 In Figure~\ref{fig:time_divided_with_asymptotic_brodal} we see that the time per insert in the structure of Brodal aligns with the theoretical bound. This can be seen by the flattening of the graph as the input size goes up, which again suggests that the structure becomes more and more I/O bound on increasing input size. Clearly the structure follows the same trend in terms of I/O's which further strengthens this hypothesis.
 
-In Figure~\ref{fig:time_divided_with_asymptotic_arge} we see that the time per insert and number of I/O's per insert follows the theoretical bound very well up to the $N = 28$ mark. We investigated this further and found this was the exact moment when the structure went from a B-Tree of height 2 to one of height 3. It would seem that adding a layer significantly increased the amount of I/O's. Further investigating the trends for I/O's we see the graph flattening again after the $N = 28$ mark, which provides evidence for the number of I/O's once again becomes a constant factor of the theoretical bounds. The same cannot be concluded for the actual running time. We would have expected a flattening along the same lines as for the number of I/O's but this is clearly not the case. We claim this suggest that the structure is heavily CPU bound. \todo{Maybe elaborate on this??}
+In Figure~\ref{fig:time_divided_with_asymptotic_arge} we see that the time per insert and number of I/O's per insert follows the theoretical bound very well up to the $N = 28$ mark. We investigated this further and found this was the exact moment when the structure went from a B-Tree of height 2 to one of height 3. It would seem that adding a layer significantly increased the amount of I/O's. Further investigating the trends for I/O's we see the graph flattening again after the $N = 28$ mark, which provides evidence for the number of I/O's once again becomes a constant factor of the theoretical bounds. The same cannot be concluded for the actual running time. We would have expected a flattening along the same lines as for the number of I/O's but this is clearly not the case.
 
 Figure~\ref{fig:time_divided_with_asymptotic_internal} shows that the Internal Memory Priority Search Tree of McCreight performs exactly as expected as long as the structure is contained in main memory. At the exact moment the structure starts to swap out main memory we see a significant increase in running time just as expected.
 
