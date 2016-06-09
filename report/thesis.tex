@@ -1877,9 +1877,16 @@ Lirum Lorem
 \clearpage
 
 \section{Construction}
-An interesting feature of the External Memory Buffered Priority Search Tree is the construction in $\mathcal{O}(Scan)$ on sorted input. As a small extra experiment we decided to compare this linear construction method on $N$ elements to the insertion of $N$ elements. As we mention in Subsection~\ref{subsec:gerth_construction} we could use this linear construction method together with a $\mathcal{O}(Sort)$ algorithm to global rebuild the structure. Our hopes for this experiment is to get an indication of which method is best in terms of global rebuilding.
+An interesting feature of the External Memory Buffered Priority Search Tree is the construction in $\mathcal{O}(\text{Scan})$ on sorted input. As a small extra experiment we decided to compare this linear construction method on $N$ elements to the insertion of $N$ elements. As we mention in Subsection~\ref{subsec:gerth_construction} we could use this linear construction method together with a $\mathcal{O}(\text{Sort})$ algorithm to global rebuild the structure. Our hopes for this experiment is to get an indication of which method is best in terms of global rebuilding.
 
 The experiment consists of constructing a tree using the linear construction method and inserting for increasing input sizes, $N$, and different fanouts to see whether this has an impact. We know from previous experiments that inserting becomes slower for larger fanouts but it is not clear what happens when we use the linear construction method.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{../src/experiments/linear_construction_experiment_results/combined_results/time_divided_N}
+\caption{missing}
+\label{fig:linear_construction_time_divided_N}
+\end{figure}
 
 \begin{savequote}[0.45\textwidth]
 ``To succeed, jump as quickly at opportunities as you do at conclusions.''
