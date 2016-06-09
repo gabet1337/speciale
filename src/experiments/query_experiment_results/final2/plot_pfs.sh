@@ -19,9 +19,9 @@ set xlabel 'N (input size in Mb)'
 set ylabel 'page faults'
 #set xrange [0:0]
 #set yrange [0:0]
-plot 'query_experiment_results/final2/gerth_Gerth' u 1:4 t 'Gerth' w lp ls 2, \
-'query_experiment_results/final2/internal_Internal' u 1:4 t 'Internal' w lp ls 5, \
-'query_experiment_results/final2/rtree_Boost R-tree' u 1:4 t 'Boost R-tree' w lp ls 3, \
-'query_experiment_results/final2/arge_Arge' u 1:4 t 'Arge' w lp ls 1, \
-'query_experiment_results/final2/spatial_libspatial' u 1:4 t 'libspatial' w lp ls 6, \
-'query_experiment_results/final2/mysql_MySQL' u 1:4 t 'MySQL' w lp ls 4
+plot 'query_experiment_results/final2/internal_Internal' u 1:4 t 'Internal' w lp ls 5, \
+    'query_experiment_results/final2/rtree_Boost R-tree' u 1:4 t 'Boost R-tree' w lp ls 3, \
+    'query_experiment_results/final2/arge_Arge' u 1:4 t 'Arge' w lp ls 1, \
+    'query_experiment_results/final2/spatial_libspatial' u 1:4 t 'libspatial' w lp ls 6 #, \
+#'query_experiment_results/final2/mysql_MySQL' u 1:4 t 'MySQL' w lp ls 4
+#plot 'query_experiment_results/final2/gerth_Gerth' u 1:4 t 'Gerth' w lp ls 2, \

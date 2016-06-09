@@ -271,12 +271,12 @@ void cleanup() {
 int main() {
   cout << "\033[0;33m\e[4mSTARTING TEST OF INTERNAL DYNAMIC PST\e[24m\033[0m" << endl;
   cleanup();
-  //test_insert();
-  //test_remove_report();
-  //test_report();
+  test_insert();
+  test_remove_report();
+  test_report();
   //test_report_random_1gb(4096, 0.5);
-  //test_error();
-  test_delete_big_data();
+  test_error();
+  //test_delete_big_data();
   
   //test_construct();
   cout << "\x1b[32mALL TESTS WERE SUCCESSFUL!\x1b[0m" << endl;

@@ -1,5 +1,5 @@
 #!/usr/bin/gnuplot
-set terminal postscript eps enhanced color font 'Verdana,12'
+set terminal postscript eps enhanced color size 5.0,3.0 font 'Verdana,12'
 set output 'query_experiment_results/final2/time_zoom.eps'
 set style line 11 lc rgb '#000000' lt 1
 set border 3 back ls 11

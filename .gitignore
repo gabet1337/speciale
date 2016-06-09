@@ -1,7 +1,9 @@
 # Programs
 src/ipst
 src/stream_test
-src/ctest
+src/ctest1
+src/ctest2
+src/dpst
 src/epst
 src/dump_file
 src/apst
@@ -17,7 +19,12 @@ src/experiments/gerth_fanout_experiment
 src/experiments/gerth_buffer_size_experiment
 src/experiments/arge_buffer_size_experiment
 src/experiments/insert_experiment
+src/experiments/delete_experiment
 src/experiments/query_experiment
+src/experiments/gerth_query_fanout_experiment
+src/experiments/query_experiment_report_50mb
+lol
+lol2
 
 # data folders
 src/c_*
