@@ -1824,10 +1824,12 @@ Clearly we see a tendency of faster searches on increasing fanouts. \todo{RERUN 
 \includegraphics[width=\textwidth]{../src/experiments/query_experiment_results/final2/time_zoom}
 \caption{Zoomed-in version of the experimentally measured running time for querying according to Figure~\ref{fig:experiment_query_uniform} on all data structures of size $N$.}
 \label{fig:result_query_search_complexity_zoom}
-\includegraphics[width=\textwidth]{../src/experiments/query_experiment_results/final2/all_operations}
+\centering
+\includegraphics[width=\textwidth]{../src/experiments/query_experiment_results/final2/all_operations2}
 \caption{Experimentally measured number of insert buffer overflows, node degree overflows, and point buffer underflows on the data structure of Brodal with fanout 2 depicted in Figure~\ref{fig:result_query_search_complexity_zoom}}
 \label{fig:result_query_search_fixup}
-\includegraphics[width=\textwidth]{../src/experiments/gerth_query_fanout_experiment_results/2016-05-19.19_04_49/time}
+\centering
+\includegraphics[width=\textwidth]{../src/experiments/gerth_query_fanout_experiment_results/2016-06-08.19_09_06/time}
 \caption{Experimentally measured running time for querying according to Figure~\ref{fig:experiment_query_uniform} on fanouts $B^\epsilon \in \{4, 16, 32 \}$.}
 \label{fig:gerth_query_fanout_experiment}
 \end{figure}
@@ -1849,6 +1851,21 @@ The experiment on the \textbf{report} part of the algorithms was conducted by fi
 %The expected query bounds for searching is depicted in Figure~\ref{fig:theory_query_complexity}.
 
 The result of the experiment on the \textbf{search} part of the algorithms is depicted in Figure~\ref{fig:result_query_search_complexity}. Arge's structure is limited by the ???
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{../src/experiments/query_experiment_report_50mb_results/Final_100mb/time}
+\caption{missing}
+\label{missing}
+\centering
+\includegraphics[width=\textwidth]{../src/experiments/query_experiment_report_50mb_results/2016-05-21.20_07_54/time}
+\caption{missing}
+\label{missing}
+\centering
+\includegraphics[width=\textwidth]{../src/experiments/query_experiment_report_50mb_results/2016-06-07.14_30_08/time}
+\caption{missing}
+\label{missing}
+\end{figure}
 
 \section{Construction}
 An interesting feature of the External Memory Buffered Priority Search Tree is the construction in $\mathcal{O}(\text{Scan})$ on sorted input. As a small extra experiment we decided to compare this linear construction method on $N$ elements to the insertion of $N$ elements. As we mention in Subsection~\ref{subsec:gerth_construction} we could use this linear construction method together with a $\mathcal{O}(\text{Sort})$ algorithm to global rebuild the structure. Our hopes for this experiment is to get an indication of which method is best in terms of global rebuilding.
