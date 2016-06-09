@@ -14,11 +14,11 @@ set style line 5 lc rgb '#000000' pt 4 ps 1 lt 1 lw 2 # --- black
 set style line 6 lc rgb '#00ced1' pt 5 ps 1 lt 1 lw 2 # --- darkturquoise
 set style line 7 lc rgb '#ff00ff' pt 7 ps 1 lt 1 lw 2 # --- magenta
 set style line 8 lc rgb '#87ceeb' pt 8 ps 1 lt 1 lw 2 # --- skyblue
-set key top left
+set key at 32,90
 set xlabel 'N (input size in Mb)'
 set ylabel 'Time (s)'
 #set xrange [0:0]
-set yrange [0:150]
+#set yrange [0:150]
 plot 'query_experiment_report_50mb_results/2016-05-21.20_07_54/gerth_Gerth' u 1:2 t 'Brodal with fanout 2' w lp ls 2, \
 'query_experiment_report_50mb_results/2016-05-21.20_07_54/rtree_Boost R-tree' u 1:2 t 'Boost R-tree' w lp ls 3, \
 'query_experiment_report_50mb_results/2016-05-21.20_07_54/mysql_MySQL' u 1:2 t 'MySQL (no index)' w lp ls 4
