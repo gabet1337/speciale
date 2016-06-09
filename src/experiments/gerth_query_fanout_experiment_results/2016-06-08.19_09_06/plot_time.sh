@@ -1,5 +1,5 @@
 #!/usr/bin/gnuplot
-set terminal postscript eps enhanced color font 'Verdana,12'
+set terminal postscript eps enhanced color size 5.0,2.0 font 'Verdana,12'
 set output 'gerth_query_fanout_experiment_results/2016-06-08.19_09_06/time.eps'
 set style line 11 lc rgb '#000000' lt 1
 set border 3 back ls 11
@@ -20,8 +20,8 @@ set xlabel 'N (input size in Mb)'
 set ylabel 'Time (s)'
 #set xrange [0:0]
 #set yrange [0:0]
-plot 'gerth_query_fanout_experiment_results/2016-06-08.19_09_06/gerth_fanout2' u 1:2 t 'fanout2' w lp ls 2, \
-'gerth_query_fanout_experiment_results/2016-06-08.19_09_06/gerth_fanout4' u 1:2 t 'fanout4' w lp ls 3, \
-'gerth_query_fanout_experiment_results/2016-06-08.19_09_06/gerth_fanout8' u 1:2 t 'fanout8' w lp ls 4, \
-'gerth_query_fanout_experiment_results/2016-06-08.19_09_06/gerth_fanout16' u 1:2 t 'fanout16' w lp ls 5, \
-'gerth_query_fanout_experiment_results/2016-06-08.19_09_06/gerth_fanout32' u 1:2 t 'fanout32' w lp ls 6
+plot 'gerth_query_fanout_experiment_results/2016-06-08.19_09_06/gerth_fanout2' u 1:($2/3) t 'fanout2' w lp ls 2, \
+'gerth_query_fanout_experiment_results/2016-06-08.19_09_06/gerth_fanout4' u 1:($2/3) t 'fanout4' w lp ls 3, \
+'gerth_query_fanout_experiment_results/2016-06-08.19_09_06/gerth_fanout8' u 1:($2/3) t 'fanout8' w lp ls 4, \
+'gerth_query_fanout_experiment_results/2016-06-08.19_09_06/gerth_fanout16' u 1:($2/3) t 'fanout16' w lp ls 5, \
+'gerth_query_fanout_experiment_results/2016-06-08.19_09_06/gerth_fanout32' u 1:($2/3) t 'fanout32' w lp ls 6
