@@ -1,6 +1,6 @@
 #!/usr/bin/gnuplot
-set terminal postscript eps enhanced color font 'Verdana,12'
-set output 'query_experiment_report_50mb_results/2016-06-09.15_38_51/ios.eps'
+set terminal postscript eps enhanced color size 5,2font 'Verdana,12'
+set output 'query_experiment_report_50mb_results/2016-06-09.15_38_51/time_divided_N.eps'
 set style line 11 lc rgb '#000000' lt 1
 set border 3 back ls 11
 set tics nomirror
@@ -15,9 +15,13 @@ set style line 6 lc rgb '#00ced1' pt 5 ps 1 lt 1 lw 2 # --- darkturquoise
 set style line 7 lc rgb '#ff00ff' pt 7 ps 1 lt 1 lw 2 # --- magenta
 set style line 8 lc rgb '#87ceeb' pt 8 ps 1 lt 1 lw 2 # --- skyblue
 set style line 9 lc rgb '#660066' pt 9 ps 1 lt 1 lw 2 # --- dunno
-set key top left
-set xlabel 'N (input size in Mb)'
-set ylabel 'I/Os'
-#set xrange [0:0]
+set key top right
+set xlabel 'K (reported data size in Mb)'
+set ylabel 'Time (s) / K (reported data size in Mb)'
+set xrange [100:1200]
+set xtics 100
 #set yrange [0:0]
-plot 'query_experiment_report_50mb_results/2016-06-09.15_38_51/gerth_Gerth' u 1:($3/$1) t 'Gerth' w lp ls 2
+f(x) = c/x + 1
+fit f(x) 'query_experiment_report_50mb_results/2016-06-09.15_38_51/gerth_Gerth' u 1:($2/$1) via c
+plot 'query_experiment_report_50mb_results/2016-06-09.15_38_51/gerth_Gerth' u 1:($2/($1)) t 'Brodal with fanout 4' w lp ls 2,\
+     f(x) w lp ls 9 pi 5 title sprintf("f(K) = %.3f / K + 1",c)
