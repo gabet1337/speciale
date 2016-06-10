@@ -132,8 +132,6 @@ Vi har derudover implementeret et Internt Hukommelses Prioritets S{\o}ge Tr{\ae}
 
 Resultater fra eksperimenter viser at det Eksterne Hukommelses Prioritets S{\o}ge Tr{\ae} sl{\aa}r alle de andre data strukturer s{\aa} snart de skal h{\aa}ndtere mere data end der er plads til i computerens interne hukommelse. MySQL uden et tilh{\o}rende indeks var den eneste struktur der kunne hamle op n{\aa}r det kommer til at inds{\ae}tte i strukturen. Denne struktur m{\aa}tte dog betale dyrt for de hurtige inds{\ae}ttelser i form af langsomme slettelser og foresp{\o}rgsler. Det var Boost R-Tr{\ae}et der viste sig at v{\ae}re den hurtigste af de interne hukommelses strukturer.
 
-\todo{conclude more?}
-
 \tableofcontents
 
 \chapter*{Preface}
@@ -176,6 +174,7 @@ We have really enjoyed working on this thesis and we sincerely hope you enjoy re
 \tikzstyle{every path}=[draw]
 \matrix [column sep={1em,between origins},row sep=\lineskip]
 {
+\commit{aef45c4}{12.Jun}{Prepress version ready for print} & \\
 \commit{8611249}{10.Jun}{Linear construction experiment added} & \\
 \commit{45b7bbd}{08.Jun}{All Makefile targets are updated and README changed} & \\
 \commit{701f7a9}{07.Jun}{Query experiment results come in} & \\
@@ -244,6 +243,7 @@ We have really enjoyed working on this thesis and we sincerely hope you enjoy re
 \connect{52d4e39}{701f7a9};
 \connect{701f7a9}{45b7bbd};
 \connect{45b7bbd}{8611249};
+\connect{8611249}{aef45c4};
 \end{tikzpicture}
 \caption{Excerpt of the git history for the entire project. The figure is read bottom up.}
 \label{fig:git_history}
