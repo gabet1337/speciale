@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70107" creator="Ipe 7.2.2">
-<info created="D:20160503132223" modified="D:20160610110417"/>
+<info created="D:20160503132223" modified="D:20160610121512"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -232,15 +232,12 @@ h
 <page>
 <layer name="alpha"/>
 <view layers="alpha" active="alpha"/>
-<path layer="alpha" matrix="1 0 0 1.25 0 -160" stroke="black">
+<path layer="alpha" matrix="1 0 0 1.25 32 -160" stroke="black">
 128 768 m
 128 512 l
 128 512 l
 </path>
 <use matrix="1 0 0 1 117.293 29.4107" name="mark/disk(sx)" pos="192 680" size="normal" stroke="black"/>
-<text transformations="translations" pos="120 472" stroke="black" type="label" width="4.981" height="6.42" depth="0" valign="baseline">$0$</text>
-<text matrix="1 0 0 1 -72 -72" transformations="translations" pos="504 540" stroke="black" type="label" width="30.58" height="8.11" depth="0.83" valign="baseline">$2^{31}-1$</text>
-<text matrix="1 0 0 1 -412 252" transformations="translations" pos="504 540" stroke="black" type="label" width="30.58" height="8.11" depth="0.83" valign="baseline">$2^{31}-1$</text>
 <path fill="lightgray">
 256 792 m
 256 480 l
@@ -272,7 +269,7 @@ h
 320 752 l
 320 752 l
 </path>
-<path stroke="black">
+<path matrix="0.8 0 0 1 57.6 0" stroke="black">
 448 480 m
 128 480 l
 128 480 l
@@ -307,13 +304,13 @@ h
 320 608 l
 320 608 l
 </path>
-<text matrix="1 0 0 1 0 4" transformations="translations" pos="252 468" stroke="black" type="label" width="10.163" height="4.294" depth="1.49" valign="baseline">$x_1$</text>
-<text matrix="1 0 0 1 4 0" transformations="translations" pos="312 472" stroke="black" type="label" width="10.163" height="4.294" depth="1.49" valign="baseline">$x_2$</text>
-<text matrix="1 0 0 1 -4 -4" transformations="translations" pos="328 772" stroke="black" type="label" width="9.354" height="4.297" depth="1.93" valign="baseline">$y_1$</text>
-<text transformations="translations" pos="324 736" stroke="black" type="label" width="9.354" height="4.297" depth="1.93" valign="baseline">$y_2$</text>
-<text matrix="1 0 0 1 -4 0" transformations="translations" pos="328 640" stroke="black" type="label" width="8.201" height="4.297" depth="1.93" valign="baseline">$y_i$</text>
-<text transformations="translations" pos="324 608" stroke="black" type="label" width="18.289" height="4.294" depth="2.32" valign="baseline">$y_{i+1}$</text>
-<text transformations="translations" pos="324 512" stroke="black" type="label" width="10.307" height="4.297" depth="1.93" valign="baseline">$y_n$</text>
+<text matrix="1 0 0 1 -4 0" transformations="translations" pos="252 468" stroke="black" type="label" width="13.462" height="6.179" depth="2.15" valign="baseline" size="Large">$x_1$</text>
+<text matrix="1 0 0 1 0 -4" transformations="translations" pos="312 472" stroke="black" type="label" width="13.462" height="6.179" depth="2.15" valign="baseline" size="Large">$x_2$</text>
+<text matrix="1 0 0 1 -4 -4" transformations="translations" pos="328 772" stroke="black" type="label" width="14.57" height="7.41" depth="3.35" valign="baseline" size="LARGE">$y_1$</text>
+<text transformations="translations" pos="324 736" stroke="black" type="label" width="14.57" height="7.41" depth="3.35" valign="baseline" size="LARGE">$y_2$</text>
+<text matrix="1 0 0 1 -4 0" transformations="translations" pos="328 640" stroke="black" type="label" width="10.78" height="6.176" depth="2.79" valign="baseline" size="Large">$y_i$</text>
+<text transformations="translations" pos="324 608" stroke="black" type="label" width="23.51" height="6.179" depth="2.98" valign="baseline" size="Large">$y_{i+1}$</text>
+<text transformations="translations" pos="324 512" stroke="black" type="label" width="13.327" height="6.176" depth="2.79" valign="baseline" size="Large">$y_n$</text>
 <use matrix="1 0 0 1 178.959 9.18343" name="mark/disk(sx)" pos="136 776" size="normal" stroke="black"/>
 <use matrix="1 0 0 1 162.249 -2.59949" name="mark/disk(sx)" pos="148 780" size="normal" stroke="black"/>
 <use matrix="1 0 0 1 140 -4" name="mark/disk(sx)" pos="172 776" size="normal" stroke="black"/>
