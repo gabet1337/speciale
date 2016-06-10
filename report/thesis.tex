@@ -117,9 +117,7 @@ We have implemented two external memory data structures that solves the problem:
 
 Besides comparing these structures against each other we also compare them against our own implementation of the Priority Search Tree of McCreight~\cite{DBLP:journals/siamcomp/McCreight85}, and wrappers around MySQL, libspatialindex R*Tree, and Boost R-Tree.
 
-Our results show that the External Memory Buffered Priority Search Tree outperforms all other structures as soon as data exceeds main memory capacity. MySQL without an index was significantly faster at inserting but as both the experiments with deletion and querying showed, the cost of not having an index on the table is too high. The Boost R-Tree proved to be the fastest of the internal memory data structures.
-
-\todo{conclude more?}
+Our results show that the External Memory Buffered Priority Search Tree outperforms all other structures as soon as data exceeds internal memory capacity. MySQL without an index was significantly faster at inserting but as both the experiments with deletion and querying showed, the cost of not having an index on the table is too high. The Boost R-Tree proved to be the fastest of the internal memory data structures.
 
 \chapter*{Resum\'e}
 \addcontentsline{toc}{chapter}{Resum\'e}
@@ -572,13 +570,13 @@ The study of adapting the Priority Search Tree to external memory was initiated 
 	\label{fig:icking_external_pst}
 \end{figure}
 
-Kanellakis et al. presents a linear space and partially dynamic solution in~\cite{Kanellakis1996589}. The data structure answers three-sided queries in $\mathcal{O}(\log_B N + \nicefrac{K}{B} + \log_2 B)$ I/O's and supports inserts in $\mathcal{O}(\log_B N + (\log^2_B \nicefrac{N}{B})$ I/O's. The result is fairly involved and is unlikely to perform well in any practical manner. Please refer to Appendix~\ref{chp:kanellakis} for a presentation of the overall ideas of their solution.
+Kanellakis et al.~presents a linear space and partially dynamic solution in~\cite{Kanellakis1996589}. The data structure answers three-sided queries in $\mathcal{O}(\log_B N + \nicefrac{K}{B} + \log_2 B)$ I/O's and supports inserts in $\mathcal{O}(\log_B N + (\log^2_B \nicefrac{N}{B})$ I/O's. The result is fairly involved and is unlikely to perform well in any practical manner. Please refer to Appendix~\ref{chp:kanellakis} for a presentation of the overall ideas of their solution.
 
 Ramaswamy and Subramanian presents a suboptimal space data structure that answers three-sided queries with an optimal query bound in \cite{Ramaswamy:1994:PCT:182591.182595}. They use the same basic blocked B-Tree with pointers to full buckets of data points as introduced by Icking et al.~\cite{Icking1988} and illustrated in Figure~\ref{fig:icking_external_pst}. In addition they introduce the idea of \textit{path caching}. Please refer to Appendix~\ref{chp:ramaswamy} for a presentation of the main ideas of their solution.
 
 Ramaswamy and Subramanian continues their work and brings down the space usage in~\cite{Subramanian:1995:PTN:313651.313769}. This is done by building a search tree that divides the points into smaller regions and using a slightly modified caching scheme. Further details of the main ideas can be found in Appendix~\ref{sec:ramaswamy_better_space}.
 
-Arge et al. presented the first linear space dynamic data structure with optimal query bounds and suboptimal update bounds in~\cite{arge_samoladas_vitter_1999}. The data structure supports queries using $\mathcal{O}(\log_B N + \nicefrac{K}{B})$ I/O's and updates using $\mathcal{O}(\log_B N)$ I/O's. Please refer to Chapter~\ref{chp:arge_pst} for a detailed description of the solution.
+Arge et al.~presented the first linear space dynamic data structure with optimal query bounds and suboptimal update bounds in~\cite{arge_samoladas_vitter_1999}. The data structure supports queries using $\mathcal{O}(\log_B N + \nicefrac{K}{B})$ I/O's and updates using $\mathcal{O}(\log_B N)$ I/O's. Please refer to Chapter~\ref{chp:arge_pst} for a detailed description of the solution.
 
 Brodal~\cite{DBLP:journals/corr/Brodal15} introduced an amortized solution that improves the update bound of~\cite{arge_samoladas_vitter_1999} by a factor $\epsilon B^{1-\epsilon}$ by adding $\epsilon^{-1}$ to the query bound. This gives a data structure supporting updates in amortized $\mathcal{O}\left(\nicefrac{1}{\epsilon B^{1-\epsilon}} \log_B N\right)$ and three-sided range queries in amortized $\mathcal{O}\left(\nicefrac{1}{\epsilon}\log_B N + K/B\right)$ for $0 < \epsilon \leq 1$. The data structure adapts ideas of the Buffer Tree of Arge~\cite{Arge:1995:BTN:645930.672850} to the External Memory Priority Search Tree of Arge~\cite{arge_samoladas_vitter_1999}. The solution is presented in detail in Chapter~\ref{chp:epst}.
 
@@ -845,7 +843,7 @@ We have now showed that we are able to construct a dynamic data structure with t
 
 \section{Main structure}
 \label{sec:arge_structure}
-As mentioned earlier, the main structure is a weight-balanced B-Tree~\cite{arge_vitter_1996} on the normal lexicographical ordering of points with regards to $x$. Each internal node of the structure stores an instance of the bootstrapped structure described above for answering three-sided queries on $\Theta(B^2)$ points. Arge et al. denotes this structure the \textit{query data structure} as it allows for fast queries which will be explained later. Points are stored in the query data structure according to the following rules.
+As mentioned earlier, the main structure is a weight-balanced B-Tree~\cite{arge_vitter_1996} on the normal lexicographical ordering of points with regards to $x$. Each internal node of the structure stores an instance of the bootstrapped structure described above for answering three-sided queries on $\Theta(B^2)$ points. Arge et al.~denotes this structure the \textit{query data structure} as it allows for fast queries which will be explained later. Points are stored in the query data structure according to the following rules.
 \begin{itemize}
 	\item{An internal node stores at most $B^2$ points in the associated query data structure.}
 	\item{For a child $w$ of internal node $v$ the Y-set of $w$ denoted $Y(w)$ is the points of the query data structure of $v$ that is associated with the range that is associated with $w$. See Figure~\ref{fig:arge_child_strucutre}.}
@@ -1207,7 +1205,7 @@ All this adds up to $\mathcal{O}\left(\frac{N_{ins}+N_{del}}{B/\Delta} \frac{1}{
 \label{chp:other_structures}
 \section{R-Tree}
 
-The R-Tree was introduced by Antonin Guttman in~\cite{Guttman:1984:RDI:602259.602266}. The structure is heuristic in nature and does not provide any close to optimal worst case search bounds. Arge et al. has, however, provided strong evidence for R-Trees outperforming several theoretical optimal data structures in practice in~\cite{Arge:2008:PRP:1328911.1328920}. We will introduce the important ideas of the R-Tree.
+The R-Tree was introduced by Antonin Guttman in~\cite{Guttman:1984:RDI:602259.602266}. The structure is heuristic in nature and does not provide any close to optimal worst case search bounds. Arge et al.~has, however, provided strong evidence for R-Trees outperforming several theoretical optimal data structures in practice in~\cite{Arge:2008:PRP:1328911.1328920}. We will introduce the important ideas of the R-Tree.
 
 Let $P$ be a set of points. An R-Tree stores all points from $P$ in leaf nodes, each of which contains $\Theta(B)$ points. Each non-leaf node $u$ has $\Theta(B)$ children, except for the root which must have 2 children unless it is the only node in the tree. For each child $v$, $u$ stores a \textit{minimum bounding rectangle} (MBR), which is the smallest rectangle that \textit{tightly} encloses all the points in the subtree of $v$. Note that there is no constraint on how points should be grouped into leaf nodes. Also, there is no constraint on how non-leaf nodes should be grouped in higher level nodes. Since each point is stored only once, the entire data structure consumes linear space. Please refer to Figure~\ref{fig:r_tree_structure} for an illustration of an R-Tree structure.
 
@@ -1813,7 +1811,7 @@ The theoretical search complexity on each of the data structures are depicted in
 \label{fig:result_query_search_complexity}
 \end{figure}
 
-We see that both the Internal Memory Priority Search Tree and the Boost R-Tree suffers when they cannot fit into internal memory. We in the following argue our observations according to the zoomed-in plot depicted in Figure~\ref{fig:result_query_search_complexity_zoom}. It is difficult for us to argue that the libspatial R*-Tree follows our expectations of an average $\mathcal{O}(\log_B N)$ search time in the depicted results. We believe we would have had a better chance of explaining the tendencies on the R*-Tree had we been able to construct a data structure on a larger input size. This was not feasible within a reasonable amount of time. To our surprise we see that the structure of Arge et al. performs best of all the structures, but since we are unable to insert more than around 70Mb of data in the data structure within 24 hours, we must conclude the implementation to be of no practical use when querying large data sets. We see that the non-indexed MySQL implementation is linear in the input as expected. It is interesting to see that the data structure of Brodal performs very well even for a small fanout. The data structure aligns with the tendencies suggested by the theory except for minor fluctuations. These are, however, perfectly explained by the insert buffer overflow, node degree overflow, and point buffer underflow needed during fixup as shown in Figure~\ref{fig:result_query_search_fixup}.
+We see that both the Internal Memory Priority Search Tree and the Boost R-Tree suffers when they cannot fit into internal memory. We in the following argue our observations according to the zoomed-in plot depicted in Figure~\ref{fig:result_query_search_complexity_zoom}. It is difficult for us to argue that the libspatial R*-Tree follows our expectations of an average $\mathcal{O}(\log_B N)$ search time in the depicted results. We believe we would have had a better chance of explaining the tendencies on the R*-Tree had we been able to construct a data structure on a larger input size. This was not feasible within a reasonable amount of time. To our surprise we see that the structure of Arge et al.~performs best of all the structures, but since we are unable to insert more than around 70Mb of data in the data structure within 24 hours, we must conclude the implementation to be of no practical use when querying large data sets. We see that the non-indexed MySQL implementation is linear in the input as expected. It is interesting to see that the data structure of Brodal performs very well even for a small fanout. The data structure aligns with the tendencies suggested by the theory except for minor fluctuations. These are, however, perfectly explained by the insert buffer overflow, node degree overflow, and point buffer underflow needed during fixup as shown in Figure~\ref{fig:result_query_search_fixup}.
 
 We decided to run a separate experiment for various fanouts on Brodal's since the theory claims the data structure improves on ever increasing fanouts.
 Note that we ran this experiment on a different machine. This is not a problem since we are aiming at experimenting on the relative performance between different fanouts opposed to the relative performance between different data structures. The results of these experiments are depicted in Figure~\ref{fig:gerth_query_fanout_experiment}.
@@ -1864,7 +1862,7 @@ The last experiment therefore added an additional 2,100Mb data \textit{outside} 
 
 \clearpage
 
-\section{Focus on reporting}
+\subsection{Focus on reporting}
 
 \begin{wrapfigure}{r}{0.50\textwidth}
 \centering
@@ -1886,18 +1884,18 @@ $$f(K) = \frac{\frac{1}{\epsilon}\log_B N + \nicefrac{K}{B}}{\nicefrac{K}{B}} \a
 \clearpage
 
 \section{Construction}
-An interesting feature of the External Memory Buffered Priority Search Tree is that it supports construction in $\mathcal{O}(\text{Scan})$ on sorted input. We decided to compare this method on $N$ elements against the one-by-one insertion of $N$ elements. As we mention in Subsection~\ref{subsec:gerth_construction} we could use the linear construction method together with a sorting algorithm to global rebuild the structure. The purpose of this experiment is to get an indication of which method is best when it comes to global rebuilding.
+An interesting feature of the External Memory Buffered Priority Search Tree is that it supports construction in $\mathcal{O}(\text{Scan})$ on sorted input. We decided to compare this method on $N$ points against the one-by-one insertion of $N$ points. As we mention in Subsection~\ref{subsec:gerth_construction} we could use the linear construction method together with a sorting algorithm to global rebuild the structure. The purpose of this experiment is to get an indication of which method is best when it comes to global rebuilding.
 
 The experiment consists of constructing a data structure using the linear construction method and inserting one-by-one for increasing input sizes, $N$, and different fanouts to see whether this has an impact. We know from previous experiments that inserting becomes slower for larger fanouts but it is not clear what happens when we use the linear construction method.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{../src/experiments/linear_construction_experiment_results/combined_results/time_divided_N}
-\caption{Running time of the linear construction method for sorted input divided by the input size in Mb. The structure started to generate page faults on fanout 32.}
+\caption{Running time of the linear construction method for sorted input divided by the input size in megabytes. The structure started to generate page faults on fanout 32.}
 \label{fig:linear_construction_time_divided_N}
 \end{figure}
 
-Figure~\ref{fig:linear_construction_time_divided_N} depicts how the linear construction method performs for different fanouts. The running time is divided by the input size. Since the construction method is linear we are very pleased to see that the graphs are horizontal when divided by $N$. This suggests we can construct the structure in linear time on sorted input. We see the running time improves for larger fanouts. This is explained in the decreased number of nodes in the tree which implies a decreased number of point buffer underflows that needs to be handled. Figure~\ref{fig:linear_construction_pbu} supports this claim.
+Figure~\ref{fig:linear_construction_time_divided_N} depicts how the linear construction method performs for different fanouts. The running time is divided by the input size. Since the construction method is linear we are very pleased to see the graphs are horizontal when divided by $N$. This suggests we can construct the structure in linear time on sorted input. We see the running time improves for larger fanouts. This is explained in the decreased number of nodes in the tree which implies a decreased number of point buffer underflows that needs to be handled. Figure~\ref{fig:linear_construction_pbu} supports this claim.
 
 Since linear construction is faster than inserting one-by-one we can conclude that it is indeed beneficial to construct the structure using the linear construction method on sorted input data. In order to conclude that this method should be used for global rebuilding we have to argue about the time required to sort the data. From an earlier course we have experimentally found that we can indeed sort fast enough for the linear construction method to be viable. The results from this course are depicted in Figure~\ref{fig:linear_construction_sorting}. Based on these observations we feel confident to conclude that the linear construction method is superior when it comes to global rebuilding.
 
@@ -1917,19 +1915,18 @@ Our results show that the External Memory Buffered Priority Search Tree outperfo
 When we looked at deleting uniformly random data, MySQL without an index expectedly fell short, and as soon as the structures not optimized for external memory had to operate outside of internal memory we saw that the External Memory Buffered Priority Search Tree outperformed all other structures significantly.
 
 We experimented with querying in two different ways to encapsulate the fact that the asymptotic complexity depends on both search and reporting. We isolated the search part by fixing 5 query windows of different size with 5Mb data each and then inserted uniformly random data outside the windows. The results shows that the internal memory data structures once again perform very well while still contained in internal memory, but as soon as we outgrow internal memory the only real contestant to the External Memory Buffered Priority Search is MySQL with an index, which is once again outperformed for large enough input sizes.
+We isolated the reporting part of a query by reporting increasingly more data from a fixed query window. Our results were limited to the External Memory Buffered Priority Search Tree, and we showed that the structure follows the expected behaviour.
 
-\todo{conclude on focus on reporting part of experiments}
+Our experiments also showed that our implementation of the External Memory Priority Search Tree by Arge et al.~proved inferior in all aspects which we explain by the large number of I/O's and heavy internal work.
 
-Our experiments also showed that our implementation of the External Memory Priority Search Tree by Arge et al. proved inferior in all aspects which we explain by the large number of I/O's and heavy internal work.
+As an extra experiment we found that the linear construction method of the External Memory Buffered Priority Search Tree proved to be a superior global rebuilding method over the one-by-one reinsertion of all points in an initially empty tree.
 
 \section{Future work}
 The structure of Brodal described in Chapter~\ref{chp:epst} is able to report top-$k$ queries. A top-$k$ query reports the top $k$ points in the query range. The structure does this in $\mathcal{O}(\frac{1}{\epsilon}\log_B N + K/B)$, i.e. in the same bound as three-sided range queries, but here $K$ is the minimum of $k$ and the number of points in the query range. It would have been interesting to see how the structure performs these top-$k$ queries compared to other results.
 
 Many of the structures discussed in this thesis also describes a construction algorithm. In future work it could be interesting to see how the structures compare in terms of construction time.
 
-\todo{replace std::set}
-
-\todo{non uniform worst case reporting experiment}
+Also, it could be an interesting future work to optimize the space usage of the structures allowing for larger internal memory buffer sizes, and to see the effect of such optimizations on the running time.
 
 \clearpage
 \addcontentsline{toc}{chapter}{Bibliography}
@@ -1942,7 +1939,7 @@ Many of the structures discussed in this thesis also describes a construction al
 \chapter{Indexing for Data Models with Constraints and Classes}
 \label{chp:kanellakis}
 
-Kanellakis et al. presents a linear space and partially dynamic data structure in~\cite{Kanellakis1996589}. The data structure answers three-sided queries in $\mathcal{O}(\log_B N + \nicefrac{K}{B} + \log_2 B)$ I/O's and supports inserts in $\mathcal{O}(\log_B N + (\log^2_B \nicefrac{N}{B})$ I/O's. The result is fairly involved and is unlikely to perform well in any practical manner.
+Kanellakis et al.~presents a linear space and partially dynamic data structure in~\cite{Kanellakis1996589}. The data structure answers three-sided queries in $\mathcal{O}(\log_B N + \nicefrac{K}{B} + \log_2 B)$ I/O's and supports inserts in $\mathcal{O}(\log_B N + (\log^2_B \nicefrac{N}{B})$ I/O's. The result is fairly involved and is unlikely to perform well in any practical manner.
 
 We will omit the full details and only present the overall ideas. As a first step all points are shifted such that they lie above the line $y = x$. The basic building block of the data structure is the \textit{metablock tree}; a B-ary tree of \textit{metablocks}, each of which represents $B^2$ data points. The root represents the $B^2$ data points with the largest $y$-values. The remaining $N - B^2$ data points are divided into $B$ groups of $(N - B^2)/B$ data points each based on the $x$-coordinate. The first group contains the $(N - B^2)/B$ data points with the smallest $x$-values and so on. A recursive tree of the exact same type is constructed for each such group of data points. This process continues until a group has at most $B^2$ data points and can fit into a single metablock. Refer to Figure~\ref{fig:kanellakis_metablock_tree} for an illustration of a metablock tree.
 
