@@ -1890,7 +1890,7 @@ The experiment consists of constructing a tree using the linear construction met
 
 Figure~\ref{fig:linear_construction_time_divided_N} depicts how the linear construction method does for different fanouts. The running time is divided by the input size. Since the construction method is linear we are very pleased to see that the graphs are horizontal when divided by $N$. This would indeed corroborate that we can construct the structure in linear time on sorted input. We see that the running time improves for larger fanouts. This is explained in the decreased number of nodes in the tree which means that we see a decreased number of point buffer underflows. Figure~\ref{fig:linear_construction_pbu} supports this claim.
 
-We can conclude that it is indeed beneficial to construct the structure using the linear construction method when we have sorted input data. In order to conclude that this method should be used for global rebuilding we have to argue about the time it takes to sort the data of the tree such that the method can be used. From an earlier course we have experimentally found that we can indeed sort fast enough for the linear construction method to be viable. The results from this course are depicting in Figure~\ref{fig:linear_construction_sorting}. We conclude that the linear construction method is superior when it comes to global rebuilding.
+We can conclude from the fact that linear construction is faster than inserting that it is indeed beneficial to construct the structure using the linear construction method when we have sorted input data. In order to conclude that this method should be used for global rebuilding we have to argue about the time it takes to sort the data of the tree such that the method can be used. From an earlier course we have experimentally found that we can indeed sort fast enough for the linear construction method to be viable. The results from this course are depicting in Figure~\ref{fig:linear_construction_sorting}. We conclude that the linear construction method is superior when it comes to global rebuilding.
 
 \begin{savequote}[0.45\textwidth]
 ``To succeed, jump as quickly at opportunities as you do at conclusions.''
@@ -2012,14 +2012,14 @@ Ramaswamy and Subramanian brings down the space usage in~\cite{Subramanian:1995:
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{../src/experiments/linear_construction_experiment_results/combined_results/pbu}
-\caption{missing}
+\caption{The number of point buffer underflows for different fanouts when linear constructing. We see that the number of point buffer underflows decreases with increasing fanouts.}
 \label{fig:linear_construction_pbu}
 \end{figure}
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{../src/experiments/sort_experiment_results/time}
-\caption{The running time for different sorting algorithms. The External Heap sort by Fadel et al.~\cite{1_fadel_jakobsen_katajainen_teuhola_1999} both naive and with linear selection~\cite{2_blum_floyd_pratt_rivest_tarjan_1973}, The External Merge Sort as described in~\cite{Knuth:1997:ACP:270146}, Internal Quick Sort~\cite{qs}, and finally the Internal Heap Sort~\cite{Forsythe:1964:ALG:512274.512284}.}
+\caption{The running time for different sorting algorithms. The tested algorithms includes the External Heap sort by Fadel et al.~\cite{1_fadel_jakobsen_katajainen_teuhola_1999} both naive and with linear selection~\cite{2_blum_floyd_pratt_rivest_tarjan_1973}, The External Merge Sort as described by Knuth in~\cite{Knuth:1997:ACP:270146}, Internal Quick Sort by Hoare~\cite{qs}, and finally the Internal Heap Sort by Forsythe~\cite{Forsythe:1964:ALG:512274.512284}.}
 \label{fig:linear_construction_sorting}
 \end{figure}
 
