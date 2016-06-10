@@ -1845,7 +1845,7 @@ The second experiment on the \textbf{search} part of the algorithms was conducte
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.8\textwidth]{../figures/query_uniform_fix_x}
-	\caption{Distribution of points for the uniform reporting experiment (reporting). The points $x_1, x_2$ and $y_1, \cdots y_n$ are fixed. There is 1 Mb data in all ranges $[x_1, x_2] \times [y_i, y_{i+1}]$}.
+	\caption{Distribution of points for the uniform reporting experiment (searching). The points $x_1, x_2$ and $y_1, \cdots y_n$ are fixed. There is 1 Mb data in all ranges $[x_1, x_2] \times [y_i, y_{i+1}]$}.
 	\label{fig:experiment_query_uniform_fix_x}
 \end{figure}
 
@@ -1872,20 +1872,31 @@ The last experiment conducted was by adding an additional 2100Mb data \textit{ou
 
 \section{Focus on reporting}
 
-This experiment focuses on the \textbf{report} of the query algorithm. We limited the experiment to only include Brodal's since we had to construct the data structure on a large input size. The experiment reused the idea of distributing data inside fixed query windows. 
-
-\begin{figure}[h]
+\begin{wrapfigure}{O}{0.5\textwidth}
+\captionsetup{width=0.40\textwidth}
 	\centering
-	\includegraphics[width=0.8\textwidth]{../figures/query_uniform_fix_x_no_noise}
-	\caption{MISSING !!!!!!!!!!!!!!! Distribution of points for the uniform reporting experiment (reporting). The points $x_1, x_2$ and $y_1, \cdots y_n$ are fixed. There is 1 Mb data in all ranges $[x_1, x_2] \times [y_i, y_{i+1}]$}.
-	\label{fig:missing}
-\end{figure}
+		\includegraphics[width=0.4\textwidth]{../figures/query_uniform_fix_x_no_noise}
+	\caption{Distribution of points for the uniform reporting experiment (reporting). The points $x_1, x_2$ and $y_1, \cdots y_n$ are fixed. There is 100Mb data in all ranges $[x_1, x_2] \times [y_i, y_{i+1}]$}.
+	\label{fig:query_report_experimental_setup}
+\end{wrapfigure}
+
+This experiment focuses on the \textbf{report} of the query algorithm. We limited the experiment to only include Brodal's since we had to construct the data structure on a large input size. The experiment reused the idea of distributing data \textit{inside} fixed query windows. The main difference was that we distributed 100Mb uniformly random data \textit{inside} each query window and no data was added \textit{outside} the query windows. The idea is that we report in a $x$-range that spans all points and on increasing query-$y$ values such that the number of reported points, $K$, grows with 100Mb when reporting in the range $[x_1, x_2] \times [y_{i+1}, \infty]$ compared to reporting in the range $[x_1, x_2] \times [y_i, \infty]$. See Figure~\ref{fig:query_report_experimental_setup}.
+
+
+%\begin{figure}[h]
+%	\centering
+%	\includegraphics[width=0.8\textwidth]{../figures/query_uniform_fix_x_no_noise}
+%	\caption{Distribution of points for the uniform reporting experiment (reporting). The points $x_1, x_2$ and $y_1, \cdots y_n$ are fixed. There is 100Mb data in all ranges %$[x_1, x_2] \times [y_i, y_{i+1}]$}.
+%	\label{fig:query_report_experimental_setup}
+%\end{figure}
+
+The result of the experiment is depicted in Figure~\ref{fig:query_report_result}. Clearly we see a linear query time as a function of $K$ which is what we would expect.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{../src/experiments/query_experiment_report_50mb_results/2016-06-09.15_38_51/time}
-\caption{missing}
-\label{fig:missing}
+\caption{Experimentally measured running time when reporting increasing data on Brodal's of input size 1,200Mb.}
+\label{fig:query_report_result}
 \end{figure}
 
 \clearpage
