@@ -1569,32 +1569,32 @@ The results presented was, however, not generated from the machines presented in
 
 \subsubsection*{Summary}
 
-We conclude from our experiments with different fanouts and buffer sizes that in order to get as fast an update time as possible we need a fanout of between 2-6 and as large a buffer size as internal memory allows.
+We conclude from our above experiments with different fanouts and buffer sizes that in order to get as fast an update time as possible we need a fanout of between 2-6 and as large a buffer size as internal memory allows.
 
-It is also worth noting that since the experimental results are very much in line with the theoretical results it can be concluded that the data structure is I/O bound.
+It is worth noting that, since the experimental results are very much in line with the theoretical results, it can be concluded that the data structure is I/O bound.
 
-Going forward we will use a buffer size of 8Mb together with a fanout of 2. 
+Going forward we will use a buffer size of 8Mb together with a fanout~of~2. 
 
 \subsection{External Memory Priority Search Tree}
 \label{subsec:tuning_arge}
 
-The experiments on Arge's consisted of inserting 50 Mb of data, i.e. $50 \cdot 1024 \cdot 1024 / 8 = 6.25$ million datapoints. The coordinates of the data points was chosen uniformly random among the positive integers. 
+The experiment consisted of inserting 50 Mb of data, i.e. $50 \cdot 1024 \cdot 1024 / 8 \approx 6.55$ million data points. The coordinates of the data points was chosen uniformly distributed among the positive integers. 
 
-The results of the experiment measuring running time per update is depicted in Figure~\ref{fig:arge_buffer_size_experiment}. Clearly we are very far away from the expected update time per operation depicted in Figure~\ref{fig:arge_buffer_size_theory}. The main reason behind this is most likely that more data is needed in the structure for the theoretical $\mathcal{O}(\log_B N)$ I/O per update to be apparent. It would seem we are dominated by the fact we need to load and store $B$ data points on each node visited in order to handle an update. Since the experiments on Arge was very time consuming, we decided to elect the buffer size of 4 Kb as the winning buffer size. We will elaborate more on the main bottlenecks of Arge's structure in the insert experiment found in Section~\ref{sec:insertion}.
+The results of the experiment are depicted in Figure~\ref{fig:arge_buffer_size_experiment}. We are very far away from the expected update time per insert depicted in Figure~\ref{fig:arge_buffer_size_theory}. The main reason behind this is most likely that more data is needed in the structure for the theoretical $\mathcal{O}(\log_B N)$ I/O per update to be apparent. It would seem we are dominated by the fact we need to load and store $B$ data points on each node visited in order to handle an update. Since the experiment was very time consuming, we decided to elect a buffer size of 4Kb as the winning buffer size. We will elaborate more on the main bottlenecks of the structure in the insert experiment found in Section~\ref{sec:insertion}.
 
 \begin{figure}[h]
 \centering
 \begin{minipage}[t]{0.48\columnwidth}
   \centering
   \includegraphics[width=\linewidth]{../plots/arge_complexities/arge_complexity}
-  \caption{Theoretical asymptotic update time per operation for buffer sizes $B~\in~\{4\text{Kb},8\text{Kb},16\text{Kb},32\text{Kb}\}$ for Arge's structure. Each graph is on the form $f(N) = \log_B N$.}
+  \caption{Theoretical asymptotic update time per insert for buffer sizes $B~\in~\{4\text{Kb},8\text{Kb},16\text{Kb},32\text{Kb}\}$. Each graph is on the form $f(N) = \log_B N$.}
   \label{fig:arge_buffer_size_theory}
 \end{minipage}
 \hfill
 \begin{minipage}[t]{0.48\columnwidth}
   \centering
   \includegraphics[width=\linewidth]{../src/experiments/arge_buffer_size_experiment_results/2016-04-28.10_03_24/time}
-  \caption{Experimentally measured update time per operation for buffer sizes $B~\in~\{4\text{Kb},8\text{Kb},16\text{Kb},32\text{Kb}\}$. Note the relatively long running time needed for inserting 50 Mb data.}
+  \caption{Experimentally measured update time per insert for buffer sizes $B~\in~\{4\text{Kb},8\text{Kb},16\text{Kb},32\text{Kb}\}$. Note the relatively long running time needed for inserting 50 Mb data.}
   \label{fig:arge_buffer_size_experiment}
 \end{minipage}
 \end{figure}
@@ -1603,20 +1603,20 @@ The results of the experiment measuring running time per update is depicted in F
 
 \section{Insertion}
 \label{sec:insertion}
-The goal of this experiment is to ascertain how the different structures compare against each other when it comes to inserting points. The experiment consists of inserting as much data as possible within 24 hours. The data is uniformly distributed in the positive integer range.
+The goal of this experiment is to ascertain how the different structures compare when it comes to inserting points. The experiment consists of inserting as much data as possible within 24 hours. The data is uniformly distributed in the positive integer range.
 
-Figure~\ref{fig:theory_insert_complexity} shows the theoretical complexities of inserting an element into the different structures for different input sizes. We expect the data structures not optimized for external memory to align close to the theoretical bounds while they are completely contained in main memory. Only when the operating system is forced to swap data between internal and external memory, do we expect a significant decrease in performance. When the data structures are no longer able to fit into internal memory, and since they all rely on scattered data access, we expect an amount of page faults close to the theoretical asymptotic complexity. For the external memory data structures we expect the MySQL implementation without an index to outperform all of the other structures, since inserting essentially appends points to a single stream. We expect the effective buffering of points in the External Memory Buffered Priority Search Tree by Brodal to outperform the R-Tree variants and MySQL with an index on coordinates.
+Figure~\ref{fig:theory_insert_complexity} shows the theoretical complexities of inserting an element into the different structures for different input sizes. We expect the data structures not optimized for external memory to align close to the theoretical bounds while completely contained in main memory. Only when the operating system is forced to swap data between internal and external memory, do we expect a significant decrease in performance. When the data structures are no longer able to fit into internal memory, and since they all rely on scattered data access, we expect an amount of page faults close to the theoretical asymptotic complexity. For the external memory data structures we expect the MySQL implementation without an index to outperform all of the other structures, since inserting essentially just appends points to a single stream. We expect the effective buffering of points in the External Memory Buffered Priority Search Tree by Brodal to outperform the R-Tree variants and MySQL with an index on coordinates.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{../plots/insert_complexities/insert_complexity}
-\caption{Theoretical asymptotic insert time for all tested structures. Brodal is on the form $f(N) = \frac{1}{B^{1-\epsilon}} \log_B N$ for $\epsilon = \frac{\log(B)}{\log(2)}$. Arge and MySQL (with index) is on the form $f(N) = \log_B N$. The Internal Memory Priority Search Tree is on the form $f(N) = \log_2 N$. The MySQL (no index) is on the form $f(N) = 1$, and the Boost R-Tree and Libspatial R*-Tree are on the form $f(N) = N$.}
+\caption{Theoretical asymptotic insert time for all tested structures. Brodal's is on the form $f(N) = \frac{1}{B^{1-\epsilon}} \log_B N$ for $\epsilon = \frac{\log(B)}{\log(2)}$. Arge's and MySQL (with index) is on the form $f(N) = \log_B N$. The Internal Memory Priority Search Tree is on the form $f(N) = \log_2 N$. The MySQL (no index) is on the form $f(N) = 1$, and the Boost R-Tree and Libspatial R*-Tree are on the form $f(N) = N$.}
 \label{fig:theory_insert_complexity}
 \end{figure}
 
 Figure~\ref{fig:actual_insert_time} shows the actual running time per inserted megabyte in all of the tested structures. The figure is cropped at $N = 600$ to better present the relation between the internal memory and the external memory structures. MySQL without an index was able to insert more than 10Gb in less than 3 hours. We decided to stop the experiment prior to the time limit since there was no change in running time per inserted megabyte. The External Memory Buffered Priorty Search Tree by Brodal was able to insert around 3.5Gb worth of data within the time limit.
 
-The internal memory data structures performs very well while contained in memory. It can be seen in Figure~\ref{fig:insert_page_faults}, depicting the number of page faults generated by the internal data structures, that there is a close relation between the running time and the number of page faults. Clearly we see the running time increase significantly at the same input size as where the number of page faults increases.
+The internal memory data structures performs very well while contained in memory. It can be seen in Figure~\ref{fig:insert_page_faults} that there is a close relation between the running time and the number of page faults. We see the running time increase significantly at the same input size as where the number of page faults increases.
 
 \begin{figure}[t]
 \centering
@@ -1632,13 +1632,13 @@ The internal memory data structures performs very well while contained in memory
 \label{fig:insert_page_faults}
 \end{figure} 
 
-It is obvious that the data structure of Arge performs the worst of all the data structures when it comes to inserting data. We believe this is due to the huge amount of data we need to load and store for inserting just a single point. We will argue this in a more precise manner. It follows from the theory that a single insert requires $\mathcal{O}(\log_B N)$ I/O's. Each data point uses 8 bytes of space, 4 bytes of each coordinate. This means that in order to insert 50Mb data or equivalently 6,553,600 points in an initially empty structure with a buffer of size $4Kb$ we need roughly $$\sum\limits_{i=0}^{6,553,600} \log_{4096}(i) \approx 11.5 \cdot 10^6~\text{I/O's}$$
+It is obvious that the data structure of Arge performs the worst when it comes to inserting data. We believe this is due to the huge amount of data we need to load and store for inserting just a single point. We will in the following argue this in a more precise manner. It follows from the theory that a single insert requires $\mathcal{O}(\log_B N)$ I/O's. Each data point uses 8 bytes of space, 4 bytes of each coordinate. This means that in order to insert 50Mb data or equivalently 6,553,600 points in an initially empty structure with a buffer of size $4$Kb we need roughly $$\sum\limits_{i=0}^{6,553,600} \log_{4096}(i) \approx 11.5 \cdot 10^6~\text{I/O's}$$
 Comparing this against the structure of Brodal with the same buffer size and a fanout of size 2, we get that Brodal's requires roughly a factor $B$ less:
 $$\sum\limits_{i=0}^{6,553,600} \frac{1}{\epsilon \cdot 4096^{1-\epsilon}} \log_{4096}(i) \approx 67.8\cdot 10^3~\text{I/O's}$$
 
-The calculations shows that in order to insert 50Mb of data, we need to load/store $11.5 \cdot 10^6 \cdot 4096 = 47.1Gb$ in the case of Arge's, and $67.8\cdot 10^3 \cdot 4096 = 0.278Gb$ in the case of Brodal's. This gives a relatively difference of $\approx 170$ times fewer I/O's performed in Brodal's over Arge's.
+The calculations shows that in order to insert 50Mb of data, we need to load/store $11.5 \cdot 10^6 \cdot 4096 = 47.1$Gb in the case of Arge's, and $67.8\cdot 10^3 \cdot 4096 = 0.278$Gb in the case of Brodal's. This gives a relatively difference of around $170$ times fewer I/O's performed in Brodal's over Arge's.
 
-To collaborate these observations we conducted a single experiment measuring the I/O's used when inserting 50Mb of data. The results can be found in Figure~\ref{fig:arge_brodal_ios}. The results clearly shows that the amount of I/O's performed is substantially larger for Arge's than for Brodal's. In fact we can see that in order to insert 50Mb we must perform I/O's equal to moving around $1Tb$ of data in Arges' and around $13Gb$ of data in Brodal's. This is a relative difference of $\approx 81$ times fewer I/O's in Brodal's compared to that of Arge's. This result is close to what we would suspect from the theoretical reasoning above, however with a constant factor between theory and reality.
+To corroborate these observations we conducted a single experiment measuring the I/O's used when inserting 50Mb of data. The results can be found in Figure~\ref{fig:arge_brodal_ios}. The results shows that the amount of I/O's performed is substantially larger for Arge's than for Brodal's. In fact we can see that in order to insert 50Mb we must perform I/O's equal to moving around $1$Tb of data in Arges' and around $13$Gb of data in Brodal's. This is a relative difference of around $81$ times fewer I/O's in Brodal's compared to that of Arge's. This result is close to what we would suspect from the theoretical reasoning above, however with a constant factor between theory and reality.
 
 \begin{figure}[t]
 \centering
@@ -1652,21 +1652,21 @@ To collaborate these observations we conducted a single experiment measuring the
 \begin{minipage}{0.48\columnwidth}
   \centering
   \includegraphics[width=\linewidth]{../src/experiments/insert_experiment_results/2016-05-22.16_20_22/time_and_ios}%
-  \caption{Time and I/O's per insert divided by $\frac{1}{\epsilon B^{1-\epsilon}}\log_B(N)$ for the structure of Brodal.}
+  \caption{Time and I/O's per insert divided by $\frac{1}{\epsilon B^{1-\epsilon}}\log_B N$ for the structure of Brodal.}
   \label{fig:time_divided_with_asymptotic_brodal}
 \end{minipage}%
 \hfill
 \begin{minipage}{0.48\columnwidth}
   \centering
   \includegraphics[width=\linewidth]{../src/experiments/insert_experiment_results/2016-05-25.10_23_00/time_and_ios}%
-  \caption{Time and I/O's per insert divided by $\log_B(N)$ for the structure of Arge et al.}
+  \caption{Time and I/O's per insert divided by $\log_B N$ for the structure of Arge et al.}
   \label{fig:time_divided_with_asymptotic_arge}
 \end{minipage}
 
 \begin{minipage}{0.48\columnwidth}
   \centering
   \includegraphics[width=\linewidth]{../src/experiments/insert_experiment_results/2016-05-27.12_06_22/time_and_pfs}%
-  \caption{Time and page faults per insert divided by $\log_2(N)$ for the Internal Memory Priority Search Tree of McCreight.}
+  \caption{Time and page faults per insert divided by $\log_2 N$ for the Internal Memory Priority Search Tree of McCreight.}
   \label{fig:time_divided_with_asymptotic_internal}
 \end{minipage}%
 \hfill
@@ -1694,19 +1694,19 @@ To collaborate these observations we conducted a single experiment measuring the
 
 Figure~\ref{fig:time_divided_with_asymptotic_brodal}-\ref{fig:time_divided_with_asymptotic_libspatial} shows the time per insert divided by the theoretical asymptotic bound of each of the tested structures. For the external memory data structures we also display the number of I/O's per insert divided by the theoretical asymptotic bound and for the internal memory structures we include the page faults per insert divided by the theoretical asymptotic bound. 
 
-If the actual running time align with the theoretical bounds then we expect to see the graphs forms horizontal lines. The caveat is that the internal memory data structures will start to swap out data when they have no more free main memory to use, which again causes the running time to increase severely. If we see a spike in both running time and number of page faults at the same mark then we feel confident the two measures are closely related.
+If the actual running time align with the theoretical bounds then we expect to see the graphs form horizontal lines. The caveat is that the internal memory data structures will start to swap out data when they have no more free internal memory to use, which again causes the running time to increase severely. If we see a spike in both running time and number of page faults at the same mark then we feel confident the two measures are closely related.
 
-In Figure~\ref{fig:time_divided_with_asymptotic_brodal} we see that the time per insert in the structure of Brodal aligns with the theoretical bound. This can be seen by the flattening of the graph as the input size goes up, which again suggests that the structure becomes more and more I/O bound on increasing input size. Clearly the structure follows the same trend in terms of I/O's which further strengthens this hypothesis.
+In Figure~\ref{fig:time_divided_with_asymptotic_brodal} we see that the time per insert in the structure of Brodal aligns with the theoretical bound. This can be seen by the flattening of the graph as the input size goes up, which again suggests the structure becomes more and more I/O bound on increasing input size. Clearly the structure follows the same trend in terms of I/O's which further strengthens this hypothesis.
 
 In Figure~\ref{fig:time_divided_with_asymptotic_arge} we see that the time per insert and number of I/O's per insert follows the theoretical bound very well up to the $N = 28$ mark. We investigated this further and found this was the exact moment when the structure went from a B-Tree of height 2 to one of height 3. It would seem that adding a layer significantly increased the amount of I/O's. Further investigating the trends for I/O's we see the graph flattening again after the $N = 28$ mark, which provides evidence for the number of I/O's once again becomes a constant factor of the theoretical bounds. The same cannot be concluded for the actual running time. We would have expected a flattening along the same lines as for the number of I/O's but this is clearly not the case. Once again we conclude this is caused by the amount of data we need to load and store to handle just a single insert.
 
-Figure~\ref{fig:time_divided_with_asymptotic_internal} shows that the Internal Memory Priority Search Tree of McCreight performs exactly as expected as long as the structure is contained in main memory. At the exact moment the structure starts to swap out main memory we see a significant increase in running time just as expected.
+Figure~\ref{fig:time_divided_with_asymptotic_internal} shows that the Internal Memory Priority Search Tree of McCreight performs exactly as expected as long as the structure is contained in internal memory. At the exact moment the structure starts to swap out internal memory we see, just as expected, a significant increase in running time.
 
-It is almost the same situation for the results of the Boost R-Tree depicted in Figure~\ref{fig:time_divided_with_asymptotic_boost}. The insertion time in a R-Tree heavily depends on heuristics which explains the decreasing graph and far from worst case behaviour. Again we see the same behaviour as for the structure by McCreight when we run out of main memory -- the running time suffers tremendously.
+It is almost the same situation for the results of the Boost R-Tree depicted in Figure~\ref{fig:time_divided_with_asymptotic_boost}. The insertion time in a R-Tree heavily depends on heuristics which explains the decreasing graph and far from worst case behaviour. Again we see the same behaviour as for the structure by McCreight when we run out of internal memory -- the running time suffers tremendously.
 
 The results for the libspatial external R*-Tree depicted in Figure~\ref{fig:time_divided_with_asymptotic_libspatial} shows the running time follows the expected theoretical bounds very well. We would have liked to measure the number of I/O's for this structure but since it is a library implementation this was infeasible. We are pleased to see that the implementation does not generate any page faults. This is what we would expect from a sound external memory data structure.
 
-Figure~\ref{fig:time_divided_with_asymptotic_mysql} shows both the running time of MySQL with an index and without an index both divided by the asymptotic running time, which for the case of the indexed version is $\mathcal{O}(\log_B N)$ and the non-indexed version is $\mathcal{O}(1)$. The results shows that MySQL without an index follows the asymptotic running time very closely while the indexed version becomes steeper and steeper. Digging into the MySQL implementation of how indices and B-Tree's are handled we found that MySQL uses a Red-Black tree to store data in main memory and then bulk insert the sorted data into a B-Tree whenever the Red-Black tree overgrows main memory. We believe the increases in running time is caused by this bulk unloading into a B-Tree\footnote{\url{https://dev.mysql.com/doc/internals/en/bulk-insert.html}}. We deemed it out of scope for this thesis to look closer into the inner workings of the MySQL index structure.
+Figure~\ref{fig:time_divided_with_asymptotic_mysql} shows both the running time of MySQL with an index and without an index both divided by the asymptotic running time, which for the case of the indexed version is $\mathcal{O}(\log_B N)$ and the non-indexed version is $\mathcal{O}(1)$. The results shows that MySQL without an index follows the asymptotic running time very closely while the indexed version becomes steeper and steeper. Digging into the MySQL implementation of how indices and B-Tree's are used we found that MySQL uses a Red-Black tree to store data in internal memory and then bulk insert the sorted data into a B-Tree whenever the Red-Black tree overgrows main memory. We believe the increases in running time are caused by this bulk unloading into a B-Tree\footnote{\url{https://dev.mysql.com/doc/internals/en/bulk-insert.html}}. We deemed it out of scope for this thesis to look closer into the inner workings of the MySQL index structure.
 
 \clearpage
 
