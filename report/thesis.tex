@@ -1874,7 +1874,7 @@ The last experiment conducted was by adding an additional 2100Mb data \textit{ou
 
 \section{Focus on reporting}
 
-\begin{wrapfigure}{O}{0.5\textwidth}
+\begin{wrapfigure}{r}{0.45\textwidth}
 \captionsetup{width=0.40\textwidth}
 	\centering
 		\includegraphics[width=0.4\textwidth]{../figures/query_uniform_fix_x_no_noise}
@@ -1883,14 +1883,6 @@ The last experiment conducted was by adding an additional 2100Mb data \textit{ou
 \end{wrapfigure}
 
 This experiment focuses on the \textbf{report} of the query algorithm. We limited the experiment to only include Brodal's since we had to construct the data structure on a large input size. The experiment reused the idea of distributing data \textit{inside} fixed query windows. The main difference was that we distributed 100Mb uniformly random data \textit{inside} each query window and no data was added \textit{outside} the query windows. The idea is that we report in a $x$-range that spans all points and on increasing query-$y$ values such that the number of reported points, $K$, grows with 100Mb when reporting in the range $[x_1, x_2] \times [y_{i+1}, \infty]$ compared to reporting in the range $[x_1, x_2] \times [y_i, \infty]$. See Figure~\ref{fig:query_report_experimental_setup}.
-
-
-%\begin{figure}[h]
-%	\centering
-%	\includegraphics[width=0.8\textwidth]{../figures/query_uniform_fix_x_no_noise}
-%	\caption{Distribution of points for the uniform reporting experiment (reporting). The points $x_1, x_2$ and $y_1, \cdots y_n$ are fixed. There is 100Mb data in all ranges %$[x_1, x_2] \times [y_i, y_{i+1}]$}.
-%	\label{fig:query_report_experimental_setup}
-%\end{figure}
 
 The result of the experiment is depicted in Figure~\ref{fig:query_report_result}. Clearly we see a linear query time as a function of $K$ which is what we would expect.
 
@@ -1904,9 +1896,9 @@ The result of the experiment is depicted in Figure~\ref{fig:query_report_result}
 \clearpage
 
 \section{Construction}
-An interesting feature of the External Memory Buffered Priority Search Tree is the construction in $\mathcal{O}(\text{Scan})$ on sorted input. As a small extra experiment we decided to compare this linear construction method on $N$ elements to the insertion of $N$ elements. As we mention in Subsection~\ref{subsec:gerth_construction} we could use this linear construction method together with a $\mathcal{O}(\text{Sort})$ algorithm to global rebuild the structure. Our hopes for this experiment is to get an indication of which method is best in terms of global rebuilding.
+An interesting feature of the External Memory Buffered Priority Search Tree is that it supports construction in $\mathcal{O}(\text{Scan})$ on sorted input. We decided to compare this method on $N$ elements against the one-by-one insertion of $N$ elements. As we mention in Subsection~\ref{subsec:gerth_construction} we could use the linear construction method together with a sorting algorithm to global rebuild the structure. The purpose of this experiment is to get an indication of which method is best when it comes to global rebuilding.
 
-The experiment consists of constructing a tree using the linear construction method and inserting for increasing input sizes, $N$, and different fanouts to see whether this has an impact. We know from previous experiments that inserting becomes slower for larger fanouts but it is not clear what happens when we use the linear construction method.
+The experiment consists of constructing a data structure using the linear construction method and inserting one-by-one for increasing input sizes, $N$, and different fanouts to see whether this has an impact. We know from previous experiments that inserting becomes slower for larger fanouts but it is not clear what happens when we use the linear construction method.
 
 \begin{figure}[h]
 \centering
@@ -1915,9 +1907,9 @@ The experiment consists of constructing a tree using the linear construction met
 \label{fig:linear_construction_time_divided_N}
 \end{figure}
 
-Figure~\ref{fig:linear_construction_time_divided_N} depicts how the linear construction method does for different fanouts. The running time is divided by the input size. Since the construction method is linear we are very pleased to see that the graphs are horizontal when divided by $N$. This would indeed corroborate that we can construct the structure in linear time on sorted input. We see that the running time improves for larger fanouts. This is explained in the decreased number of nodes in the tree which means that we see a decreased number of point buffer underflows. Figure~\ref{fig:linear_construction_pbu} supports this claim.
+Figure~\ref{fig:linear_construction_time_divided_N} depicts how the linear construction method performs for different fanouts. The running time is divided by the input size. Since the construction method is linear we are very pleased to see that the graphs are horizontal when divided by $N$. This suggests we can construct the structure in linear time on sorted input. We see the running time improves for larger fanouts. This is explained in the decreased number of nodes in the tree which implies a decreased number of point buffer underflows that needs to be handled. Figure~\ref{fig:linear_construction_pbu} supports this claim.
 
-We can conclude from the fact that linear construction is faster than inserting that it is indeed beneficial to construct the structure using the linear construction method when we have sorted input data. In order to conclude that this method should be used for global rebuilding we have to argue about the time it takes to sort the data of the tree such that the method can be used. From an earlier course we have experimentally found that we can indeed sort fast enough for the linear construction method to be viable. The results from this course are depicting in Figure~\ref{fig:linear_construction_sorting}. We conclude that the linear construction method is superior when it comes to global rebuilding.
+Since linear construction is faster than inserting one-by-one we can conclude that it is indeed beneficial to construct the structure using the linear construction method on sorted input data. In order to conclude that this method should be used for global rebuilding we have to argue about the time required to sort the data. From an earlier course we have experimentally found that we can indeed sort fast enough for the linear construction method to be viable. The results from this course are depicting in Figure~\ref{fig:linear_construction_sorting}. Based on these observations we conclude that the linear construction method is superior when it comes to global rebuilding.
 
 \begin{savequote}[0.45\textwidth]
 ``To succeed, jump as quickly at opportunities as you do at conclusions.''
