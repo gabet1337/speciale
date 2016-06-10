@@ -55,5 +55,6 @@ The target are somewhat self explanatory
 - gerth_buffer_size_experiment
 - gerth_fanout_experiment
 - gerth_query_fanout_experiment
+- linear_construction
 - stream_input_speed_experiment
 - stream_output_speed_experiment

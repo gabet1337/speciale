@@ -38,7 +38,7 @@ next_6 = NaN
 plot 'delete_experiment_results/2016-05-27.10_10_14/gerth_Gerth' u (50-$1):(delta_1($2)) t 'Brodal' w lp ls 2 , \
      'delete_experiment_results/2016-05-27.10_10_14/internal_Internal' u (50-$1):(delta_2($2)) t 'Internal PST' w lp ls 5, \
      'delete_experiment_results/2016-05-27.10_10_14/rtree_Boost R-tree' u (50-$1):(delta_3($2)) t 'Boost R-tree' w lp ls 3, \
-     'delete_experiment_results/2016-05-27.10_10_14/spatial_libspatial' u (60-$1):(delta_4($2)) t 'Libspatial R*-Tree' w lp ls 6, \
+     'delete_experiment_results/2016-05-27.10_10_14/spatial_libspatial' u (50-$1):(delta_4($2)) t 'Libspatial R*-Tree' w lp ls 6, \
      'delete_experiment_results/2016-05-27.10_10_14/mysql_MySQL' u (50-$1):(delta_5($2)) t 'MySQL (no index)' w lp ls 4, \
     'delete_experiment_results/2016-05-27.10_10_14/mysql_MySQL_index' u (50-$1):($2) t 'MySQL (with index)' w lp ls 7
 
