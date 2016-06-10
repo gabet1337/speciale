@@ -1436,7 +1436,7 @@ Compiler & gcc 4.8.4 with optimization level 2
 \end{savequote}
 \chapter{Our results}
 \label{chp:experimental_results}
-The performance of the structures were evaluated and compared through meticulous experimentation. In this chapter we present and discuss the most interesting results. Some of the experiments are limited to only run for a fixed amount of time. This was a necessary restriction as the internal memory structures are severely limited when data input is greater than the available internal memory. This will be very apparent in many of the presented results.
+The performance of the structures were evaluated and compared through meticulous experimentation. In this chapter we present and discuss the most interesting results. Some of the experiments are limited to run only for a fixed amount of time. This was a necessary restriction as the internal memory structures are severely limited when data input is greater than the available internal memory. This will be very apparent in many of the presented results.
 
 \section{Parameter tuning}
 Both the original and buffered external memory Priority Search Tree by Arge et al.~(Chapter~\ref{chp:arge_pst}) and Brodal (Chapter~\ref{chp:epst}) respectively are parametrised with fanout and buffer size. These parameters are of a very machine dependent nature as larger main memory allows for larger buffer sizes. It is our goal to utilize as much main memory as available in the machine running the data structure. We decided to focus the parameter tuning sorely on the \texttt{insert} operation, since this would allow us to construct data structures with a large amount of data, which again would give rise to interesting experiments for the remaining operations. Put in other words; it is of no interest to achieve a data structure that queries \textit{really} fast if we are unable to construct it with a decent amount of data within a decent amount of time.
@@ -1445,7 +1445,7 @@ In Subsection~\ref{subsec:tuning_gerth} we present our tuning parameters for the
 
 \subsection{External Memory Buffered Priority Search Tree}
 \label{subsec:tuning_gerth}
-The experiments consisted of inserting 5 Gb of data, i.e. for a $8$ byte point $5 \cdot 1024 \cdot 1024 \cdot 1024 / 8 = 640$ million data points. The coordinates of the data points were chosen uniformly distributed among the positive integers. 
+The experiments consisted of inserting 5Gb of data, i.e. for a $8$ byte point $5 \cdot 1024 \cdot 1024 \cdot 1024 / 8 \approx 670$ million data points. The coordinates of the data points were chosen uniformly distributed among the positive integers. 
 
 \subsubsection*{Buffer size}
 
@@ -1821,7 +1821,7 @@ We see that both the Internal Memory Priority Search Tree and the Boost R-Tree s
 
 We decided to run a separate experiment for various fanouts on Brodals. We did as the theory claims that the data structure search ever faster on ever increasing fanouts.
 Note that we ran this experiment on a different machine. This is not a problem since we are aiming at experimenting on the relative performance between different fanouts opposed to the relative performance between different data structures. The results of these experiments are depicted in Figure~\ref{fig:gerth_query_fanout_experiment}.
-Clearly we see a tendency of faster searches on increasing fanouts. \todo{this is not true... Don't know what is though.}
+Clearly we see a tendency of faster searches on increasing fanouts going from fanout 2 to fanout 4, but on ever increasing fanouts it seems we are achieving ever worse performance.
 
 \begin{figure}[h]
 \centering
