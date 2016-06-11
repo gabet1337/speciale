@@ -1142,7 +1142,7 @@ After all points have been reported we might have some buffers that are temporar
 
 \subsubsection*{Analysis}
 
-Assume we during a query visit $V$ nodes not on the search paths for $x_1$ or $x_2$ and $\mathcal{O}(\frac{1}{\epsilon}\log_B N)$ nodes on the search paths. We know that the $V$ nodes must have at least $VB/2$ points in their point buffers before updates are pushed down. The number of deletions we push down to visited nodes can at most be $(V + \mathcal{O}(\frac{1}{\epsilon}\log_B N))B/4$. It now follows that the number of points we report, $K$, must be at least the number of points in the point buffers before pushing down minus the deletions we push down: $VB/2 - (V + \mathcal{O}(\frac{1}{\epsilon}\log_B N))B/4 = VB/4 - \mathcal{O}(\frac{B}{\epsilon}\log_B N) = K$. By isolating $V$ it follows that $V = \mathcal{O}(\frac{1}{\epsilon}\log_B N + K/B)$.
+During a query assume we visit $V$ nodes \textit{not on} the search paths for $x_1$ or $x_2$ and $\mathcal{O}(\frac{1}{\epsilon}\log_B N)$ nodes \textit{on} the search paths. We know that the $V$ nodes must have at least $VB/2$ points in their point buffers before updates are pushed down. The number of deletions we push down to visited nodes can at most be $(V + \mathcal{O}(\frac{1}{\epsilon}\log_B N))B/4$. It now follows that the number of points we report, $K$, must be at least the number of points in the point buffers before pushing down minus the deletions we push down: $VB/2 - (V + \mathcal{O}(\frac{1}{\epsilon}\log_B N))B/4 = VB/4 - \mathcal{O}(\frac{B}{\epsilon}\log_B N) = K$. By isolating $V$ it follows that $V = \mathcal{O}(\frac{1}{\epsilon}\log_B N + K/B)$.
 
 The worst case bound now becomes the sum of visiting the $V$ nodes, the nodes on the search paths for $x_1$ and $x_2$, and the output: $\mathcal{O}(V+\frac{1}{\epsilon}\log_B N + K/B) = \mathcal{O}(\frac{1}{\epsilon}\log_B N + K/B)$.
 On top of this comes the cost of pushing down update buffer elements and handling overflowing update buffers and overflowing point buffers.
@@ -1155,11 +1155,11 @@ This all adds up to a total amortized cost of $\mathcal{O}(\frac{1}{\epsilon} \l
 
 \subsection{Construction}
 \label{subsec:gerth_construction}
-The structure can be initialized with a set of $N$ points using $\mathcal{O}(\text{Sort}(N))$ I/O's. If the points are sorted on the $x$-coordinate we only need $\mathcal{O}(\text{Scan}(N))$. For the remainder of this section we assume that the points are initially sorted with regards to the $x$-coordinate.
+The structure can be initialized with a set of $N$ points using $\mathcal{O}(\text{Sort})$ I/O's. If the points are sorted on the $x$-coordinate we only need $\mathcal{O}(\text{Scan})$ I/O's. For the remainder of this section we assume that the points are initially sorted w.r.t.~to the $x$-coordinate.
 
 The first step of the construction is to construct a B-Tree over the $x$-values. We let each internal node have a degree of $\Delta/2$ and each leaf stores $B/2$ points, with the exception of the rightmost leaf which might contain less than $B/2$ points, and the rightmost internal nodes having a degree less than $\Delta/2$.
 
-The point buffers of the internal nodes are now filled bottom up pulling the top $B/2$ highest $y$-value points up. If this results in a child having an underflowing point buffer we recursively fill that child before proceeding. In a second iteration we do the same but in a top-down fashion.
+The point buffers of the internal nodes are now filled bottom up by pulling up the top $B/2$ highest $y$-value points. If this results in a child having an underflowing point buffer we recursively fill that child before proceeding. In a second iteration we do the same but in a top-down fashion.
 
 All insertion and deletion buffers are initially empty and the child structures are constructed from the point buffers of the children.
 
@@ -1168,13 +1168,13 @@ This construction algorithm could also have been used for global rebuilding givi
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{../figures/gerth_construction}
-	\caption{A B-Tree with each internal node having a degree of $\Delta/2$. Each leaf stores $B/2$ points with the possible exception of the rightmost. The bold points are the top $B/2$ points that is pulled up from the leafs into the layer above.}
+	\caption{A B-Tree with each internal node have a degree of $\Delta/2$. Each leaf stores $B/2$ points with the possible exception of the rightmost. The bold points are the top $B/2$ points that is pulled up from the leafs into the layer above.}
 	\label{fig:gerth_construction}
 \end{figure}
 
 \subsubsection*{Analysis}
 
-We know level $i$ of the tree contains at most $\frac{N}{B\Delta^i}$ nodes. It follows that the number of points stored at or above level $i$ is $\mathcal{O}\left(\sum_{j=i}^\infty B\frac{N}{B\Delta^j}\right) = \mathcal{O}\left(\frac{N}{\Delta^i}\right)$. It must follow that we cannot move $B/2$ points to level $i$ from $i-1$ more than $\mathcal{O}\left(\frac{N}{\Delta^i} / \frac{B}{2}\right)$ times. We know that we can move $B/2$ points using $\mathcal{O}(\Delta)$ I/O's and thus the total number of I/O's to fill the point buffers becomes:
+We know level $i$ of the tree contains at most $\frac{N}{B\Delta^i}$ nodes. It follows that the number of points stored at or above level $i$ is $\mathcal{O}\left(\sum_{j=i}^\infty B\frac{N}{B\Delta^j}\right) = \mathcal{O}\left(\frac{N}{\Delta^i}\right)$. It follows that we cannot move $B/2$ points to level $i$ from $i-1$ more than $\mathcal{O}\left(\frac{N}{\Delta^i} / \frac{B}{2}\right)$ times. We know that we can move $B/2$ points using $\mathcal{O}(\Delta)$ I/O's and thus the total number of I/O's to fill the point buffers becomes:
 $$\mathcal{O}\left(\sum\limits_{i=1}^\infty \Delta \frac{N}{B\Delta^i}\right) = \mathcal{O}\left(\frac{N}{B}\sum\limits_{i=1}^\infty \Delta \frac{1}{\Delta^i}\right) = \mathcal{O}\left(\frac{N}{B}\sum\limits_{i=0}^\infty \frac{1}{\Delta^i}\right) = \mathcal{O}\left(\frac{N}{B}\right)$$
 
 Another aspect we have to look at is what happens to the amortized analysis when we initialize our data structure using this construction method, i.e. we have to argue that the amortized cost of the remaining operations remain unchanged during the epoch started by the construction.
@@ -1182,7 +1182,7 @@ Another aspect we have to look at is what happens to the amortized analysis when
 In order to argue this we consider a sequence of operations containing $N_{ins}$ insertions and $N_{del}$ deletions and a newly constructed tree of $N$ points.
 
 Let us first consider the cost of creating new nodes in the tree. Each leaf has initially at most $B/2$ points and it follows that we can at most create $2N_{ins}/B$ new leafs. Each new leaf is created in $\mathcal{O}(1)$ I/O's and it thus cost at most $\mathcal{O}(N_{ins}/B)$ I/O's to create new leafs during $N_{ins}$ insertions.
-By a similar argument it follows that at most $\mathcal{O}\left(\frac{N_{ins}}{\Delta B}\right)$ new internal nodes can be created since each internal node initially has a degree of $\leq \Delta/2$. Each new internal node is created in $\mathcal{O}(\Delta)$ I/O's and it thus costs $\mathcal{O}(N_{ins}/B)$ I/O's to create new internal nodes without the cost of refilling point buffers which we will account for in the following.
+By a similar argument it follows that at most $\mathcal{O}\left(\frac{N_{ins}}{\Delta B}\right)$ new internal nodes can be created since each internal node initially has a degree of $\leq \Delta/2$. Each new internal node is created in $\mathcal{O}(\Delta)$ I/O's and it thus costs $\mathcal{O}(N_{ins}/B)$ I/O's to create new internal nodes without the cost of refilling point buffers. The refilling of point buffers we will be accounted for in the following.
 
 An insertion has to be moved at most from the top to the bottom of the tree before it is cancelled or moved into a point buffer. Since the height of the tree is $\mathcal{O}\left(\frac{1}{\epsilon} \log_B N\right)$ it follows that the cost of handling overflowing insertion buffers during the course of $N_{ins}$ insertions becomes $\mathcal{O}\left(\frac{N_{ins}}{B/\Delta}\frac{1}{\epsilon}\log_B N\right)$ I/O's.
 A similar argument can be given for the case of deletions.
