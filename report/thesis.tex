@@ -109,32 +109,28 @@
 \pagenumbering{roman}
 \addcontentsline{toc}{chapter}{Abstract}
 
-The world has become increasingly data driven and almost anything in our daily lives generate data. The generated data sets are typically larger than we can fit in a normal computer's main memory. We therefore need clever techniques to handle and analyse the large data sets in order to extrapolate information. Much of the data that is gathered is spatial in nature, i.e. contains e.g. GPS coordinates. Analysing coordinates require us to solve complicated problems within the field of computational geometry. One such problem is that of three-sided range reporting. In this problem we are asked to maintain a dynamic set, $\mathcal{S}$, of $N$ points in $\mathbb{R}^2$. The set can be updated by inserting or deleting points. Any solution to the problem must be able to answer three-sided range queries, i.e. given a range of the type $\left[x_1,x_2\right]\times \left[y,\infty\right]$ we report points in $\mathcal{S} \cap \left[x_1,x_2\right]\times \left[y,\infty\right]$.
+The world has become increasingly data driven and almost everything in our daily lives generate data. The generated data sets are typically larger than we can fit in a normal computer's internal memory. We therefore need clever techniques to handle and analyse the large data sets in order to extrapolate information. Much of the data that is gathered is spatial in nature, i.e. it contains e.g. GPS coordinates. Analysing coordinates require us to solve complicated problems within the field of computational geometry. One such problem is that of three-sided range reporting. In this problem we are asked to maintain a dynamic set, $\mathcal{S}$, of $N$ points in $\mathbb{R}^2$. The set can be updated by inserting or deleting points. Any solution to the problem must be able to answer three-sided range queries, i.e. given a range of the type $\left[x_1,x_2\right]\times \left[y,\infty\right]$ we report points in $\mathcal{S} \cap \left[x_1,x_2\right]\times \left[y,\infty\right]$.
 
-This thesis presents, implements, and experiments with several solutions to the problem of three-sided range reporting. The main focus will be to experimentally provide evidence that the three-side range reporting problem on huge data sets are best solved using data structures optimized for external memory.
+This thesis presents, implements, and experiments with several solutions to the problem of three-sided range reporting. The main focus will be to provide evidence to corroborate that the three-side range reporting problem on huge data sets is best solved using data structures optimized for external memory.
 
 We have implemented two external memory data structures that solves the problem: The External Memory Priority Search Tree by Arge et al.~\cite{arge_samoladas_vitter_1999} and the External Memory \textit{Buffered} Priority Search Tree by Brodal~\cite{DBLP:journals/corr/Brodal15}.
 
-Besides comparing these structures against each other we also compare them against our own implementation of the Priority Search Tree of McCreight~\cite{DBLP:journals/siamcomp/McCreight85}, and wrappers around MySQL, libspatialindex R*Tree, and Boost R-Tree.
+Besides comparing these structures we also compare them against our own implementation of the Priority Search Tree of McCreight~\cite{DBLP:journals/siamcomp/McCreight85}, and wrappers around MySQL, libspatialindex R*-Tree, and Boost R-Tree.
 
-Our results show that the External Memory Buffered Priority Search Tree outperforms all other structures as soon as data exceeds main memory capacity. MySQL without an index was significantly faster at inserting but as both the experiments with deletion and querying showed, the cost of not having an index on the table is too high. The Boost R-Tree proved to be the fastest of the internal memory data structures.
-
-\todo{conclude more?}
+Our results show that the External Memory Buffered Priority Search Tree outperforms all other structures as soon as data exceeds internal memory capacity. MySQL without an index was significantly faster at inserting but as both the experiments with deletion and querying showed, the cost of not having an index on the table is too high. The Boost R-Tree proved to be the fastest of the internal memory data structures.
 
 \chapter*{Resum\'e}
 \addcontentsline{toc}{chapter}{Resum\'e}
 
-Flere og flere hverdagsapparater bliver koblet p{\aa} internettet. Dette har til form{\aa}l at personligg{\o}re og for at bedre kunne m{\aa}lrette produkter til forbrugeren. Det skaber samtidig k{\ae}mpe m{\ae}ngder af data --- st{\o}rre m{\ae}ngder end en almindelig computer kan klare i dens interne hukommelse. Vi har derfor brug for teknikker og redskaber til at finde hoved og hale i alt det genereret data. Meget af det genererede data indeholder information omkring vores position i form af GPS koordinater. For at h{\aa}ndtere GPS koordinater skal man typisk l{\o}se komplicerede problemer indenfor algoritmisk geometri. Et s{\aa}dan problem kunne eksempelvis v{\ae}re det tre-sidede interval rapporterings problem. Dette problem g{\aa}r ud p{\aa} at vedligeholde en dynamisk m{\ae}ngde, $\mathcal{S}$, indeholdende $N$ punkter i $\mathbb{R}^2$. M{\ae}ngden kan modificeres ved at inds{\ae}tte eller slette punkter. En l{\o}sning p{\aa} dette problem skal v{\ae}re i stand til at svare p{\aa} foresp{\o}rgsler af typen $[x_1,x_2] \times [y,\infty]$, dvs. rapportere alle punkter i $\mathcal{S} \cap [x_1,x_2] \times [y,\infty]$.
+Flere og flere hverdagsapparater bliver koblet p{\aa} internettet. Dette har til form{\aa}l at personligg{\o}re og bedre kunne m{\aa}lrette produkter til forbrugeren. Det skaber samtidig k{\ae}mpe m{\ae}ngder data --- st{\o}rre m{\ae}ngder end en almindelig datamat kan h{\aa}ndtere i det interne hukommelseslager. Vi har derfor brug for teknikker og redskaber til at analysere det genererede data. Meget data indeholder information omkring vores position i form af GPS koordinater. For at h{\aa}ndtere GPS koordinater skal man typisk l{\o}se komplicerede problemer indenfor algoritmisk geometri. Et s{\aa}dan problem kunne eksempelvis v{\ae}re det tre-sidede interval rapporteringsproblem. Dette problem g{\aa}r ud p{\aa} at vedligeholde en dynamisk m{\ae}ngde, $\mathcal{S}$, indeholdende $N$ punkter i $\mathbb{R}^2$. M{\ae}ngden kan modificeres ved at inds{\ae}tte eller slette punkter. En l{\o}sning p{\aa} dette problem skal v{\ae}re i stand til at svare p{\aa} foresp{\o}rgsler af typen $[x_1,x_2] \times [y,\infty]$, dvs. rapportere alle punkter i $\mathcal{S} \cap [x_1,x_2] \times [y,\infty]$.
 
-Vi vil i dette speciale pr{\ae}sentere, implementere og eksperimentere med mange forskellige l{\o}sninger til dette problem. Hovedfokuset bliver at vise hvor stor forskel der er p{\aa} strukturer optimeret til at h{\aa}ndtere store data\-m{\ae}ngder og strukturer der er optimeret til at kunne v{\ae}re i intern hukommelse ved at sammenligne dem eksperimentielt.
+Vi vil i dette speciale pr{\ae}sentere, implementere og eksperimentere med mange forskellige l{\o}sninger til problemet. Hovedfokuset bliver at vise hvor stor forskel, der er p{\aa} strukturer optimeret til at h{\aa}ndtere store data\-m{\ae}ngder og strukturer der er optimeret til at kunne v{\ae}re i det interne hukommelseslager. Dette g{\o}res ved at sammenligne dem eksperimentielt.
 
-Vi har igennem specialet implementeret to strukturer optimeret til ekstern hukommelse: Det Eksterne Hukommelses Prioritets S{\o}ge Tr{\ae} af Arge et al.~\cite{arge_samoladas_vitter_1999} og det Eksterne Hukommelses \textit{Bufferet} Prioritets S{\o}ge Tr{\ae} af Brodal~\cite{DBLP:journals/corr/Brodal15}.
+Vi har igennem specialeforl{\o}bet implementeret to strukturer optimeret til det eksterne hukommelseslager: Prioritetss{\o}getr{\ae}et til det eksterne hukommelseslager af Arge et al.~\cite{arge_samoladas_vitter_1999} og det \textit{Bufferet} Prioritetss{\o}getr{\ae} til det eksterne hukommelseslager af Brodal~\cite{DBLP:journals/corr/Brodal15}.
 
-Vi har derudover implementeret et Internt Hukommelses Prioritets S{\o}ge Tr{\ae} af McCreight~\cite{DBLP:journals/siamcomp/McCreight85}, og lavet omslag til MySQL, libspatialindex R*Tr{\ae} og Boost R-Tr{\ae}.
+Vi har derudover implementeret et Prioritetss{\o}getr{\ae} til det interne hukommelseslager af McCreight~\cite{DBLP:journals/siamcomp/McCreight85}, og lavet omslag til MySQL, libspatialindex R*-Tr{\ae} og Boost R-Tr{\ae}.
 
-Resultater fra eksperimenter viser at det Eksterne Hukommelses Prioritets S{\o}ge Tr{\ae} sl{\aa}r alle de andre data strukturer s{\aa} snart de skal h{\aa}ndtere mere data end der er plads til i computerens interne hukommelse. MySQL uden et tilh{\o}rende indeks var den eneste struktur der kunne hamle op n{\aa}r det kommer til at inds{\ae}tte i strukturen. Denne struktur m{\aa}tte dog betale dyrt for de hurtige inds{\ae}ttelser i form af langsomme slettelser og foresp{\o}rgsler. Det var Boost R-Tr{\ae}et der viste sig at v{\ae}re den hurtigste af de interne hukommelses strukturer.
-
-\todo{conclude more?}
+Resultater fra eksperimenter viser at det \textit{Bufferet} Prioritetss{\o}getr{\ae} til det eksterne hukommelseslager pr{\ae}sterer bedre end de resterende data strukturer s{\aa} snart de skal h{\aa}ndtere mere data end der er plads til i datamatens interne hukommelseslager. MySQL uden et tilh{\o}rende indeks var den eneste struktur der kunne f{\o}lge med n{\aa}r det kommer til at inds{\ae}tte. Denne struktur m{\aa}tte dog betale dyrt for de hurtige inds{\ae}ttelser i form af langsomme slettelser og foresp{\o}rgsler. Det var Boost R-Tr{\ae}et der viste sig at v{\ae}re den hurtigste af strukturerne for det interne hukommelseslager.
 
 \tableofcontents
 
@@ -178,6 +174,7 @@ We have really enjoyed working on this thesis and we sincerely hope you enjoy re
 \tikzstyle{every path}=[draw]
 \matrix [column sep={1em,between origins},row sep=\lineskip]
 {
+\commit{aef45c4}{12.Jun}{Prepress version ready for print} & \\
 \commit{8611249}{10.Jun}{Linear construction experiment added} & \\
 \commit{45b7bbd}{08.Jun}{All Makefile targets are updated and README changed} & \\
 \commit{701f7a9}{07.Jun}{Query experiment results come in} & \\
@@ -246,6 +243,7 @@ We have really enjoyed working on this thesis and we sincerely hope you enjoy re
 \connect{52d4e39}{701f7a9};
 \connect{701f7a9}{45b7bbd};
 \connect{45b7bbd}{8611249};
+\connect{8611249}{aef45c4};
 \end{tikzpicture}
 \caption{Excerpt of the git history for the entire project. The figure is read bottom up.}
 \label{fig:git_history}
@@ -359,8 +357,8 @@ We conclude the thesis in Chapter~\ref{chp:conclusion} and present possible futu
 \end{savequote}
 \chapter{Model of computation}
 \label{chp:iomodel}
-We will argue the results of this thesis in terms of the external memory model of Aggarwal and Vitter~\cite{Aggarwal:1988/ICS/48529.48535}.
-The external memory model (or I/O model) measures the efficiency of an algorithm by counting the total number of reads and writes to and from disk. In detail the model consists of two levels of memory; a bounded internal memory of size $M$ and an unbounded external memory. For a total of $N$ records we define an I/O operation to be the process of transferring $B$ contiguous records between the two levels of memory as depicted in Figure~\ref{fig:io_model}. We restrict all computations on records to be done in internal memory. Throughout the thesis we will let $K$ denote the total number of records in the output.
+We will argue asymptotic complexities in this thesis using the external memory model of Aggarwal and Vitter~\cite{Aggarwal:1988/ICS/48529.48535}.
+The external memory model (or I/O Model) measures the efficiency of an algorithm by counting the total number of reads and writes to and from disk. In detail the model consists of two levels of memory; a bounded internal memory of size $M$ and an unbounded external memory. For a total of $N$ records we define an I/O operation to be the process of transferring $B$ contiguous records between the two levels of memory as depicted in Figure~\ref{fig:io_model}. We restrict all computations on records to internal memory. Throughout the thesis we will let $K$ denote the total number of records in the output.
 
 \begin{figure}[h]
 	\centering
@@ -369,7 +367,7 @@ The external memory model (or I/O model) measures the efficiency of an algorithm
 	\label{fig:io_model}
 \end{figure}
 
-The fundamental bounds in the external memory model is that scanning $N$ records can be done in $\mathcal{O}(\text{Scan}) = \mathcal{O}(\nicefrac{N}{B})$, sorting $N$ records in $\mathcal{O}(\text{Sort}) = \mathcal{O}\left(\frac{N}{B} \log_{\nicefrac{M}{B}}\frac{N}{B}\right)$, and searching for a single record between $N$ records in $\mathcal{O}(\log_B N)$. We denote $\mathcal{O}(\nicefrac{N}{B})$ as being linear in terms of I/O's. Note that the $B$ factor is very important since $\nicefrac{N}{B} < \mathcal{O}\left(\frac{N}{B} \log_{\nicefrac{M}{B}}\frac{N}{B}\right) \ll N$.
+The fundamental bounds in the I/O Model are that scanning $N$ records can be done in $\mathcal{O}(\text{Scan}) = \mathcal{O}(\nicefrac{N}{B})$, sorting $N$ records in $\mathcal{O}(\text{Sort}) = \mathcal{O}\left(\frac{N}{B} \log_{\nicefrac{M}{B}}\frac{N}{B}\right)$, and searching for a single record between $N$ records in $\mathcal{O}(\log_B N)$. We denote $\mathcal{O}(\nicefrac{N}{B})$ as being linear in terms of I/O's. Note that the $B$ factor is very important as $\nicefrac{N}{B} < \mathcal{O}\left(\frac{N}{B} \log_{\nicefrac{M}{B}}\frac{N}{B}\right) \ll N$.
 
 For convenience we will assume $M > B^2$. This assumption is known as the \textit{tall-cache assumption} in the cache-oblivious model and basically states that the number of blocks \nicefrac{M}{B} is larger than the size of each block $B$~\cite{Prokop99cache-obliviousalgorithms}.
 
@@ -466,6 +464,7 @@ Fusing two nodes require $\mathcal{O}(1)$ I/O's but a fuse can cascade from a le
 A B-Tree on $N$ elements are stored in $\mathcal{O}(\nicefrac{N}{B})$ blocks and can be constructed in the sorting bound by building the tree level-by-level bottom-up.
 
 \subsection{Weight-balanced B-Tree}
+\label{subsec:weight_b_tree}
 A weight balanced B-Tree and a regular B-Tree differ with regards to how and when splitting and fusing of nodes takes place. Constraints are imposed on the \textit{weight} of a node rather than the number of children. The weight of a node $v$ is the number of elements stored in the subtree rooted at $v$. Let $a$ be the branching parameter and $k$ the leaf parameter of the tree. An internal node on level $l$ has weight between $\frac{1}{2}a^lk$ and $2a^lk$ and has at least one child. Inserting in a weight balanced B-Tree is similar to a normal B-Tree and when a leaf splits it might cause the weight of the parent to become too large and recursively split on a path from a leaf to the root.
 
 The strength of the weight-balanced B-Tree is the crucial property described in the following lemma.
@@ -572,13 +571,13 @@ The study of adapting the Priority Search Tree to external memory was initiated 
 	\label{fig:icking_external_pst}
 \end{figure}
 
-Kanellakis et al. presents a linear space and partially dynamic solution in~\cite{Kanellakis1996589}. The data structure answers three-sided queries in $\mathcal{O}(\log_B N + \nicefrac{K}{B} + \log_2 B)$ I/O's and supports inserts in $\mathcal{O}(\log_B N + (\log^2_B \nicefrac{N}{B})$ I/O's. The result is fairly involved and is unlikely to perform well in any practical manner. Please refer to Appendix~\ref{chp:kanellakis} for a presentation of the overall ideas of their solution.
+Kanellakis et al.~presents a linear space and partially dynamic solution in~\cite{Kanellakis1996589}. The data structure answers three-sided queries in $\mathcal{O}(\log_B N + \nicefrac{K}{B} + \log_2 B)$ I/O's and supports inserts in $\mathcal{O}(\log_B N + (\log^2_B \nicefrac{N}{B})$ I/O's. The result is fairly involved and is unlikely to perform well in any practical manner. Please refer to Appendix~\ref{chp:kanellakis} for a presentation of the overall ideas of their solution.
 
 Ramaswamy and Subramanian presents a suboptimal space data structure that answers three-sided queries with an optimal query bound in \cite{Ramaswamy:1994:PCT:182591.182595}. They use the same basic blocked B-Tree with pointers to full buckets of data points as introduced by Icking et al.~\cite{Icking1988} and illustrated in Figure~\ref{fig:icking_external_pst}. In addition they introduce the idea of \textit{path caching}. Please refer to Appendix~\ref{chp:ramaswamy} for a presentation of the main ideas of their solution.
 
 Ramaswamy and Subramanian continues their work and brings down the space usage in~\cite{Subramanian:1995:PTN:313651.313769}. This is done by building a search tree that divides the points into smaller regions and using a slightly modified caching scheme. Further details of the main ideas can be found in Appendix~\ref{sec:ramaswamy_better_space}.
 
-Arge et al. presented the first linear space dynamic data structure with optimal query bounds and suboptimal update bounds in~\cite{arge_samoladas_vitter_1999}. The data structure supports queries using $\mathcal{O}(\log_B N + \nicefrac{K}{B})$ I/O's and updates using $\mathcal{O}(\log_B N)$ I/O's. Please refer to Chapter~\ref{chp:arge_pst} for a detailed description of the solution.
+Arge et al.~presented the first linear space dynamic data structure with optimal query bounds and suboptimal update bounds in~\cite{arge_samoladas_vitter_1999}. The data structure supports queries using $\mathcal{O}(\log_B N + \nicefrac{K}{B})$ I/O's and updates using $\mathcal{O}(\log_B N)$ I/O's. Please refer to Chapter~\ref{chp:arge_pst} for a detailed description of the solution.
 
 Brodal~\cite{DBLP:journals/corr/Brodal15} introduced an amortized solution that improves the update bound of~\cite{arge_samoladas_vitter_1999} by a factor $\epsilon B^{1-\epsilon}$ by adding $\epsilon^{-1}$ to the query bound. This gives a data structure supporting updates in amortized $\mathcal{O}\left(\nicefrac{1}{\epsilon B^{1-\epsilon}} \log_B N\right)$ and three-sided range queries in amortized $\mathcal{O}\left(\nicefrac{1}{\epsilon}\log_B N + K/B\right)$ for $0 < \epsilon \leq 1$. The data structure adapts ideas of the Buffer Tree of Arge~\cite{Arge:1995:BTN:645930.672850} to the External Memory Priority Search Tree of Arge~\cite{arge_samoladas_vitter_1999}. The solution is presented in detail in Chapter~\ref{chp:epst}.
 
@@ -782,24 +781,24 @@ The above bounds translate directly to the I/O model as we cannot guarantee that
 \end{savequote}
 \chapter{External Memory Priority Search Tree}
 \label{chp:arge_pst}
-In this chapter we present an older result on dynamic three-sided range queries due to Arge et al.~\cite{arge_samoladas_vitter_1999}.
-The result is a weight-balanced B-Tree where each node is augmented with a bootstrapped structure for storing the top $\Theta(B^2)$ points w.r.t. the $y$-value of the subtree rooted at that node. The bootstrapped structure is described in Section~\ref{sec:child_structure} and the main data structure of Arge et al.~that proves Theorem~\ref{thm:arge_structure} is described in Section~\ref{sec:arge_structure}.
+In this chapter we present a result on dynamic three-sided range reporting due to Arge et al.~\cite{arge_samoladas_vitter_1999}.
+The result is a weight-balanced B-Tree where each node is augmented with a bootstrapped structure for storing the top $\Theta(B^2)$ points w.r.t.~the $y$-value of the subtree rooted at that node. The bootstrapped structure is described in Section~\ref{sec:child_structure} and the main data structure of Arge et al.~that proves Theorem~\ref{thm:arge_structure} is described in Section~\ref{sec:arge_structure}.
 
 \begin{theorem}
 \label{thm:arge_structure}
-An external memory data structure exists supporting insertion and deletion in amortized $\mathcal{O}(\log_B N/B)$ I/O's and reporting of three sided range queries in $\mathcal{O}(\log_B N/B~+~K/B)$ I/O's, where $N$ is the input size, and $K$ is the size of the output. The structure uses $\mathcal{O}(N/B)$ space.
+An external memory data structure exists supporting insertion and deletion of points in amortized $\mathcal{O}(\log_B \nicefrac{N}{B})$ I/O's and reporting of three sided range queries in $\mathcal{O}(\log_B \nicefrac{N}{B}~+~\nicefrac{K}{B})$ I/O's, where $N$ is the input size and $K$ is the size of the output. The structure uses $\mathcal{O}(N/B)$ space.
 \end{theorem}
 
-\section{Dynamic 3-sided queries on \texorpdfstring{$\Theta(B^2)$}{tb2} points}
+\section{Dynamic 3-sided queries on \texorpdfstring{$\Theta\left(B^2\right)$}{tb2} points}
 \label{sec:child_structure}
 In this section we describe a data structure that supports the operations stated in Theorem~\ref{thm:child_structure}.
 \begin{theorem}
 \label{thm:child_structure}
 There exists a dynamic data structure for storing $\mathcal{O}(B^{1+\epsilon})$ two dimensional points for $0 \leq \epsilon \leq 1$.
-Insertion and deletion of $s$ points requires amortized $\mathcal{O}(1+\nicefrac{s}{B^{1-\epsilon}})$ I/O's.
-The data structure supports reporting all points inside a query range of the form $[x_1,x_2] \times [y,\infty]$ in $\mathcal{O}(1+\nicefrac{K}{B})$ I/O's.
+Insertion and deletion of $s$ points requires amortized $\mathcal{O}\left(1+\frac{s}{B^{1-\epsilon}}\right)$ I/O's.
+The data structure supports reporting of all points inside a query range of the form $[x_1,x_2] \times [y,\infty]$ in $\mathcal{O}(1+\nicefrac{K}{B})$ I/O's.
 The structure uses linear space.
-Finally the structure can be constructed using $\mathcal{O}(B^{1+\epsilon} / B)$ I/O's given a x-sorted set of $B^{1+\epsilon}$ points.
+Finally the structure can be constructed using $\mathcal{O}(B^{1+\epsilon} / B)$ I/O's given an x-sorted set of $B^{1+\epsilon}$ points.
 \end{theorem}
 
 The structure consists of a static structure $\mathcal{L}$ storing $\mathcal{O}(B^{1+\epsilon})$ points and two buffers $\mathcal{I}$ and $\mathcal{D}$ storing at most $B$ points each. The buffers $\mathcal{I}$ and $\mathcal{D}$ store delayed insertions and deletions, respectively, and are initially empty. A point can appear in either $\mathcal{I}$ or $\mathcal{D}$ but not both as updates from either cancel each other out.
@@ -813,15 +812,15 @@ Let $L$ be the points stored in $\mathcal{L}$ and let $\ell = \lceil \nicefrac{\
 	\label{fig:sweep-line}
 \end{figure}
 
-\textbf{To construct} blocks $b_{\ell+1},\dots,b_{2\ell}$ we make a vertical sweep over the points in increasing $y$-order. When the sweep line reaches a point in a block $b_i$ that together with an adjacent block, i.e. either $b_{i-1}$ or $b_{i+1}$, contains exactly $B$ points on or above the sweep line, we replace the two blocks by a single block containing the $B$ points on or above the sweep line.  The merged block is denoted $b_{i,j}$ if it contains points from the initial blocks in the range from, and including, $i$ to $j$. The two merged blocks are then excluded from the sweep and the newly created merged block is included in the continued sweep. Every merge of adjacent blocks causes the sweep line to intersect one block less resulting in at most $\ell-1$ blocks being created from the sweep.
+\textbf{To construct} blocks $b_{\ell+1},\dots,b_{2\ell}$ we make a vertical sweep over the points in increasing $y$-order. When the sweep line reaches a point in a block $b_i$ that together with an adjacent block, i.e.~either $b_{i-1}$ or $b_{i+1}$, contains exactly $B$ points on or above the sweep line, we replace the two blocks by a single block containing the $B$ points on or above the sweep line.  The merged block is denoted $b_{i,j}$ if it contains points from the initial blocks in the range from, and including, $i$ to $j$. The two merged blocks are then excluded from the sweep and the newly created merged block is included in the continued sweep. Every merge of adjacent blocks causes the sweep line to intersect one block less resulting in at most $\ell-1$ blocks created from the sweep.
 
 A catalogue structure stores in $\mathcal{O}(1)$ disk blocks a reference to each of the $2\ell-1$ blocks. For block $b_i$ we store the minimum and maximum $x$-values for the points contained in the block. For a merged block $b_{i,j}$ we store the interval $\left[ i,j\right]$ and the minimum $y$-value of the points in the block. Note, this minimum $y$-value is also the point where the sweep line created the block $b_{i,j}$.
 
 %%%%%%%%%%%%%
 % UPDATES %%%
 %%%%%%%%%%%%%
-\textbf{Insertions and deletions} are stored in $\mathcal{I}$ and $\mathcal{D}$ respectively. When a point is inserted in $\mathcal{I}$ or $\mathcal{D}$ we make sure to remove any existing occurrence of the point in $\mathcal{I}$ and $\mathcal{D}$ such that the new update overrides any previous updates. Whenever $\mathcal{I}$ or $\mathcal{D}$ overflows, i.e. $\vert \mathcal{I} \vert > B$ or $\vert \mathcal{D} \vert > B$, the stored updates are applied to the set of points in $\mathcal{L}$. This is done by scanning $L$ in increasing $x$-order while applying insertions and deletions, i.e. for each point in $L$ we check whether we should insert a new point from $\mathcal{I}$ before it or if the point should be deleted. This process results in a new set of points $L'$ which once again is partitioned into blocks $b_1,\dots,b_{\ell'}$ and a vertical sweep similar to the previously described sweep is performed to rebuild the merged blocks and catalogue structure.
-This reconstruction is done in $\mathcal{O}(\ell')$ I/O's. As $\ell' \leq \lceil \nicefrac{(\vert L \vert + 1)}{B}\rceil$ it requires $\mathcal{O}(\lceil \nicefrac{\vert L \vert}{B}\rceil) = \mathcal{O}(B^\epsilon)$ I/O's to rebuild $\mathcal{L}$. If we amortize this cost over the $>B$ updates that caused the overflow the cost becomes $\mathcal{O}\left(\nicefrac{B^\epsilon}{B}\right) = \mathcal{O}\left(\nicefrac{1}{B^{1-\epsilon}}\right)$ amortized I/O's per delayed update.
+\textbf{Insertions and deletions} are stored in $\mathcal{I}$ and $\mathcal{D}$ respectively. When a point is inserted in $\mathcal{I}$ or $\mathcal{D}$ we make sure to remove any existing occurrence of the point in $\mathcal{I}$ and $\mathcal{D}$ such that the new update override any previous updates. Whenever $\mathcal{I}$ or $\mathcal{D}$ overflows, i.e.~$\vert \mathcal{I} \vert > B$ or $\vert \mathcal{D} \vert > B$, the stored updates are applied to the set of points in $\mathcal{L}$. This is done by scanning $L$ in increasing $x$-order while applying insertions and deletions, i.e.~for each point in $L$ we check whether we should insert a new point from $\mathcal{I}$ before it or if the point should be deleted. This process results in a new set of points $L'$ which once again is partitioned into blocks $b_1,\dots,b_{\ell'}$ and a vertical sweep similar to the previously described is performed to rebuild the merged blocks and catalogue structure.
+This reconstruction is done in $\mathcal{O}(\ell')$ I/O's. Since $\ell' \leq \lceil \nicefrac{(\vert L \vert + 1)}{B}\rceil$ it requires $\mathcal{O}(\lceil \nicefrac{\vert L \vert}{B}\rceil) = \mathcal{O}(B^\epsilon)$ I/O's to rebuild $\mathcal{L}$. If we amortize this cost over the $>B$ updates that caused the overflow the cost becomes $\mathcal{O}\left(\nicefrac{B^\epsilon}{B}\right) = \mathcal{O}\left(\nicefrac{1}{B^{1-\epsilon}}\right)$ amortized I/O's per delayed update.
 
 %%%%%%%%%%%%%
 % QUERIES %%%
@@ -831,11 +830,11 @@ This reconstruction is done in $\mathcal{O}(\ell')$ I/O's. As $\ell' \leq \lceil
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=1]{../figures/sweep-line-with-query}
-	\caption{The grey area is our query and we should report the points within. This is done by finding the fat line segments which is the segments just below the sweep line at $y$. The segments can be found using the catalogue and the blocks can be scanned and relevant points can be reported in $\mathcal{O}(1+\nicefrac{K}{B})$.}
+	\caption{The gray area is our query and we should report the points within. This is done by finding the fat line segments which is the segments just below the sweep line at $y$. The segments can be found using the catalogue. Now the blocks can be scanned and relevant points can be reported in $\mathcal{O}(1+\nicefrac{K}{B})$.}
 	\label{fig:sweep-line-query}
 \end{figure}
 
-We know from construction that the blocks intersected contains $B$ points on or above the sweep line. The left most and right most of these blocks are not necessarily fully contained in the query range and do not necessarily contain any points to report. We know that blocks must contain at least $B\lfloor \nicefrac{(t-2)}{2}\rfloor$ points since two adjacent blocks in the query range at the sweep line would otherwise have been merged to a single block containing just $B$ points, i.e. if we force merge all adjacent blocks two and two we would end up with $\nicefrac{(t-2)}{2}$ blocks each with at least $B$ points on or above the sweep line. It follows that the output is at least $K \geq B\lfloor \nicefrac{(t-2)}{2}\rfloor$.
+We know from construction that the blocks intersected contains $B$ points on or above the sweep line. The left most and right most of these blocks are not necessarily fully contained in the query range and do not necessarily contain any points to report. We know that blocks must contain at least $B\lfloor \nicefrac{(t-2)}{2}\rfloor$ points since two adjacent blocks in the query range at the sweep line would otherwise have been merged to a single block containing just $B$ points, i.e.~if we force merge all adjacent blocks two and two we would end up with $\nicefrac{(t-2)}{2}$ blocks each with at least $B$ points on or above the sweep line. It follows that the output is at least $K \geq B\lfloor \nicefrac{(t-2)}{2}\rfloor$.
 
 The $t$ relevant blocks are scanned and the points contained in the query are reported. The total number of I/O's required becomes $\mathcal{O}(1+t) = \mathcal{O}(1+\nicefrac{K}{B})$ as $t \leq 2\frac{K}{B}-2$ from the previous observation.
 
@@ -845,10 +844,10 @@ We have now showed that we are able to construct a dynamic data structure with t
 
 \section{Main structure}
 \label{sec:arge_structure}
-As mentioned earlier, the main structure is a weight-balanced B-Tree~\cite{arge_vitter_1996} on the normal lexicographical ordering of points with regards to $x$. Each internal node of the structure stores an instance of the bootstrapped structure described above for answering three-sided queries on $\Theta(B^2)$ points. Arge et al. denotes this structure the \textit{query data structure} as it allows for fast queries which will be explained later. Points are stored in the query data structure according to the following rules.
+As mentioned earlier, the main structure is a weight-balanced B-Tree~\cite{arge_vitter_1996} on the normal lexicographical ordering of points w.r.t~the $x$-coordinate. Each internal node of the structure stores an instance of the bootstrapped structure described above for answering three-sided queries on $\Theta(B^2)$ points. Arge et al.~denotes this structure the \textit{query data structure} as it allows for fast queries which will be explained later. Points are stored in the query data structure according to the following rules.
 \begin{itemize}
 	\item{An internal node stores at most $B^2$ points in the associated query data structure.}
-	\item{For a child $w$ of internal node $v$ the Y-set of $w$ denoted $Y(w)$ is the points of the query data structure of $v$ that is associated with the range that is associated with $w$. See Figure~\ref{fig:arge_child_strucutre}.}
+	\item{For a child $w$ of internal node $v$ the $Y$-set of $w$ denoted $Y(w)$ is the points of the query data structure of $v$ that is associated with the range of $w$. See Figure~\ref{fig:arge_child_strucutre}.}
 	\item{An internal node stores at most $B$ points for each child of the node, i.e. for all children $w$ of an internal node $v$ we have that the size of $Y(w)$ is at most $B$.}
 	\item{A leaf stores at most $2k$ points in its query data structure where $k$ is the leaf parameter of the B-Tree.}
 	\item{If a node or leaf $v$ stores points in its query data structure then $Y(v)$ in $parent(v)$ must contain at least $B/2$ points.}
@@ -857,12 +856,12 @@ As mentioned earlier, the main structure is a weight-balanced B-Tree~\cite{arge_
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.65\textwidth]{../figures/arge_child_structure}
-	\caption{An internal node $v$ of the base tree. For each child $w$ of $v$, the Y-set $Y(w)$ consists of the $\Theta(B)$ highest points stored in the subtree of $v$ that are within the $x$-range of $w$. The Y-sets of the five children of $v$ are indicated by bold points. They are stored collectively in the query structure of $v$.}
+	\caption{An internal node $v$ of the base B-tree. For each child $w$ of $v$, the $Y$-set $Y(w)$ consists of the $\Theta(B)$ highest points stored in the subtree of $v$ that are within the $x$-range of $w$. The $Y$-sets of the five children of $v$ are indicated by bold points. They are stored collectively in the query structure of $v$.}
 	\label{fig:arge_child_strucutre}
 \end{figure}
 
 
-The base B-Tree uses linear space and since each point is stored only once in a query data structure that uses linear space, we can conclude that the structure stores $N$ points in $\mathcal{O}(N/B)$ blocks, i.e. uses linear space.
+The base B-Tree uses linear space and since each point is stored only once in a query data structure that also uses linear space, we can conclude that the structure stores $N$ points in $\mathcal{O}(N/B)$ blocks.
 
 \clearpage
 
@@ -872,7 +871,7 @@ The base B-Tree uses linear space and since each point is stored only once in a 
 
 \begin{figure}[b]
 	\centering
-     \includegraphics[width=\textwidth]{../figures/arge_split}
+     \includegraphics[width=0.90\textwidth]{../figures/arge_split}
      \caption{$v$ is split into $v'$ and $v''$. As a result $Y(v')$ and $Y(v'')$ may contain fewer than $B/2$ points.}
      \label{fig:arge_split_1}
 \end{figure}
@@ -890,22 +889,22 @@ As a result $Y(v')$ and $Y(v'')$ may contain fewer than $B/2$ points. This is re
 \end{wrapfigure}
 
 
-After inserting in the base tree and appropriate reorganization we need to insert the point in the correct query data structure. The search starts in the root. The child $w$ responsible for the $x$-range which the points belongs to is found and its Y-set is found by a degenerate query on the form  $\left[ x\text{-range of }w \right] \times \left[ - \infty, \infty \right]$ to the query data structure of the root. If the number of points is $\geq B/2$ and the point is below all of them the point is recursively inserted into the found child. Otherwise the point joins the query data structure of the root. If the $Y$-set of the found child is now too large we recursively insert the lowest of these points into the child's query data structure. If we reach a leaf we simply insert the point into the query data structure of the leaf. See Figure~\ref{fig:arge_bubble_down}.
+After inserting in the base tree and appropriate reorganization we need to insert the point in the correct query data structure. The search starts in the root. The child $w$ responsible for the $x$-range of the point is found and its $Y$-set is found by a degenerate query on the form  $\left[ x\text{-range of }w \right] \times \left[ - \infty, \infty \right]$ on the query data structure. If the number of points is $\geq B/2$ and the point is below all of them then the point is recursively inserted into the found child. Otherwise the point joins the query data structure of the root. If the $Y$-set of the found child is now too large we recursively insert the lowest of these points into the child's query data structure. If we reach a leaf we simply insert the point into the query data structure of that leaf. See Figure~\ref{fig:arge_bubble_down}.
 
 \begin{figure}[t]
 	\centering
 	\includegraphics[width=1\textwidth]{../figures/arge_bubble_down}
-	\caption{Bubble down. First a degenerate query on the form $\left[ x\text{-range of }w \right] \times \left[ - \infty, \infty \right]$ is done for the found child $w$ resulting in a set of points with size $K$ (a) If $K < B/2$ then we simply insert the point (here marked as a circle) (b) If $K \geq B/2$ and the point is \textit{larger} than the \textit{smallest} $y$-value then the point is inserted and the smallest $y$-value is recursively sent down (c) If $K \geq B/2$ and the point is \textit{smaller} than the \textit{smallest} $y$-value then the point itself is sent recursively down.}
+		\caption{Bubble down. First we compute the $Y$-set of the found child $w$ by a degenerate query on the form $\left[ x\text{-range of }w \right] \times \left[ - \infty, \infty \right]$ resulting in a set of points with size $K$ (a) If $K < B/2$ then we simply insert the point (here marked as a circle) (b) If $K \geq B/2$ and the point is \textit{larger} than the \textit{smallest} $y$-value then the point is inserted and the smallest $y$-value is recursively sent down (c) If $K \geq B/2$ and the point is \textit{smaller} than the \textit{smallest} $y$-value then the point itself is sent recursively down.}
 	\label{fig:arge_bubble_down}
 \end{figure}
 
 \subsection{Deletion}
-Rebalancing the tree after handling a delete is done by adopting global rebuilding instead of using fusion of nodes. To delete a point we search down in the base tree for the point and mark it as deleted without actually removing the point. The next step is to remove the point from the query data structure that it resides in. This is done similar to finding the query data structure to insert the point into. The $Y$-set is recursively found on the search path of the point and if the $Y$-set contains the point, then the point is removed. If the $Y$-set becomes too small as a result we perform a \textit{bubble-up} operation.
+Rebalancing the tree after handling a delete is done by global rebuilding instead of using fusion of nodes. To delete a point we search down in the base tree for the point and mark it as deleted without actually removing the point. The next step is to remove the point from the query data structure that it resides in. This is done similar to finding the query data structure to insert the point into. The $Y$-set is recursively found on the search path of the point and if the $Y$-set contains the point, then the point is removed. If the $Y$-set becomes too small as a result we perform a \textit{bubble-up} operation.
 
 \subsection{Analysis}
-Inserting in the base tree can be done in $\mathcal{O}(\log_B N)$ I/O's by Section~\ref{sec:prelim_b_tree} and can cause as many splits on the path from a leaf to the root. Each split might cause $B/2$ \textit{bubble-up} operations. Each \textit{bubble-up} at $v$ costs $\mathcal{O}(1)$ I/O's and might recurse all the way to a leaf for a total of $\mathcal{O}(\log_B weight(v))$ where $weight(v)$ is the size of the subtree rooted at $v$. In the worst case $B/2$ of these operations are performed totalling at $\mathcal{O}(B\log_B weight(v)) = \mathcal{O}(weight(v))$ I/O's.
+Inserting in the base tree can be done in $\mathcal{O}(\log_B N)$ I/O's by Section~\ref{sec:prelim_b_tree} and can cause as many splits on the path from a leaf to the root. Each split might cause $B/2$ \textit{bubble-up} operations. Each \textit{bubble-up} at $v$ costs $\mathcal{O}(1)$ I/O's and might recurse all the way to a leaf for a total of $\mathcal{O}(\log_B weight(v))$ where $weight(v)$ is the size of the subtree rooted at $v$. In the worst case $B/2$ of these operations are performed totalling $\mathcal{O}(B\log_B weight(v)) = \mathcal{O}(weight(v))$ I/O's.
 
-It follows from Lemma~\ref{lma:weight_balanced} that the cost of splitting a node can be amortized over the insertions and thus each of the $\mathcal{O}(\log_B N)$ splits cost $\mathcal{O}(1)$ I/O's amortized.
+It follows from Lemma~\ref{lma:weight_balanced} in Subsection~\ref{subsec:weight_b_tree} that the cost of splitting a node can be amortized over the insertions and thus each of the $\mathcal{O}(\log_B N)$ splits cost $\mathcal{O}(1)$ I/O's amortized.
 
 Deleting can be done in $\mathcal{O}(\log_B N)$ I/O's as it is just a search for the point in the base tree and query data structure.
 
@@ -918,7 +917,7 @@ We will only proceed to visit a child of $v$ if we report all points from the qu
 We report all points in $Q$, since, by the rules, a point in $Q$ cannot be in an unvisited subtree as this would have been visited if all points were reported and no points in the subtree has lower $y$-values.
 
 \subsection{Analysis}
-In every internal node $v$ visited we spend $\mathcal{O}(1+K_v/B)$ I/O's. There are $\mathcal{O}(\log_B N)$ nodes on the search path from root to the leftmost leaf and rightmost leaf and thus the number of I/O's used on these paths is $\mathcal{O}(\log_B N + K/B)$. All other internal nodes visited are visited because all points were reported in the parent. If we do not report all points from a $Y$-set we can charge the $\mathcal{O}(1)$ I/O's of visiting the child to the parent which must have reported $\Theta(B)$ points. As the cost of reporting from the query data structures is $\mathcal{O}(1+K/B)$ the total cost amounts to $\mathcal{O}(\log_B N + K/B)$.
+In every internal node $v$ visited we spend $\mathcal{O}(1+K_v/B)$ I/O's. There are $\mathcal{O}(\log_B N)$ nodes on the search path from root to the leftmost and rightmost leaf and thus the number of I/O's used on these paths is $\mathcal{O}(\log_B N + K/B)$. All other internal nodes visited are visited because all points were reported in the parent. If we do not report all points from a $Y$-set we can charge the $\mathcal{O}(1)$ I/O's of visiting the child to the parent which must have reported $\Theta(B)$ points. As the cost of reporting from the query data structures is $\mathcal{O}(1+K/B)$ the total cost amounts to $\mathcal{O}(\log_B N + K/B)$.
 
 
 \begin{savequote}[0.50\textwidth]
@@ -927,10 +926,10 @@ In every internal node $v$ visited we spend $\mathcal{O}(1+K_v/B)$ I/O's. There 
 \end{savequote}
 \chapter{External Memory Buffered Priority Search Tree}
 \label{chp:epst}
-In this chapter we present an external memory data structure described by Brodal~\cite{DBLP:journals/corr/Brodal15}. The structure supports updates in amortized $\mathcal{O}\left(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N\right)$ I/O's, three sided range queries in $\mathcal{O}\left(\frac{1}{\epsilon}\log_B N + \nicefrac{K}{B}\right)$ I/O's for $0 < \epsilon \leq 1$, and can be constructed on $N$ sorted points in $\mathcal{O}(\nicefrac{N}{B})$ I/O's. The parameter $\epsilon$ determines the size of the fanout and in turn the size of a bootstrapped substructure for storing $\mathcal{O}(B^{1+\epsilon})$ points.
-The substructure is very similar to that of Arge et al.~\cite[Section~3.1]{arge_vitter_2003} for handling $\Theta(B^2)$ points with the main difference being that we reduce the capacity to allow an amortized constant number of I/O's per update. The bootstrapped structure is in~\cite{arge_vitter_2003} used to store the top $\Theta(B^2)$ points w.r.t. the $y$ value for the subtree rooted at the given node of the substructure. This structure uses it in a slightly different way to store the top $\mathcal{O}(B^{1+\epsilon})$ points of the children of the given  node. The bootstrapped structure is described further in Section~\ref{sec:child_structure} and will be referred to as the \textit{child structure} in the rest of the chapter.
+In this chapter we present an external memory data structure introduced by Brodal~\cite{DBLP:journals/corr/Brodal15}. The structure supports updates in amortized $\mathcal{O}\left(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N\right)$ I/O's, three sided range queries in $\mathcal{O}\left(\frac{1}{\epsilon}\log_B N + \nicefrac{K}{B}\right)$ I/O's for $0 < \epsilon \leq 1$, and can be constructed on $N$ sorted points in $\mathcal{O}(\nicefrac{N}{B})$ I/O's. The parameter $\epsilon$ determines the size of the fanout and in turn the size of a bootstrapped substructure for storing $\mathcal{O}(B^{1+\epsilon})$ points in every internal node.
+The substructure is very similar to that of Arge et al.~\cite[Section~3.1]{arge_samoladas_vitter_1999} for handling $\Theta(B^2)$ points with the main difference being that we reduce the capacity to allow an amortized constant number of I/O's per update. The bootstrapped structure is in~\cite{arge_samoladas_vitter_1999} used to store the top $\Theta(B^2)$ points w.r.t. the $y$ value for the subtree rooted at the given node. This structure uses it in a slightly different way to store the top $\mathcal{O}(B^{1+\epsilon})$ points of the children of the given  node. The bootstrapped structure is described further in Section~\ref{sec:child_structure} and will be referred to as the \textit{child structure} in the rest of the chapter.
 
-The External Memory Buffered Priority Search Tree is a combination of the External Memory Priority Search Tree of Arge et al.~\cite{arge_samoladas_vitter_1999} described in Chapter~\ref{chp:arge_pst}, and the buffered updates of the Buffer Tree also thanks to Arge~\cite{Arge:1995:BTN:645930.672850} described in Section~\ref{sec:prelim_buffer_tree}. The main data structure is described in Section~\ref{sec:main_data_structure}.
+The External Memory Buffered Priority Search Tree is a combination of the External Memory Priority Search Tree of Arge et al.~\cite{arge_samoladas_vitter_1999} described in Chapter~\ref{chp:arge_pst}, and the buffered updates of the Buffer Tree described in Section~\ref{sec:prelim_buffer_tree} also thanks to Arge~\cite{Arge:1995:BTN:645930.672850}. The main data structure is described in Section~\ref{sec:main_data_structure}.
 
 \begin{figure}
 	\centering
@@ -947,41 +946,41 @@ The External Memory Buffered Priority Search Tree is a combination of the Extern
 
 \section{Main data structure}
 \label{sec:main_data_structure}
-This section presents the main data structure achieving the results of Theorem~\ref{thm:main_structure}.
+This section presents the main data structure achieving the results introduced in Theorem~\ref{thm:main_structure}.
 \begin{theorem}
 \label{thm:main_structure}
 An external memory data structure exists supporting insertion and deletion of points in amortized $\mathcal{O}(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N)$ I/O's and three sided range queries in amortized $\mathcal{O}(\frac{1}{\epsilon} \log_B N + \nicefrac{K}{B})$, where $\epsilon$ is a constant, $0 < \epsilon \leq 1$, $N$ is the number of points in the structure, and $K$ is the size of the output. The structure can be constructed in amortized $\mathcal{O}(\nicefrac{N}{B})$ I/O's on an x-sorted set of points and stored in $\mathcal{O}(\nicefrac{N}{B})$ blocks.
 \end{theorem}
 
-The structure is a slightly modified version of the B-Tree over the $x$-values of points. Each internal node, except for the root, has a node degree between $\Delta/2$ and $\Delta$, with $\Delta = \lceil B^\epsilon \rceil$. The root has node degree between $2$ and $\Delta$.
+The structure is a slightly modified version of the B-Tree over the $x$-values of the points in the tree. Each internal node, except for the root, has a degree between $\Delta/2$ and $\Delta$, with $\Delta = \lceil B^\epsilon \rceil$. The root has degree between $2$ and $\Delta$.
 
 Each node $v$ stores three buffers containing $\mathcal{O}(B)$ points each, namely a point buffer $P_v$, an insertion buffer $I_v$, and a deletion buffer $D_v$ which purpose will be described shortly.
 
-As in the Internal Memory Priority Search Tree of McCreight~\cite{DBLP:journals/siamcomp/McCreight85} described in Chapter~\ref{chp:internal_pst}, the points with highest $y$-value resides in the top of the tree, i.e. we have a heap ordering among the nodes of the tree on the $y$-value. This means that for a child $c$ of $v$, there is no elements in the point buffer $P_c$ of the child with larger $y$-value than the minimum $y$-value in the point buffer $P_v$ of $v$.
+As in the Internal Memory Priority Search Tree of McCreight~\cite{DBLP:journals/siamcomp/McCreight85} described in Chapter~\ref{chp:internal_pst}, the points with highest $y$-value resides in the top of the tree, i.e. we have a heap ordering among the nodes of the tree on the $y$-value. This means that for a child $c$ of $v$, there are no points in the point buffer $P_c$ of the child with larger $y$-value than any $y$-value in the point buffer $P_v$ of $v$.
 
 The buffers $I_v$ and $D_v$ stores delayed insertions and deletions on their way down to a point buffer of a descendant. Using the basic ideas of the Buffer Tree of Arge~\cite{Arge:1995:BTN:645930.672850} described in Section~\ref{sec:prelim_buffer_tree}, buffers are handled recursively whenever an invariant is broken. We will introduce the invariants in Section~\ref{subsec:brodal_invariants}.
 
 For each internal node $v$ we also store an instance of the child structure $C_v$ containing a copy of all points stored in the point buffers $P_c$ of every child $c$ of $v$. See Figure~\ref{fig:gerth_tree}.
 
-Finally, for each internal node, $v$, we store, in $\mathcal{O}(1)$ blocks, information about the minimum $y$-value of the points of each of $v$'s children. If a child is empty we will mark this by storing $\infty$ as the minimum $y$-value.
+Finally, for each internal node, $v$, we store, in $\mathcal{O}(1)$ blocks, information about the minimum $y$-value of the points in the point buffers of each of $v$'s children. If a child is empty we will mark this by storing $\infty$ as the minimum $y$-value.
 
 All information at the root is kept in internal memory except for the child structure.
 
 \subsection{Invariants}
 \label{subsec:brodal_invariants}
-For a node $v$ in the main data structure the following invariants must be true:
+For a node $v$ the following invariants must be true:
 \begin{itemize}
-	\item $P_v$, $I_v$, and $D_v$ are disjoint and points in the buffers have $x$-values spanned by the subtree at $v$.
+	\item $P_v$, $I_v$, and $D_v$ are disjoint and points in the buffers have $x$-values spanned by the subtree rooted at $v$.
 	\item All points in $I_v \cup D_v$ have $y$-value less than the points in $P_v$.
-	\item An update in a buffer at $v$ is more recent than updates in descendants of $v$ with equal points, and thus, should overwrite any updates in descendant of $v$ with equal points.
-	\item A leaf in the tree has empty insertion and deletion buffers and the size of its point buffer is less than $B/2$.
+	\item An update in a buffer at $v$ is more recent than updates in descendants of $v$, and thus, should overwrite any updates in descendant of $v$.
+	\item A leaf in the tree has empty insertion and deletion buffer and the size of its point buffer is less than $B/2$.
 	\item An internal node in the tree has $B/2 \leq \vert P_v \vert \leq B$, $\vert D_v \vert \leq B/4$, and $\vert I_v \vert \leq B$.
 \end{itemize}
 
 \subsection{Updates}
 \label{subsec:gerth_updates}
 We update the structure with insertions and deletions by adding points to the root's insertion or deletion buffer respectively, while maintaining the above invariants.
-During an update the insertion or deletion buffers might overflow, i.e get size larger than $B$ or $B/4$ respectively. This is handled in the following five steps:
+During an update the insertion or deletion buffer might overflow, i.e.get~larger than $B$ or $B/4$ respectively. This is handled in the following five steps:
 \begin{inlinelist}
 	\item handle overflowing deletion buffers
 	\item handle overflowing insertion buffers
@@ -993,72 +992,67 @@ During an update the insertion or deletion buffers might overflow, i.e get size 
 We will in the following look at each step individually and argue their complexity.
 
 \begin{enumerate}[label=(\roman*)]
-	\item\label{update:del} A deletion buffer at node $v$ overflows when $\vert D_v \vert > B/4$. Since the structure is a B-Tree on the lexicographically ordering of points, by the pigeon-hole principle, there must exist a child $c$ such that we can push $U \subseteq D_v$ of $\lceil \vert D_v \vert / \Delta \rceil$ deletions to $c$. This is illustrated in Figure~\ref{fig:pigeon_hole}. Points in $U$ are removed from $D_v$, $I_c$, $D_c$, $P_c$, and $C_v$. Any point $p$ in $U$ lexicographically larger than the minimum point in $P_c$ (w.r.t. $y$) is removed from $U$ as the deletion cannot cancel any updates further down in the tree. See Figure~\ref{fig:brodal_deletion_buffer_overflow}.
-	
-	\begin{figure}[htp!]
+	\item\label{update:del} A deletion buffer at node $v$ overflows when $\vert D_v \vert > B/4$. As the structure is a B-Tree on the lexicographically ordering of points, we must have by the pigeon-hole principle, that there exists a child $c$ such that we can push $\mathcal{U} \subseteq D_v$ of $\lceil \vert D_v \vert / \Delta \rceil$ deletions to $c$. This is illustrated in Figure~\ref{fig:pigeon_hole}. Points in $\mathcal{U}$ are removed from $D_v$, $I_c$, $D_c$, $P_c$, and $C_v$. Any point $p$ in $\mathcal{U}$ lexicographically larger than the minimum point in $P_c$ (w.r.t.~$y$) is removed from $\mathcal{U}$ as the deletion cannot cancel any updates further down in the tree. See Figure~\ref{fig:brodal_deletion_buffer_overflow}.
+	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.9\textwidth]{../figures/pigeon_hole2}
-		\caption{Pigeon hole principle. Each cross represents a deletion stored in the deletion buffer of $v$. Here $B' = \nicefrac{B}{4} = 16$ and $\epsilon = \nicefrac{1}{3}$. This gives $B^{\epsilon} = 4$. By the pigeon hole principle we must have that at least one of the x-ranges contains at least $\nicefrac{B'}{B^{\epsilon}}$ points that can be sent down to the child that is responsible. Here the child $c_3$ will receive a subset of the deletions.}
+		\caption{Pigeon hole principle. Each cross represents a deletion stored in the deletion buffer of $v$. Here $B' = \nicefrac{B}{4} = 16$ and $\epsilon = \nicefrac{1}{3}$. This gives $B^{\epsilon} = 4$. By the pigeon hole principle there must exist an $x$-range containing at least $\nicefrac{B'}{B^{\epsilon}}$ points that can be sent down to the child responsible for storing these points. Here the child $c_3$ will receive a subset of the deletions.}
 		\label{fig:pigeon_hole}
 	\end{figure}
 	
-\clearpage	
-
 	\begin{figure}[t]
 		\centering
 		\includegraphics[width=0.77\textwidth]{../figures/brodal_deletion_buffer_overflow}
-		\caption{Deletion buffer overflow. A total of $\lceil \lvert D_v \rvert /B^\epsilon \rceil$ deletions are moved from $D_v$ to $\mathcal{U}$. Deletions larger than the smallest $y$-value in $P_c$ are removed from $\mathcal{U}$ since they cannot cancel points further down because of the heap order of the tree. Finally all points in $\mathcal{U}$ are removed from $P_c$, $I_c$, $D_c$, and $C_v$ before $\mathcal{U}$ is inserted into $D_c$.}
+		\caption{Deletion buffer overflow. A total of $\lceil \lvert D_v \rvert /B^\epsilon \rceil$ deletions are moved from $D_v$ to $\mathcal{U}$. Deletions larger than the smallest $y$-value in $P_c$ are removed from $\mathcal{U}$ since they cannot cancel points further down due to the heap order of the tree. Finally all points in $\mathcal{U}$ are removed from $P_c$, $I_c$, $D_c$, and $C_v$ before $\mathcal{U}$ is inserted into $D_c$.}
 		\label{fig:brodal_deletion_buffer_overflow}
 	\end{figure}
 	
-	If $v$ is a leaf we do not need to do more. If not, the remaining points in $U$ are inserted in $D_c$ which might recursively overflow. In the worst case we might recursively overflow along a path from the root to a leaf each time causing $\mathcal{O}(\lceil B / \Delta \rceil)$ deletes to be pushed one level down. Updating $C_v$ with $\mathcal{O}(\lceil B / \Delta \rceil)$ updates takes amortized $\mathcal{O}(1+ (B/\Delta) / B^{1-\epsilon}) = \mathcal{O}(1)$ I/O's.
+	If $v$ is a leaf we are done. If not, the remaining points in $\mathcal{U}$ are inserted in $D_c$ which might recursively overflow. In the worst case we might recursively overflow along a path from the root to a leaf each time causing $\mathcal{O}(\lceil B / \Delta \rceil)$ deletes to be pushed one level down. Updating $C_v$ with $\mathcal{O}(\lceil B / \Delta \rceil)$ updates takes amortized $\mathcal{O}(1+ (B/\Delta) / B^{1-\epsilon}) = \mathcal{O}(1)$ I/O's.
 	
-	\item\label{update:ins} An insertion buffer at $v$ overflows when $\vert I_v \vert > B$. Similar to handling a deletion buffer overflow we find a child $c$ such that we can push $U \subseteq I_v$ of $\lceil \vert D_v \vert / \Delta \rceil$ insertions to $c$. Points in $U$ are removed from $I_v$, $I_c$, $D_c$, $P_c$, and $C_v$.
-	Any point $p$ in $U$ lexicographically larger than the minimum point in $P_c$ (w.r.t. $y$) is removed from $U$ and inserted into $P_c$ and $C_v$.
-	If $P_c$ overflows, the lexicographically smallest points w.r.t. $y$ are moved from $P_c$ to $U$ and removed from $C_v$ until $P_c$ no longer overflows.
-	If $c$ is a leaf then all points are inserted into $P_c$ and $U$ is now empty.
-	Otherwise, the remaining points in $U$ are added to $I_c$ which might overflow and cause a similar overflow along a path from the root to a leaf in the worst case as in the case of the deletion buffer overflow. See Figure~\ref{fig:brodal_insert_buffer_overflow}. The analysis and bounds follows directly from that of the deletion buffer overflow.
+	\item\label{update:ins} An insertion buffer at $v$ overflows when $\vert I_v \vert > B$. Similar to handling a deletion buffer overflow we find a child $c$ such that we can push $U \subseteq I_v$ of $\lceil \vert I_v \vert / \Delta \rceil$ insertions to $c$. Points in $\mathcal{U}$ are removed from $I_v$, $I_c$, $D_c$, $P_c$, and $C_v$.
+	Any point $p$ in $\mathcal{U}$ lexicographically larger than the minimum point in $P_c$ (w.r.t.~$y$) is removed from $\mathcal{U}$ and inserted into $P_c$ and $C_v$.
+	If $P_c$ overflows, the lexicographically smallest points w.r.t.~$y$ are moved from $P_c$ to $\mathcal{U}$ and removed from $C_v$ until $P_c$ no longer overflows.
+	If $c$ is a leaf then all points are inserted into $P_c$ and $\mathcal{U}$ is now empty.
+	Otherwise, the remaining points in $\mathcal{U}$ are added to $I_c$ which might overflow and cause a similar overflow along a path from the root to a leaf in the worst case as in the case of the deletion buffer overflow. See Figure~\ref{fig:brodal_insert_buffer_overflow}. The analysis and bounds are similar to the deletion buffer overflow.
 	
 	\begin{figure}[b]
 		\centering
 		\includegraphics[width=0.77\textwidth]{../figures/brodal_insert_buffer_overflow}
-		\caption{Insert buffer overflow. A total of $\lceil \lvert I_v \rvert /B^\epsilon \rceil$ points are moved from $I_v$ to $\mathcal{U}$. All points from $\mathcal{U}$ are removed from $D_c$ since they cancel the deletions. Points larger than the smallest $y$-value in $P_c$ are inserted into $P_c$ and points smaller than the smallest $y$-value in $P_c$ are inserted into $I_c$. This ensures the invariant that the tree is heap ordered. Finally the newly added points to $P_c$ are also inserted into $C_v$ to ensure that $C_v$ contains a copy of all points in $P_c$.}
+		\caption{Insert buffer overflow. A total of $\lceil \lvert I_v \rvert /B^\epsilon \rceil$ points are moved from $I_v$ to $\mathcal{U}$. All points from $\mathcal{U}$ are removed from $D_c$ since they cancel the deletions. Points larger than the smallest $y$-value in $P_c$ are inserted into $P_c$ and points smaller than the smallest $y$-value in $P_c$ are inserted into $I_c$. This ensures the tree is heap ordered. Finally the newly added points to $P_c$ are also inserted into $C_v$ to ensure that $C_v$ contains a copy of all points in $P_c$.}
 		\label{fig:brodal_insert_buffer_overflow}
 	\end{figure}		
 	
-	\item\label{update:pbo} A point buffer overflows at a leaf $v$ when $\vert P_v \vert > B/2$. If this is the case then we split the leaf into two nodes and evenly distribute the points in $P_v$ among the two new nodes $v'$ and $v''$ using $\mathcal{O}(1)$ I/O's. See Figure~\ref{fig:brodal_point_buffer_overflow}. The splitting of the node might cause the parent to get a degree of $\Delta+1$.
+	\item\label{update:pbo} A point buffer overflows at a leaf $v$ when $\vert P_v \vert > B/2$. If this is the case then we split the leaf into two and evenly distribute the points from $P_v$ among the two leafs $v'$ and $v''$ using $\mathcal{O}(1)$ I/O's. See Figure~\ref{fig:brodal_point_buffer_overflow}. The splitting of a leaf might cause the parent to get a degree of $\Delta+1$.
 	
 	\begin{figure}[h]
 		\centering
 		\includegraphics[width=1\textwidth]{../figures/brodal_point_buffer_overflow}
-		\caption{Point buffer overflow. The point buffer $P_v$ is evenly distributed between to new nodes $v'$ and $v''$. After the split we have to ensure the parent is not node degree overflowed.}
+		\caption{Point buffer overflow. The point buffer $P_v$ is evenly distributed between $v'$ and $v''$. After the split the parent might have too high degree.}
 		\label{fig:brodal_point_buffer_overflow}
 	\end{figure}	
 	
-	\item\label{update:deg} An internal node $v$ with a degree larger than $\Delta$ is split into two new nodes $v'$ and $v''$. $I_v$, $D_v$, and $P_v$ are distributed among $v'$ and $v''$ according to the $x$-value. Finally the child structures of $v'$ and $v''$ are rebuilt from the children's point buffers. See Figure~\ref{fig:brodal_node_degree_overflow}. The split might cause the parent of $v$ to have a degree overflow and in the worst case we need to split along a path from a leaf to the root. The splitting of a single node costs $\mathcal{O}(\Delta)$ I/O's due to the reconstruction of the child structures.
+	\item\label{update:deg} An internal node $v$ with a degree larger than $\Delta$ is split into two nodes $v'$ and $v''$. $I_v$, $D_v$, and $P_v$ are distributed among $v'$ and $v''$ according to the $x$-values of the points. Finally the child structures of $v'$ and $v''$ are rebuilt from the children's point buffers. See Figure~\ref{fig:brodal_node_degree_overflow}. The split might cause the parent of $v$ to have a degree overflow and in the worst case we need to split along a path from a leaf to the root. The splitting of a single node costs $\mathcal{O}(\Delta)$ I/O's due to the reconstruction of the child structures.
 	
 	
 	\begin{figure}[h]
 		\centering
 		\includegraphics[width=1\textwidth]{../figures/brodal_node_degree_overflow}
-		\caption{Node degree overflow. The buffers $I_v$, $D_v$, and $P_v$ are distributed to the new nodes $v'$ and $v''$. After the split we have to ensure the child structures contains a copy of all points from the point buffers of the children.}
+		\caption{Node degree overflow. The buffers $I_v$, $D_v$, and $P_v$ are distributed among nodes $v'$ and $v''$. After the split we have to ensure the child structures mirrors all points of the children's point buffer.}
 		\label{fig:brodal_node_degree_overflow}
 	\end{figure}		
 	
-	\item\label{update:pbu} A point buffer underflows at $v$ when $\vert P_v \vert < B/2$. In that case we try to \textit{pull up} the highest $B/2$ points from the children of $v$ into $P_v$. If $v$'s subtree does not store any points then we remove all points from $D_v$ and move points from $I_v$ to $P_v$ until $\vert P_v \vert = B$ or $I_v = \emptyset$.
+	\item\label{update:pbu} A point buffer underflows at $v$ when $\vert P_v \vert < B/2$. In that case we try to \textit{pull up} the highest $B/2$ points from the children of $v$ into $P_v$. If $v$'s subtree does not store any points then we remove all points from $D_v$ and move points from $I_v$ to $P_v$ until $\vert P_v \vert = B$ or $I_v = \varnothing$.
 	Otherwise we use $\mathcal{O}(\Delta)$ I/O's to identify the set $X$ of the top $B/2$ points from the children of $v$ and remove the identified points from the point buffers of the children and the child structure $C_v$ of $v$.
 
-	If a point buffer of a child becomes empty before having identified all of the top $B/2$ points we have to recursively fill that child as the subtree might contain points with larger $y$-value than the remaining children of $v$. After this is done we can continue to grab points from the children.
+	If a point buffer of a child becomes empty before having identified all of the top $B/2$ points we have to recursively fill that child before continuing as the subtree might contain points with larger $y$-value than points in the remaining children of $v$.
 	
 	All points in $X \cap D_v$ are then removed from $X$. This might cause $\lvert X \rvert < B/2 - \lvert P_v \rvert$ resulting in a repeated run of the procedure to guarantee $X$ contains enough points to ensure $P_v$ is no longer underflowed.
 	
 	The remaining points of $X$ are inserted into $P_v$ and the child structure of the parent of $v$. Please refer to Figure~\ref{fig:brodal_pb_underflow} for an illustration of the main ideas of the pull up procedure.
 	
-
+	The points of $X$ inserted into $P_v$ might have a smaller $y$-value than the points in $I_v$. We solve this problem by swapping the highest point in $I_v$ with the lowest point in $P_v$ while there exists a point in $I_v$ that is higher than a point in $P_v$, and make sure to maintain the child structure of the parent to reflect the changes made to the insert and point buffer.
 	
-	The points of $X$ now inserted into $P_v$ might have a smaller $y$ value than the points in $I_v$. We solve this problem by swapping the highest point in $I_v$ with the lowest point in $P_v$ while there exists a point in $I_v$ that is higher than a point in $P_v$, and make sure to maintain the child structure of the parent to reflect the changes made to the insert and point buffer.
-	
-	If the subtree of $v$ becomes empty as a result of pulling points up to $v$ we must remove all points of $D_v$ and move points from $I_v$ to $P_v$. This might cause $P_v$ to overflow which is handled recursively.
+	If the subtree of $v$ becomes empty as a result of pulling points up to $v$ we must remove all points of $D_v$ and move points from $I_v$ to $P_v$. This might cause $P_v$ to overflow.
 	
 	Finally, after having pulled points from the children, we check if any of the children's point buffers underflows and should be refilled.
 	
@@ -1074,13 +1068,13 @@ We will in the following look at each step individually and argue their complexi
 \clearpage
 
 \subsubsection*{Analysis}
-The tree stays balanced during insertions since we only increase in height whenever the root splits, which causes every path from root to leaf to increase by one. In the B-Tree we handle rebalancing using fusion of nodes. We do not apply this method here. Instead we apply global rebuilding when a linear number of updates have been performed. By~\ref{update:pbo} it follows that the total number of leafs created during $N$ insertions can be at most $\mathcal{O}(N/B)$ implying that at most $\mathcal{O}(\frac{N}{\Delta B})$ internal nodes can be created by splitting internal nodes. From this it follows that the tree has height $\mathcal{O}(\log_\Delta \frac{N}{B}) = \mathcal{O}(\frac{1}{\epsilon} \log_B N)$.
+The tree remains balanced during insertions as the tree only increase in height whenever the root splits, which causes every path from root to leaf to increase by one. In the B-Tree we handle rebalancing using fusion of nodes. We do not apply this method here. Instead we apply global rebuilding when a linear number of updates have been performed. By~\ref{update:pbo} it follows that the total number of leafs created during $N$ insertions can be at most $\mathcal{O}(N/B)$ implying that at most $\mathcal{O}(\frac{N}{\Delta B})$ internal nodes can be created by splitting internal nodes. From this it follows that the tree has height $\mathcal{O}(\log_\Delta \frac{N}{B}) = \mathcal{O}(\frac{1}{\epsilon} \log_B N)$.
 
 We can now argue that every update in~\ref{update:del} and~\ref{update:ins} requires amortized $\mathcal{O}(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N)$ I/O's. As every $\Theta (B/\Delta)$ update require $\mathcal{O}(1)$ I/O's on every layer of the tree we get the correct amortized bound:
 \begin{align*}
-\mathcal{O}\bigg(\frac{1}{B/\Delta} \log_\Delta \frac{N}{B}\bigg) &= \frac{B^\epsilon}{B} \log_{B^\epsilon} \frac{N}{B} \\
-&= \frac{B^\epsilon}{B} \frac{1}{\epsilon} \log_{B} N \\
-&= \frac{1}{\epsilon B^{1-\epsilon}} \log_B N
+\mathcal{O}\left(\frac{1}{B/\Delta} \log_\Delta \frac{N}{B}\right) &= \mathcal{O}\left(\frac{B^\epsilon}{B} \log_{B^\epsilon} \frac{N}{B}\right) \\
+&= \mathcal{O}\left(\frac{B^\epsilon}{B} \frac{1}{\epsilon} \log_{B} N\right) \\
+&= \mathcal{O}\left(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N\right)
 \end{align*}
 
 In~\ref{update:pbo}, we know that at most $\mathcal{O}(N/B)$ leafs are created each requiring $\mathcal{O}(1)$ I/O's giving amortized $\mathcal{O}(1/B)$ I/O's per update.
@@ -1091,24 +1085,22 @@ In~\ref{update:pbu} each refilling might trigger a cascaded recursive refilling 
 
 This argument ignores the fact that when pulling up points some points might swap positions from $I_v$ to $P_v$. This swap does not change the fact that the number of points we pull up remain the same and therefore it does not affect the amortized accounting.
 
-Another fact that we ignore is what happens if we are not able to pull up $B/2$ points from the children. This is solved by a simple amortization argument. We double charge the operation responsible for pushing points to a child. This way we can ensure each node with non-empty point buffers always has saved an I/O for being emptied by a recursive pull up.
+Another fact that we ignore is what happens if we are not able to pull up $B/2$ points from the children. This is solved by a simple amortization argument. We double charge the operation responsible for pushing points to a child. This way we can ensure each node with non-empty point buffers always has an I/O saved for being emptied by a recursive pull up.
 
 \subsection{Global rebuilding}
 Since we do not fuse nodes with too low node degree we might end up with an unbalanced tree. We use global rebuilding as described in Section~\ref{sec:prelim_global_rebuilding} to guarantee the tree never gets \textit{too} unbalanced which would disprove our amortized bounds. This is done by partitioning updates into epochs. After a rebuild a new epoch begins and if the data structure at this points stores $\bar{N}$ points, then the next epoch will begin after $\bar{N}/2$ updates, i.e. a global rebuild will be performed.
-Having a new epoch after every $\bar{N}/2$ updates ensures that the tree does not grow higher than $\mathcal{O}\left(\frac{1}{\epsilon}\log_B\frac{3\bar{N}}{2}\right) = \mathcal{O}\left(\frac{1}{\epsilon}\log_B N\right)$ as the size is $\frac{1}{2}\bar{N} \leq N \leq \frac{3}{2}\bar{N}$.
+Having a new epoch after every $\bar{N}/2$ updates ensures that the tree never grows higher than $\mathcal{O}\left(\frac{1}{\epsilon}\log_B\frac{3\bar{N}}{2}\right) = \mathcal{O}\left(\frac{1}{\epsilon}\log_B N\right)$ as the size of the tree is $\frac{1}{2}\bar{N} \leq N \leq \frac{3}{2}\bar{N}$.
 
 Global rebuilding works by constructing an empty structure and then reinserting all the points of the old structure that has not been deleted.
 
 The points to reinsert are found by doing a top-down traversal of the tree while flushing insertion and deletion buffers to children. The points to reinsert are then found in the point buffers after flushing. This might cause buffers to temporarily overflow but we will allow this as the old structure will be deleted.
 
-Once the set of points to reinsert have been found we simply insert the points on an initially empty tree.
+Once the set of points to reinsert have been found we simply insert the points in an initially empty tree.
 
 \subsubsection*{Analysis}
 
 Elements at level $i$ (leaf layer being level 0) can at most be flushed $i$ levels down.
-The structure holds at most $\frac{3\bar{N}}{2B}$ nodes in total and at level $i$ the structure has at most $\frac{3\bar{N}}{2B} \frac{1}{\Delta^i}$ nodes. The cost of flushing all the buffers at level $i$ becomes:
-
-$$ i \cdot \frac{3\bar{N}}{2B} \frac{1}{\Delta^i}$$
+The structure holds at most $\frac{3\bar{N}}{2B}$ nodes in total and at level $i$ the structure has at most $\frac{3\bar{N}}{2B} \frac{1}{\Delta^i}$ nodes. The cost of flushing all the buffers at level $i$ becomes $i \cdot \frac{3\bar{N}}{2B} \frac{1}{\Delta^i}$.
 
 By summing over all layers of the tree we get the total cost of flushing all buffers to be:
 \begin{align*}
@@ -1124,21 +1116,23 @@ This gives an amortized cost of $\mathcal{O}(1/B)$ per update to flush all buffe
 
 The $\mathcal{O}(\bar{N})$ reinsertions into the new, initially empty, tree can be done in amortized $\mathcal{O}(\frac{\bar{N}}{\epsilon B^{1-\epsilon}}\log_B\bar{N})$ I/O's which is paid for by the $\bar{N}/2$ updates during the epoch.
 
+\clearpage
+
 \subsection{Three sided range queries}
 \label{subsec:brodal_3_sided}
 Reporting a three-sided query $Q = \left[ x_1,x_2 \right] \times \left[y, \infty \right]$ consists of three steps. Namely, identifying the nodes to visit, push down delayed insertions and deletions between the identified nodes, and finally reporting the points contained in $Q$.
 
 We identify the nodes to visit in a breadth first manner.
-Starting from the root we identify, from the query's $x$-range, the children that are relevant to the query and push all insertions and deletions belonging to those children in the root to the identified children. This is done without handling possible overflows. After having done this we know that the point buffers of the children do not change further and we can thus report all points in the query range from the child structure and the point buffer of the root. The children worth visiting are then added to the back of the breadth first search queue. We can decide whether a child is worth visiting without reading the node by comparing $y$ with the minimum $y$-value of that child's point buffer. This follows from the heap-order of point buffers. If the query-$y$ lies above the minimum $y$-point of a child, then by the heap-order invariant, we know that no relevant points are to be found in the subtree rooted at that child. The minimum $y$-value for every child is stored in the parent.
-All nodes except for the root do not need to report from their point buffers as the parent of the node has already reported the relevant points from the child structure.
+Starting from the root we identify, from the query's $x$-range, the children that are relevant to the query and push all insertions and deletions belonging to those children. This is done without handling possible overflows. After this we know that the point buffers of the children do not change further and we can thus report all points in the query range from the child structure and the point buffer. The children worth visiting are then added to the back of the breadth first search queue. We can decide whether a child is worth visiting without reading the node by comparing the query-$y$ with the minimum $y$-value of that child's point buffer. This follows from the heap-order of point buffers. If the query-$y$ lies above the minimum $y$-point of a child, then by the heap-order invariant, we know that no relevant points are to be found in the subtree rooted at that child. The minimum $y$-value for every child is stored in the parent.
+All nodes, except for the root, do not need to report from their point buffers as the parent of the node has already reported the relevant points from the child structure.
 
-After all points have been reported we might have some buffers that have temporarily overflowed. This is now handled in a bottom up fashion using the update operations described in Subsection~\ref{subsec:gerth_updates}. We will handle a single subtree at a time and make sure that the entire subtree has no broken invariants, i.e. buffers that overflow or underflow or any nodes with a too high node degree. We do this by applying the update operations~\ref{update:del}-\ref{update:deg}\footnote{\begin{inlinelist}
+After all points have been reported we might have some buffers that are temporarily overflowed. This is now handled in a bottom up fashion using the update operations described in Subsection~\ref{subsec:gerth_updates}. We will handle a single subtree at a time and make sure that the entire subtree has no broken invariants, i.e.~buffers that overflow or underflow or any nodes with too high node degree. We do this by applying the update operations~\ref{update:del}-\ref{update:deg}\footnote{\begin{inlinelist}
 	\item handle overflowing deletion buffers
 	\item handle overflowing insertion buffers
 	\item split leafs with overflowing point buffers
 	\item split nodes of degree $\Delta+1$
 \end{inlinelist}
-} while we disallow any recursion leaving the subtree, i.e. no splits may recursively split nodes outside of the subtree. Only when the entire subtree has no overflows or underflows we can remedy a potential underflowed point buffer using update operation~\ref{update:pbu}\footnote{(v) fill underflowing point buffers}, and only then are we allowed to continue to the next subtree one level higher in the tree. See Figure~\ref{fig:gerth_fixup}. This way of handling the fixup procedure ensures we never get interleaving update operations interfering with each other.
+} while we disallow any recursion leaving the subtree, i.e. no splits may recursively split nodes outside of the subtree. Only when the entire subtree has no overflows or underflows can we remedy a potential underflowed point buffer using update operation~\ref{update:pbu}\footnote{(v) fill underflowing point buffers}, and only then are we allowed to continue to a subtree one level higher. See Figure~\ref{fig:gerth_fixup}. This way of handling the fixup procedure ensures we never get interleaving update operations interfering with each other.
 
 \begin{figure}
 \centering
@@ -1149,7 +1143,7 @@ After all points have been reported we might have some buffers that have tempora
 
 \subsubsection*{Analysis}
 
-Assume we during a query visit $V$ nodes not on the search paths for $x_1$ or $x_2$ and $\mathcal{O}(\frac{1}{\epsilon}\log_B N)$ nodes on the search paths. We know that the $V$ nodes must have at least $VB/2$ points in their point buffers before updates are pushed down. The number of deletions we push down to visited nodes can at most be $(V + \mathcal{O}(\frac{1}{\epsilon}\log_B N))B/4$. It now follows that the number of points we report, $K$, must be at least the number of points in the point buffers before pushing down minus the deletions we push down: $VB/2 - (V + \mathcal{O}(\frac{1}{\epsilon}\log_B N))B/4 = VB/4 - \mathcal{O}(\frac{B}{\epsilon}\log_B N) = K$. By isolating $V$ it follows that $V = \mathcal{O}(\frac{1}{\epsilon}\log_B N + K/B)$.
+During a query assume we visit $V$ nodes \textit{not on} the search paths for $x_1$ or $x_2$ and $\mathcal{O}(\frac{1}{\epsilon}\log_B N)$ nodes \textit{on} the search paths. We know that the $V$ nodes must have at least $VB/2$ points in their point buffers before updates are pushed down. The number of deletions we push down to visited nodes can at most be $(V + \mathcal{O}(\frac{1}{\epsilon}\log_B N))B/4$. It now follows that the number of points we report, $K$, must be at least the number of points in the point buffers before pushing down minus the deletions we push down: $VB/2 - (V + \mathcal{O}(\frac{1}{\epsilon}\log_B N))B/4 = VB/4 - \mathcal{O}(\frac{B}{\epsilon}\log_B N) = K$. By isolating $V$ it follows that $V = \mathcal{O}(\frac{1}{\epsilon}\log_B N + K/B)$.
 
 The worst case bound now becomes the sum of visiting the $V$ nodes, the nodes on the search paths for $x_1$ and $x_2$, and the output: $\mathcal{O}(V+\frac{1}{\epsilon}\log_B N + K/B) = \mathcal{O}(\frac{1}{\epsilon}\log_B N + K/B)$.
 On top of this comes the cost of pushing down update buffer elements and handling overflowing update buffers and overflowing point buffers.
@@ -1162,11 +1156,11 @@ This all adds up to a total amortized cost of $\mathcal{O}(\frac{1}{\epsilon} \l
 
 \subsection{Construction}
 \label{subsec:gerth_construction}
-The structure can be initialized with a set of $N$ points using $\mathcal{O}(\text{Sort}(N))$ I/O's. If the points are sorted on the $x$-coordinate we only need $\mathcal{O}(\text{Scan}(N))$. For the remainder of this section we assume that the points are initially sorted with regards to the $x$-coordinate.
+The structure can be initialized with a set of $N$ points using $\mathcal{O}(\text{Sort})$ I/O's. If the points are sorted on the $x$-coordinate we only need $\mathcal{O}(\text{Scan})$ I/O's. For the remainder of this section we assume that the points are initially sorted w.r.t.~to the $x$-coordinate.
 
 The first step of the construction is to construct a B-Tree over the $x$-values. We let each internal node have a degree of $\Delta/2$ and each leaf stores $B/2$ points, with the exception of the rightmost leaf which might contain less than $B/2$ points, and the rightmost internal nodes having a degree less than $\Delta/2$.
 
-The point buffers of the internal nodes are now filled bottom up pulling the top $B/2$ highest $y$-value points up. If this results in a child having an underflowing point buffer we recursively fill that child before proceeding. In a second iteration we do the same but in a top-down fashion.
+The point buffers of the internal nodes are now filled bottom up by pulling up the top $B/2$ highest $y$-value points. If this results in a child having an underflowing point buffer we recursively fill that child before proceeding. In a second iteration we do the same but in a top-down fashion.
 
 All insertion and deletion buffers are initially empty and the child structures are constructed from the point buffers of the children.
 
@@ -1175,13 +1169,13 @@ This construction algorithm could also have been used for global rebuilding givi
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{../figures/gerth_construction}
-	\caption{A B-Tree with each internal node having a degree of $\Delta/2$. Each leaf stores $B/2$ points with the possible exception of the rightmost. The bold points are the top $B/2$ points that is pulled up from the leafs into the layer above.}
+	\caption{A B-Tree with each internal node have a degree of $\Delta/2$. Each leaf stores $B/2$ points with the possible exception of the rightmost. The bold points are the top $B/2$ points that is pulled up from the leafs into the layer above.}
 	\label{fig:gerth_construction}
 \end{figure}
 
 \subsubsection*{Analysis}
 
-We know level $i$ of the tree contains at most $\frac{N}{B\Delta^i}$ nodes. It follows that the number of points stored at or above level $i$ is $\mathcal{O}\left(\sum_{j=i}^\infty B\frac{N}{B\Delta^j}\right) = \mathcal{O}\left(\frac{N}{\Delta^i}\right)$. It must follow that we cannot move $B/2$ points to level $i$ from $i-1$ more than $\mathcal{O}\left(\frac{N}{\Delta^i} / \frac{B}{2}\right)$ times. We know that we can move $B/2$ points using $\mathcal{O}(\Delta)$ I/O's and thus the total number of I/O's to fill the point buffers becomes:
+We know level $i$ of the tree contains at most $\frac{N}{B\Delta^i}$ nodes. It follows that the number of points stored at or above level $i$ is $\mathcal{O}\left(\sum_{j=i}^\infty B\frac{N}{B\Delta^j}\right) = \mathcal{O}\left(\frac{N}{\Delta^i}\right)$. It follows that we cannot move $B/2$ points to level $i$ from $i-1$ more than $\mathcal{O}\left(\frac{N}{\Delta^i} / \frac{B}{2}\right)$ times. We know that we can move $B/2$ points using $\mathcal{O}(\Delta)$ I/O's and thus the total number of I/O's to fill the point buffers becomes:
 $$\mathcal{O}\left(\sum\limits_{i=1}^\infty \Delta \frac{N}{B\Delta^i}\right) = \mathcal{O}\left(\frac{N}{B}\sum\limits_{i=1}^\infty \Delta \frac{1}{\Delta^i}\right) = \mathcal{O}\left(\frac{N}{B}\sum\limits_{i=0}^\infty \frac{1}{\Delta^i}\right) = \mathcal{O}\left(\frac{N}{B}\right)$$
 
 Another aspect we have to look at is what happens to the amortized analysis when we initialize our data structure using this construction method, i.e. we have to argue that the amortized cost of the remaining operations remain unchanged during the epoch started by the construction.
@@ -1189,7 +1183,7 @@ Another aspect we have to look at is what happens to the amortized analysis when
 In order to argue this we consider a sequence of operations containing $N_{ins}$ insertions and $N_{del}$ deletions and a newly constructed tree of $N$ points.
 
 Let us first consider the cost of creating new nodes in the tree. Each leaf has initially at most $B/2$ points and it follows that we can at most create $2N_{ins}/B$ new leafs. Each new leaf is created in $\mathcal{O}(1)$ I/O's and it thus cost at most $\mathcal{O}(N_{ins}/B)$ I/O's to create new leafs during $N_{ins}$ insertions.
-By a similar argument it follows that at most $\mathcal{O}\left(\frac{N_{ins}}{\Delta B}\right)$ new internal nodes can be created since each internal node initially has a degree of $\leq \Delta/2$. Each new internal node is created in $\mathcal{O}(\Delta)$ I/O's and it thus costs $\mathcal{O}(N_{ins}/B)$ I/O's to create new internal nodes without the cost of refilling point buffers which we will account for in the following.
+By a similar argument it follows that at most $\mathcal{O}\left(\frac{N_{ins}}{\Delta B}\right)$ new internal nodes can be created since each internal node initially has a degree of $\leq \Delta/2$. Each new internal node is created in $\mathcal{O}(\Delta)$ I/O's and it thus costs $\mathcal{O}(N_{ins}/B)$ I/O's to create new internal nodes without the cost of refilling point buffers. The refilling of point buffers we will be accounted for in the following.
 
 An insertion has to be moved at most from the top to the bottom of the tree before it is cancelled or moved into a point buffer. Since the height of the tree is $\mathcal{O}\left(\frac{1}{\epsilon} \log_B N\right)$ it follows that the cost of handling overflowing insertion buffers during the course of $N_{ins}$ insertions becomes $\mathcal{O}\left(\frac{N_{ins}}{B/\Delta}\frac{1}{\epsilon}\log_B N\right)$ I/O's.
 A similar argument can be given for the case of deletions.
@@ -1207,9 +1201,9 @@ All this adds up to $\mathcal{O}\left(\frac{N_{ins}+N_{del}}{B/\Delta} \frac{1}{
 \label{chp:other_structures}
 \section{R-Tree}
 
-The R-Tree was introduced by Antonin Guttman in~\cite{Guttman:1984:RDI:602259.602266}. The structure is heuristic in nature and does not provide any close to optimal worst case search bounds. Arge et al. has, however, provided strong evidence for R-Trees outperforming several theoretical optimal data structures in practice in~\cite{Arge:2008:PRP:1328911.1328920}. We will introduce the important ideas of the R-Tree.
+The R-Tree was introduced by Antonin Guttman in~\cite{Guttman:1984:RDI:602259.602266}. The structure is heuristic in nature and does not provide any close to optimal worst case search bounds. Arge et al.~has, however, provided strong evidence for R-Trees outperforming several theoretical optimal data structures in practice \cite{Arge:2008:PRP:1328911.1328920}. We will introduce the important ideas of the R-Tree.
 
-Let $P$ be a set of points. An R-Tree stores all points from $P$ in leaf nodes, each of which contains $\Theta(B)$ points. Each non-leaf node $u$ has $\Theta(B)$ children, except for the root which must have 2 children unless it is the only node in the tree. For each child $v$, $u$ stores a \textit{minimum bounding rectangle} (MBR), which is the smallest rectangle that \textit{tightly} encloses all the points in the subtree of $v$. Note that there is no constraint on how points should be grouped into leaf nodes. Also, there is no constraint on how non-leaf nodes should be grouped in higher level nodes. Since each point is stored only once, the entire data structure consumes linear space. Please refer to Figure~\ref{fig:r_tree_structure} for an illustration of a R-Tree structure.
+Let $P$ be a set of points. An R-Tree stores all points from $P$ in leaf nodes, each of which contains $\Theta(B)$ points. Each non-leaf node $u$ has $\Theta(B)$ children, except for the root which must have 2 children unless it is the only node in the tree. For each child $c$, $u$ stores a \textit{minimum bounding rectangle} (MBR), which is the smallest rectangle that \textit{tightly} encloses all the points in the subtree of $c$. Note that there is no constraint on how points should be grouped into leaf nodes. Also, there is no constraint on how non-leaf nodes should be grouped in higher level nodes. Since each point is stored only once, the entire data structure consumes linear space. Please refer to Figure~\ref{fig:r_tree_structure} for an illustration of an R-Tree structure.
 
 \begin{figure}[h]
 	\centering
@@ -1219,30 +1213,30 @@ Let $P$ be a set of points. An R-Tree stores all points from $P$ in leaf nodes, 
 \end{figure}
 
 \subsection{Query}
-Given a query $Q = \left[x_1,x_2\right] \times \left[y_1,\infty\right]$ we want to find all the points in $P$ that are covered by $Q$. The relation to the R-Tree is that we only need to visit those nodes whose MBRs intersect $Q$. Intuitively, this means we desire as \textit{small} MBRs as possible, as this directly implies that a query spans fewer MBRs, again implying fewer nodes are visited. A good heuristic is therefore to minimize the perimeter of each MBR as this directly implies MBRs that covers smaller areas.
+Given a query $Q = \left[x_1,x_2\right] \times \left[y_1,\infty\right]$ we want to find all the points in $P$ covered by $Q$. The relation to the R-Tree is that we only need to visit those nodes whose MBRs intersect $Q$. Intuitively, this means we desire as \textit{small} MBRs as possible, as this directly implies that a query spans fewer MBRs, again implying fewer nodes are visited. A good heuristic is therefore to minimize the perimeter of each MBR as this directly implies MBRs covers smaller areas.
 
 \subsection{Insertions}
-To insert a point $p$, we add $p$ to a leaf node $u$ by following a single root-to-leaf path. If $u$ overflows we split it, which creates a new child of $parent(u)$. This could cause $parent(u)$ to overflow which is handled in a recursive manner. Finally, if the root split, then a new root is created. Note that it is legal to insert a point $p$ into \textit{any} leaf, after which, the data structure will still be considered legal. This is the main property that differs R-Trees from standard B-Trees. There are several heuristics for choosing a subtree to insert into. It is these heuristics that gives rise to the different R-Tree variants and names. We will cover the original R-Tree heuristic and the R$^*$-Tree heuristic.
+To insert a point $p$, we add $p$ to a leaf node $u$ by following a single root-to-leaf path. If $u$ overflows we split it, which creates a new child of $parent(u)$. This could cause $parent(u)$ to overflow which is handled in a recursive manner. Finally, if the root split, then a new root is created. Note that it is legal to insert a point $p$ into \textit{any} leaf, after which, the data structure will still be considered legal. This is the main property that differs R-Trees from standard B-Trees. There are several heuristics for choosing a subtree to insert into. It is these heuristics that gives rise to the different R-Tree variants. We will cover the original R-Tree heuristic and the R$^*$-Tree heuristic.
 
-The formal definition of inserting a new point $p$ is as follows. Given a non-leaf $u$ with children $v_1, v_2, \cdots, v_{\Theta(B)}$, we need to pick the best child $v^*$ such that the new point $p$ is best inserted into the subtree of $v^*$.
+The formal definition of inserting a new point $p$ is as follows. Given a non-leaf $u$ with children $c_1, c_2, \dots, c_{\Theta(B)}$, we need to pick the best child $c^*$ such that the new point $p$ is best inserted into the subtree of $c^*$.
 
-\textbf{Choosing a subtree to insert in an R-Tree.}  The standard R-Tree chooses the best child in a greedy manner. Specifically, $v^*$ is simply the child $v_i$ whose MBR requires the \textit{least increase} of area in order to cover $p$.
+\textbf{Choosing a subtree to insert into in an R-Tree.}  The standard R-Tree chooses the best child in a greedy manner. Specifically, $c^*$ is simply the child $c_i$ whose MBR requires the \textit{least increase} of area in order to cover $p$.
 
-\textbf{Choosing a subtree to insert in an R$^*$-Tree.} The problems in the original R-Tree is that certain types of data points may create small areas but large distances which will initiate a bad split. To overcome this, a mixed heuristic is employed. At leaf level we try to minimize the overlap and in case of \textit{ties} the MBR that requires the \textit{least increase} of perimeter is chosen. If this again yields a tie the MBR that increases the least in area is chosen. At the higher levels, it behaves similar to the R-Tree.
+\textbf{Choosing a subtree to insert into in an R$^*$-Tree.} The problem in the original R-Tree is that certain types of data points may create small areas but large distances which will initiate a bad split. To overcome this, a mixed heuristic is employed. At leaf level we try to minimize the overlap and in case of \textit{ties} the MBR that requires the \textit{least increase} of perimeter is chosen. If this again yields a tie the MBR that increases the least in area is chosen. At the higher levels, it behaves similar to the R-Tree.
 
-\textbf{Node split in an R-Tree} was by Guttman originally proposed done using two different heuristics. The \textit{linear method} chooses far apart nodes as ends. Randomly nodes are then chosen and assigned such that they require the smallest MBR enlargement. The \textit{quadratic method} chooses two nodes such that the dead space between them is maximized. Nodes are then assigned such that the MBR area is minimized.
+\textbf{Node split in an R-Tree} was by Guttman originally proposed handled using two different heuristics. The \textit{linear method} chooses far apart nodes as ends. Randomly nodes are then chosen and assigned such that they require the smallest MBR enlargement. The \textit{quadratic method} chooses two nodes such that the dead space between them is maximized. Nodes are then assigned such that the MBR area is minimized.
 
-\textbf{Node split in an R$^*$-Tree is fairly more involved} but the main idea is to always split point set $S$ using an axis-orthogonal cut. This means that points of $S$ is sorted with respect to their $x$- and $y$-value respectively. Then, the first $\nicefrac{B}{2}$ points are inserted into $S_1$ and the rest is inserted into $S_2$ for the $x$-sorted points and into $S'_1$ and $S'_2$ for the $y$-sorted points. The final split is the better one of the two splits, i.e. the splits that have the least combined MBR perimeter and least combined MBR area. The above applies to splitting of a leaf node. The case of a non-leaf node is a bit different because the items split are MBRs. The strategy is however the same and involves sorting the MBRs by their centroids. Please refer to figure~\ref{fig:r_tree_splitting} for an illustration of the splitting of a node.
+\textbf{Node split in an R$^*$-Tree is more involved} but the main idea is to always split point set $S$ using an axis-orthogonal cut. This means that points of $S$ are sorted w.r.t.~their $x$- and $y$-coordinate respectively. Then, the first $\nicefrac{B}{2}$ points are inserted into $S_1$ and the rest is inserted into $S_2$ for the $x$-sorted points and into $S'_1$ and $S'_2$ for the $y$-sorted points. The final split is the better one, i.e. the split that have the least combined MBR perimeter and least combined MBR area. The above applies to splitting of a leaf node. The case of a non-leaf node is a bit different because the items split are MBRs. The strategy is however the same and involves sorting the MBRs by their centroids. Please refer to figure~\ref{fig:r_tree_splitting} for an illustration of the splitting of a leaf.
 
 \begin{figure}[h]
 	\centering
      \includegraphics[width=\textwidth]{../figures/r_tree_splitting}
-     \caption{(a) Split by cutting the $x$-dimension (b) Split by cutting the $y$-dimension}
+     \caption{(a) Split by cutting the $x$-dimension (b) Split by cutting the $y$-dimension.}
      \label{fig:r_tree_splitting}
 \end{figure}
 
 \subsection{Deletions}
-Let $p$ be the point to be deleted. First the leaf node $u$ which stores $p$ is found using $p$ as search region. Then $p$ is removed from $u$. The deletion is finished if the node has $\lambda B$ points, where $\lambda$ denotes the minimum node utilization. Otherwise, $u$ \textit{underflows}, which is handled by first removing $u$ from its parent, and then re-inserting all points in $u$ using the insert algorithm described earlier. Now, removing $u$ from $parent(u)$ may cause $parent(u)$ to underflow too. In general, the underflow of a non-leaf node $u'$ is also handled by re-insertions, with the only difference that the items re-inserted are MBRs, and each MBR is re-inserted to the same level of $u'$.
+Let $p$ be the point to be deleted. First the leaf node $u$ which stores $p$ is found using $p$ as search region. Then $p$ is removed from $u$. The deletion is done if the node has more than $\lambda B$ points, where $\lambda$ denotes the minimum node utilization. Otherwise, $u$ \textit{underflows}, which is handled by first removing $u$ from its parent, and then re-inserting all points in $u$ using the insert algorithm described earlier. Now, removing $u$ from $parent(u)$ may cause $parent(u)$ to underflow too. In general, the underflow of a non-leaf node $u'$ is also handled by re-insertions, with the only difference that the items re-inserted are MBRs, and each MBR is re-inserted to the same level of $u'$.
 
 \subsection{Analysis}
 It follows trivially from construction that a point can be inserted in $\mathcal{O}(\log_B N)$ by simply searching after the MBR that is responsible for the update.
@@ -1253,18 +1247,18 @@ Since we cannot guarantee the heuristics for constructing the R-Tree choosing al
 
 \section{MySQL}
 \label{sec:mysql}
-MySQL is a very popular open-source relational database management system. We will not give an in depth description of how relational databases work but we will describe how to very simply adapt MySQL to answer three-sided range queries. A very minimal table was constructed with just two columns. One for the $x$ coordinate and one for the $y$ coordinate. These two columns are base for a primary key on the table. This eliminates duplicates in the table and allows for faster range queries by building some variant of a B-Tree on the concatenation of $x$ and $y$ yielding a single key, i.e. MySQL does not do anything extraordinary to utilize the two elements of the key. Inserting in the table was done using simple \texttt{INSERT IGNORE INTO table VALUES \{ values \}} SQL queries. In order to make this work efficiently we buffer inserts in memory and bulk insert whenever the buffer overflows. This gave a significant speedup. Deletion was done similarly simple using \texttt{DELETE FROM table WHERE (x,y) IN \{ values \}} and buffers on top.
+MySQL is a popular open-source relational database management system. We will not give an in-depth description of how relational databases work but we will describe how to very simply adapt MySQL to answer three-sided range queries. A very minimal table was constructed with just two columns. One for the $x$-coordinate and one for the $y$-coordinate. These two columns are base for a primary key on the table. This eliminates duplicates in the table and allows for faster range queries by building some variant of a B-Tree on the concatenation of the $x$- and $y$-coordinate yielding a single key, i.e.~MySQL does nothing extraordinary to utilize the two elements of the key. Inserting in the table was done using simple \texttt{INSERT IGNORE INTO table VALUES \{ values \}} SQL queries. In order to make this work efficiently we buffer inserts in memory and bulk insert whenever the buffer overflows. This gave a significant speedup. Deletion was done using \texttt{DELETE FROM table WHERE (x,y) IN \{ values \}} queries and with buffers on top.
 
-Queries of the form $\left[x_1,x_2\right] \times \left[y_1,\infty\right]$ were answered using a \texttt{SELECT * FROM table WHERE $x_1$ <= x AND x <= $x_2$ AND y >= $y_1$}.
+Queries of the form $\left[x_1,x_2\right] \times \left[y_1,\infty\right]$ were answered using a \texttt{SELECT * FROM table WHERE $x_1$ <= x AND x <= $x_2$ AND y >= $y_1$} query.
 
 \subsection{Analysis}
-It is important to keep an open connection to the server at all times, if not we will end up spending a lot of time reconnecting to the server.
+It is important to keep an open connection to the server at all times; if not we will end up spending a lot of time reconnecting to the server.
 
 Inserting points in the database involves sending the query to the server, parsing the query, and finally inserting the rows. Due to the primary key on the table, we know that MySQL will build a B-Tree on the data. This will give an insertion time of $\mathcal{O}(\log_B N)$ I/O's for some MySQL implementation specific $B$.
 
 Deleting points is similar to inserting and is also done in $\mathcal{O}(\log_B N)$.
 
-It is a little harder to argue about the complexity of a three sided query. A B-Tree can answer normal two sided range queries in $\mathcal{O}(\log_B N + K/B)$. We can however not guarantee that all points in the two sided range should be reported and thus we cannot properly attribute any I/O's to the output, i.e. use filtering. We will have to settle with a complexity of $\mathcal{O}(\log_B N + T/B)$ where $T$ is the size of the output within the $x$ range of the query.
+It is a little harder to argue about the complexity of a three sided query. A B-Tree can answer normal two sided range queries in $\mathcal{O}(\log_B N + K/B)$. We can however not guarantee that all points in the two sided range should be reported and thus we cannot properly attribute any I/O's to the output, i.e.~use filtering. We will have to settle with a complexity of $\mathcal{O}(\log_B N + T/B)$ where $T$ is the size of the output within the $x$ range of the query.
 
 If we enforce no index on the MySQL table, then we believe the standard implementation will simply append all insertions to a continuous stream, which can be done in $\mathcal{O}(1)$ I/O's. We believe deletions and queries can be handled in $\mathcal{O}(N/B)$ I/O's by scanning the entire stream.
 
@@ -1289,25 +1283,25 @@ All code can be cloned from the following git repository or downloaded from the 
 \section{General}
 Almost all code was developed using pair programming and we strongly believe this technique, though slow and cumbersome, eliminated many mistakes that would otherwise had slowed us down later on.
 Everything we implemented was unit tested and large parts of the project implemented using test driven development. We made sure to make sound design choices to enable easy extension and reuse of our code. Stubs and mocks were used to ease the integration of substructures into larger structures.
-We also wrote checkers to automatically check validity of a tree. In the case of the External Memory Buffered Priority Search Tree we wrote a checker that would iterate the entire tree and check that no invariants were broken. We also included a method to print the trees in a DOT format (graph description language) allowing us to visualize every step of the algorithm. This really made debugging easier as it supplied us with a quick overview of the structure.
+We also wrote checkers to automatically check validity of a tree. In the case of the External Memory Buffered Priority Search Tree we wrote a checker that would iterate the entire tree and check that no invariants were broken. Furthermore we included a method to print the trees in a DOT format (graph description language) allowing us to visualize every step of the algorithm. This really made debugging easier as it supplied us with a quick overview of the structure.
 
-We optimized the code as much as time would allow using the profiler \texttt{valgrind}.
+We optimized the code as much as time allowed using the profiler \texttt{valgrind}.
 
-In order to fully test that there were no errors in our implementation we wrote a random test that would insert thousands of points and test validity of the tree for every insert, delete, and query. We would then repeat this test for several thousand iterations over several days while continuing on other parts of the code.
+In order to fully test that there were no errors in our implementation we wrote a test that would insert thousands of random points and test validity of the tree for every insert, delete, and query. We would then repeat this test for several thousand iterations over several days while continuing on other parts of the code.
 
 Using all these methods and tools we feel confident that our code works as intended.
 
 \section{Stream}
-The implementations we present makes use of the concept of \textit{streams}. A stream gives access to reading and writing from disk to memory and vice versa. A stream typically manages an internal buffer which is a mirror of a small portion of the disk allowing for fast interaction with that small piece of data. Although the C++ standard library provides several streams that allow for the internal buffer to be managed we introduce an implementation of our own. We denote this stream \texttt{buffered\_stream}. This design choice was made because of the nature of our experiments in which it is of extreme importance that we are able to argue about the exact number of I/O's being used. By introducing a stream of our own we avoid that any undefined behaviour in the standard library implementations gives rise to a potential I/O overhead. Any such I/O overhead would be reflected directly in the overall running time of our implementation. A stream of our own would further more allow us to count the exact number of I/O's being used.
+The implementations we present make use of the concept of \textit{streams}. A stream gives access to reading and writing from disk to memory and vice versa. A stream typically manages an internal buffer which is a mirror of a small portion of the external memory allowing for fast interaction with that small piece of data. Although the \texttt{C++} standard library provides several streams that allow for the internal buffer to be managed we introduce an implementation of our own. We denote this stream \texttt{buffered\_stream}. This design choice was made because of the nature of our experiments in which it is of extreme importance that we are able to argue about the exact number of I/O's being used. By introducing a stream of our own we avoid that any undefined behaviour in the standard library implementations gives rise to a potential I/O overhead. Any such I/O overhead would be reflected directly in the overall running time of our implementation giving us a hard time to reason about the behaviour. A stream of our own would further more allow us to count the exact number of I/O's being used.
 
-The stream we introduce makes use of the \texttt{read} and \texttt{write} system calls and is equipped with a buffer of size $B$ in internal memory that is maintained on all operations.
+The stream we introduce makes use of the \texttt{read} and \texttt{write} system calls and is equipped with a buffer of size $B$ that is maintained on all operations.
 
-There are many different ways to construct a stream. In order to substantiate our choice of using buffering on top of the \texttt{read} and \texttt{write} system calls we conducted some experiments with some different other types of streams:
+There are many different ways to construct a stream. In order to substantiate our choice of using buffering on top of the \texttt{read} and \texttt{write} system calls we conducted some experiments with different types of streams:
 
 \begin{itemize}
 	\item Direct invocation of the operating system calls \texttt{read} and \texttt{write} that reads\-/writes one item using no buffering mechanism.
 	\item The standard library streams \texttt{fread} and \texttt{fwrite} that use a built\--in buffering mechanism that we do not manage.
-	\item Direct invocation of the operating system calls \texttt{mmap} and \texttt{munmap} that makes use of the operating systems virtual memory mechanism through demand paging.
+	\item Direct invocation of the operating system calls \texttt{mmap} and \texttt{munmap} that makes use of the operating system's virtual memory mechanism through demand paging.
 \end{itemize}
 
 It is clear that direct invocation of the \texttt{read} and \texttt{write} system calls cannot be better than adding buffering on top, which early experiments without doubt showed. The results were so slow that we had to exclude them.
@@ -1316,62 +1310,62 @@ It is clear that direct invocation of the \texttt{read} and \texttt{write} syste
 \begin{minipage}{.5\textwidth}
   \centering
   \includegraphics[width=\linewidth]{../src/experiments/stream_input_speed_experiment_results/2016-04-23.16_00_16/time}
-  \caption{Reading 5Gb}
+  \caption{Reading 5Gb.}
   \label{fig:stream_input_speed}
 \end{minipage}%
 \begin{minipage}{.5\textwidth}
   \centering
   \includegraphics[width=\linewidth]{../src/experiments/stream_output_speed_experiment_results/2016-04-23.16_07_40/time}
-  \caption{Writing 5Gb}
+  \caption{Writing 5Gb.}
   \label{fig:stream_output_speed}
 \end{minipage}
 \end{figure}
 
-The results of Figure~\ref{fig:stream_input_speed} and~\ref{fig:stream_output_speed} shows that the \texttt{buffered\_stream} performs similarly to using \texttt{mmap} when reading 5Gb of data while using \texttt{fread} and \texttt{fwrite} is significantly slower.
+The results of Figure~\ref{fig:stream_input_speed} and~\ref{fig:stream_output_speed} show that the \texttt{buffered\_stream} performs similarly to using \texttt{mmap} when reading 5Gb of data while using \texttt{fread} and \texttt{fwrite} is significantly slower.
 Figure~\ref{fig:stream_output_speed} surprisingly shows that it is faster to use the virtual memory mechanism to write data. Using virtual memory however also means that we lose some control of when and how data is written to disk, and we lose the control to accurately measure disk I/O's as we have no control of how the operating system schedules I/O's. We would also have a harder time measuring the number of page faults caused by our structures' internal work as every I/O will cause a page fault which will interfere with our measurements. With these considerations in mind we conclude that it makes most sense to use the \texttt{buffered\_stream}.
 
 \section{External Memory Buffered Priority Search Tree}
 \label{sec:impl_main_data_structure}
-This Section will present important implementation specific design choices for the main data structure of the External Memory Buffered Priority Search Tree by Brodal presented in Section~\ref{sec:main_data_structure}.
+This Section presents important implementation specific design choices for the main data structure of the External Memory Buffered Priority Search Tree by Brodal presented in Section~\ref{sec:main_data_structure}.
 
-In Section~\ref{sec:main_data_structure} we argued how the operations \texttt{insert}, \texttt{delete}, and \texttt{report} are supported using subroutines for handling overflowing deletion buffers, overflowing insertion buffers, split leafs with overflowing point buffers, split nodes of degree $B^\epsilon+1$, and fill underflowing point buffers.
+% In Section~\ref{sec:main_data_structure} we argued how the operations \texttt{insert}, \texttt{delete}, and \texttt{report} are supported using subroutines for handling overflowing deletion buffers, overflowing insertion buffers, split leafs with overflowing point buffers, split nodes of degree $B^\epsilon+1$, and fill underflowing point buffers.
 
-The implementation we present uses the same idea of introducing a delegated subroutine which is responsible for maintaining one event only.
+% The implementation we present uses the same idea of introducing a delegated subroutine which is responsible for maintaining one event only.
 
 % introduce dependency mechanism (partly load/flush node).
-We decided to implement a \textbf{dependency mechanism} on each node that allows for the node to be partly flushed and loaded. This allows us to optimize the number of I/O's being made as we can restrict the load and flush to be done only on needed data. The data for each node naturally groups into a separate stream for the insert buffer, delete buffer, point buffer, meta data on children, and meta data for the node itself.
+We decided to implement a \textbf{dependency mechanism} on each node that allows for the node to be partly flushed and loaded. This allows us to optimize the number of I/O's needed as we can restrict the load and flush to required data. The data for each node naturally groups into a separate file for the insert buffer, delete buffer, point buffer, meta data on children, and meta data for the node itself.
 
 % introduce event loop
-As described in Section~\ref{sec:main_data_structure} we have to enable a mechanism that allows for subroutines to call each other, as one event can cause other events to be risen. If we simply let each subroutine call each other using a na\"{\i}ve call stack we would have to manage that a subroutine can be both caller and callee and so it is responsible for loading and flushing data with respect to the recursion path we are currently on. This would require a complex logical mechanism that does nothing but manage the control flow of the recursion and handling data load and flushing. In order to overcome this we have introduced an \textbf{event loop mechanism} that uses a stack of events to control flushing, loading and calling  proper subroutines. Using this mechanism we are able to predict exactly what data is needed. Furthermore it becomes an easy task to flush all required data before taking further steps in the recursion ensuring optimal use of available main memory.
+As described in Section~\ref{sec:main_data_structure} we have subroutines calling each other. If we simply let each subroutine call each other using a na\"{\i}ve call stack we would have to manage that a subroutine can be both caller and callee. This would require a complex logical mechanism that does nothing but manage the control flow of the recursion and handling of data load and flushing. In order to overcome this we have introduced an \textbf{event loop mechanism} that uses a stack of events to control flushing, loading, and calling  proper subroutines. Using this mechanism we are able to predict exactly what data is needed. Furthermore, it becomes an easy task to flush all required data before taking further steps in the recursion ensuring optimal use of available internal memory.
 
 % cache abstraction
-As it is not uncommon to see consecutive events for the same node we have added a \textbf{caching mechanism} that makes sure not to flush data on any nodes used in the previous event if the same nodes and data is required in the current event. This idea of using a simple caching scheme dramatically reduces the number of I/O's required compared against the na\"{\i}ve solution where we load and flush a node completely between each event.
+As it is not uncommon to see consecutive events for the same node we have added a \textbf{caching mechanism} that makes sure not to flush data on any nodes used in the previous event if the same nodes and data is required in the current event. This idea of using a simple caching scheme dramatically reduces the number of I/O's required compared against the na\"{\i}ve solution.
 
 % introduce meta info_file
-In order to reduce the number of I/O's required we make sure to store a detailed \textit{view} of the state of each node in a separate \textbf{info file} that is maintained on each subroutine. This enables us to test whether a node is internal or a leaf and if it has any broken invariants we should fix using only a single I/O.
+In order to further reduce the number of I/O's required we make sure to maintain a detailed \textit{view} of the state of each node. This enables us to test, in only a single I/O, whether a node is internal or a leaf, and if it has any broken invariants.
 
 % introduce states
-As both event loop and buffer over-/underflow thresholds depends on whether we are currently global rebuilding, linear constructing, reporting or handling updates, we introduce a \textbf{state switch} that is used throughout our implementation to decide which path the recursion should take.
+As both event loop and buffer over-/underflow thresholds depends on whether we are currently global rebuilding, linear constructing, reporting, or handling updates, we introduce a \textbf{state switch} that is used throughout our implementation to decide which path the recursion should follow.
 
 %%%%%%% General conciderations about the tree.
-The \textbf{general representation} of buffers makes use of Red-Black search trees (\texttt{set<point>} from the C++ standard library) on totally ordered points. This design choice allows us to retrieve the minimum and maximum element in each buffer in constant time using \texttt{iterator} pointers. Furthermore we are able to traverse each buffer in sorted order in linear time which is needed when computing a subset of points to handle on a buffer overflow and underflow. We are aware that using a search tree comes with the price of a space blow-up, as each node needs a pointer for children and parent, giving a total of $32 \cdot N$ bytes extra compared to a \texttt{std::vector<point>} representation. We maintain the point buffer as two separate search trees totally ordered on the $x$-value and $y$-value respectively. This is needed as we frequently need access to the minimum $y$-value when deciding whether we should insert a point into the point buffer or insert buffer. The \textbf{catalogue structure} containing information about the children of each node is also represented as a Red-Black search tree on interval-start of the children. In detail each catalogue item stores information about the minimum $x$-point, minimum $y$-point, maximum $y$-point and node id for each child. In the \textbf{info file} of each node we maintain a bit on whether the node is a leaf, a virtual leaf\footnote{An internal node with an empty subtree} or an internal node, whether the node currently has an overflowing or underflowing point buffer, insert buffer, delete buffer, and whether the node is currently node degree overflowed. This allow the event loop to identify whether we should fix any broken invariants caused by events in the neighbourhood, using only 1 I/O.
+The \textbf{general representation} of buffers makes use of Red-Black search trees (\texttt{std::set} from the \texttt{C++} standard library) on totally ordered points. This design choice allows us to retrieve the minimum and maximum element in each buffer in constant time using \texttt{iterators}. Furthermore we are able to traverse each buffer in sorted order in linear time. We are aware that using a search tree comes with the price of a space blow-up. We maintain the point buffer as two separate search trees totally ordered on the $x$-coordinate and $y$-coordinate respectively. This is needed as we frequently need access to the minimum $y$-value when deciding whether we should insert a point into the point buffer or insert buffer. The \textbf{catalogue structure} containing information about the children of each node is also represented as a Red-Black search tree. In the \textbf{info file} of each node we maintain information on whether the node is a leaf, a virtual leaf\footnote{An internal node with an empty subtree.}, or an internal node, whether the node currently has an overflowing or underflowing point buffer, insert buffer, delete buffer, and whether the node is currently node degree overflowed. This allows the event loop to identify whether we should remedy any broken invariants using only 1 I/O.
 
 \section{External Memory Priority Search Tree}
 Drawing from the experiences gained while implementing the External Memory Buffered Priority Search Tree of Section~\ref{sec:impl_main_data_structure} we decided to once again make use of the event loop to handle our recursion allowing for full control of loading and flushing. This choice also allowed for simple adaptation of the caching mechanism previously described.
 
-The elements of the base B-Tree is a simple type containing a point, a reference to a child, and a bool telling us whether the point has been deleted. The elements are stored in nodes which is just a collection of the simple point types, a reference to a query data structure, and some booleans used in loading and flushing mechanisms. The collection used for the simple point types is a Red-Black tree (\texttt{std::set}). This collection allows us to find the child responsible for a point in logarithmic time using binary search and naturally keeps the points in sorted order w.r.t the $x$-values.
+The elements of the base B-Tree is a simple type containing a point, a reference to a child, and a boolean telling us whether the point has been deleted. The elements are stored in nodes which is just a collection of the point type, a reference to a query data structure, and some booleans used in the loading and flushing mechanisms. The collection used for the point type is a Red-Black tree (\texttt{std::set}). This collection allows us to find the child responsible for a point in logarithmic time using binary search and naturally keeps the points in sorted order w.r.t.~the $x$-coordinates.
 
 Updates and reporting are done as described in Section~\ref{sec:arge_updates} and~\ref{sec:arge_query} with no remarkably deviations.
 
 \section{Other structures}
-We also implemented wrappers around MySQL 5.7.12, Boost 1.60.0 R-Tree using the quadratic method, and libspatialindex 1.8.5 external R*-Tree such that we could use these structures as a Priority Search Tree. These structures are described further in Chapter~\ref{chp:other_structures}. We made sure to implement functionality to disallow duplicates in the structures on top of the basic functionality of the structures.
+We also implemented wrappers around MySQL 5.7.12, Boost 1.60.0 R-Tree using the quadratic method, and libspatialindex 1.8.5 external R*-Tree such that we could use these structures as a Priority Search Tree. The structures are described further in Chapter~\ref{chp:other_structures}. We made sure to implement functionality to disallow duplicates of points on top of the basic functionality.
 
 \section{Experimental framework}
 We developed an extensive framework for running experiments in order to automate the process as much as possible.
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=\textwidth]{../figures/experimental_setup3}
-	\caption{(a) An experiment is created by extending a Base class (b) The experiment is added to an experiment queue (c) When a machine becomes available the experiment is run (c) Measures on statistics and time are automatically plotted and finally the motherboard beeper plays a tune to signal that an experiment has been processed.}
+	\caption{(a) An experiment is created by extending a base class (b) The experiment is added to an experiment queue (c) When a machine becomes available the experiment is run (c) Measures on statistics and time are automatically plotted and finally the motherboard beeper plays a tune to signal that an experiment has been processed.}
 	\label{fig:experimental_setup2}
 \end{figure}
 
@@ -1383,13 +1377,13 @@ We developed an extensive framework for running experiments in order to automate
 	\label{fig:missing}
 \end{wrapfigure}
 
-Figure~\ref{fig:experimental_setup2} depicts the flow of an experiment from thought to result. In order to achieve this flow we wrote a framework that would do all the hard work for us such that all we had to do for each experiment was to describe the actual experiment. As an example, to test the time it takes to insert in all the structures all we would have to do was to tell the framework to insert into the Priority Search Tree and measure for each 10 megabytes. The framework would then automatically run the experiment on all the structures one at a time, measure time, I/O's, page faults, and other data structure specific statistics (overflows, splits, etc.), plot all the gathered data as a function of the input size, and finally play a small tune to signal that the experiment had finished. To make sure that no experiment leaves any ungathered memory behind we start each experiment in its own thread such that the memory would be automatically recollected upon termination of the thread and all caches are dropped between each experiment.
+Figure~\ref{fig:experimental_setup2} depicts the flow of an experiment from thought to result. In order to achieve this flow we wrote a framework that would do all the hard work for us such that all we had to do was to describe the actual experiment. As an example, to test the time it takes to insert in all the structures we only had to tell the framework to insert into the Priority Search Tree and measure for each 10 megabytes. The framework would then automatically run the experiment on all the structures one-by-one, measure time, I/O's, page faults, and other data structure specific statistics (overflows, splits, etc.), plot all the gathered data as a function of the input size, and finally play a small tune to signal that the experiment had finished. To make sure that no experiment leaves any ungathered memory behind we start each experiment in its own thread such that the memory would be automatically recollected upon termination of the thread. All caches are dropped between each experiment.
 
-The running time was measured using the \texttt{chrono} library's \texttt{high\_resolution\_clock}. It was measured in both seconds and milliseconds to make sure we had all the required data. In most cases it suffices to measure in seconds.
+The running time was measured using the \texttt{high\_resolution\_clock} of the \texttt{chrono} library. It was measured in both seconds and milliseconds to make sure we had all the required data. In most cases it suffices to measure in seconds.
 
 In order to obtain a deeper understanding of the results we chose to measure the number of major page faults generated when using the data structures. This was done using \texttt{perf} - a performance analysis tool for Linux. Finally we measured the number of I/O's by extending our stream with a counter on calls to \texttt{read} and \texttt{write}.
 
-As the machines run on a 32 bit operating systems it is very important to define \texttt{\_FILE\_OFFSET\_BITS=64}. This forces the system to use 64 bit pointers when seeking in files allowing us to handle data sets larger than $2^{32}$ on the machines.
+As the machines run on a 32 bit operating system it is very important to define \texttt{\_FILE\_OFFSET\_BITS=64}. This forces the system to use 64 bit pointers when seeking in files allowing us to handle data sets larger than $2^{32}$ on the machines.
 
 \begin{savequote}[0.55\textwidth]
 ``We must never make experiments to confirm our ideas, but simply to control them.''
@@ -1397,14 +1391,14 @@ As the machines run on a 32 bit operating systems it is very important to define
 \end{savequote}
 \chapter{Experimental setup}
 \label{chp:experimental_setup}
-Running experiments on I/O algorithms is extremely time consuming. In order to compare I/O efficient algorithms against internal memory algorithms we need input sizes that force the internal memory algorithms to store and load data to and from the disk (swapping). The input size to the algorithms can be severely minimized if run on machines with a small amount of internal memory which in turn decrease the running time severely as well.
+Conducting experiments on I/O algorithms is extremely time consuming. In order to compare I/O efficient algorithms against internal memory algorithms we need input sizes that force the internal memory algorithms to store and load data to and from the disk (swapping). The input size to the algorithms can be severely minimized if run on machines with a small amount of internal memory which in turn decrease the running time severely as well.
 
-It is important to mention some considerations when it comes to choice of persistent storage media. In recent years solid state drives (SSD's) have grown increasingly more desirably in terms of price per gigabyte and storage size, but there is still a significant gap in price between electronic SSD's and mechanical HDD's. Disregarding this gap in price, solid state drives clearly outperforms the mechanical hard disk in every notable aspect. Solid state drives allow random access to blocks and diminish the seek time which is considered to be the culprit of the mechanical disks due to the rotational latency.
-The rotational latency makes it very important to store data on the disk in consecutive blocks as scattering data blocks across the disk would be detrimental to the performance as each block would have to wait for the rotational latency. As long as the mechanical disk is still as widespread as it is, these culprits of the mechanical disk have to be taken in consideration when designing I/O efficient algorithms.
+It is important to mention some considerations when it comes to choice of persistent storage media. In recent years solid state drives (SSD's) have grown increasingly more desirably in terms of price per gigabyte and storage capacity, but there is still a significant gap in price between electronic SSD's and mechanical HDD's. Disregarding this gap in price, solid state drives clearly outperforms the mechanical hard disk in every notable aspect. Solid state drives allow random access to blocks and diminish the seek time which is considered to be the culprit of the mechanical disks due to the rotational latency.
+The rotational latency makes it very important to store data on the disk in consecutive blocks as scattering data blocks across the disk would be detrimental to the performance as each block would have to wait for the rotational latency. As long as the mechanical disk is still as widespread as it is, these culprits of the mechanical disk have to be taken into consideration when designing I/O efficient algorithms.
 
 With these considerations in mind we acquired two very old Dell machines with the specifications outlined in Figure~\ref{fig:pc_specs}.
 
-We used newer machines for some experiments where it made sense. An example of a situation where it made sense was when we experimentally compared the actual running time with the theoretical running time of a single data structure, i.e. check whether the actual running time divided by the asymptotic complexity would give a horizontal line. For these experiments a newer machine would not change the results but rather provide faster results and not take up scarce time on the two Dell machines.
+We used newer machines for some experiments where it made sense. An example of a situation where it made sense was when we experimentally compared the actual running time with the theoretical running time of a single data structure, i.e.~confirm whether the actual running time divided by the asymptotic complexity would give a horizontal line. For these experiments a newer machine would not change the results but rather provide faster results and not take up scarce time on the two Dell machines.
 
 \begin{figure}[h]
 \centering
@@ -1702,7 +1696,7 @@ In Figure~\ref{fig:time_divided_with_asymptotic_arge} we see that the time per i
 
 Figure~\ref{fig:time_divided_with_asymptotic_internal} shows that the Internal Memory Priority Search Tree of McCreight performs exactly as expected as long as the structure is contained in internal memory. At the exact moment the structure starts to swap out internal memory we see, just as expected, a significant increase in running time.
 
-It is almost the same situation for the results of the Boost R-Tree depicted in Figure~\ref{fig:time_divided_with_asymptotic_boost}. The insertion time in a R-Tree heavily depends on heuristics which explains the decreasing graph and far from worst case behaviour. Again we see the same behaviour as for the structure by McCreight when we run out of internal memory -- the running time suffers tremendously.
+It is almost the same situation for the results of the Boost R-Tree depicted in Figure~\ref{fig:time_divided_with_asymptotic_boost}. The insertion time in an R-Tree heavily depends on heuristics which explains the decreasing graph and far from worst case behaviour. Again we see the same behaviour as for the structure by McCreight when we run out of internal memory -- the running time suffers tremendously.
 
 The results for the libspatial external R*-Tree depicted in Figure~\ref{fig:time_divided_with_asymptotic_libspatial} shows the running time follows the expected theoretical bounds very well. We would have liked to measure the number of I/O's for this structure but since it is a library implementation this was infeasible. We are pleased to see that the implementation does not generate any page faults. This is what we would expect from a sound external memory data structure.
 
@@ -1785,24 +1779,24 @@ As the theoretical query bounds are analysed using the method of filtering, we c
 \subsection{Focus on searching}
 In this subsection we try to focus on searching, i.e. remove the reporting part of the query complexity, by fixing the output to a fixed constant number of points.
 \subsubsection*{First experiment}
-The first experiment on the \textbf{search} part of the algorithms was conducted by first inserting data \textit{inside} 5 fixed query windows as showed in Figure~\ref{fig:experiment_query_uniform} of 5Mb data each, i.e. each query window contains 655.360 points. We use query windows such that we report on both small and large ranges and high and low in the tree. This was followed by inserting uniformly distributed data \textit{outside} the query windows. For every 10Mb of data inserted we report all of the 25Mb points inside the query windows. The experiment was limited to run for 24 hours.
+The first experiment on the \textbf{search} part of the algorithms was conducted by first inserting data \textit{inside} 5 fixed query windows as shown in Figure~\ref{fig:experiment_query_uniform} of 5Mb data each, i.e. each query window contains 655,360 points. We use query windows such that we report on both small and large ranges and high and low in the tree. This was followed by inserting uniformly distributed data \textit{outside} the query windows. For every 10Mb of data inserted we report all of the 25Mb points inside the query windows. The experiment was limited to run for 24 hours.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.70\textwidth]{../figures/query_uniform}
-	\caption{Distribution of points for the uniform reporting experiment (search). The gray areas (a) - (e) contains 5 Mb data each. Points are distributed uniformly random. The query window (a) spans 5\% of the $x$-axis and 100\% of the $y$-axis (b) spans 17\% of the $x$-axis and 20\% of the $y$-axis (c) spans 11\% of the $x$-axis and 60\% of the $y$-axis (d) spans 14\% of the $x$-axis and 40\% of the $y$-axis (e) spans 8\% of the $x$-axis and 80\% of the $y$-axis.}
+	\caption{Distribution of points for the uniform reporting experiment (search). The gray areas (a) - (e) contains 5Mb data each. Points are distributed uniformly random. The query window (a) spans 5\% of the $x$-axis and 100\% of the $y$-axis (b) spans 17\% of the $x$-axis and 20\% of the $y$-axis (c) spans 11\% of the $x$-axis and 60\% of the $y$-axis (d) spans 14\% of the $x$-axis and 40\% of the $y$-axis (e) spans 8\% of the $x$-axis and 80\% of the $y$-axis.}
 	\label{fig:experiment_query_uniform}
 \end{figure}
 
-All queries are performed once before the actual measuring is done. This is to remove fluctuations on the internal data structures and to pay the amortized cost of flushing buffers in the External Memory Buffered Priority Search Tree. The time measured exactly reflects the actual time used when reporting.
+All queries are performed once before the actual measuring is done. This is to remove fluctuations on the internal data structures and to pay the amortized cost of flushing buffers in the External Memory Buffered Priority Search Tree. The results of the experiment is depicted in Figure~\ref{fig:result_query_search_complexity}.
 
 %Please note that the plot is only intended to show tendencies isolated to each of the data structures, meaning no relative tendencies  are explained by the plot.
-The theoretical search complexity on each of the data structures are depicted in Figure~\ref{fig:theory_query_complexity}. Even though the theoretical asymptotic bound suggests the R*-Tree to be linear in the size of the input, we expect it to have an actual average running time closer to $\mathcal{O}(\log_B N)$ guaranteed when no bounding boxes overlap each other. We expect the external memory data structures to perform much better than the internal memory data structures when the operating system starts swapping out main memory.
+The theoretical search complexity on each of the data structures are depicted in Figure~\ref{fig:theory_query_complexity}. Even though the theoretical asymptotic bound suggests the R*-Tree to be linear in the size of the input, we expect it to have an actual average running time closer to $\mathcal{O}(\log_B N)$ guaranteed when no bounding boxes overlap each other. We expect the external memory data structures to perform much better than the internal memory data structures when the operating system starts swapping out internal memory.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.94\textwidth]{../plots/query_complexities/query_complexity}
-\caption{Theoretical search complexity for the query operation on all structures. Brodals is on the form $f(N) = \frac{1}{\epsilon}\log_B N$ for $\epsilon = \log(fanout) / \log(B)$. The data structure of Arge is on the form $f(N) = log_B N$. The Internal Memory Priority Search Tree is on the form $f(N) = \log_2 N$. Both the Boost R-Tree, the non-indexed MySQL implementation and the Libspatial R*-Tree are worst case linear in the size of the input, i.e. $f(N) = N$.}
+\caption{Theoretical search complexity for the query operation on all structures. Brodal's is on the form $f(N) = \frac{1}{\epsilon}\log_B N$ for $\epsilon = \log(fanout) / \log(B)$. The data structure of Arge is on the form $f(N) = log_B N$. The Internal Memory Priority Search Tree is on the form $f(N) = \log_2 N$. Both the Boost R-Tree, the non-indexed MySQL implementation and the Libspatial R*-Tree are worst case linear in the size of the input, i.e. $f(N) = N$.}
 \label{fig:theory_query_complexity}
 \end{figure}
 
@@ -1813,18 +1807,16 @@ The theoretical search complexity on each of the data structures are depicted in
 \label{fig:result_query_search_complexity}
 \end{figure}
 
-The results of the experiment is depicted in Figure~\ref{fig:result_query_search_complexity}.
+We see that both the Internal Memory Priority Search Tree and the Boost R-Tree suffers when they cannot fit into internal memory. We in the following argue our observations according to the zoomed-in plot depicted in Figure~\ref{fig:result_query_search_complexity_zoom}. It is difficult for us to argue that the libspatial R*-Tree follows our expectations of an average $\mathcal{O}(\log_B N)$ search time in the depicted results. We believe we would have had a better chance of explaining the tendencies on the R*-Tree had we been able to construct a data structure on a larger input size. This was not feasible within a reasonable amount of time. To our surprise we see that the structure of Arge et al.~performs best of all the structures, but since we are unable to insert more than around 70Mb of data in the data structure within 24 hours, we must conclude the implementation to be of no practical use when querying large data sets. We see that the non-indexed MySQL implementation is linear in the input as expected. It is interesting to see that the data structure of Brodal performs very well even for a small fanout. The data structure aligns with the tendencies suggested by the theory except for minor fluctuations. These are, however, perfectly explained by the insert buffer overflow, node degree overflow, and point buffer underflow needed during fixup as shown in Figure~\ref{fig:result_query_search_fixup}.
 
-We see that both the Internal Memory Priority Search Tree and the Boost R-Tree suffers when data cannot fit into main memory. We will argue the rest of our observations according to the zoomed-in plot depicted in Figure~\ref{fig:result_query_search_complexity_zoom}. It is difficult for us to argue that the libspatial R*-Tree follows our expectations of an average $\mathcal{O}(\log_B N)$ search time in the depicted results. We believe we would have a better chance of explaining the tendencies on the R*-Tree had we we been able to construct a data structure on larger input size within an reasonable amount of time. To our surprise we see that the structure of Arge et al. performs best of all the structures, but since we are unable to insert more than around 70Mb of data in the data structure within 24 hours, we must conclude the implementation to be of no practical use when querying large data sets. We also see that the non-indexed MySQL implementation is linear in the input as expected. It is interesting to see that the data structure of Brodal perform very well even for a small fanout. The data structure aligns with the tendencies suggested by the theory except for minor fluctuations. These are, however, perfectly explained by the insert buffer overflow, node degree overflow, and point buffer underflow needed during fixup. See Figure~\ref{fig:result_query_search_fixup}.
-
-We decided to run a separate experiment for various fanouts on Brodals. We did as the theory claims that the data structure search ever faster on ever increasing fanouts.
+We decided to run a separate experiment for various fanouts on Brodal's since the theory claims the data structure improves on ever increasing fanouts.
 Note that we ran this experiment on a different machine. This is not a problem since we are aiming at experimenting on the relative performance between different fanouts opposed to the relative performance between different data structures. The results of these experiments are depicted in Figure~\ref{fig:gerth_query_fanout_experiment}.
 Clearly we see a tendency of faster searches on increasing fanouts going from fanout 2 to fanout 4, but on ever increasing fanouts it seems we are achieving ever worse performance.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{../src/experiments/query_experiment_results/final2/time_zoom}
-\caption{Zoomed-in version of the experimentally measured running time for querying using the query windows of Figure~\ref{fig:experiment_query_uniform} on all data structures of size $N$.}
+\caption{Zoomed-in version of the experimentally measured running time for querying using the query windows of Figure~\ref{fig:experiment_query_uniform}.}
 \label{fig:result_query_search_complexity_zoom}
 
 \includegraphics[width=\textwidth]{../src/experiments/gerth_query_fanout_experiment_results/2016-06-08.19_09_06/time}
@@ -1836,19 +1828,18 @@ Clearly we see a tendency of faster searches on increasing fanouts going from fa
 
 \subsubsection*{Second experiment}
 
-The second experiment on the \textbf{search} part of the algorithms was conducted by fixing $x_1$, $x_2$ and $y_1, \dots, y_n$ and inserting data points such that there is exactly 
-1Mb of data points in the range $[x_1, x_2] \times [y_i, y_{i+1}]$. In the range outside $[x_1, x_2] \times [- \infty, \infty]$ we distribute data points uniformly. Now we report points in ranges $[x_1, x_2] \times [y_1, \infty]$, $[x_1, x_2] \times [y_2, \infty],\cdots,[x_1, x_2] \times [y_n, \infty]$. The idea is that the number of reported points $K$ only grows with 1Mb when reporting in the range $[x_1, x_2] \times [y_{i+1}, \infty]$ compared to reporting in the range $[x_1, x_2] \times [y_i, \infty]$.
+The second experiment on the \textbf{search} part of the algorithms was conducted by fixing $x_1$ and $x_2$ and $y_1, \dots, y_n$, and inserting data points such that there is exactly 1Mb of data points in the range $[x_1, x_2] \times [y_i, y_{i+1}]$. In the range \textit{outside} $[x_1, x_2] \times [- \infty, \infty]$ we distribute data points uniformly. Now we report points in ranges $[x_1, x_2] \times [y_1, \infty]$, $[x_1, x_2] \times [y_2, \infty],\dots,[x_1, x_2] \times [y_n, \infty]$. The idea is that the number of reported points $K$ only grows with 1Mb when reporting in the range $[x_1, x_2] \times [y_{i+1}, \infty]$ compared to reporting in the range $[x_1, x_2] \times [y_i, \infty]$.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.8\textwidth]{../figures/query_uniform_fix_x}
-	\caption{Distribution of points for the uniform reporting experiment (searching). The points $x_1, x_2$ and $y_1, \cdots, y_n$ are fixed. There is 1Mb data in all ranges $[x_1, x_2] \times [y_i, y_{i+1}]$.}
+	\caption{Distribution of points for the uniform reporting experiment (searching). The points $x_1$ and $x_2$ and $y_1, \dots, y_n$ are fixed. There is 1Mb data in all ranges $[x_1, x_2] \times [y_i, y_{i+1}]$.}
 	\label{fig:experiment_query_uniform_fix_x}
 \end{figure}
 
-We first conducted the experiment with 50Mb data distributed \textit{inside} the query windows and an additional 50Mb data distributed \textit{outside} the query windows. The result of this experiment is depicted in Figure~\ref{fig:query_report_100mb}. We see the Internal Memory Priority Search Tree of McCreight suffers severely from swapping of memory, and so we rule this data structure out after having deleted only 2Mb worth of data. Also, it is obvious that the Boost R-Tree is still able to fit entirely in internal memory which achieves a superior running time.
-Based on this observation we added an additional 300Mb data \textit{outside} the query windows giving a total of 400Mb data. The results of running this experiment on the remaining data structures is depicted in Figure~\ref{fig:query_report_400mb}. We now see that the Boost R-Tree can no longer fit into internal memory which results in a much worse running time than achieved by the external memory data structures. What is also clear is that MySQL using no index is still superior compared to the data structure of Brodal.
-The last experiment therefore added an additional 2,100Mb data \textit{outside} the query windows yielding a data structure of a total of 2,500Mb worth of data. The experiment was then run on MySQL with no index and the data structure by Brodal with a fanout of 2 and 4 respectively. The result of this experiment is depicted in Figure~\ref{fig:query_report_2500mb}. We now see that the data structure of Brodal with fanout 4 outperforms MySQL which is explained by the fact that it is able to exclude searching in the parts of the tree with no interest based the $y$ range of the query. We also see that the External Memory Buffered Priority Search Tree just barely overtake MySQL with a fanout of 2. These results support the tendency of increasing performance on query when the fanout goes up. This aligns well with the theoretical analysis.
+We first conducted the experiment with 50Mb data distributed \textit{inside} the query windows and an additional 50Mb of data distributed \textit{outside} the query windows. The result of this experiment is depicted in Figure~\ref{fig:query_report_100mb}. We see the Internal Memory Priority Search Tree of McCreight suffers severely from swapping of memory, and so we rule this data structure out after having deleted only 2Mb worth of data. Also, it is obvious that the Boost R-Tree is still able to fit entirely in internal memory and achieves a superior running time.
+Based on this observation we added an additional 300Mb data \textit{outside} the query windows giving a total of 400Mb data in Figure~\ref{fig:query_report_400mb}. We now see that the Boost R-Tree can no longer fit into internal memory which results in a much worse running time than achieved by the external memory data structures. What is also clear is that MySQL using no index is still superior compared to the data structure of Brodal.
+The last experiment therefore added an additional 2,100Mb data \textit{outside} the query windows yielding a data structure of a total of 2,500Mb worth of data. The experiment was then run on MySQL with no index and the data structure by Brodal with a fanout of 2 and 4 respectively. The result of this experiment is depicted in Figure~\ref{fig:query_report_2500mb}. We now see that the data structure of Brodal with fanout 4 outperforms MySQL which is explained by the fact that it is able to exclude searching in the parts of the tree with no points to report based on the $y$ range of the query. We also see that the External Memory Buffered Priority Search Tree just barely overtake MySQL with a fanout of 2. These results support the tendency of increasing performance on query when the fanout goes up. This aligns well with the theoretical analysis.
 
 \begin{figure}[h]
 \centering
@@ -1867,40 +1858,40 @@ The last experiment therefore added an additional 2,100Mb data \textit{outside} 
 
 \clearpage
 
-\section{Focus on reporting}
+\subsection{Focus on reporting}
 
-\begin{wrapfigure}{O}{0.50\textwidth}
+\begin{wrapfigure}{r}{0.50\textwidth}
 \centering
 \captionsetup{width=0.45\textwidth}
-\includegraphics[width=0.5\textwidth]{../figures/query_uniform_fix_x_no_noise}
-\caption{Distribution of points for the uniform reporting experiment (reporting). The points $x_1, x_2$ and $y_1, \cdots, y_n$ are fixed. There is 100Mb data in all ranges $[x_1, x_2] \times [y_i, y_{i+1}]$.}
+\includegraphics[width=0.38\textwidth]{../figures/query_uniform_fix_x_no_noise}
+\caption{Distribution of points for the uniform reporting experiment. The points $x_1$ and $x_2$ and $y_1, \dots, y_n$ are fixed. There is 100Mb data in all ranges $[x_1, x_2] \times [y_i, y_{i+1}]$.}
 \end{wrapfigure}
-This experiment focuses on the \textbf{report} of the query algorithm. We limited the experiment to only include Brodal's since we had to construct the data structure on a large input size and due to limited time. The experiment reused the idea of distributing data \textit{inside} fixed query windows. The main difference was that we distributed 100Mb uniformly random data \textit{inside} each query window and no data was added \textit{outside} the query windows. The idea is that we report in a $x$-range that spans all points and on increasing query-$y$ values such that the number of reported points, $K$, grow with 100Mb when reporting in the range $[x_1, x_2] \times [y_{i+1}, \infty]$ compared to reporting in the range $[x_1, x_2] \times [y_i, \infty]$.
+This experiment focuses on the \textbf{report} part of the query algorithm. We limited the experiment to only include Brodal's since only had limited time and the nature of the experiment required a large input size. The experiment reused the idea of distributing data \textit{inside} fixed query windows. The main difference was that we distributed 100Mb uniformly random data \textit{inside} each query window and no data was added \textit{outside} of the query windows. The idea is that we report in an $x$-range that spans all points and on increasing query-$y$ values such that the number of reported points, $K$, grow with 100Mb when reporting in the range $[x_1, x_2] \times [y_{i+1}, \infty]$ compared to reporting in the range $[x_1, x_2] \times [y_i, \infty]$.
 We see from the results in Figure~\ref{fig:query_report_result} that the query time follows a slowly decreasing line going towards a limit. This is what we would expect as
 $$f(K) = \frac{\frac{1}{\epsilon}\log_B N + \nicefrac{K}{B}}{\nicefrac{K}{B}} \approx \frac{c}{K} + 1$$
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{../src/experiments/query_experiment_report_50mb_results/2016-06-09.15_38_51/time_divided_N}
-\caption{Experimentally measured running time divided by $K/B$ when reporting increasing data on Brodal's of input size 1,200Mb. We fitted $f(K)$ to the experimentally measured data.}
+\caption{Experimentally measured running time divided by $K/B$ when reporting increasingly more data on Brodal's of input size 1,200Mb. We fitted $f(K)$ to the experimentally measured data.}
 \label{fig:query_report_result}
 \end{figure}
 
 \clearpage
 
 \section{Construction}
-An interesting feature of the External Memory Buffered Priority Search Tree is that it supports construction in $\mathcal{O}(\text{Scan})$ on sorted input. We decided to compare this method on $N$ elements against the one-by-one insertion of $N$ elements. As we mention in Subsection~\ref{subsec:gerth_construction} we could use the linear construction method together with a sorting algorithm to global rebuild the structure. The purpose of this experiment is to get an indication of which method is best when it comes to global rebuilding.
+An interesting feature of the External Memory Buffered Priority Search Tree is that it supports construction in $\mathcal{O}(\text{Scan})$ on sorted input. We decided to compare this method on $N$ points against the one-by-one insertion of $N$ points. As we mention in Subsection~\ref{subsec:gerth_construction} we could use the linear construction method together with a sorting algorithm to global rebuild the structure. The purpose of this experiment is to get an indication of which method is best when it comes to global rebuilding.
 
 The experiment consists of constructing a data structure using the linear construction method and inserting one-by-one for increasing input sizes, $N$, and different fanouts to see whether this has an impact. We know from previous experiments that inserting becomes slower for larger fanouts but it is not clear what happens when we use the linear construction method.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{../src/experiments/linear_construction_experiment_results/combined_results/time_divided_N}
-\caption{Running time of the linear construction method for sorted input divided by the input size in Mb. The structure started to generate page faults on fanout 32.}
+\caption{Running time of the linear construction method for sorted input divided by the input size in megabytes. The structure started to generate page faults on fanout 32.}
 \label{fig:linear_construction_time_divided_N}
 \end{figure}
 
-Figure~\ref{fig:linear_construction_time_divided_N} depicts how the linear construction method performs for different fanouts. The running time is divided by the input size. Since the construction method is linear we are very pleased to see that the graphs are horizontal when divided by $N$. This suggests we can construct the structure in linear time on sorted input. We see the running time improves for larger fanouts. This is explained in the decreased number of nodes in the tree which implies a decreased number of point buffer underflows that needs to be handled. Figure~\ref{fig:linear_construction_pbu} supports this claim.
+Figure~\ref{fig:linear_construction_time_divided_N} depicts how the linear construction method performs for different fanouts. The running time is divided by the input size. Since the construction method is linear we are very pleased to see the graphs are horizontal when divided by $N$. This suggests we can construct the structure in linear time on sorted input. We see the running time improves for larger fanouts. This is explained in the decreased number of nodes in the tree which implies a decreased number of point buffer underflows that needs to be handled. Figure~\ref{fig:linear_construction_pbu} supports this claim.
 
 Since linear construction is faster than inserting one-by-one we can conclude that it is indeed beneficial to construct the structure using the linear construction method on sorted input data. In order to conclude that this method should be used for global rebuilding we have to argue about the time required to sort the data. From an earlier course we have experimentally found that we can indeed sort fast enough for the linear construction method to be viable. The results from this course are depicted in Figure~\ref{fig:linear_construction_sorting}. Based on these observations we feel confident to conclude that the linear construction method is superior when it comes to global rebuilding.
 
@@ -1911,28 +1902,27 @@ Since linear construction is faster than inserting one-by-one we can conclude th
 \chapter{Conclusion}
 \label{chp:conclusion}
 
-We have implemented three different data structures for solving the three-sided range reporting problem: The Internal Memory Priority Search Tree by McCreight~\cite{DBLP:journals/siamcomp/McCreight85}, the External Memory Priority Search Tree by Arge et al.~\cite{arge_samoladas_vitter_1999}, and the External Memory \textit{Buffered} Priority Search Tree by Brodal~\cite{DBLP:journals/corr/Brodal15}. We have also implemented wrappers around MySQL 5.7.12, Boost R-Tree, and libspatial external memory R*-Tree, such that the implementation match the interface of a Priority Search Tree. All structures have been thoroughly described and analysed in the I/O model, and for the internal memory structures we have argued that the complexity in the RAM model can be adopted directly to the I/O model due to the oblivious and inefficient access to data not available in internal memory.
+We have implemented three different data structures for solving the three-sided range reporting problem: The Internal Memory Priority Search Tree by McCreight~\cite{DBLP:journals/siamcomp/McCreight85}, the External Memory Priority Search Tree by Arge et al.~\cite{arge_samoladas_vitter_1999}, and the External Memory \textit{Buffered} Priority Search Tree by Brodal~\cite{DBLP:journals/corr/Brodal15}. We have also implemented wrappers around MySQL 5.7.12, Boost R-Tree, and libspatialindex external memory R*-Tree, such that the implementation match the interface of a Priority Search Tree. All structures have been thoroughly described and analysed in the I/O model, and for the internal memory structures we have argued that the complexity in the RAM model can be adopted directly to the I/O model due to the oblivious and inefficient access to data not available in internal memory.
 
 We have conducted several experiments to compare the structures on the operations of the Priority Search Tree interface: \texttt{insert}, \texttt{delete}, and \texttt{query}.
 
-Our results show that the External Memory Buffered Priority Search Tree outperforms all other structures except for MySQL without an index when it comes to inserting uniformly random data. We found the Boost R-Tree performing the best in internal memory due to its efficient use of space.
+Our results show that the External Memory Buffered Priority Search Tree outperforms all other structures except for MySQL without an index when it comes to inserting uniformly distributed data. We found that the Boost R-Tree performed the best in internal memory due to its efficient use of space.
 
-When we looked at deleting uniformly random data, MySQL without an index expectedly fell short, and as soon as the structures not optimized for external memory had to operate outside of internal memory we saw that the External Memory Buffered Priority Search Tree outperformed all other structures significantly.
+When we looked at deleting uniformly distributed data, MySQL without an index expectedly fell short, and as soon as the structures not optimized for external memory outgrew internal memory we saw that the External Memory Buffered Priority Search Tree outperformed all other structures significantly.
 
-We experimented with querying in two different ways to encapsulate the fact that the asymptotic complexity depends on both search and reporting. We isolated the search part by fixing 5 query windows of different size with 5Mb data each and then inserted uniformly random data outside the windows. The results shows that the internal memory data structures once again perform very well while still contained in internal memory, but as soon as we outgrow internal memory the only real contestant to the External Memory Buffered Priority Search is MySQL with an index, which is once again outperformed for large enough input sizes.
+We experimented with querying in two different ways to encapsulate the fact that the asymptotic complexity depends on both search and reporting. We isolated the search part by fixing several query windows of different size each with few megabytes worth of data, and we then inserted uniformly distributed data outside the windows. The results shows that the internal memory data structures once again perform very well while still contained in internal memory, but as soon as we outgrow internal memory the only real contestant to the External Memory Buffered Priority Search is MySQL with an index, which is once again outperformed for large enough input sizes.
+We isolated the reporting part of a query by reporting increasingly more data from a fixed query window. Our results were limited to the External Memory Buffered Priority Search Tree, and we showed that the structure follows the expected behaviour.
 
-\todo{conclude on focus on reporting part of experiments}
+Our experiments also showed that our implementation of the External Memory Priority Search Tree by Arge et al.~proved inferior in all aspects which we explain by the large number of I/O's and heavy internal work.
 
-Our experiments also showed that our implementation of the External Memory Priority Search Tree by Arge et al. proved inferior in all aspects which we explain by the large number of I/O's and heavy internal work.
+As an extra experiment we found that the linear construction method of the External Memory Buffered Priority Search Tree proved to be a superior global rebuilding method over the one-by-one reinsertion of all points in an initially empty tree.
 
 \section{Future work}
-The structure of Brodal described in Chapter~\ref{chp:epst} is able to report top-$k$ queries. A top-$k$ query reports the top $k$ points in the query range. The structure does this in $\mathcal{O}(\frac{1}{\epsilon}\log_B N + K/B)$, i.e. in the same bound as three-sided range queries, but here $K$ is the minimum of $k$ and the number of points in the query range. It would have been interesting to see how the structure performs these top-$k$ queries compared to other results.
+The structure of Brodal described in Chapter~\ref{chp:epst} is able to report top-$k$ queries. A top-$k$ query reports the highest $k$ points in the query range. The structure does this in $\mathcal{O}(\frac{1}{\epsilon}\log_B N + K/B)$, i.e. in the same bound as three-sided range queries, but here $K$ is the minimum of $k$ and the number of points in the query range. It would have been interesting to see how the structure performs these top-$k$ queries compared to other results.
 
 Many of the structures discussed in this thesis also describes a construction algorithm. In future work it could be interesting to see how the structures compare in terms of construction time.
 
-\todo{replace std::set}
-
-\todo{non uniform worst case reporting experiment}
+Furthermore it could be an interesting future work to optimize the space usage of the structures allowing for larger buffers, and to see the effect of such optimizations on the running time.
 
 \clearpage
 \addcontentsline{toc}{chapter}{Bibliography}
@@ -1945,7 +1935,7 @@ Many of the structures discussed in this thesis also describes a construction al
 \chapter{Indexing for Data Models with Constraints and Classes}
 \label{chp:kanellakis}
 
-Kanellakis et al. presents a linear space and partially dynamic data structure in~\cite{Kanellakis1996589}. The data structure answers three-sided queries in $\mathcal{O}(\log_B N + \nicefrac{K}{B} + \log_2 B)$ I/O's and supports inserts in $\mathcal{O}(\log_B N + (\log^2_B \nicefrac{N}{B})$ I/O's. The result is fairly involved and is unlikely to perform well in any practical manner.
+Kanellakis et al.~presents a linear space and partially dynamic data structure in~\cite{Kanellakis1996589}. The data structure answers three-sided queries in $\mathcal{O}(\log_B N + \nicefrac{K}{B} + \log_2 B)$ I/O's and supports inserts in $\mathcal{O}(\log_B N + (\log^2_B \nicefrac{N}{B})$ I/O's. The result is fairly involved and is unlikely to perform well in any practical manner.
 
 We will omit the full details and only present the overall ideas. As a first step all points are shifted such that they lie above the line $y = x$. The basic building block of the data structure is the \textit{metablock tree}; a B-ary tree of \textit{metablocks}, each of which represents $B^2$ data points. The root represents the $B^2$ data points with the largest $y$-values. The remaining $N - B^2$ data points are divided into $B$ groups of $(N - B^2)/B$ data points each based on the $x$-coordinate. The first group contains the $(N - B^2)/B$ data points with the smallest $x$-values and so on. A recursive tree of the exact same type is constructed for each such group of data points. This process continues until a group has at most $B^2$ data points and can fit into a single metablock. Refer to Figure~\ref{fig:kanellakis_metablock_tree} for an illustration of a metablock tree.
 
