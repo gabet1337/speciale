@@ -925,10 +925,10 @@ In every internal node $v$ visited we spend $\mathcal{O}(1+K_v/B)$ I/O's. There 
 \end{savequote}
 \chapter{External Memory Buffered Priority Search Tree}
 \label{chp:epst}
-In this chapter we present an external memory data structure described by Brodal~\cite{DBLP:journals/corr/Brodal15}. The structure supports updates in amortized $\mathcal{O}\left(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N\right)$ I/O's, three sided range queries in $\mathcal{O}\left(\frac{1}{\epsilon}\log_B N + \nicefrac{K}{B}\right)$ I/O's for $0 < \epsilon \leq 1$, and can be constructed on $N$ sorted points in $\mathcal{O}(\nicefrac{N}{B})$ I/O's. The parameter $\epsilon$ determines the size of the fanout and in turn the size of a bootstrapped substructure for storing $\mathcal{O}(B^{1+\epsilon})$ points.
-The substructure is very similar to that of Arge et al.~\cite[Section~3.1]{arge_vitter_2003} for handling $\Theta(B^2)$ points with the main difference being that we reduce the capacity to allow an amortized constant number of I/O's per update. The bootstrapped structure is in~\cite{arge_vitter_2003} used to store the top $\Theta(B^2)$ points w.r.t. the $y$ value for the subtree rooted at the given node of the substructure. This structure uses it in a slightly different way to store the top $\mathcal{O}(B^{1+\epsilon})$ points of the children of the given  node. The bootstrapped structure is described further in Section~\ref{sec:child_structure} and will be referred to as the \textit{child structure} in the rest of the chapter.
+In this chapter we present an external memory data structure introduced by Brodal~\cite{DBLP:journals/corr/Brodal15}. The structure supports updates in amortized $\mathcal{O}\left(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N\right)$ I/O's, three sided range queries in $\mathcal{O}\left(\frac{1}{\epsilon}\log_B N + \nicefrac{K}{B}\right)$ I/O's for $0 < \epsilon \leq 1$, and can be constructed on $N$ sorted points in $\mathcal{O}(\nicefrac{N}{B})$ I/O's. The parameter $\epsilon$ determines the size of the fanout and in turn the size of a bootstrapped substructure for storing $\mathcal{O}(B^{1+\epsilon})$ points in every internal node.
+The substructure is very similar to that of Arge et al.~\cite[Section~3.1]{arge_samoladas_vitter_1999} for handling $\Theta(B^2)$ points with the main difference being that we reduce the capacity to allow an amortized constant number of I/O's per update. The bootstrapped structure is in~\cite{arge_samoladas_vitter_1999} used to store the top $\Theta(B^2)$ points w.r.t. the $y$ value for the subtree rooted at the given node. This structure uses it in a slightly different way to store the top $\mathcal{O}(B^{1+\epsilon})$ points of the children of the given  node. The bootstrapped structure is described further in Section~\ref{sec:child_structure} and will be referred to as the \textit{child structure} in the rest of the chapter.
 
-The External Memory Buffered Priority Search Tree is a combination of the External Memory Priority Search Tree of Arge et al.~\cite{arge_samoladas_vitter_1999} described in Chapter~\ref{chp:arge_pst}, and the buffered updates of the Buffer Tree also thanks to Arge~\cite{Arge:1995:BTN:645930.672850} described in Section~\ref{sec:prelim_buffer_tree}. The main data structure is described in Section~\ref{sec:main_data_structure}.
+The External Memory Buffered Priority Search Tree is a combination of the External Memory Priority Search Tree of Arge et al.~\cite{arge_samoladas_vitter_1999} described in Chapter~\ref{chp:arge_pst}, and the buffered updates of the Buffer Tree described in Section~\ref{sec:prelim_buffer_tree} also thanks to Arge~\cite{Arge:1995:BTN:645930.672850}. The main data structure is described in Section~\ref{sec:main_data_structure}.
 
 \begin{figure}
 	\centering
@@ -945,23 +945,23 @@ The External Memory Buffered Priority Search Tree is a combination of the Extern
 
 \section{Main data structure}
 \label{sec:main_data_structure}
-This section presents the main data structure achieving the results of Theorem~\ref{thm:main_structure}.
+This section presents the main data structure achieving the results introduced in Theorem~\ref{thm:main_structure}.
 \begin{theorem}
 \label{thm:main_structure}
 An external memory data structure exists supporting insertion and deletion of points in amortized $\mathcal{O}(\frac{1}{\epsilon B^{1-\epsilon}} \log_B N)$ I/O's and three sided range queries in amortized $\mathcal{O}(\frac{1}{\epsilon} \log_B N + \nicefrac{K}{B})$, where $\epsilon$ is a constant, $0 < \epsilon \leq 1$, $N$ is the number of points in the structure, and $K$ is the size of the output. The structure can be constructed in amortized $\mathcal{O}(\nicefrac{N}{B})$ I/O's on an x-sorted set of points and stored in $\mathcal{O}(\nicefrac{N}{B})$ blocks.
 \end{theorem}
 
-The structure is a slightly modified version of the B-Tree over the $x$-values of points. Each internal node, except for the root, has a node degree between $\Delta/2$ and $\Delta$, with $\Delta = \lceil B^\epsilon \rceil$. The root has node degree between $2$ and $\Delta$.
+The structure is a slightly modified version of the B-Tree over the $x$-values of the points in the tree. Each internal node, except for the root, has a degree between $\Delta/2$ and $\Delta$, with $\Delta = \lceil B^\epsilon \rceil$. The root has degree between $2$ and $\Delta$.
 
 Each node $v$ stores three buffers containing $\mathcal{O}(B)$ points each, namely a point buffer $P_v$, an insertion buffer $I_v$, and a deletion buffer $D_v$ which purpose will be described shortly.
 
-As in the Internal Memory Priority Search Tree of McCreight~\cite{DBLP:journals/siamcomp/McCreight85} described in Chapter~\ref{chp:internal_pst}, the points with highest $y$-value resides in the top of the tree, i.e. we have a heap ordering among the nodes of the tree on the $y$-value. This means that for a child $c$ of $v$, there is no elements in the point buffer $P_c$ of the child with larger $y$-value than the minimum $y$-value in the point buffer $P_v$ of $v$.
+As in the Internal Memory Priority Search Tree of McCreight~\cite{DBLP:journals/siamcomp/McCreight85} described in Chapter~\ref{chp:internal_pst}, the points with highest $y$-value resides in the top of the tree, i.e. we have a heap ordering among the nodes of the tree on the $y$-value. This means that for a child $c$ of $v$, there are no points in the point buffer $P_c$ of the child with larger $y$-value than any $y$-value in the point buffer $P_v$ of $v$.
 
 The buffers $I_v$ and $D_v$ stores delayed insertions and deletions on their way down to a point buffer of a descendant. Using the basic ideas of the Buffer Tree of Arge~\cite{Arge:1995:BTN:645930.672850} described in Section~\ref{sec:prelim_buffer_tree}, buffers are handled recursively whenever an invariant is broken. We will introduce the invariants in Section~\ref{subsec:brodal_invariants}.
 
 For each internal node $v$ we also store an instance of the child structure $C_v$ containing a copy of all points stored in the point buffers $P_c$ of every child $c$ of $v$. See Figure~\ref{fig:gerth_tree}.
 
-Finally, for each internal node, $v$, we store, in $\mathcal{O}(1)$ blocks, information about the minimum $y$-value of the points of each of $v$'s children. If a child is empty we will mark this by storing $\infty$ as the minimum $y$-value.
+Finally, for each internal node, $v$, we store, in $\mathcal{O}(1)$ blocks, information about the minimum $y$-value of the points in the point buffers of each of $v$'s children. If a child is empty we will mark this by storing $\infty$ as the minimum $y$-value.
 
 All information at the root is kept in internal memory except for the child structure.
 
