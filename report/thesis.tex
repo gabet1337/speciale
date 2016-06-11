@@ -464,6 +464,7 @@ Fusing two nodes require $\mathcal{O}(1)$ I/O's but a fuse can cascade from a le
 A B-Tree on $N$ elements are stored in $\mathcal{O}(\nicefrac{N}{B})$ blocks and can be constructed in the sorting bound by building the tree level-by-level bottom-up.
 
 \subsection{Weight-balanced B-Tree}
+\label{subsec:weight_b_tree}
 A weight balanced B-Tree and a regular B-Tree differ with regards to how and when splitting and fusing of nodes takes place. Constraints are imposed on the \textit{weight} of a node rather than the number of children. The weight of a node $v$ is the number of elements stored in the subtree rooted at $v$. Let $a$ be the branching parameter and $k$ the leaf parameter of the tree. An internal node on level $l$ has weight between $\frac{1}{2}a^lk$ and $2a^lk$ and has at least one child. Inserting in a weight balanced B-Tree is similar to a normal B-Tree and when a leaf splits it might cause the weight of the parent to become too large and recursively split on a path from a leaf to the root.
 
 The strength of the weight-balanced B-Tree is the crucial property described in the following lemma.
@@ -846,7 +847,7 @@ We have now showed that we are able to construct a dynamic data structure with t
 As mentioned earlier, the main structure is a weight-balanced B-Tree~\cite{arge_vitter_1996} on the normal lexicographical ordering of points w.r.t~the $x$-coordinate. Each internal node of the structure stores an instance of the bootstrapped structure described above for answering three-sided queries on $\Theta(B^2)$ points. Arge et al.~denotes this structure the \textit{query data structure} as it allows for fast queries which will be explained later. Points are stored in the query data structure according to the following rules.
 \begin{itemize}
 	\item{An internal node stores at most $B^2$ points in the associated query data structure.}
-	\item{For a child $w$ of internal node $v$ the Y-set of $w$ denoted $Y(w)$ is the points of the query data structure of $v$ that is associated with the range of $w$. See Figure~\ref{fig:arge_child_strucutre}.}
+	\item{For a child $w$ of internal node $v$ the $Y$-set of $w$ denoted $Y(w)$ is the points of the query data structure of $v$ that is associated with the range of $w$. See Figure~\ref{fig:arge_child_strucutre}.}
 	\item{An internal node stores at most $B$ points for each child of the node, i.e. for all children $w$ of an internal node $v$ we have that the size of $Y(w)$ is at most $B$.}
 	\item{A leaf stores at most $2k$ points in its query data structure where $k$ is the leaf parameter of the B-Tree.}
 	\item{If a node or leaf $v$ stores points in its query data structure then $Y(v)$ in $parent(v)$ must contain at least $B/2$ points.}
@@ -855,7 +856,7 @@ As mentioned earlier, the main structure is a weight-balanced B-Tree~\cite{arge_
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.65\textwidth]{../figures/arge_child_structure}
-	\caption{An internal node $v$ of the base B-tree. For each child $w$ of $v$, the Y-set $Y(w)$ consists of the $\Theta(B)$ highest points stored in the subtree of $v$ that are within the $x$-range of $w$. The Y-sets of the five children of $v$ are indicated by bold points. They are stored collectively in the query structure of $v$.}
+	\caption{An internal node $v$ of the base B-tree. For each child $w$ of $v$, the $Y$-set $Y(w)$ consists of the $\Theta(B)$ highest points stored in the subtree of $v$ that are within the $x$-range of $w$. The $Y$-sets of the five children of $v$ are indicated by bold points. They are stored collectively in the query structure of $v$.}
 	\label{fig:arge_child_strucutre}
 \end{figure}
 
@@ -870,7 +871,7 @@ The base B-Tree uses linear space and since each point is stored only once in a 
 
 \begin{figure}[b]
 	\centering
-     \includegraphics[width=\textwidth]{../figures/arge_split}
+     \includegraphics[width=0.90\textwidth]{../figures/arge_split}
      \caption{$v$ is split into $v'$ and $v''$. As a result $Y(v')$ and $Y(v'')$ may contain fewer than $B/2$ points.}
      \label{fig:arge_split_1}
 \end{figure}
@@ -888,22 +889,22 @@ As a result $Y(v')$ and $Y(v'')$ may contain fewer than $B/2$ points. This is re
 \end{wrapfigure}
 
 
-After inserting in the base tree and appropriate reorganization we need to insert the point in the correct query data structure. The search starts in the root. The child $w$ responsible for the $x$-range which the points belongs to is found and its Y-set is found by a degenerate query on the form  $\left[ x\text{-range of }w \right] \times \left[ - \infty, \infty \right]$ to the query data structure of the root. If the number of points is $\geq B/2$ and the point is below all of them the point is recursively inserted into the found child. Otherwise the point joins the query data structure of the root. If the $Y$-set of the found child is now too large we recursively insert the lowest of these points into the child's query data structure. If we reach a leaf we simply insert the point into the query data structure of the leaf. See Figure~\ref{fig:arge_bubble_down}.
+After inserting in the base tree and appropriate reorganization we need to insert the point in the correct query data structure. The search starts in the root. The child $w$ responsible for the $x$-range of the point is found and its $Y$-set is found by a degenerate query on the form  $\left[ x\text{-range of }w \right] \times \left[ - \infty, \infty \right]$ on the query data structure. If the number of points is $\geq B/2$ and the point is below all of them then the point is recursively inserted into the found child. Otherwise the point joins the query data structure of the root. If the $Y$-set of the found child is now too large we recursively insert the lowest of these points into the child's query data structure. If we reach a leaf we simply insert the point into the query data structure of that leaf. See Figure~\ref{fig:arge_bubble_down}.
 
 \begin{figure}[t]
 	\centering
 	\includegraphics[width=1\textwidth]{../figures/arge_bubble_down}
-	\caption{Bubble down. First a degenerate query on the form $\left[ x\text{-range of }w \right] \times \left[ - \infty, \infty \right]$ is done for the found child $w$ resulting in a set of points with size $K$ (a) If $K < B/2$ then we simply insert the point (here marked as a circle) (b) If $K \geq B/2$ and the point is \textit{larger} than the \textit{smallest} $y$-value then the point is inserted and the smallest $y$-value is recursively sent down (c) If $K \geq B/2$ and the point is \textit{smaller} than the \textit{smallest} $y$-value then the point itself is sent recursively down.}
+		\caption{Bubble down. First we compute the $Y$-set of the found child $w$ by a degenerate query on the form $\left[ x\text{-range of }w \right] \times \left[ - \infty, \infty \right]$ resulting in a set of points with size $K$ (a) If $K < B/2$ then we simply insert the point (here marked as a circle) (b) If $K \geq B/2$ and the point is \textit{larger} than the \textit{smallest} $y$-value then the point is inserted and the smallest $y$-value is recursively sent down (c) If $K \geq B/2$ and the point is \textit{smaller} than the \textit{smallest} $y$-value then the point itself is sent recursively down.}
 	\label{fig:arge_bubble_down}
 \end{figure}
 
 \subsection{Deletion}
-Rebalancing the tree after handling a delete is done by adopting global rebuilding instead of using fusion of nodes. To delete a point we search down in the base tree for the point and mark it as deleted without actually removing the point. The next step is to remove the point from the query data structure that it resides in. This is done similar to finding the query data structure to insert the point into. The $Y$-set is recursively found on the search path of the point and if the $Y$-set contains the point, then the point is removed. If the $Y$-set becomes too small as a result we perform a \textit{bubble-up} operation.
+Rebalancing the tree after handling a delete is done by global rebuilding instead of using fusion of nodes. To delete a point we search down in the base tree for the point and mark it as deleted without actually removing the point. The next step is to remove the point from the query data structure that it resides in. This is done similar to finding the query data structure to insert the point into. The $Y$-set is recursively found on the search path of the point and if the $Y$-set contains the point, then the point is removed. If the $Y$-set becomes too small as a result we perform a \textit{bubble-up} operation.
 
 \subsection{Analysis}
-Inserting in the base tree can be done in $\mathcal{O}(\log_B N)$ I/O's by Section~\ref{sec:prelim_b_tree} and can cause as many splits on the path from a leaf to the root. Each split might cause $B/2$ \textit{bubble-up} operations. Each \textit{bubble-up} at $v$ costs $\mathcal{O}(1)$ I/O's and might recurse all the way to a leaf for a total of $\mathcal{O}(\log_B weight(v))$ where $weight(v)$ is the size of the subtree rooted at $v$. In the worst case $B/2$ of these operations are performed totalling at $\mathcal{O}(B\log_B weight(v)) = \mathcal{O}(weight(v))$ I/O's.
+Inserting in the base tree can be done in $\mathcal{O}(\log_B N)$ I/O's by Section~\ref{sec:prelim_b_tree} and can cause as many splits on the path from a leaf to the root. Each split might cause $B/2$ \textit{bubble-up} operations. Each \textit{bubble-up} at $v$ costs $\mathcal{O}(1)$ I/O's and might recurse all the way to a leaf for a total of $\mathcal{O}(\log_B weight(v))$ where $weight(v)$ is the size of the subtree rooted at $v$. In the worst case $B/2$ of these operations are performed totalling $\mathcal{O}(B\log_B weight(v)) = \mathcal{O}(weight(v))$ I/O's.
 
-It follows from Lemma~\ref{lma:weight_balanced} that the cost of splitting a node can be amortized over the insertions and thus each of the $\mathcal{O}(\log_B N)$ splits cost $\mathcal{O}(1)$ I/O's amortized.
+It follows from Lemma~\ref{lma:weight_balanced} in Subsection~\ref{subsec:weight_b_tree} that the cost of splitting a node can be amortized over the insertions and thus each of the $\mathcal{O}(\log_B N)$ splits cost $\mathcal{O}(1)$ I/O's amortized.
 
 Deleting can be done in $\mathcal{O}(\log_B N)$ I/O's as it is just a search for the point in the base tree and query data structure.
 
@@ -916,7 +917,7 @@ We will only proceed to visit a child of $v$ if we report all points from the qu
 We report all points in $Q$, since, by the rules, a point in $Q$ cannot be in an unvisited subtree as this would have been visited if all points were reported and no points in the subtree has lower $y$-values.
 
 \subsection{Analysis}
-In every internal node $v$ visited we spend $\mathcal{O}(1+K_v/B)$ I/O's. There are $\mathcal{O}(\log_B N)$ nodes on the search path from root to the leftmost leaf and rightmost leaf and thus the number of I/O's used on these paths is $\mathcal{O}(\log_B N + K/B)$. All other internal nodes visited are visited because all points were reported in the parent. If we do not report all points from a $Y$-set we can charge the $\mathcal{O}(1)$ I/O's of visiting the child to the parent which must have reported $\Theta(B)$ points. As the cost of reporting from the query data structures is $\mathcal{O}(1+K/B)$ the total cost amounts to $\mathcal{O}(\log_B N + K/B)$.
+In every internal node $v$ visited we spend $\mathcal{O}(1+K_v/B)$ I/O's. There are $\mathcal{O}(\log_B N)$ nodes on the search path from root to the leftmost and rightmost leaf and thus the number of I/O's used on these paths is $\mathcal{O}(\log_B N + K/B)$. All other internal nodes visited are visited because all points were reported in the parent. If we do not report all points from a $Y$-set we can charge the $\mathcal{O}(1)$ I/O's of visiting the child to the parent which must have reported $\Theta(B)$ points. As the cost of reporting from the query data structures is $\mathcal{O}(1+K/B)$ the total cost amounts to $\mathcal{O}(\log_B N + K/B)$.
 
 
 \begin{savequote}[0.50\textwidth]
