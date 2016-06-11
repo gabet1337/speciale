@@ -19,4 +19,4 @@ set xlabel 'N (input size in Mb)'
 set ylabel 'node degree overflows'
 set xrange [0:1030]
 set yrange [0:30]
-plot 'query_experiment_results/final2/gerth_Gerth' u 1:10 t 'Brodal\_fanout2' w lp ls 2
+plot 'query_experiment_results/final2/gerth_fanout4' u 1:10 t 'Brodal\_fanout4' w lp ls 2

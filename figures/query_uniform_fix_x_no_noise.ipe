@@ -1,0 +1,418 @@
+<?xml version="1.0"?>
+<!DOCTYPE ipe SYSTEM "ipe.dtd">
+<ipe version="70107" creator="Ipe 7.2.2">
+<info created="D:20160503132223" modified="D:20160610201035"/>
+<ipestyle name="basic">
+<symbol name="arrow/arc(spx)">
+<path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/farc(spx)">
+<path stroke="sym-stroke" fill="white" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="mark/circle(sx)" transformations="translations">
+<path fill="sym-stroke">
+0.6 0 0 0.6 0 0 e
+0.4 0 0 0.4 0 0 e
+</path>
+</symbol>
+<symbol name="mark/disk(sx)" transformations="translations">
+<path fill="sym-stroke">
+0.6 0 0 0.6 0 0 e
+</path>
+</symbol>
+<symbol name="mark/fdisk(sfx)" transformations="translations">
+<group>
+<path fill="sym-fill">
+0.5 0 0 0.5 0 0 e
+</path>
+<path fill="sym-stroke" fillrule="eofill">
+0.6 0 0 0.6 0 0 e
+0.4 0 0 0.4 0 0 e
+</path>
+</group>
+</symbol>
+<symbol name="mark/box(sx)" transformations="translations">
+<path fill="sym-stroke" fillrule="eofill">
+-0.6 -0.6 m
+0.6 -0.6 l
+0.6 0.6 l
+-0.6 0.6 l
+h
+-0.4 -0.4 m
+0.4 -0.4 l
+0.4 0.4 l
+-0.4 0.4 l
+h
+</path>
+</symbol>
+<symbol name="mark/square(sx)" transformations="translations">
+<path fill="sym-stroke">
+-0.6 -0.6 m
+0.6 -0.6 l
+0.6 0.6 l
+-0.6 0.6 l
+h
+</path>
+</symbol>
+<symbol name="mark/fsquare(sfx)" transformations="translations">
+<group>
+<path fill="sym-fill">
+-0.5 -0.5 m
+0.5 -0.5 l
+0.5 0.5 l
+-0.5 0.5 l
+h
+</path>
+<path fill="sym-stroke" fillrule="eofill">
+-0.6 -0.6 m
+0.6 -0.6 l
+0.6 0.6 l
+-0.6 0.6 l
+h
+-0.4 -0.4 m
+0.4 -0.4 l
+0.4 0.4 l
+-0.4 0.4 l
+h
+</path>
+</group>
+</symbol>
+<symbol name="mark/cross(sx)" transformations="translations">
+<group>
+<path fill="sym-stroke">
+-0.43 -0.57 m
+0.57 0.43 l
+0.43 0.57 l
+-0.57 -0.43 l
+h
+</path>
+<path fill="sym-stroke">
+-0.43 0.57 m
+0.57 -0.43 l
+0.43 -0.57 l
+-0.57 0.43 l
+h
+</path>
+</group>
+</symbol>
+<symbol name="arrow/fnormal(spx)">
+<path stroke="sym-stroke" fill="white" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/pointed(spx)">
+<path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-0.8 0 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/fpointed(spx)">
+<path stroke="sym-stroke" fill="white" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-0.8 0 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/linear(spx)">
+<path stroke="sym-stroke" pen="sym-pen">
+-1 0.333 m
+0 0 l
+-1 -0.333 l
+</path>
+</symbol>
+<symbol name="arrow/fdouble(spx)">
+<path stroke="sym-stroke" fill="white" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-1 -0.333 l
+h
+-1 0 m
+-2 0.333 l
+-2 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/double(spx)">
+<path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-1 -0.333 l
+h
+-1 0 m
+-2 0.333 l
+-2 -0.333 l
+h
+</path>
+</symbol>
+<pen name="heavier" value="0.8"/>
+<pen name="fat" value="1.2"/>
+<pen name="ultrafat" value="2"/>
+<symbolsize name="large" value="5"/>
+<symbolsize name="small" value="2"/>
+<symbolsize name="tiny" value="1.1"/>
+<arrowsize name="large" value="10"/>
+<arrowsize name="small" value="5"/>
+<arrowsize name="tiny" value="3"/>
+<color name="red" value="1 0 0"/>
+<color name="green" value="0 1 0"/>
+<color name="blue" value="0 0 1"/>
+<color name="yellow" value="1 1 0"/>
+<color name="orange" value="1 0.647 0"/>
+<color name="gold" value="1 0.843 0"/>
+<color name="purple" value="0.627 0.125 0.941"/>
+<color name="gray" value="0.745"/>
+<color name="brown" value="0.647 0.165 0.165"/>
+<color name="navy" value="0 0 0.502"/>
+<color name="pink" value="1 0.753 0.796"/>
+<color name="seagreen" value="0.18 0.545 0.341"/>
+<color name="turquoise" value="0.251 0.878 0.816"/>
+<color name="violet" value="0.933 0.51 0.933"/>
+<color name="darkblue" value="0 0 0.545"/>
+<color name="darkcyan" value="0 0.545 0.545"/>
+<color name="darkgray" value="0.663"/>
+<color name="darkgreen" value="0 0.392 0"/>
+<color name="darkmagenta" value="0.545 0 0.545"/>
+<color name="darkorange" value="1 0.549 0"/>
+<color name="darkred" value="0.545 0 0"/>
+<color name="lightblue" value="0.678 0.847 0.902"/>
+<color name="lightcyan" value="0.878 1 1"/>
+<color name="lightgray" value="0.827"/>
+<color name="lightgreen" value="0.565 0.933 0.565"/>
+<color name="lightyellow" value="1 1 0.878"/>
+<dashstyle name="dashed" value="[4] 0"/>
+<dashstyle name="dotted" value="[1 3] 0"/>
+<dashstyle name="dash dotted" value="[4 2 1 2] 0"/>
+<dashstyle name="dash dot dotted" value="[4 2 1 2 1 2] 0"/>
+<textsize name="large" value="\large"/>
+<textsize name="Large" value="\Large"/>
+<textsize name="LARGE" value="\LARGE"/>
+<textsize name="huge" value="\huge"/>
+<textsize name="Huge" value="\Huge"/>
+<textsize name="small" value="\small"/>
+<textsize name="footnote" value="\footnotesize"/>
+<textsize name="tiny" value="\tiny"/>
+<textstyle name="center" begin="\begin{center}" end="\end{center}"/>
+<textstyle name="itemize" begin="\begin{itemize}" end="\end{itemize}"/>
+<textstyle name="item" begin="\begin{itemize}\item{}" end="\end{itemize}"/>
+<gridsize name="4 pts" value="4"/>
+<gridsize name="8 pts (~3 mm)" value="8"/>
+<gridsize name="16 pts (~6 mm)" value="16"/>
+<gridsize name="32 pts (~12 mm)" value="32"/>
+<gridsize name="10 pts (~3.5 mm)" value="10"/>
+<gridsize name="20 pts (~7 mm)" value="20"/>
+<gridsize name="14 pts (~5 mm)" value="14"/>
+<gridsize name="28 pts (~10 mm)" value="28"/>
+<gridsize name="56 pts (~20 mm)" value="56"/>
+<anglesize name="90 deg" value="90"/>
+<anglesize name="60 deg" value="60"/>
+<anglesize name="45 deg" value="45"/>
+<anglesize name="30 deg" value="30"/>
+<anglesize name="22.5 deg" value="22.5"/>
+<tiling name="falling" angle="-60" step="4" width="1"/>
+<tiling name="rising" angle="30" step="4" width="1"/>
+</ipestyle>
+<page>
+<layer name="alpha"/>
+<view layers="alpha" active="alpha"/>
+<use layer="alpha" matrix="1 0 0 1 117.293 29.4107" name="mark/disk(sx)" pos="192 680" size="normal" stroke="black"/>
+<path fill="lightgray">
+256 792 m
+256 480 l
+320 480 l
+320 792 l
+h
+</path>
+<path stroke="black" fill="lightgray" dash="dashed" rarrow="normal/normal">
+256 800 m
+256 480 l
+256 480 l
+</path>
+<path stroke="black" fill="lightgray" dash="dashed" rarrow="normal/normal">
+320 800 m
+320 480 l
+320 480 l
+</path>
+<use matrix="1 0 0 1 -59.1716 37.4637" name="mark/disk(sx)" pos="348 688" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 54.6199 49.368" name="mark/disk(sx)" pos="216 668" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 69.6404 53.2544" name="mark/disk(sx)" pos="216 544" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 42.3655 37.4637" name="mark/disk(sx)" pos="236 688" size="normal" stroke="black"/>
+<path stroke="black" fill="lightgray" dash="dashed">
+256 768 m
+320 768 l
+320 768 l
+</path>
+<path matrix="1 0 0 1 0 -16" stroke="black" fill="lightgray" dash="dashed">
+256 752 m
+320 752 l
+320 752 l
+</path>
+<path matrix="0.6 0 0 1 115.2 0" stroke="black">
+448 480 m
+128 480 l
+128 480 l
+</path>
+<path stroke="black" fill="lightgray" dash="dashed">
+256 704 m
+320 704 l
+320 704 l
+</path>
+<path stroke="black" fill="lightgray" dash="dashed">
+256 672 m
+320 672 l
+320 672 l
+</path>
+<path stroke="black" fill="lightgray" dash="dashed">
+256 640 m
+320 640 l
+320 640 l
+</path>
+<path stroke="black" fill="lightgray" dash="dashed">
+256 608 m
+320 608 l
+320 608 l
+</path>
+<path matrix="1 0 0 1 0 -32" stroke="black" fill="lightgray" dash="dashed">
+256 608 m
+320 608 l
+320 608 l
+</path>
+<path matrix="1 0 0 1 0 -96" stroke="black" fill="lightgray" dash="dashed">
+256 608 m
+320 608 l
+320 608 l
+</path>
+<text matrix="1 0 0 1 -4 0" transformations="translations" pos="252 468" stroke="black" type="label" width="13.462" height="6.179" depth="2.15" valign="baseline" size="Large">$x_1$</text>
+<text matrix="1 0 0 1 0 -4" transformations="translations" pos="312 472" stroke="black" type="label" width="13.462" height="6.179" depth="2.15" valign="baseline" size="Large">$x_2$</text>
+<text matrix="1 0 0 1 -4 -4" transformations="translations" pos="328 772" stroke="black" type="label" width="14.57" height="7.41" depth="3.35" valign="baseline" size="LARGE">$y_1$</text>
+<text transformations="translations" pos="324 736" stroke="black" type="label" width="14.57" height="7.41" depth="3.35" valign="baseline" size="LARGE">$y_2$</text>
+<text matrix="1 0 0 1 -4 0" transformations="translations" pos="328 640" stroke="black" type="label" width="10.78" height="6.176" depth="2.79" valign="baseline" size="Large">$y_i$</text>
+<text transformations="translations" pos="324 608" stroke="black" type="label" width="23.51" height="6.179" depth="2.98" valign="baseline" size="Large">$y_{i+1}$</text>
+<text transformations="translations" pos="324 512" stroke="black" type="label" width="13.327" height="6.176" depth="2.79" valign="baseline" size="Large">$y_n$</text>
+<use matrix="1 0 0 1 178.959 9.18343" name="mark/disk(sx)" pos="136 776" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 162.249 -2.59949" name="mark/disk(sx)" pos="148 780" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 140 -4" name="mark/disk(sx)" pos="172 776" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 64 0" name="mark/disk(sx)" pos="204 780" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 40 4" name="mark/disk(sx)" pos="232 768" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 72 8" name="mark/disk(sx)" pos="212 764" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 64 8" name="mark/disk(sx)" pos="220 776" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 72 4" name="mark/disk(sx)" pos="232 780" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="264 788" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="300 776" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 134.449 14.3555" name="mark/disk(sx)" pos="156 728" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 87.5321 17.8568" name="mark/disk(sx)" pos="184 736" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 104.338 42.7159" name="mark/disk(sx)" pos="208 720" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 82.9807 4.55209" name="mark/disk(sx)" pos="180 752" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 124.295 33.2625" name="mark/disk(sx)" pos="140 728" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -155.807 20.6579" name="mark/disk(sx)" pos="440 736" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 28.711 5.60246" name="mark/disk(sx)" pos="236 736" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -22.0148 9.75106" name="mark/disk(sx)" pos="328 736" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 0.00045282 0.00041952" name="mark/disk(sx)" pos="276 744" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 0.00045282 0.00041952" name="mark/disk(sx)" pos="304 756" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -57.4208 0.700193" name="mark/disk(sx)" pos="368 728" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -58.121 -6.30236" name="mark/disk(sx)" pos="356 716" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 79.8293 19.257" name="mark/disk(sx)" pos="184 708" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 15.756 1.05032" name="mark/disk(sx)" pos="248 708" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 0.00019285 -0.350187" name="mark/disk(sx)" pos="304 720" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 0.00019285 -0.350187" name="mark/disk(sx)" pos="280 716" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 117.293 29.4105" name="mark/disk(sx)" pos="192 680" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 42.3652 37.4635" name="mark/disk(sx)" pos="236 688" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -57.4211 0.700006" name="mark/disk(sx)" pos="368 728" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -58.1213 -6.30255" name="mark/disk(sx)" pos="356 716" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 79.829 19.2568" name="mark/disk(sx)" pos="184 708" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 15.7557 1.05013" name="mark/disk(sx)" pos="248 708" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -0.00010311 -0.350374" name="mark/disk(sx)" pos="304 720" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -0.00010311 -0.350374" name="mark/disk(sx)" pos="280 716" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -106.509 -98.3163" name="mark/disk(sx)" pos="372 784" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -61.4472 21.8476" name="mark/disk(sx)" pos="372 656" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -85.1159 -79.1993" name="mark/disk(sx)" pos="348 776" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 158.853 25.4885" name="mark/disk(sx)" pos="148 668" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -126.081 11.3784" name="mark/disk(sx)" pos="412 684" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 98.7708 27.7643" name="mark/disk(sx)" pos="180 652" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 132.453 7.2818" name="mark/disk(sx)" pos="136 672" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -125.171 19.5713" name="mark/disk(sx)" pos="436 676" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -0.00028508 -0.00086524" name="mark/disk(sx)" pos="272 692" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -0.00028508 -0.00086524" name="mark/disk(sx)" pos="296 684" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -101.047 31.8617" name="mark/disk(sx)" pos="416 632" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -57.8064 28.2204" name="mark/disk(sx)" pos="352 636" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -47.3376 4.55176" name="mark/disk(sx)" pos="332 656" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -132.909 -122.44" name="mark/disk(sx)" pos="408 776" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -132.909 -122.44" name="mark/disk(sx)" pos="444 772" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -132.909 -122.44" name="mark/disk(sx)" pos="436 784" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 43.6955 31.8615" name="mark/disk(sx)" pos="224 632" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 8.1926 -6.37245" name="mark/disk(sx)" pos="256 656" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 43.6955 31.8615" name="mark/disk(sx)" pos="236 616" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -0.00038749 -0.00012423" name="mark/disk(sx)" pos="300 652" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -50.9782 29.5856" name="mark/disk(sx)" pos="360 592" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -92.8535 -5.91735" name="mark/disk(sx)" pos="384 620" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -153.846 17.7513" name="mark/disk(sx)" pos="444 616" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 149.294 28.2206" name="mark/disk(sx)" pos="156 588" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 149.294 28.2206" name="mark/disk(sx)" pos="164 604" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 75.5579 -0.91005" name="mark/disk(sx)" pos="188 620" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 145.198 4.55194" name="mark/disk(sx)" pos="136 624" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 52.7996 47.7927" name="mark/disk(sx)" pos="212 584" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 0.00027068 0.00028133" name="mark/disk(sx)" pos="276 616" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 0.00027068 0.00028133" name="mark/disk(sx)" pos="296 628" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -108.33 14.5648" name="mark/disk(sx)" pos="416 584" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 15.9307 -1.82115" name="mark/disk(sx)" pos="252 584" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -48.9924 -11.1175" name="mark/disk(sx)" pos="336 600" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -62.3579 25.4888" name="mark/disk(sx)" pos="340 556" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -62.3579 25.4888" name="mark/disk(sx)" pos="328 568" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -0.00012979 -0.00048724" name="mark/disk(sx)" pos="304 584" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -0.00012979 -0.00048724" name="mark/disk(sx)" pos="272 600" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 113.792 38.6888" name="mark/disk(sx)" pos="184 556" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 113.792 38.6888" name="mark/disk(sx)" pos="180 540" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -60.0817 32.772" name="mark/disk(sx)" pos="360 520" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 91.4886 45.9718" name="mark/disk(sx)" pos="184 504" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 72.3716 50.9786" name="mark/disk(sx)" pos="208 516" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 27.3102 36.8685" name="mark/disk(sx)" pos="236 528" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 0.00020248 0.0000494" name="mark/disk(sx)" pos="272 560" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 0.00020248 0.0000494" name="mark/disk(sx)" pos="300 564" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -118.343 -7.28291" name="mark/disk(sx)" pos="408 564" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -118.343 -7.28291" name="mark/disk(sx)" pos="408 556" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -115.157 -8.19324" name="mark/disk(sx)" pos="376 564" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -123.35 -9.10357" name="mark/disk(sx)" pos="436 564" size="normal" stroke="black"/>
+<path matrix="1 0 0 1 -0.00027681 -64.0004" stroke="black" fill="lightgray" dash="dashed">
+256 608 m
+320 608 l
+320 608 l
+</path>
+<use matrix="1 0 0 1 -93.3087 23.2133" name="mark/disk(sx)" pos="384 496" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -56.4402 -0.91058" name="mark/disk(sx)" pos="332 520" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -59.6264 28.2201" name="mark/disk(sx)" pos="340 500" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 157.487 34.1369" name="mark/disk(sx)" pos="148 496" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 130.178 -51.8895" name="mark/disk(sx)" pos="132 572" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 157.487 34.1369" name="mark/disk(sx)" pos="136 500" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 65.0889 51.4332" name="mark/disk(sx)" pos="240 484" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 80.5645 37.323" name="mark/disk(sx)" pos="204 500" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 0.00011411 -0.00066178" name="mark/disk(sx)" pos="300 520" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 0.00011411 -0.00066178" name="mark/disk(sx)" pos="268 532" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -98.7707 -9.10336" name="mark/disk(sx)" pos="408 496" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -121.529 -15.9308" name="mark/disk(sx)" pos="432 520" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -133.819 -18.6618" name="mark/disk(sx)" pos="404 520" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 0.00036861 -0.00004345" name="mark/disk(sx)" pos="264 488" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 0.00036861 -0.00004345" name="mark/disk(sx)" pos="296 500" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -147.929 -30.4957" name="mark/disk(sx)" pos="432 520" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -146.564 -20.482" name="mark/disk(sx)" pos="432 520" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -134.729 -31.8612" name="mark/disk(sx)" pos="432 520" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -122.44 -22.7579" name="mark/disk(sx)" pos="432 520" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -149.75 -13.6545" name="mark/disk(sx)" pos="432 520" size="normal" stroke="black"/>
+</page>
+</ipe>
