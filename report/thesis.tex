@@ -780,24 +780,24 @@ The above bounds translate directly to the I/O model as we cannot guarantee that
 \end{savequote}
 \chapter{External Memory Priority Search Tree}
 \label{chp:arge_pst}
-In this chapter we present an older result on dynamic three-sided range queries due to Arge et al.~\cite{arge_samoladas_vitter_1999}.
-The result is a weight-balanced B-Tree where each node is augmented with a bootstrapped structure for storing the top $\Theta(B^2)$ points w.r.t. the $y$-value of the subtree rooted at that node. The bootstrapped structure is described in Section~\ref{sec:child_structure} and the main data structure of Arge et al.~that proves Theorem~\ref{thm:arge_structure} is described in Section~\ref{sec:arge_structure}.
+In this chapter we present a result on dynamic three-sided range reporting due to Arge et al.~\cite{arge_samoladas_vitter_1999}.
+The result is a weight-balanced B-Tree where each node is augmented with a bootstrapped structure for storing the top $\Theta(B^2)$ points w.r.t.~the $y$-value of the subtree rooted at that node. The bootstrapped structure is described in Section~\ref{sec:child_structure} and the main data structure of Arge et al.~that proves Theorem~\ref{thm:arge_structure} is described in Section~\ref{sec:arge_structure}.
 
 \begin{theorem}
 \label{thm:arge_structure}
-An external memory data structure exists supporting insertion and deletion in amortized $\mathcal{O}(\log_B N/B)$ I/O's and reporting of three sided range queries in $\mathcal{O}(\log_B N/B~+~K/B)$ I/O's, where $N$ is the input size, and $K$ is the size of the output. The structure uses $\mathcal{O}(N/B)$ space.
+An external memory data structure exists supporting insertion and deletion of points in amortized $\mathcal{O}(\log_B \nicefrac{N}{B})$ I/O's and reporting of three sided range queries in $\mathcal{O}(\log_B \nicefrac{N}{B}~+~\nicefrac{K}{B})$ I/O's, where $N$ is the input size and $K$ is the size of the output. The structure uses $\mathcal{O}(N/B)$ space.
 \end{theorem}
 
-\section{Dynamic 3-sided queries on \texorpdfstring{$\Theta(B^2)$}{tb2} points}
+\section{Dynamic 3-sided queries on \texorpdfstring{$\Theta\left(B^2\right)$}{tb2} points}
 \label{sec:child_structure}
 In this section we describe a data structure that supports the operations stated in Theorem~\ref{thm:child_structure}.
 \begin{theorem}
 \label{thm:child_structure}
 There exists a dynamic data structure for storing $\mathcal{O}(B^{1+\epsilon})$ two dimensional points for $0 \leq \epsilon \leq 1$.
-Insertion and deletion of $s$ points requires amortized $\mathcal{O}(1+\nicefrac{s}{B^{1-\epsilon}})$ I/O's.
-The data structure supports reporting all points inside a query range of the form $[x_1,x_2] \times [y,\infty]$ in $\mathcal{O}(1+\nicefrac{K}{B})$ I/O's.
+Insertion and deletion of $s$ points requires amortized $\mathcal{O}\left(1+\frac{s}{B^{1-\epsilon}}\right)$ I/O's.
+The data structure supports reporting of all points inside a query range of the form $[x_1,x_2] \times [y,\infty]$ in $\mathcal{O}(1+\nicefrac{K}{B})$ I/O's.
 The structure uses linear space.
-Finally the structure can be constructed using $\mathcal{O}(B^{1+\epsilon} / B)$ I/O's given a x-sorted set of $B^{1+\epsilon}$ points.
+Finally the structure can be constructed using $\mathcal{O}(B^{1+\epsilon} / B)$ I/O's given an x-sorted set of $B^{1+\epsilon}$ points.
 \end{theorem}
 
 The structure consists of a static structure $\mathcal{L}$ storing $\mathcal{O}(B^{1+\epsilon})$ points and two buffers $\mathcal{I}$ and $\mathcal{D}$ storing at most $B$ points each. The buffers $\mathcal{I}$ and $\mathcal{D}$ store delayed insertions and deletions, respectively, and are initially empty. A point can appear in either $\mathcal{I}$ or $\mathcal{D}$ but not both as updates from either cancel each other out.
@@ -811,15 +811,15 @@ Let $L$ be the points stored in $\mathcal{L}$ and let $\ell = \lceil \nicefrac{\
 	\label{fig:sweep-line}
 \end{figure}
 
-\textbf{To construct} blocks $b_{\ell+1},\dots,b_{2\ell}$ we make a vertical sweep over the points in increasing $y$-order. When the sweep line reaches a point in a block $b_i$ that together with an adjacent block, i.e. either $b_{i-1}$ or $b_{i+1}$, contains exactly $B$ points on or above the sweep line, we replace the two blocks by a single block containing the $B$ points on or above the sweep line.  The merged block is denoted $b_{i,j}$ if it contains points from the initial blocks in the range from, and including, $i$ to $j$. The two merged blocks are then excluded from the sweep and the newly created merged block is included in the continued sweep. Every merge of adjacent blocks causes the sweep line to intersect one block less resulting in at most $\ell-1$ blocks being created from the sweep.
+\textbf{To construct} blocks $b_{\ell+1},\dots,b_{2\ell}$ we make a vertical sweep over the points in increasing $y$-order. When the sweep line reaches a point in a block $b_i$ that together with an adjacent block, i.e.~either $b_{i-1}$ or $b_{i+1}$, contains exactly $B$ points on or above the sweep line, we replace the two blocks by a single block containing the $B$ points on or above the sweep line.  The merged block is denoted $b_{i,j}$ if it contains points from the initial blocks in the range from, and including, $i$ to $j$. The two merged blocks are then excluded from the sweep and the newly created merged block is included in the continued sweep. Every merge of adjacent blocks causes the sweep line to intersect one block less resulting in at most $\ell-1$ blocks created from the sweep.
 
 A catalogue structure stores in $\mathcal{O}(1)$ disk blocks a reference to each of the $2\ell-1$ blocks. For block $b_i$ we store the minimum and maximum $x$-values for the points contained in the block. For a merged block $b_{i,j}$ we store the interval $\left[ i,j\right]$ and the minimum $y$-value of the points in the block. Note, this minimum $y$-value is also the point where the sweep line created the block $b_{i,j}$.
 
 %%%%%%%%%%%%%
 % UPDATES %%%
 %%%%%%%%%%%%%
-\textbf{Insertions and deletions} are stored in $\mathcal{I}$ and $\mathcal{D}$ respectively. When a point is inserted in $\mathcal{I}$ or $\mathcal{D}$ we make sure to remove any existing occurrence of the point in $\mathcal{I}$ and $\mathcal{D}$ such that the new update overrides any previous updates. Whenever $\mathcal{I}$ or $\mathcal{D}$ overflows, i.e. $\vert \mathcal{I} \vert > B$ or $\vert \mathcal{D} \vert > B$, the stored updates are applied to the set of points in $\mathcal{L}$. This is done by scanning $L$ in increasing $x$-order while applying insertions and deletions, i.e. for each point in $L$ we check whether we should insert a new point from $\mathcal{I}$ before it or if the point should be deleted. This process results in a new set of points $L'$ which once again is partitioned into blocks $b_1,\dots,b_{\ell'}$ and a vertical sweep similar to the previously described sweep is performed to rebuild the merged blocks and catalogue structure.
-This reconstruction is done in $\mathcal{O}(\ell')$ I/O's. As $\ell' \leq \lceil \nicefrac{(\vert L \vert + 1)}{B}\rceil$ it requires $\mathcal{O}(\lceil \nicefrac{\vert L \vert}{B}\rceil) = \mathcal{O}(B^\epsilon)$ I/O's to rebuild $\mathcal{L}$. If we amortize this cost over the $>B$ updates that caused the overflow the cost becomes $\mathcal{O}\left(\nicefrac{B^\epsilon}{B}\right) = \mathcal{O}\left(\nicefrac{1}{B^{1-\epsilon}}\right)$ amortized I/O's per delayed update.
+\textbf{Insertions and deletions} are stored in $\mathcal{I}$ and $\mathcal{D}$ respectively. When a point is inserted in $\mathcal{I}$ or $\mathcal{D}$ we make sure to remove any existing occurrence of the point in $\mathcal{I}$ and $\mathcal{D}$ such that the new update override any previous updates. Whenever $\mathcal{I}$ or $\mathcal{D}$ overflows, i.e.~$\vert \mathcal{I} \vert > B$ or $\vert \mathcal{D} \vert > B$, the stored updates are applied to the set of points in $\mathcal{L}$. This is done by scanning $L$ in increasing $x$-order while applying insertions and deletions, i.e.~for each point in $L$ we check whether we should insert a new point from $\mathcal{I}$ before it or if the point should be deleted. This process results in a new set of points $L'$ which once again is partitioned into blocks $b_1,\dots,b_{\ell'}$ and a vertical sweep similar to the previously described is performed to rebuild the merged blocks and catalogue structure.
+This reconstruction is done in $\mathcal{O}(\ell')$ I/O's. Since $\ell' \leq \lceil \nicefrac{(\vert L \vert + 1)}{B}\rceil$ it requires $\mathcal{O}(\lceil \nicefrac{\vert L \vert}{B}\rceil) = \mathcal{O}(B^\epsilon)$ I/O's to rebuild $\mathcal{L}$. If we amortize this cost over the $>B$ updates that caused the overflow the cost becomes $\mathcal{O}\left(\nicefrac{B^\epsilon}{B}\right) = \mathcal{O}\left(\nicefrac{1}{B^{1-\epsilon}}\right)$ amortized I/O's per delayed update.
 
 %%%%%%%%%%%%%
 % QUERIES %%%
@@ -829,11 +829,11 @@ This reconstruction is done in $\mathcal{O}(\ell')$ I/O's. As $\ell' \leq \lceil
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=1]{../figures/sweep-line-with-query}
-	\caption{The grey area is our query and we should report the points within. This is done by finding the fat line segments which is the segments just below the sweep line at $y$. The segments can be found using the catalogue and the blocks can be scanned and relevant points can be reported in $\mathcal{O}(1+\nicefrac{K}{B})$.}
+	\caption{The gray area is our query and we should report the points within. This is done by finding the fat line segments which is the segments just below the sweep line at $y$. The segments can be found using the catalogue. Now the blocks can be scanned and relevant points can be reported in $\mathcal{O}(1+\nicefrac{K}{B})$.}
 	\label{fig:sweep-line-query}
 \end{figure}
 
-We know from construction that the blocks intersected contains $B$ points on or above the sweep line. The left most and right most of these blocks are not necessarily fully contained in the query range and do not necessarily contain any points to report. We know that blocks must contain at least $B\lfloor \nicefrac{(t-2)}{2}\rfloor$ points since two adjacent blocks in the query range at the sweep line would otherwise have been merged to a single block containing just $B$ points, i.e. if we force merge all adjacent blocks two and two we would end up with $\nicefrac{(t-2)}{2}$ blocks each with at least $B$ points on or above the sweep line. It follows that the output is at least $K \geq B\lfloor \nicefrac{(t-2)}{2}\rfloor$.
+We know from construction that the blocks intersected contains $B$ points on or above the sweep line. The left most and right most of these blocks are not necessarily fully contained in the query range and do not necessarily contain any points to report. We know that blocks must contain at least $B\lfloor \nicefrac{(t-2)}{2}\rfloor$ points since two adjacent blocks in the query range at the sweep line would otherwise have been merged to a single block containing just $B$ points, i.e.~if we force merge all adjacent blocks two and two we would end up with $\nicefrac{(t-2)}{2}$ blocks each with at least $B$ points on or above the sweep line. It follows that the output is at least $K \geq B\lfloor \nicefrac{(t-2)}{2}\rfloor$.
 
 The $t$ relevant blocks are scanned and the points contained in the query are reported. The total number of I/O's required becomes $\mathcal{O}(1+t) = \mathcal{O}(1+\nicefrac{K}{B})$ as $t \leq 2\frac{K}{B}-2$ from the previous observation.
 
@@ -843,10 +843,10 @@ We have now showed that we are able to construct a dynamic data structure with t
 
 \section{Main structure}
 \label{sec:arge_structure}
-As mentioned earlier, the main structure is a weight-balanced B-Tree~\cite{arge_vitter_1996} on the normal lexicographical ordering of points with regards to $x$. Each internal node of the structure stores an instance of the bootstrapped structure described above for answering three-sided queries on $\Theta(B^2)$ points. Arge et al.~denotes this structure the \textit{query data structure} as it allows for fast queries which will be explained later. Points are stored in the query data structure according to the following rules.
+As mentioned earlier, the main structure is a weight-balanced B-Tree~\cite{arge_vitter_1996} on the normal lexicographical ordering of points w.r.t~the $x$-coordinate. Each internal node of the structure stores an instance of the bootstrapped structure described above for answering three-sided queries on $\Theta(B^2)$ points. Arge et al.~denotes this structure the \textit{query data structure} as it allows for fast queries which will be explained later. Points are stored in the query data structure according to the following rules.
 \begin{itemize}
 	\item{An internal node stores at most $B^2$ points in the associated query data structure.}
-	\item{For a child $w$ of internal node $v$ the Y-set of $w$ denoted $Y(w)$ is the points of the query data structure of $v$ that is associated with the range that is associated with $w$. See Figure~\ref{fig:arge_child_strucutre}.}
+	\item{For a child $w$ of internal node $v$ the Y-set of $w$ denoted $Y(w)$ is the points of the query data structure of $v$ that is associated with the range of $w$. See Figure~\ref{fig:arge_child_strucutre}.}
 	\item{An internal node stores at most $B$ points for each child of the node, i.e. for all children $w$ of an internal node $v$ we have that the size of $Y(w)$ is at most $B$.}
 	\item{A leaf stores at most $2k$ points in its query data structure where $k$ is the leaf parameter of the B-Tree.}
 	\item{If a node or leaf $v$ stores points in its query data structure then $Y(v)$ in $parent(v)$ must contain at least $B/2$ points.}
@@ -855,12 +855,12 @@ As mentioned earlier, the main structure is a weight-balanced B-Tree~\cite{arge_
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.65\textwidth]{../figures/arge_child_structure}
-	\caption{An internal node $v$ of the base tree. For each child $w$ of $v$, the Y-set $Y(w)$ consists of the $\Theta(B)$ highest points stored in the subtree of $v$ that are within the $x$-range of $w$. The Y-sets of the five children of $v$ are indicated by bold points. They are stored collectively in the query structure of $v$.}
+	\caption{An internal node $v$ of the base B-tree. For each child $w$ of $v$, the Y-set $Y(w)$ consists of the $\Theta(B)$ highest points stored in the subtree of $v$ that are within the $x$-range of $w$. The Y-sets of the five children of $v$ are indicated by bold points. They are stored collectively in the query structure of $v$.}
 	\label{fig:arge_child_strucutre}
 \end{figure}
 
 
-The base B-Tree uses linear space and since each point is stored only once in a query data structure that uses linear space, we can conclude that the structure stores $N$ points in $\mathcal{O}(N/B)$ blocks, i.e. uses linear space.
+The base B-Tree uses linear space and since each point is stored only once in a query data structure that also uses linear space, we can conclude that the structure stores $N$ points in $\mathcal{O}(N/B)$ blocks.
 
 \clearpage
 
