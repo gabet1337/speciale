@@ -115,7 +115,7 @@ This thesis presents, implements, and experiments with several solutions to the 
 
 We have implemented two external memory data structures that solves the problem: The External Memory Priority Search Tree by Arge et al.~\cite{arge_samoladas_vitter_1999} and the External Memory \textit{Buffered} Priority Search Tree by Brodal~\cite{DBLP:journals/corr/Brodal15}.
 
-Besides comparing these structures we also compare them against our own implementation of the Priority Search Tree of McCreight~\cite{DBLP:journals/siamcomp/McCreight85}, and wrappers around MySQL, libspatialindex R*Tree, and Boost R-Tree.
+Besides comparing these structures we also compare them against our own implementation of the Priority Search Tree of McCreight~\cite{DBLP:journals/siamcomp/McCreight85}, and wrappers around MySQL, libspatialindex R*-Tree, and Boost R-Tree.
 
 Our results show that the External Memory Buffered Priority Search Tree outperforms all other structures as soon as data exceeds internal memory capacity. MySQL without an index was significantly faster at inserting but as both the experiments with deletion and querying showed, the cost of not having an index on the table is too high. The Boost R-Tree proved to be the fastest of the internal memory data structures.
 
@@ -128,7 +128,7 @@ Vi vil i dette speciale pr{\ae}sentere, implementere og eksperimentere med mange
 
 Vi har igennem specialeforl{\o}bet implementeret to strukturer optimeret til det eksterne hukommelseslager: Prioritetss{\o}getr{\ae}et til det eksterne hukommelseslager af Arge et al.~\cite{arge_samoladas_vitter_1999} og det \textit{Bufferet} Prioritetss{\o}getr{\ae} til det eksterne hukommelseslager af Brodal~\cite{DBLP:journals/corr/Brodal15}.
 
-Vi har derudover implementeret et Prioritetss{\o}getr{\ae} til det interne hukommelseslager af McCreight~\cite{DBLP:journals/siamcomp/McCreight85}, og lavet omslag til MySQL, libspatialindex R*Tr{\ae} og Boost R-Tr{\ae}.
+Vi har derudover implementeret et Prioritetss{\o}getr{\ae} til det interne hukommelseslager af McCreight~\cite{DBLP:journals/siamcomp/McCreight85}, og lavet omslag til MySQL, libspatialindex R*-Tr{\ae} og Boost R-Tr{\ae}.
 
 Resultater fra eksperimenter viser at det \textit{Bufferet} Prioritetss{\o}getr{\ae} til det eksterne hukommelseslager pr{\ae}sterer bedre end de resterende data strukturer s{\aa} snart de skal h{\aa}ndtere mere data end der er plads til i datamatens interne hukommelseslager. MySQL uden et tilh{\o}rende indeks var den eneste struktur der kunne f{\o}lge med n{\aa}r det kommer til at inds{\ae}tte. Denne struktur m{\aa}tte dog betale dyrt for de hurtige inds{\ae}ttelser i form af langsomme slettelser og foresp{\o}rgsler. Det var Boost R-Tr{\ae}et der viste sig at v{\ae}re den hurtigste af strukturerne for det interne hukommelseslager.
 
@@ -357,8 +357,8 @@ We conclude the thesis in Chapter~\ref{chp:conclusion} and present possible futu
 \end{savequote}
 \chapter{Model of computation}
 \label{chp:iomodel}
-We will argue the results of this thesis in terms of the external memory model of Aggarwal and Vitter~\cite{Aggarwal:1988/ICS/48529.48535}.
-The external memory model (or I/O model) measures the efficiency of an algorithm by counting the total number of reads and writes to and from disk. In detail the model consists of two levels of memory; a bounded internal memory of size $M$ and an unbounded external memory. For a total of $N$ records we define an I/O operation to be the process of transferring $B$ contiguous records between the two levels of memory as depicted in Figure~\ref{fig:io_model}. We restrict all computations on records to be done in internal memory. Throughout the thesis we will let $K$ denote the total number of records in the output.
+We will argue asymptotic complexities in this thesis using the external memory model of Aggarwal and Vitter~\cite{Aggarwal:1988/ICS/48529.48535}.
+The external memory model (or I/O Model) measures the efficiency of an algorithm by counting the total number of reads and writes to and from disk. In detail the model consists of two levels of memory; a bounded internal memory of size $M$ and an unbounded external memory. For a total of $N$ records we define an I/O operation to be the process of transferring $B$ contiguous records between the two levels of memory as depicted in Figure~\ref{fig:io_model}. We restrict all computations on records to internal memory. Throughout the thesis we will let $K$ denote the total number of records in the output.
 
 \begin{figure}[h]
 	\centering
@@ -367,7 +367,7 @@ The external memory model (or I/O model) measures the efficiency of an algorithm
 	\label{fig:io_model}
 \end{figure}
 
-The fundamental bounds in the external memory model is that scanning $N$ records can be done in $\mathcal{O}(\text{Scan}) = \mathcal{O}(\nicefrac{N}{B})$, sorting $N$ records in $\mathcal{O}(\text{Sort}) = \mathcal{O}\left(\frac{N}{B} \log_{\nicefrac{M}{B}}\frac{N}{B}\right)$, and searching for a single record between $N$ records in $\mathcal{O}(\log_B N)$. We denote $\mathcal{O}(\nicefrac{N}{B})$ as being linear in terms of I/O's. Note that the $B$ factor is very important since $\nicefrac{N}{B} < \mathcal{O}\left(\frac{N}{B} \log_{\nicefrac{M}{B}}\frac{N}{B}\right) \ll N$.
+The fundamental bounds in the I/O Model are that scanning $N$ records can be done in $\mathcal{O}(\text{Scan}) = \mathcal{O}(\nicefrac{N}{B})$, sorting $N$ records in $\mathcal{O}(\text{Sort}) = \mathcal{O}\left(\frac{N}{B} \log_{\nicefrac{M}{B}}\frac{N}{B}\right)$, and searching for a single record between $N$ records in $\mathcal{O}(\log_B N)$. We denote $\mathcal{O}(\nicefrac{N}{B})$ as being linear in terms of I/O's. Note that the $B$ factor is very important as $\nicefrac{N}{B} < \mathcal{O}\left(\frac{N}{B} \log_{\nicefrac{M}{B}}\frac{N}{B}\right) \ll N$.
 
 For convenience we will assume $M > B^2$. This assumption is known as the \textit{tall-cache assumption} in the cache-oblivious model and basically states that the number of blocks \nicefrac{M}{B} is larger than the size of each block $B$~\cite{Prokop99cache-obliviousalgorithms}.
 
@@ -1901,15 +1901,15 @@ Since linear construction is faster than inserting one-by-one we can conclude th
 \chapter{Conclusion}
 \label{chp:conclusion}
 
-We have implemented three different data structures for solving the three-sided range reporting problem: The Internal Memory Priority Search Tree by McCreight~\cite{DBLP:journals/siamcomp/McCreight85}, the External Memory Priority Search Tree by Arge et al.~\cite{arge_samoladas_vitter_1999}, and the External Memory \textit{Buffered} Priority Search Tree by Brodal~\cite{DBLP:journals/corr/Brodal15}. We have also implemented wrappers around MySQL 5.7.12, Boost R-Tree, and libspatial external memory R*-Tree, such that the implementation match the interface of a Priority Search Tree. All structures have been thoroughly described and analysed in the I/O model, and for the internal memory structures we have argued that the complexity in the RAM model can be adopted directly to the I/O model due to the oblivious and inefficient access to data not available in internal memory.
+We have implemented three different data structures for solving the three-sided range reporting problem: The Internal Memory Priority Search Tree by McCreight~\cite{DBLP:journals/siamcomp/McCreight85}, the External Memory Priority Search Tree by Arge et al.~\cite{arge_samoladas_vitter_1999}, and the External Memory \textit{Buffered} Priority Search Tree by Brodal~\cite{DBLP:journals/corr/Brodal15}. We have also implemented wrappers around MySQL 5.7.12, Boost R-Tree, and libspatialindex external memory R*-Tree, such that the implementation match the interface of a Priority Search Tree. All structures have been thoroughly described and analysed in the I/O model, and for the internal memory structures we have argued that the complexity in the RAM model can be adopted directly to the I/O model due to the oblivious and inefficient access to data not available in internal memory.
 
 We have conducted several experiments to compare the structures on the operations of the Priority Search Tree interface: \texttt{insert}, \texttt{delete}, and \texttt{query}.
 
-Our results show that the External Memory Buffered Priority Search Tree outperforms all other structures except for MySQL without an index when it comes to inserting uniformly random data. We found the Boost R-Tree performing the best in internal memory due to its efficient use of space.
+Our results show that the External Memory Buffered Priority Search Tree outperforms all other structures except for MySQL without an index when it comes to inserting uniformly distributed data. We found that the Boost R-Tree performed the best in internal memory due to its efficient use of space.
 
-When we looked at deleting uniformly random data, MySQL without an index expectedly fell short, and as soon as the structures not optimized for external memory had to operate outside of internal memory we saw that the External Memory Buffered Priority Search Tree outperformed all other structures significantly.
+When we looked at deleting uniformly distributed data, MySQL without an index expectedly fell short, and as soon as the structures not optimized for external memory outgrew internal memory we saw that the External Memory Buffered Priority Search Tree outperformed all other structures significantly.
 
-We experimented with querying in two different ways to encapsulate the fact that the asymptotic complexity depends on both search and reporting. We isolated the search part by fixing 5 query windows of different size with 5Mb data each and then inserted uniformly random data outside the windows. The results shows that the internal memory data structures once again perform very well while still contained in internal memory, but as soon as we outgrow internal memory the only real contestant to the External Memory Buffered Priority Search is MySQL with an index, which is once again outperformed for large enough input sizes.
+We experimented with querying in two different ways to encapsulate the fact that the asymptotic complexity depends on both search and reporting. We isolated the search part by fixing several query windows of different size each with few megabytes worth of data, and we then inserted uniformly distributed data outside the windows. The results shows that the internal memory data structures once again perform very well while still contained in internal memory, but as soon as we outgrow internal memory the only real contestant to the External Memory Buffered Priority Search is MySQL with an index, which is once again outperformed for large enough input sizes.
 We isolated the reporting part of a query by reporting increasingly more data from a fixed query window. Our results were limited to the External Memory Buffered Priority Search Tree, and we showed that the structure follows the expected behaviour.
 
 Our experiments also showed that our implementation of the External Memory Priority Search Tree by Arge et al.~proved inferior in all aspects which we explain by the large number of I/O's and heavy internal work.
@@ -1917,11 +1917,11 @@ Our experiments also showed that our implementation of the External Memory Prior
 As an extra experiment we found that the linear construction method of the External Memory Buffered Priority Search Tree proved to be a superior global rebuilding method over the one-by-one reinsertion of all points in an initially empty tree.
 
 \section{Future work}
-The structure of Brodal described in Chapter~\ref{chp:epst} is able to report top-$k$ queries. A top-$k$ query reports the top $k$ points in the query range. The structure does this in $\mathcal{O}(\frac{1}{\epsilon}\log_B N + K/B)$, i.e. in the same bound as three-sided range queries, but here $K$ is the minimum of $k$ and the number of points in the query range. It would have been interesting to see how the structure performs these top-$k$ queries compared to other results.
+The structure of Brodal described in Chapter~\ref{chp:epst} is able to report top-$k$ queries. A top-$k$ query reports the highest $k$ points in the query range. The structure does this in $\mathcal{O}(\frac{1}{\epsilon}\log_B N + K/B)$, i.e. in the same bound as three-sided range queries, but here $K$ is the minimum of $k$ and the number of points in the query range. It would have been interesting to see how the structure performs these top-$k$ queries compared to other results.
 
 Many of the structures discussed in this thesis also describes a construction algorithm. In future work it could be interesting to see how the structures compare in terms of construction time.
 
-Also, it could be an interesting future work to optimize the space usage of the structures allowing for larger internal memory buffer sizes, and to see the effect of such optimizations on the running time.
+Furthermore it could be an interesting future work to optimize the space usage of the structures allowing for larger buffers, and to see the effect of such optimizations on the running time.
 
 \clearpage
 \addcontentsline{toc}{chapter}{Bibliography}
