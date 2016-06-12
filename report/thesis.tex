@@ -1806,19 +1806,11 @@ The theoretical search complexity on each of the data structures are depicted in
 
 We see that both the Internal Memory Priority Search Tree and the Boost R-Tree suffers when they cannot fit into internal memory. We in the following argue our observations according to the zoomed-in plot depicted in Figure~\ref{fig:result_query_search_complexity_zoom}. It is difficult for us to argue that the libspatial R*-Tree follows our expectations of an average $\mathcal{O}(\log_B N)$ search time in the depicted results. We believe we would have had a better chance of explaining the tendencies on the R*-Tree had we been able to construct a data structure on a larger input size. This was not feasible within a reasonable amount of time. To our surprise we see that the structure of Arge et al.~performs best of all the structures, but since we are unable to insert more than around 70Mb of data in the data structure within 24 hours, we must conclude the implementation to be of no practical use when querying large data sets. We see that the non-indexed MySQL implementation is linear in the input as expected. It is interesting to see that the data structure of Brodal performs very well even for a small fanout. The data structure aligns with the tendencies suggested by the theory except for minor fluctuations. These are, however, perfectly explained by the insert buffer overflow, node degree overflow, and point buffer underflow needed during fixup as shown in Figure~\ref{fig:result_query_search_fixup}.
 
-We decided to run a separate experiment for various fanouts on Brodal's since the theory claims the data structure improves on ever increasing fanouts.
-Note that we ran this experiment on a different machine. This is not a problem since we are aiming at experimenting on the relative performance between different fanouts opposed to the relative performance between different data structures. The results of these experiments are depicted in Figure~\ref{fig:gerth_query_fanout_experiment}.
-Clearly we see a tendency of faster searches on increasing fanouts going from fanout 2 to fanout 4, but on ever increasing fanouts it seems we are achieving ever worse performance.
-
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{../src/experiments/query_experiment_results/final2/time_zoom}
 \caption{Zoomed-in version of the experimentally measured running time for querying using the query windows of Figure~\ref{fig:experiment_query_uniform}.}
 \label{fig:result_query_search_complexity_zoom}
-
-\includegraphics[width=\textwidth]{../src/experiments/gerth_query_fanout_experiment_results/2016-06-08.19_09_06/time}
-\caption{Experimentally measured running time for querying using the query windows of Figure~\ref{fig:experiment_query_uniform} on fanouts $B^\epsilon \in \{2, 4, 8, 16, 32 \}$.}
-\label{fig:gerth_query_fanout_experiment}
 \end{figure}
 
 \clearpage
