@@ -18,7 +18,7 @@ set key right bottom
 set xlabel 'N (input size in Mb)'
 set ylabel 'Time (s)'
 set y2label ' '
-set y2tics 0
+#set y2tics 0
 set xrange [0:1030]
 set yrange [0:300]
 plot 'query_experiment_results/final2/gerth_fanout2' u 1:($2) t 'Brodal with fanout 2' w lp ls 2, \
