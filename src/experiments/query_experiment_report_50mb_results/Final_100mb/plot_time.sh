@@ -1,5 +1,5 @@
 #!/usr/bin/gnuplot
-set terminal postscript eps enhanced color size 2.5,2.5 font 'Verdana,12'
+set terminal postscript eps enhanced color size 2.5,2.0 font 'Verdana,12'
 set output 'query_experiment_report_50mb_results/Final_100mb/time.eps'
 set style line 11 lc rgb '#000000' lt 1
 set border 3 back ls 11
