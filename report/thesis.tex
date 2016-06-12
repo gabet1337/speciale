@@ -1832,22 +1832,33 @@ We first conducted the experiment with 50Mb data distributed \textit{inside} the
 Based on this observation we added an additional 300Mb data \textit{outside} the query windows giving a total of 400Mb data in Figure~\ref{fig:query_report_400mb}. We now see that the Boost R-Tree can no longer fit into internal memory which results in a much worse running time than achieved by the external memory data structures. What is also clear is that MySQL using no index is still superior compared to the data structure of Brodal.
 The last experiment therefore added an additional 2,100Mb data \textit{outside} the query windows yielding a data structure of a total of 2,500Mb worth of data. The experiment was then run on MySQL with no index and the data structure by Brodal with a fanout of 2 and 4 respectively. The result of this experiment is depicted in Figure~\ref{fig:query_report_2500mb}. We now see that the data structure of Brodal with fanout 4 outperforms MySQL which is explained by the fact that it is able to exclude searching in the parts of the tree with no points to report based on the $y$ range of the query. We also see that the External Memory Buffered Priority Search Tree just barely overtake MySQL with a fanout of 2. These results support the tendency of increasing performance on query when the fanout goes up. This aligns well with the theoretical analysis.
 
+
 \begin{figure}[h]
 \centering
-\includegraphics[width=\textwidth]{../src/experiments/query_experiment_report_50mb_results/Final_100mb/time}
-\caption{Reporting using the strategy of Figure~\ref{fig:experiment_query_uniform_fix_x} on a data structure of size 100Mb. The Internal Priority Search Tree of McCreight suffers from swapping of memory.}
-\label{fig:query_report_100mb}
+\begin{minipage}{.5\textwidth}
+  \centering
+  \includegraphics[]{../src/experiments/query_experiment_report_50mb_results/Final_100mb/time}
+  \caption{}
+  %\caption{Reporting using the strategy of Figure~\ref{fig:experiment_query_uniform_fix_x} on a data structure of size 100Mb. The Internal Priority Search Tree of McCreight suffers from swapping of memory.}
+  \label{fig:query_report_100mb}
+\end{minipage}%
+\begin{minipage}{.5\textwidth}
+  \centering
+  \includegraphics[]{../src/experiments/query_experiment_report_50mb_results/2016-05-21.20_07_54/time}
+  %\caption{Reporting using the strategy of Figure~\ref{fig:experiment_query_uniform_fix_x} on a data structure of size 400Mb. Here the Boost R-Tree suffers from swapping of   memory.}
+  \caption{}
+  \label{fig:query_report_400mb}
+\end{minipage}
+\caption*{Reporting using the strategy of Figure~\ref{fig:experiment_query_uniform_fix_x} on data structures of size 100Mb (Figure~\ref{fig:query_report_100mb}). Here the Internal Priority Search Tree of McCreight suffers from swapping of memory. Running on data structures of size 400Mb (Figure~\ref{fig:query_report_400mb}). Here the Boost R-Tree suffers from swapping of memory.}
+\end{figure}
 
-\includegraphics[width=\textwidth]{../src/experiments/query_experiment_report_50mb_results/2016-05-21.20_07_54/time}
-\caption{Reporting using the strategy of Figure~\ref{fig:experiment_query_uniform_fix_x} on a data structure of size 400Mb. Here the Boost R-Tree suffers from swapping of memory.}
-\label{fig:query_report_400mb}
-
+\begin{figure}[h]
 \includegraphics[width=\textwidth]{../src/experiments/query_experiment_report_50mb_results/2016-06-07.14_30_08/time}
 \caption{Reporting using the strategy of Figure~\ref{fig:experiment_query_uniform_fix_x} on a data structure of size 2,500Mb. The data structure of Brodal on fanout 4 now outperforms MySQL with no index.}
 \label{fig:query_report_2500mb}
 \end{figure}
 
-\clearpage
+
 
 \subsection{Focus on reporting}
 
