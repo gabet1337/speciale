@@ -1,5 +1,5 @@
 #!/usr/bin/gnuplot
-set terminal postscript eps enhanced color font 'Verdana,12'
+set terminal postscript eps enhanced color size 5,3.0 font 'Verdana,12'
 set output 'query_experiment_results/final2/time.eps'
 set style line 11 lc rgb '#000000' lt 1
 set border 3 back ls 11
@@ -14,6 +14,7 @@ set style line 5 lc rgb '#000000' pi 4 pt 4 ps 1 lt 1 lw 2 # --- black
 set style line 6 lc rgb '#00ced1' pi 2 pt 5 ps 1 lt 1 lw 2 # --- darkturquoise
 set style line 7 lc rgb '#ff00ff' pi 1 pt 7 ps 1 lt 1 lw 2 # --- magenta
 set style line 8 lc rgb '#87ceeb' pi 1 pt 8 ps 1 lt 1 lw 2 # --- skyblue
+set style line 10 lc rgb '#ff0000' pi 2 pt 10 ps 1 lt 1 lw 2 # red2
 set key top right
 set xlabel 'N (input size in Mb)'
 set ylabel 'Time (s)'

@@ -14,6 +14,7 @@ set style line 5 lc rgb '#000000' pi 5 pt 4 ps 1 lt 1 lw 2 # --- black
 set style line 6 lc rgb '#00ced1' pi 6 pt 5 ps 1 lt 1 lw 2 # --- darkturquoise
 set style line 7 lc rgb '#ff00ff' pi 5 pt 7 ps 1 lt 1 lw 2 # --- magenta
 set style line 8 lc rgb '#87ceeb' pi 7 pt 8 ps 1 lt 1 lw 2 # --- skyblue
+set style line 10 lc rgb '#ff0000' pi 6 pt 10 ps 1 lt 1 lw 2 # red2
 set key top left
 set xlabel 'N'
 set ylabel 'Time / N'
@@ -38,5 +39,5 @@ plot brodal(x,buffer_size,2) with linespoint title sprintf("Brodal with fanout 2
      rtree(x) with linespoint title sprintf("Boost R-Tree") ls 3,\
      rstar(x) with linespoint title sprintf("Libspatial R*-Tree") ls 6,\
      mysql(x) with linespoint title sprintf("MySQL (no index)") ls 4, \
-     arge(x,buffer_size) with linespoint title sprintf("MySQL (with index)") ls 10, \
+     arge(x,buffer_size) with linespoint title sprintf("MySQL (with index)") ls 10 pi 6, \
      arge(x,buffer_size) with linespoint title sprintf("Arge") ls 1

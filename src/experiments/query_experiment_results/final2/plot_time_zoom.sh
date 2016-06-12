@@ -14,11 +14,12 @@ set style line 5 lc rgb '#000000' pi 4 pt 4 ps 1 lt 1 lw 2 # --- black
 set style line 6 lc rgb '#00ced1' pi 2 pt 5 ps 1 lt 1 lw 2 # --- darkturquoise
 set style line 7 lc rgb '#ff00ff' pi 1 pt 7 ps 1 lt 1 lw 2 # --- magenta
 set style line 8 lc rgb '#87ceeb' pi 1 pt 8 ps 1 lt 1 lw 2 # --- skyblue
+set style line 10 lc rgb '#ff0000' pi 2 pt 10 ps 1 lt 1 lw 2 # red2
 set key right bottom
 set xlabel 'N (input size in Mb)'
 set ylabel 'Time (s)'
 set y2label ' '
-set y2tics 0
+#set y2tics 0
 set xrange [0:1030]
 set yrange [0:300]
 plot 'query_experiment_results/final2/gerth_fanout2' u 1:($2) t 'Brodal with fanout 2' w lp ls 2, \
