@@ -1,3 +1,8 @@
+THESIS:
+=======
+
+[You can download a pdf of the thesis by clicking this text](https://github.com/gabet1337/speciale/raw/master/report/thesis.pdf)
+
 DEPENDENCIES:
 =============
 
