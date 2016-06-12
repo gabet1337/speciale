@@ -25,5 +25,5 @@ plot 'query_experiment_report_50mb_results/Final_100mb/gerth_Gerth' u 1:2 t 'Bro
 'query_experiment_report_50mb_results/Final_100mb/rtree_Boost R-tree' u 1:($4/1000.0) t 'Boost R-tree' w lp ls 3, \
 'query_experiment_report_50mb_results/Final_100mb/mysql_MySQL' u 1:2 t 'MySQL (no index)' w lp ls 4, \
 'query_experiment_report_50mb_results/Final_100mb/internal_Internal' u 1:2 t 'Internal PST' w lp ls 5, \
-'query_experiment_report_50mb_results/Final_100mb/spatial_libspatial' u 1:2 t 'libspatial R*-Tree' w lp ls 6
-#'query_experiment_report_50mb_results/Final_100mb/arge_Arge' u 1:2 t 'Arge' w lp ls 4, \
+'query_experiment_report_50mb_results/Final_100mb/spatial_libspatial' u 1:2 t 'libspatial R*-Tree' w lp ls 6, \
+'query_experiment_report_50mb_results/Final_100mb/arge_Arge' u 1:2 t 'Arge' w lp ls 1
