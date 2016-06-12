@@ -26,7 +26,7 @@ plot 'query_experiment_results/final2/gerth_fanout2' u 1:($2) t 'Brodal with fan
 'query_experiment_results/final2/gerth_fanout8' u 1:($2) t 'Brodal with fanout 8' w lp ls 7, \
 'query_experiment_results/final2/internal_Internal' u 1:2 t 'Internal PST' w lp ls 5, \
 'query_experiment_results/final2/rtree_Boost R-tree' u 1:2 t 'Boost R-Tree' w lp ls 3, \
-'query_experiment_results/final2/arge_Arge' u 1:2 t 'Arge' w lp ls 1, \
 'query_experiment_results/final2/spatial_libspatial' u 1:2 t 'Libspatial R*-Tree' w lp ls 6, \
 'query_experiment_results/final2/mysql_MySQL' u 1:($2*1.10) t 'MySQL (no index)' w lp ls 4, \
-'query_experiment_results/final2/mysql_MySQL_indexed' u 1:($2) t 'MySQL (with index)' w lp ls 11
+'query_experiment_results/final2/mysql_MySQL_indexed' u 1:($2) t 'MySQL (with index)' w lp ls 10, \
+'query_experiment_results/final2/arge_Arge' u 1:2 t 'Arge' w lp ls 1
