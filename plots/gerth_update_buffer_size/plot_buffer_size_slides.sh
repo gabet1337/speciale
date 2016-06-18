@@ -1,5 +1,5 @@
 #!/usr/bin/gnuplot
-set terminal postscript eps enhanced color size 2,1.75 font 'Verdana,12'
+set terminal postscript eps enhanced color size 3,1.50 font 'Verdana,12'
 set output 'gerth_buffer_size_slides.eps'
 set style line 11 lc rgb '#000000' lt 1
 set border 3 back ls 11
