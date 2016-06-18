@@ -16,11 +16,11 @@ set style line 7 lc rgb '#ff00ff' pt 7 ps 1 lt 1 lw 2 # --- magenta
 set style line 8 lc rgb '#87ceeb' pt 8 ps 1 lt 1 lw 2 # --- skyblue
 set key top left
 set xlabel 'N (input size in Mb)'
-set ylabel 'I/Os'
+set ylabel 'I/Os / N (input size in Mb)'
 #set xrange [0:0]
 #set yrange [0:0]
 plot 'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_buffer1MB' u 1:3 t 'buffer1MB' w lp ls 2, \
 'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_buffer2MB' u 1:3 t 'buffer2MB' w lp ls 3, \
-'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_buffer4MB' u 1:($3-5731724) t 'buffer4MB' w lp ls 4, \
+'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_buffer4MB' u 1:(($3-5731724)/( t 'buffer4MB' w lp ls 4, \
 'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_buffer8MB' u 1:($3-2733929) t 'buffer8MB' w lp ls 5, \
 'gerth_buffer_size_experiment_results/2016-05-03.13_51_54/gerth_buffer16MB' u 1:($3-7156100) t 'buffer16MB' w lp ls 6
