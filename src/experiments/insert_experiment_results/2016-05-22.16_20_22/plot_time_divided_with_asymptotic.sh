@@ -17,8 +17,8 @@ set style line 8 lc rgb '#87ceeb' pi 20 pt 8 ps 1 lt 1 lw 5 # --- skyblue
 set key top left
 set xtics rotate by -35 offset -0.2 -1.5
 set xlabel 'N (input size in Mb)'
-set ylabel 'Time (s) per insert / 1/({/Symbol \145} B^{1-{/Symbol \145}}) log_{B} N)' font "Verdana,18"
-set y2label 'I/Os per insert / 1/({/Symbol \145} B^{1-{/Symbol \145}}) log_{B} N)' font "Verdana,18"
+set ylabel 'Time (s) per insert / (1/({/Symbol \145} B^{1-{/Symbol \145}}) log_{B} N)' font "Verdana,18"
+set y2label 'I/Os per insert / (1/({/Symbol \145} B^{1-{/Symbol \145}}) log_{B} N)' font "Verdana,18"
 set y2tics
 #set xrange [0:3500]
 set yrange [0:1]
