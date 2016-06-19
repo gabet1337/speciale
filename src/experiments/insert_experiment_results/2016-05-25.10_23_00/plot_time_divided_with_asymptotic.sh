@@ -22,7 +22,7 @@ set y2label 'I/Os per insert / log_B N'
 set y2tics
 #set xrange [0:3500]
 set y2range [0:2]
-set yrange [0:0.01]
+#set yrange [0:0.0010]
 #set y2range [0:2000]
 #unset ytics
 #set autoscale y2
