@@ -30,7 +30,7 @@ set style line 9 lc rgb '#808080' pi 5 pt 2 ps 1 lt 1 lw 2 # --- darkgray
 set nokey
 set xlabel 'N (input size in Mb)'
 set ylabel 'Time (s) / N (input size in Mb)'
-#set xrange [0:0]
+set xrange [0:5025]
 #set yrange [0:0]
 plot 'gerth_fanout_experiment_results/2016-05-06.11_52_24/gerth_fanout2' u 1:($2/$1) t 'fanout 2' w lp ls 1, \
 'gerth_fanout_experiment_results/2016-05-06.11_52_24/gerth_fanout3' u 1:($2/$1) t 'fanout 3' w lp ls 2, \
