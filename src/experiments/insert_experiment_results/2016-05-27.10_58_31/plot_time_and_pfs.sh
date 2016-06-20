@@ -17,14 +17,14 @@ set style line 8 lc rgb '#87ceeb' pt 8 ps 1 lt 1 lw 2 # --- skyblue
 set style line 9 lc rgb '#660066' pt 9 ps 1 lt 1 lw 2 # --- dunno
 set key top center title " "
 set xlabel 'N (input size in Mb)'
-set ylabel 'Time (s) per insert / N'
-set y2label 'Page faults per insert / N'
-set yrange [0:0.001]
+set ylabel 'Time (s) per insert / log_B N'
+set y2label 'Page faults per insert / log_B N'
+#set yrange [0:0.001]
 set y2range [0:2]
 set y2tics
 set xrange [10:2300]
 set x2range [10:2300]
 #set autoscale y
 set autoscale y2
-plot 'insert_experiment_results/2016-05-27.10_58_31/rtree_Boost R-tree' u 1:($2/($1*$1)) t 'time' w lp ls 5 axes x1y1 ,\
-     'insert_experiment_results/2016-05-27.10_58_31/rtree_Boost R-tree' u 1:($4/($1*$1)) t 'page faults' w lp ls 3 axes x1y2
+plot 'insert_experiment_results/2016-05-27.10_58_31/rtree_Boost R-tree' u 1:($2/($1*log($1))) t 'time' w lp ls 5 axes x1y1 ,\
+     'insert_experiment_results/2016-05-27.10_58_31/rtree_Boost R-tree' u 1:($4/($1*log($1))) t 'page faults' w lp ls 3 axes x1y2
