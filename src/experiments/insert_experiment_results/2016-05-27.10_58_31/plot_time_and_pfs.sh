@@ -17,8 +17,8 @@ set style line 8 lc rgb '#87ceeb' pt 8 ps 1 lt 1 lw 2 # --- skyblue
 set style line 9 lc rgb '#660066' pt 9 ps 1 lt 1 lw 2 # --- dunno
 set key top center title " "
 set xlabel 'N (input size in Mb)'
-set ylabel 'Time (s) per insert / log_B N'
-set y2label 'Page faults per insert / log_B N'
+set ylabel 'Time (s) per insert / log_{16} N'
+set y2label 'Page faults per insert / log_{16} N'
 #set yrange [0:0.001]
 set y2range [0:2]
 set y2tics
